@@ -24,13 +24,11 @@ DataNameDialog::DataNameDialog(const QString& dataname, const QStringList* const
     : datanames{datanames_cur}
 {
     setModal(true);
-    resize(500, 130);
-    setMinimumSize(500, 130);
-    setMaximumSize(500, 130);
+    setWindowTitle("Name data set");
 
     QGridLayout* gridLayout = new QGridLayout(this);
 
-    QLabel* const dataname_label{new QLabel(QString::fromStdString("Data name:"))};
+    QLabel* const dataname_label{new QLabel(QString::fromStdString("Data set name:"))};
     _dataname_ledit = new QLineEdit(dataname);
 
     QDialogButtonBox* buttonBox = new QDialogButtonBox();

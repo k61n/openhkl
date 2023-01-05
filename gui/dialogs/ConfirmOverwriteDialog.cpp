@@ -22,9 +22,7 @@
 ConfirmOverwriteDialog::ConfirmOverwriteDialog(const QString& name)
 {
     setModal(true);
-    resize(500, 130);
-    setMinimumSize(500, 130);
-    setMaximumSize(500, 130);
+    setWindowTitle("Confirm");
 
     const std::string msg{"The name '" + name.toStdString() + "' will be overwritten."};
     QLabel* const dataname_label{new QLabel(QString::fromStdString(msg))};

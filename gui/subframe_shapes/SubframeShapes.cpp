@@ -174,6 +174,12 @@ void SubframeShapes::setInputUp()
 
     connect(_build_collection, &QPushButton::clicked, this, &SubframeShapes::buildShapeModel);
     connect(_save_shapes, &QPushButton::clicked, this, &SubframeShapes::saveShapes);
+    connect(
+        _peak_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
+        &SubframeShapes::grabShapeParameters);
+    connect(
+        _peak_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+        this, &SubframeShapes::refreshPeakTable);
 
     _left_layout->addWidget(input_box);
 }

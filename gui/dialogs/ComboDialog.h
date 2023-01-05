@@ -21,7 +21,7 @@
 //! Dialog containing only a single QComboBox
 class ComboDialog : public QDialog {
  public:
-    ComboDialog(QStringList items, QString description);
+    ComboDialog(QStringList items, QString description, QString title);
     QString itemName() const;
     unsigned int itemIndex() const;
 

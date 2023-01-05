@@ -25,6 +25,7 @@
 ClonePeakDialog::ClonePeakDialog(QStringList collectionNames, const QString& suggestion)
 {
     setModal(true);
+    setWindowTitle("Clone peak collection");
 
     QGridLayout* gridLayout = new QGridLayout(this);
 
