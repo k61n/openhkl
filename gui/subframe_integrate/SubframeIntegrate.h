@@ -88,8 +88,6 @@ class SubframeIntegrate : public QWidget {
     void refreshPeakTable();
     //! Assign shapes to a peak collection
     void assignPeakShapes();
-    //! Remove overlapping peaks
-    void removeOverlappingPeaks();
     //! Wrapper for integration
     void runIntegration();
     //! Scroll to selected peak in table

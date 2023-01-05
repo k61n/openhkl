@@ -14,6 +14,7 @@
 
 #include "core/shape/Octree.h"
 #include "base/geometry/Ellipsoid.h"
+#include "base/utils/Logger.h"
 
 namespace ohkl {
 
@@ -128,6 +129,7 @@ std::set<Octree::collision_pair> Octree::getCollisions() const
             }
         }
     }
+    ohklLog(Level::Info, "Octree::getCollisions: ", collisions.size(), " collisions detected");
     return collisions;
 }
 
@@ -156,6 +158,7 @@ std::set<Octree::collision_pair> Octree::getCollisions(
             }
         }
     }
+    ohklLog(Level::Info, "Octree::getCollisions: ", collisions.size(), " collisions detected");
     return collisions;
 }
 
@@ -188,6 +191,7 @@ std::set<const Ellipsoid*> Octree::getCollisions(const Ellipsoid& given) const
     };
 
     recursiveCollisions(this, collisions);
+    ohklLog(Level::Info, "Octree::getCollisions: ", collisions.size(), " collisions detected");
     return collisions;
 }
 

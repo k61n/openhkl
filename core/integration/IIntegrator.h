@@ -69,6 +69,8 @@ struct IntegrationParameters {
     RegionType region_type = RegionType::VariableEllipsoid;
     //! Whether to skip peaks that intersect masks
     bool skip_masked = true;
+    //! Whether to remove peaks with overlapping peak integration regions
+    bool remove_overlaps = false;
 
     void log(const Level& level) const;
 };
@@ -129,6 +131,9 @@ class IIntegrator {
 
     //! Assign a parameter set to the integrator
     void setParameters(const IntegrationParameters& params);
+
+    //! Remove overlapping peak intensity regions
+    void removeOverlaps(const std::map<Peak3D*, std::unique_ptr<IntegrationRegion>>& regions);
 
  private:
     //! Compute the integrated intensity of the peak given the integration region.

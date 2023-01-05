@@ -209,6 +209,7 @@ void SubframeIntegrate::grabIntegrationParameters()
     _compute_gradient->setChecked(params->use_gradient);
     _fft_gradient->setChecked(params->fft_gradient);
     _gradient_kernel->setCurrentIndex(static_cast<int>(params->gradient_type));
+    _remove_overlaps->setChecked(params->remove_overlaps);
 
     _integrator_combo->setCurrentIndex(static_cast<int>(params->integrator_type));
 
@@ -248,6 +249,7 @@ void SubframeIntegrate::setIntegrationParameters()
     params->use_gradient = _compute_gradient->isChecked();
     params->fft_gradient = _fft_gradient->isChecked();
     params->gradient_type = static_cast<ohkl::GradientKernel>(_gradient_kernel->currentIndex());
+    params->remove_overlaps = _remove_overlaps->isChecked();
 
     for (auto it = ohkl::regionTypeDescription.begin(); it != ohkl::regionTypeDescription.end();
          ++it)
@@ -388,12 +390,6 @@ void SubframeIntegrate::setIntegrateUp()
 
     connect(_integrate_button, &QPushButton::clicked, this, &SubframeIntegrate::runIntegration);
     connect(
-        _remove_overlaps, &QCheckBox::stateChanged, this,
-        &SubframeIntegrate::removeOverlappingPeaks);
-    connect(
-        _peak_end, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
-        this, &SubframeIntegrate::removeOverlappingPeaks);
-    connect(
         _integrator_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
         this, &SubframeIntegrate::toggleUnsafeWidgets);
     connect(
@@ -436,49 +432,6 @@ void SubframeIntegrate::setPreviewUp()
         _peak_view_widget->set1.regionType, &QComboBox::setCurrentText);
 
     _left_layout->addWidget(preview_spoiler);
-}
-
-void SubframeIntegrate::removeOverlappingPeaks()
-{
-    gGui->setReady(false);
-
-    if (_peak_combo->count() == 0)
-        return;
-
-    ohkl::PeakCollection* peaks_to_integrate = _peak_combo->currentPeakCollection();
-    ohkl::PeakFilter filter;
-    filter.resetFiltering(peaks_to_integrate);
-    int nrejected = 0;
-    if (_remove_overlaps->isChecked()) {
-        _overlap_saved_flags.clear();
-        filter.parameters()->peak_end = _peak_end->value();
-        filter.parameters()->bkg_end = _peak_end->value();
-        filter.filterOverlapping(peaks_to_integrate);
-        for (auto* peak : peaks_to_integrate->getPeakList()) {
-            if (!peak->caughtByFilter() && peak->selected()) {
-                _overlap_saved_flags.insert_or_assign(peak, peak->rejectionFlag());
-                peak->setSelected(false);
-                peak->setRejectionFlag(ohkl::RejectionFlag::OverlappingPeak);
-                ++nrejected;
-            }
-        }
-        gGui->statusBar()->showMessage(QString::number(nrejected) + " overlapping peaks rejected");
-    } else {
-        std::map<ohkl::Peak3D*, ohkl::RejectionFlag>::iterator it;
-        for (it = _overlap_saved_flags.begin(); it != _overlap_saved_flags.end(); ++it) {
-            if (it->second == ohkl::RejectionFlag::NotRejected) {
-                it->first->setSelected(true);
-                it->first->setRejectionFlag(ohkl::RejectionFlag::NotRejected, true);
-            } else {
-                it->first->setSelected(false);
-                it->first->setRejectionFlag(it->second, true);
-            }
-            ++nrejected;
-        }
-        gGui->statusBar()->showMessage(QString::number(nrejected) + " overlapping peaks restored");
-    }
-    refreshPeakTable();
-    gGui->setReady(true);
 }
 
 void SubframeIntegrate::runIntegration()

@@ -443,9 +443,9 @@ void Peak3D::setRejectionFlag(RejectionFlag flag, bool overwrite /* = false */)
 
 RejectionFlag Peak3D::rejectionFlag() const
 {
-    if (_integration_flag != RejectionFlag::NotRejected)
-        return _integration_flag;
-    return _rejection_flag;
+    if (_integration_flag == RejectionFlag::NotRejected)
+        return _rejection_flag;
+    return _integration_flag;
 }
 
 std::string Peak3D::rejectionString() const

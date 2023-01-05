@@ -276,7 +276,8 @@ void PeakCollection::resetIntegrationFlags()
 {
     ohklLog(Level::Info, "PeakCollection::resetIntegrationFlags");
     for (auto* peak : getPeakList())
-        if (peak->rejectionFlag() == RejectionFlag::NotRejected) {
+        if (peak->getRejectionFlag() == RejectionFlag::NotRejected) {
+            // Set to selected only if _rejection_flag == RejectionFlag::NotRejected
             peak->setSelected(true);
         peak->setIntegrationFlag(RejectionFlag::NotRejected);
     }

@@ -16,6 +16,7 @@
 
 #include "base/geometry/Ellipsoid.h"
 #include "base/utils/Logger.h"
+#include "core/shape/Octree.h"
 #include "core/data/DataSet.h"
 #include "core/peak/IntegrationRegion.h"
 #include "core/peak/Intensity.h"
@@ -44,6 +45,8 @@ void IntegrationParameters::log(const Level& level) const
     ohklLog(level, "use_gradient           = ", use_gradient);
     ohklLog(level, "fft_gradient           = ", fft_gradient);
     ohklLog(level, "gradient_type          = ", static_cast<int>(gradient_type));
+    ohklLog(level, "skip_masked            = ", skip_masked);
+    ohklLog(level, "remove_overlaps        = ", remove_overlaps);
 }
 
 IIntegrator::IIntegrator()
@@ -135,6 +138,10 @@ void IIntegrator::integrate(
         return regions.find(p) == regions.end();
     });
     peaks.erase(it, peaks.end());
+
+    // check for overlaps if requested
+    if (_params.remove_overlaps)
+        removeOverlaps(regions);
 
     ohklLog(Level::Debug, "IIntegrator::integrate: frames loop");
     int nfailures = 0;
@@ -228,6 +235,51 @@ void IIntegrator::setParameters(const IntegrationParameters& params)
     _params = params;
     ohklLog(Level::Info, "IIntegrator::setParameters");
     _params.log(Level::Info);
+}
+
+void IIntegrator::removeOverlaps(const std::map<Peak3D*, std::unique_ptr<IntegrationRegion>>& regions)
+{
+    ohklLog(Level::Info, "Integrator::removeOverlaps");
+
+    std::vector<Peak3D*> peaks;
+    std::vector<Ellipsoid> ellipsoids;
+
+    // shapes (ellipsoids) have already been generated at this points, stored as IntegrationRegion
+    for (const auto& [peak, region] : regions) {
+        peaks.push_back(peak);
+        ellipsoids.push_back(region->shape());
+    }
+
+    Eigen::Vector3d lower(
+        std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity(),
+        std::numeric_limits<double>::infinity());
+    Eigen::Vector3d upper(-lower);
+
+    for (const auto& ellipsoid : ellipsoids) {
+        Eigen::Vector3d center = ellipsoid.center();
+        for (int idx = 0; idx < 3; ++idx) {
+            lower(idx) = std::min(lower(idx), center(idx));
+            upper(idx) = std::max(upper(idx), center(idx));
+        }
+    }
+
+    // build octree
+    Octree tree(lower, upper);
+    for (std::size_t i = 0; i < ellipsoids.size(); ++i)
+        tree.addData(&ellipsoids[i]);
+
+    // handle collisions
+    int nrejected = 0;
+    for (auto collision : tree.getCollisions()) {
+        unsigned int i = collision.first - &ellipsoids[0];
+        unsigned int j = collision.second - &ellipsoids[0];
+        peaks.at(i)->setSelected(false);
+        peaks.at(i)->setIntegrationFlag(RejectionFlag::OverlappingPeak);
+        peaks.at(j)->rejectYou(false);
+        peaks.at(j)->setIntegrationFlag(RejectionFlag::OverlappingPeak);
+        nrejected += 2;
+    }
+    ohklLog(Level::Info, "IIntegrator::removeOverlaps: ", nrejected, " overlapping peaks rejected");
 }
 
 } // namespace ohkl
