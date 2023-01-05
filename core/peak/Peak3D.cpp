@@ -143,7 +143,7 @@ void Peak3D::setShape(const Ellipsoid& shape)
     _shape = shape;
 }
 
-Ellipsoid Peak3D::shape() const
+const Ellipsoid& Peak3D::shape() const
 {
     return _shape;
 }

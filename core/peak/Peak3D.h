@@ -103,7 +103,7 @@ class Peak3D {
     //! Compute the shape in q-space. May throw if there is no valid q-space ellipsoid.
     Ellipsoid qShape() const;
     //! Return the shape of the peak as an ellipsoid in detector coordinates
-    Ellipsoid shape() const;
+    const Ellipsoid& shape() const;
 
     //! Return the intensity, after scaling, transmission, and Lorentz factor corrections
     Intensity correctedIntensity() const;
