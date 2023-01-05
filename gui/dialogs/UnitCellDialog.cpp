@@ -26,6 +26,7 @@ UnitCellDialog::UnitCellDialog(
     QString suggestion, QStringList spaceGroups, QStringList collectionNames)
 {
     setModal(true);
+    setWindowTitle("Assign unit cell");
 
     QGridLayout* gridLayout = new QGridLayout(this);
 

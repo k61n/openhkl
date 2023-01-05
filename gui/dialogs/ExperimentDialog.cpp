@@ -48,6 +48,7 @@ QStringList allInstrumentNames()
 
 ExperimentDialog::ExperimentDialog(QString exp_name)
 {
+    setWindowTitle("New experiment");
     setModal(true);
     QGridLayout* gridLayout = new QGridLayout(this);
     QHBoxLayout* horizontalLayout = new QHBoxLayout;
