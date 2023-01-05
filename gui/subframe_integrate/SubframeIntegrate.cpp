@@ -260,8 +260,8 @@ void SubframeIntegrate::setIntegrationRegionUp()
     _integration_region_box = new Spoiler("Integration region");
     GridFiller f(_integration_region_box, true);
 
-    _integration_region_type = f.addLinkedCombo(
-        ComboType::RegionType, "Integration region type",
+    _integration_region_type = f.addCombo(
+        "Integration region type",
         "<font>Specify integration region in Pixels (peak end), and"
         "scaling factors for background region (bkg begin, bkg end)</font>");
     for (int i = 0; i < static_cast<int>(ohkl::RegionType::Count); ++i)
@@ -390,7 +390,6 @@ void SubframeIntegrate::setIntegrateUp()
     connect(
         _remove_overlaps, &QCheckBox::stateChanged, this,
         &SubframeIntegrate::removeOverlappingPeaks);
-    connect(_remove_masked, &QCheckBox::stateChanged, this, &SubframeIntegrate::removeMaskedPeaks);
     connect(
         _peak_end, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
         this, &SubframeIntegrate::removeOverlappingPeaks);
@@ -477,31 +476,6 @@ void SubframeIntegrate::removeOverlappingPeaks()
             ++nrejected;
         }
         gGui->statusBar()->showMessage(QString::number(nrejected) + " overlapping peaks restored");
-    }
-    refreshPeakTable();
-    gGui->setReady(true);
-}
-
-void SubframeIntegrate::removeMaskedPeaks()
-{
-    gGui->setReady(false);
-    auto data = _data_combo->currentData();
-    auto peaks = _peak_combo->currentPeakCollection()->getPeakList();
-
-    if (_remove_masked->isChecked()) {
-        _mask_saved_flags.clear();
-        data->maskPeaks(peaks, _mask_saved_flags, _peak_end->value());
-        gGui->statusBar()->showMessage(QString::number(_mask_saved_flags.size()) + " peaks masked");
-    } else {
-        std::map<ohkl::Peak3D*, ohkl::RejectionFlag>::iterator it;
-        for (it = _mask_saved_flags.begin(); it != _mask_saved_flags.end(); ++it) {
-            it->first->setMasked(false);
-            it->first->setRejectionFlag(it->second, true);
-            if (it->second == ohkl::RejectionFlag::NotRejected)
-                it->first->setSelected(true);
-            else
-                it->first->setSelected(false);
-        }
     }
     refreshPeakTable();
     gGui->setReady(true);

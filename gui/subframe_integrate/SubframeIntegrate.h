@@ -39,7 +39,6 @@ class PeakComboBox;
 class FoundPeakComboBox;
 class DataComboBox;
 class DetectorWidget;
-class LinkedComboBox;
 class PeakItemGraphic;
 class PeakTableView;
 class PeakViewWidget;
@@ -91,8 +90,6 @@ class SubframeIntegrate : public QWidget {
     void assignPeakShapes();
     //! Remove overlapping peaks
     void removeOverlappingPeaks();
-    //! Remove peaks intersecting masks
-    void removeMaskedPeaks();
     //! Wrapper for integration
     void runIntegration();
     //! Scroll to selected peak in table
@@ -116,7 +113,7 @@ class SubframeIntegrate : public QWidget {
 
     // Integration region
     Spoiler* _integration_region_box;
-    LinkedComboBox* _integration_region_type;
+    QComboBox* _integration_region_type;
     SafeDoubleSpinBox* _peak_end;
     SafeDoubleSpinBox* _bkg_begin;
     SafeDoubleSpinBox* _bkg_end;
