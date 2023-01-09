@@ -452,7 +452,7 @@ RejectionFlag Peak3D::rejectionFlag() const
 
 std::string Peak3D::rejectionString() const
 {
-    return _rejection_map.find(_rejection_flag)->second;
+    return _rejection_map.find(rejectionFlag())->second;
 }
 
 std::string Peak3D::toString() const
