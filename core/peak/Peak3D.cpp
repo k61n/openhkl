@@ -75,6 +75,7 @@ Peak3D::Peak3D(sptrDataSet data)
     , _rejected_by_filter(false)
     , _transmission(1.0)
     , _rejection_flag(RejectionFlag::NotRejected)
+    , _integration_flag(RejectionFlag::NotRejected)
     , _data(data)
     , _rockingCurve()
 {
@@ -101,6 +102,7 @@ Peak3D::Peak3D(sptrDataSet data, const MillerIndex& hkl)
     , _rejected_by_filter(false)
     , _transmission(1.0)
     , _rejection_flag(RejectionFlag::NotRejected)
+    , _integration_flag(RejectionFlag::NotRejected)
     , _data(data)
     , _rockingCurve()
 {
@@ -369,7 +371,7 @@ void Peak3D::rejectYou(bool reject)
 void Peak3D::setManually(
     Intensity intensity, double peakEnd, double bkgBegin, double bkgEnd, double scale,
     double transmission, Intensity mean_bkg, bool predicted, bool selected, bool masked,
-    int rejection_flag, Intensity mean_bkg_grad /* = {} */)
+    int rejection_flag, int integration_flag, Intensity mean_bkg_grad /* = {} */)
 {
     _peakEnd = peakEnd;
     _bkgBegin = bkgBegin;
@@ -382,6 +384,7 @@ void Peak3D::setManually(
     _meanBackground = mean_bkg;
     _rawIntensity = intensity;
     _rejection_flag = static_cast<RejectionFlag>(rejection_flag);
+    _integration_flag = static_cast<RejectionFlag>(integration_flag);
     _meanBkgGradient = mean_bkg_grad;
 }
 
@@ -440,9 +443,16 @@ void Peak3D::setRejectionFlag(RejectionFlag flag, bool overwrite /* = false */)
     }
 }
 
+RejectionFlag Peak3D::rejectionFlag() const
+{
+    if (_integration_flag == RejectionFlag::NotRejected)
+        return _rejection_flag;
+    return _integration_flag;
+}
+
 std::string Peak3D::rejectionString() const
 {
-    return _rejection_map.find(_rejection_flag)->second;
+    return _rejection_map.find(rejectionFlag())->second;
 }
 
 std::string Peak3D::toString() const

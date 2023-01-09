@@ -25,9 +25,7 @@
 NewCellDialog::NewCellDialog(QStringList spaceGroups)
 {
     setModal(true);
-    resize(600, 130);
-    setMinimumSize(600, 130);
-    setMaximumSize(600, 130);
+    setWindowTitle("New unit cell");
 
     QGridLayout* gridLayout = new QGridLayout(this);
     QHBoxLayout* horizontalLayout = new QHBoxLayout;

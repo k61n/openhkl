@@ -160,7 +160,7 @@ void Actions::removeExperiment()
         expt_list.push_back(QString::fromStdString(name));
         id_list.push_back(gSession->experimentAt(expt_idx)->id());
     }
-    std::unique_ptr<ComboDialog> dlg(new ComboDialog(expt_list, description));
+    std::unique_ptr<ComboDialog> dlg(new ComboDialog(expt_list, description, "Remove experiment"));
     dlg->exec();
 
     if (dlg->itemName().isEmpty())
@@ -177,7 +177,7 @@ void Actions::removeData()
 {
     QString description{"Data set to remove"};
     QStringList data_list = gSession->currentProject()->getDataNames();
-    std::unique_ptr<ComboDialog> dlg(new ComboDialog(data_list, description));
+    std::unique_ptr<ComboDialog> dlg(new ComboDialog(data_list, description, "Remove data set"));
     dlg->exec();
 
     if (dlg->itemName().isEmpty())
@@ -255,7 +255,7 @@ void Actions::removeCell()
 {
     QString description{"Unit cell to remove"};
     QStringList cell_list = gSession->currentProject()->getUnitCellNames();
-    std::unique_ptr<ComboDialog> dlg(new ComboDialog(cell_list, description));
+    std::unique_ptr<ComboDialog> dlg(new ComboDialog(cell_list, description, "Remove unit cell"));
     dlg->exec();
 
     if (dlg->itemName().isEmpty())
@@ -278,7 +278,7 @@ void Actions::removePeaks()
     if (peaks_list.empty())
         return;
 
-    std::unique_ptr<ComboDialog> dlg(new ComboDialog(peaks_list, description));
+    std::unique_ptr<ComboDialog> dlg(new ComboDialog(peaks_list, description, "Remove peak collection"));
     dlg->exec();
     if (dlg->itemName().isEmpty())
         return;

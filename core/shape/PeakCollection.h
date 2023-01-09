@@ -139,6 +139,9 @@ class PeakCollection {
 
     void setUnitCell(const sptrUnitCell& cell);
 
+    //! Reset peak selection status to pre-integration values
+    void resetIntegrationFlags();
+
  private:
     unsigned int _id;
     std::vector<std::unique_ptr<ohkl::Peak3D>> _peaks;

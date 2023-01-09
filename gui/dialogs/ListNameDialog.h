@@ -22,7 +22,9 @@
 //! Dialog to name a specific peak list
 class ListNameDialog : public QDialog {
  public:
-    ListNameDialog(QString suggestion = "", QString name = "Peak collection");
+    ListNameDialog(
+        QString suggestion = "", QString name = "Peak collection",
+        QString header = "New peak collection");
     QString listName();
 
  private:

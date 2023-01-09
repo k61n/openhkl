@@ -39,7 +39,6 @@ class PeakComboBox;
 class FoundPeakComboBox;
 class DataComboBox;
 class DetectorWidget;
-class LinkedComboBox;
 class PeakItemGraphic;
 class PeakTableView;
 class PeakViewWidget;
@@ -89,10 +88,6 @@ class SubframeIntegrate : public QWidget {
     void refreshPeakTable();
     //! Assign shapes to a peak collection
     void assignPeakShapes();
-    //! Remove overlapping peaks
-    void removeOverlappingPeaks();
-    //! Remove peaks intersecting masks
-    void removeMaskedPeaks();
     //! Wrapper for integration
     void runIntegration();
     //! Scroll to selected peak in table
@@ -116,7 +111,7 @@ class SubframeIntegrate : public QWidget {
 
     // Integration region
     Spoiler* _integration_region_box;
-    LinkedComboBox* _integration_region_type;
+    QComboBox* _integration_region_type;
     SafeDoubleSpinBox* _peak_end;
     SafeDoubleSpinBox* _bkg_begin;
     SafeDoubleSpinBox* _bkg_end;
@@ -159,12 +154,12 @@ class SubframeIntegrate : public QWidget {
 
     std::shared_ptr<ohkl::ShapeModelParameters> _shape_params;
 
-    const std::map<std::string, ohkl::IntegratorType> _integrator_strings{
-        {"Pixel sum integrator", ohkl::IntegratorType::PixelSum},
-        {"Gaussian integrator", ohkl::IntegratorType::Gaussian},
-        {"I/Sigma integrator", ohkl::IntegratorType::ISigma},
-        {"1D Profile integrator", ohkl::IntegratorType::Profile1D},
-        {"3D Profile integrator", ohkl::IntegratorType::Profile3D}};
+    const std::map<ohkl::IntegratorType, std::string> _integrator_strings{
+        {ohkl::IntegratorType::PixelSum, "Pixel sum integrator"},
+        {ohkl::IntegratorType::Gaussian, "Gaussian integrator"},
+        {ohkl::IntegratorType::ISigma, "I/Sigma integrator"},
+        {ohkl::IntegratorType::Profile1D, "1D Profile integrator"},
+        {ohkl::IntegratorType::Profile3D, "3D Profile integrator"}};
 
     const std::map<ohkl::GradientKernel, QString> _kernel_description{
         {ohkl::GradientKernel::CentralDifference, "Central difference"},

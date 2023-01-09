@@ -17,6 +17,7 @@
 
 #include "core/data/ImageGradient.h"
 #include "core/experiment/Experiment.h"
+#include "core/integration/IIntegrator.h"
 #include "core/peak/IntegrationRegion.h"
 #include "core/peak/Peak3D.h"
 #include "core/shape/ShapeModel.h"
@@ -28,7 +29,6 @@
 #include "gui/subwindows/DetectorWindow.h"
 #include "gui/utility/DataComboBox.h"
 #include "gui/utility/GridFiller.h"
-#include "gui/utility/LinkedComboBox.h"
 #include "gui/utility/PeakComboBox.h"
 #include "gui/utility/PropertyScrollArea.h"
 #include "gui/utility/SafeSpinBox.h"
@@ -75,8 +75,12 @@ SubframeIntegrate::SubframeIntegrate() : QWidget()
         _peak_view_widget, &PeakViewWidget::settingsChanged, _detector_widget,
         &DetectorWidget::refresh);
     connect(
+        _integrator_combo,
+        static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+        this, &SubframeIntegrate::toggleUnsafeWidgets);
+    connect(
         _integration_region_type,
-        static_cast<void (LinkedComboBox::*)(int)>(&LinkedComboBox::currentIndexChanged),
+        static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
         _detector_widget, &DetectorWidget::refresh);
     connect(
         _gradient_kernel, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
@@ -205,10 +209,9 @@ void SubframeIntegrate::grabIntegrationParameters()
     _compute_gradient->setChecked(params->use_gradient);
     _fft_gradient->setChecked(params->fft_gradient);
     _gradient_kernel->setCurrentIndex(static_cast<int>(params->gradient_type));
+    _remove_overlaps->setChecked(params->remove_overlaps);
 
-    for (auto it = _integrator_strings.begin(); it != _integrator_strings.end(); ++it)
-        if (it->second == params->integrator_type)
-            _integrator_combo->setCurrentText(QString::fromStdString(it->first));
+    _integrator_combo->setCurrentIndex(static_cast<int>(params->integrator_type));
 
     for (auto it = ohkl::regionTypeDescription.begin(); it != ohkl::regionTypeDescription.end();
          ++it)
@@ -233,8 +236,7 @@ void SubframeIntegrate::setIntegrationParameters()
     params->fit_cov = _fit_covariance->isChecked();
     params->min_neighbors = _min_neighbours->value();
     params->region_type = static_cast<ohkl::RegionType>(_integration_region_type->currentIndex());
-    params->integrator_type =
-        _integrator_strings.find(_integrator_combo->currentText().toStdString())->second;
+    params->integrator_type = static_cast<ohkl::IntegratorType>(_integrator_combo->currentIndex());
     if (params->region_type == ohkl::RegionType::VariableEllipsoid) {
         params->peak_end = _peak_end->value();
         params->bkg_begin = _bkg_begin->value();
@@ -247,6 +249,7 @@ void SubframeIntegrate::setIntegrationParameters()
     params->use_gradient = _compute_gradient->isChecked();
     params->fft_gradient = _fft_gradient->isChecked();
     params->gradient_type = static_cast<ohkl::GradientKernel>(_gradient_kernel->currentIndex());
+    params->remove_overlaps = _remove_overlaps->isChecked();
 
     for (auto it = ohkl::regionTypeDescription.begin(); it != ohkl::regionTypeDescription.end();
          ++it)
@@ -259,8 +262,8 @@ void SubframeIntegrate::setIntegrationRegionUp()
     _integration_region_box = new Spoiler("Integration region");
     GridFiller f(_integration_region_box, true);
 
-    _integration_region_type = f.addLinkedCombo(
-        ComboType::RegionType, "Integration region type",
+    _integration_region_type = f.addCombo(
+        "Integration region type",
         "<font>Specify integration region in Pixels (peak end), and"
         "scaling factors for background region (bkg begin, bkg end)</font>");
     for (int i = 0; i < static_cast<int>(ohkl::RegionType::Count); ++i)
@@ -368,8 +371,10 @@ void SubframeIntegrate::setIntegrateUp()
     _integrate_button = f.addButton("Integrate peaks");
 
     // -- Initialize controls
-    for (const auto& [key, val] : _integrator_strings)
-        _integrator_combo->addItem(QString::fromStdString(key));
+    for (std::size_t idx = 0; idx < static_cast<int>(ohkl::IntegratorType::Count); ++idx) {
+        const std::string integrator_type = _integrator_strings.at(static_cast<ohkl::IntegratorType>(idx));
+        _integrator_combo->addItem(QString::fromStdString(integrator_type));
+    }
 
     _interpolation_combo->addItem("None");
     _interpolation_combo->addItem("Inverse distance");
@@ -384,13 +389,6 @@ void SubframeIntegrate::setIntegrateUp()
     _min_neighbours->setMaximum(1000);
 
     connect(_integrate_button, &QPushButton::clicked, this, &SubframeIntegrate::runIntegration);
-    connect(
-        _remove_overlaps, &QCheckBox::stateChanged, this,
-        &SubframeIntegrate::removeOverlappingPeaks);
-    connect(_remove_masked, &QCheckBox::stateChanged, this, &SubframeIntegrate::removeMaskedPeaks);
-    connect(
-        _peak_end, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
-        this, &SubframeIntegrate::removeOverlappingPeaks);
     connect(
         _integrator_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
         this, &SubframeIntegrate::toggleUnsafeWidgets);
@@ -436,74 +434,6 @@ void SubframeIntegrate::setPreviewUp()
     _left_layout->addWidget(preview_spoiler);
 }
 
-void SubframeIntegrate::removeOverlappingPeaks()
-{
-    gGui->setReady(false);
-
-    if (_peak_combo->count() == 0)
-        return;
-
-    ohkl::PeakCollection* peaks_to_integrate = _peak_combo->currentPeakCollection();
-    ohkl::PeakFilter filter;
-    filter.resetFiltering(peaks_to_integrate);
-    int nrejected = 0;
-    if (_remove_overlaps->isChecked()) {
-        _overlap_saved_flags.clear();
-        filter.parameters()->peak_end = _peak_end->value();
-        filter.parameters()->bkg_end = _peak_end->value();
-        filter.filterOverlapping(peaks_to_integrate);
-        for (auto* peak : peaks_to_integrate->getPeakList()) {
-            if (!peak->caughtByFilter() && peak->selected()) {
-                _overlap_saved_flags.insert_or_assign(peak, peak->rejectionFlag());
-                peak->setSelected(false);
-                peak->setRejectionFlag(ohkl::RejectionFlag::OverlappingPeak);
-                ++nrejected;
-            }
-        }
-        gGui->statusBar()->showMessage(QString::number(nrejected) + " overlapping peaks rejected");
-    } else {
-        std::map<ohkl::Peak3D*, ohkl::RejectionFlag>::iterator it;
-        for (it = _overlap_saved_flags.begin(); it != _overlap_saved_flags.end(); ++it) {
-            if (it->second == ohkl::RejectionFlag::NotRejected) {
-                it->first->setSelected(true);
-                it->first->setRejectionFlag(ohkl::RejectionFlag::NotRejected, true);
-            } else {
-                it->first->setSelected(false);
-                it->first->setRejectionFlag(it->second, true);
-            }
-            ++nrejected;
-        }
-        gGui->statusBar()->showMessage(QString::number(nrejected) + " overlapping peaks restored");
-    }
-    refreshPeakTable();
-    gGui->setReady(true);
-}
-
-void SubframeIntegrate::removeMaskedPeaks()
-{
-    gGui->setReady(false);
-    auto data = _data_combo->currentData();
-    auto peaks = _peak_combo->currentPeakCollection()->getPeakList();
-
-    if (_remove_masked->isChecked()) {
-        _mask_saved_flags.clear();
-        data->maskPeaks(peaks, _mask_saved_flags, _peak_end->value());
-        gGui->statusBar()->showMessage(QString::number(_mask_saved_flags.size()) + " peaks masked");
-    } else {
-        std::map<ohkl::Peak3D*, ohkl::RejectionFlag>::iterator it;
-        for (it = _mask_saved_flags.begin(); it != _mask_saved_flags.end(); ++it) {
-            it->first->setMasked(false);
-            it->first->setRejectionFlag(it->second, true);
-            if (it->second == ohkl::RejectionFlag::NotRejected)
-                it->first->setSelected(true);
-            else
-                it->first->setSelected(false);
-        }
-    }
-    refreshPeakTable();
-    gGui->setReady(true);
-}
-
 void SubframeIntegrate::runIntegration()
 {
     gGui->setReady(false);
@@ -529,6 +459,7 @@ void SubframeIntegrate::runIntegration()
         gGui->statusBar()->showMessage(
             QString::number(integrator->numberOfValidPeaks()) + "/"
             + QString::number(integrator->numberOfPeaks()) + " peaks integrated");
+        refreshPeakTable();
     } catch (std::exception& e) {
         QMessageBox::critical(this, "Error", QString(e.what()));
     }

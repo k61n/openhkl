@@ -36,6 +36,7 @@ PeakWindow::PeakWindow(ohkl::Peak3D* peak, QWidget* parent /* = nullptr */)
     , _colormap(new ColorMap())
 {
     setModal(false);
+    setWindowTitle("Single peak integration region");
     setControlWidgetUp();
 
     QWidget* view_widget = new QWidget;

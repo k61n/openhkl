@@ -350,6 +350,7 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
 
         // initialize integers
         std::vector<int> rejection_flag(nPeaks);
+        std::vector<int> integration_flag(nPeaks);
 
         // initialize the booleans
         std::unique_ptr<bool[]> selected{new bool[nPeaks]};
@@ -379,7 +380,8 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
             mean_bkg_grad[i] = peak->meanBkgGradient().value();
             mean_bkg_grad_sigma[i] = peak->meanBkgGradient().sigma();
 
-            rejection_flag[i] = static_cast<int>(peak->rejectionFlag());
+            rejection_flag[i] = static_cast<int>(peak->getRejectionFlag());
+            integration_flag[i] = static_cast<int>(peak->getIntegrationFlag());
 
             selected[i] = peak->selected();
             masked[i] = peak->masked();
@@ -434,7 +436,8 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
                 {ohkl::ds_Center, H5::PredType::NATIVE_DOUBLE, center_space, center.data()},
                 {ohkl::ds_Metric, H5::PredType::NATIVE_DOUBLE, metric_space, metric.data()},
                 // NATIVE_INT32
-                {ohkl::ds_Rejection, H5::PredType::NATIVE_INT32, peak_space, rejection_flag.data()},
+                {ohkl::ds_RejectionFlag, H5::PredType::NATIVE_INT32, peak_space, rejection_flag.data()},
+                {ohkl::ds_IntegrationFlag, H5::PredType::NATIVE_INT32, peak_space, integration_flag.data()},
                 {ohkl::ds_hkl, H5::PredType::NATIVE_INT32, hkl_space, hkl.data()},
                 // NATIVE_HBOOL
                 {ohkl::ds_Selected, H5::PredType::NATIVE_HBOOL, peak_space, selected.get()},

@@ -66,6 +66,7 @@ void Integrator::integratePeaks(
     ohklLog(
         Level::Info,
         "Integrator::integratePeaks: integrating PeakCollection '" + peaks->name() + "'");
+    peaks->resetIntegrationFlags();
     IIntegrator* integrator = getIntegrator(integrator_type);
     integrator->setParameters(*_params);
     integrator->integrate(peaks->getPeakList(), peaks->shapeModel(), data);
@@ -88,6 +89,7 @@ void Integrator::integratePeaks(
     ohklLog(
         Level::Info,
         "Integrator::integratePeaks: integrating PeakCollection '" + peaks->name() + "'");
+    peaks->resetIntegrationFlags();
     params->log(Level::Info);
     IIntegrator* integrator = getIntegrator(_params->integrator_type);
     integrator->setParameters(*params);

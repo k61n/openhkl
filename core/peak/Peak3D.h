@@ -170,7 +170,7 @@ class Peak3D {
     void setManually(
         Intensity intensity, double peakEnd, double bkgBegin, double bkgEnd, double scale,
         double transmission, Intensity mean_bkg, bool predicted, bool selected, bool masked,
-        int rejection_flag, Intensity mean_bkg_grad = {});
+        int rejection_flag, int integration_flag, Intensity mean_bkg_grad = {});
 
     //! Update the integration parameters for this peak
     void updateIntegration(
@@ -196,8 +196,14 @@ class Peak3D {
     double getBkgEnd() { return _bkgEnd; };
     //! Set the reason for this peak being rejected (unselected)
     void setRejectionFlag(RejectionFlag flag, bool overwrite = false);
-    //! Return the rejection flag
-    RejectionFlag rejectionFlag() const { return _rejection_flag; };
+    //! Set the reason for rejection during integration
+    void setIntegrationFlag(RejectionFlag flag) { _integration_flag = flag; };
+    //! Return the rejection flag only
+    RejectionFlag getRejectionFlag() const { return _rejection_flag; };
+    //! Return the integration flag only
+    RejectionFlag getIntegrationFlag() const { return _integration_flag; };
+    //! Return the integration flag, or rejection flag if the former is not set
+    RejectionFlag rejectionFlag() const;
     //! Return a string explaining the rejection
     std::string rejectionString() const;
     //! Return a string representation of the peak
@@ -246,6 +252,8 @@ class Peak3D {
     double _transmission;
     //! Reason for rejection
     ohkl::RejectionFlag _rejection_flag;
+    //! Reason for rejection during integration
+    ohkl::RejectionFlag _integration_flag;
 
     //! Pointer to the dataset from which this peak is derived
     sptrDataSet _data;

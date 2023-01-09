@@ -21,9 +21,10 @@
 #include <QLabel>
 
 
-ComboDialog::ComboDialog(QStringList items, QString description)
+ComboDialog::ComboDialog(QStringList items, QString description, QString title)
 {
     setModal(true);
+    setWindowTitle(title);
 
     QGridLayout* gridLayout = new QGridLayout(this);
 

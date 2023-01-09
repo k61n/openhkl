@@ -21,6 +21,7 @@ MtzExportDialog::MtzExportDialog(bool merged_data)
     : _selected_data(""), _selected_pc(""), _comment(""), _merged_data(merged_data)
 {
     setModal(true);
+    setWindowTitle("Export to .mtz file");
 
     setWindowTitle(QString("MTZ Export"));
 

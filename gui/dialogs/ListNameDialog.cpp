@@ -20,9 +20,10 @@
 #include <QLabel>
 #include <QVBoxLayout>
 
-ListNameDialog::ListNameDialog(QString suggestion, QString name)
+ListNameDialog::ListNameDialog(QString suggestion, QString name, QString header)
 {
     setModal(true);
+    setWindowTitle(header);
 
     QVBoxLayout* whole = new QVBoxLayout(this);
     QHBoxLayout* line = new QHBoxLayout;

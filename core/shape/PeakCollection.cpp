@@ -17,6 +17,7 @@
 #include "base/utils/Logger.h"
 #include "core/data/DataSet.h"
 #include "core/integration/ShapeIntegrator.h"
+#include "core/peak/Peak3D.h"
 #include "core/raw/DataKeys.h"
 
 #include <string>
@@ -269,6 +270,17 @@ void PeakCollection::setUnitCell(const sptrUnitCell& cell)
 {
     for (auto* peak : getPeakList())
         peak->setUnitCell(cell);
+}
+
+void PeakCollection::resetIntegrationFlags()
+{
+    ohklLog(Level::Info, "PeakCollection::resetIntegrationFlags");
+    for (auto* peak : getPeakList())
+        if (peak->getRejectionFlag() == RejectionFlag::NotRejected) {
+            // Set to selected only if _rejection_flag == RejectionFlag::NotRejected
+            peak->setSelected(true);
+        peak->setIntegrationFlag(RejectionFlag::NotRejected);
+    }
 }
 
 } // namespace ohkl

@@ -32,7 +32,6 @@ RawDataDialog::RawDataDialog(
     : _dataset_names{datanames_cur}
 {
     setModal(true);
-    resize(400, 300);
 
     QGridLayout* main_grid = new QGridLayout();
     GridFiller gridfiller(main_grid);

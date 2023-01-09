@@ -319,6 +319,7 @@ bool Session::loadRawData()
         ohkl::RawDataReaderParameters parameters;
         parameters.LoadDataFromFile(filenames.at(0));
         RawDataDialog dialog(parameters, extant_dataset_names);
+        dialog.setWindowTitle("Raw data parameters");
         if (!dialog.exec())
             return false;
         ohkl::Experiment* exp = currentProject()->experiment();

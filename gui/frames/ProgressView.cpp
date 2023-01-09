@@ -24,6 +24,7 @@
 ProgressView::ProgressView(QWidget* parent) : QProgressDialog(parent)
 {
     setModal(true);
+    setWindowTitle("Progress");
 
     setLabelText("Nothing to show");
     setMaximum(100);
@@ -89,6 +90,5 @@ void ProgressView::abort()
     // call update to flush ouput log etc.
     updateProgress();
 
-    qDebug() << "Job was aborted.";
     _timer->stop();
 }
