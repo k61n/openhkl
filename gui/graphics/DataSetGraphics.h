@@ -85,6 +85,10 @@ class DataSetGraphics {
     std::optional<QString> dSpacing(int col, int row);
     //! Miller indices of a specific pixel
     std::optional<QString> millerIndices(int col, int row);
+    //! Overlay of resolution contours
+    std::optional<QImage> resolutionContours(int n_contours, double d_min, double d_max);
+    //! Get a vector of labels for resolution contours
+    QVector<QGraphicsTextItem*> resolutionLabels();
 
  private:
     ohkl::sptrDataSet _data;
@@ -106,6 +110,11 @@ class DataSetGraphics {
     QColor _old_beam_color;
     //! Size of direct beam
     double _beam_size;
+
+    //! Vector of resolution value labels for resolution contour overlay
+    std::vector<double> _resolution_labels;
+    //! Vector of label positions for resolution contour overlay
+    std::vector<QPoint> _resolution_label_positions;
 };
 
 #endif // OHKL_GUI_GRAPHICS_DATASETGRAPHICS_H

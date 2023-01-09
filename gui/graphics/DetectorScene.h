@@ -73,7 +73,7 @@ class DetectorScene : public QGraphicsScene {
     //! Load image from current Data and frame
     void loadCurrentImage();
     //! Remove integration overlays from the DetectorScene
-    void clearIntegrationRegion();
+    void clearPixmapItems();
     //! Remove masks
     void clearMasks();
 
@@ -163,6 +163,10 @@ class DetectorScene : public QGraphicsScene {
     void adjustZoomRect(QGraphicsRectItem* box);
     //! Check whether a graphics item exists, if it does, remove + delete
     void deleteGraphicsItem(QGraphicsItem* item);
+    //! Draw the resolution contours
+    void drawResolutionContours();
+    //! Remove contours + labels from scene
+    void clearContours();
 
     //! Visual parameters of the scene
     DetectorSceneParams _params;
@@ -210,6 +214,11 @@ class DetectorScene : public QGraphicsScene {
     PeakItemGraphic* _selected_peak;
     //! Selected peaks for drawing a single integration region
     ohkl::Peak3D* _peak;
+
+    //! QImage overlay of resolution contours
+    std::optional<QImage> _contours;
+    //! The contour overlay item
+    QGraphicsPixmapItem* _contour_overlay;
 };
 
 #endif // OHKL_GUI_GRAPHICS_DETECTORSCENE_H

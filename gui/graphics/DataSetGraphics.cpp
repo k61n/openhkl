@@ -20,6 +20,7 @@
 #include "core/convolve/Convolver.h"
 #include "core/convolve/ConvolverFactory.h"
 #include "core/detector/Detector.h"
+#include "core/instrument/Diffractometer.h"
 #include "core/instrument/InterpolatedState.h"
 #include "gui/graphics_items/BoxMaskItem.h"
 #include "gui/graphics_items/EllipseMaskItem.h"
@@ -246,4 +247,80 @@ std::optional<QString> DataSetGraphics::millerIndices(int col, int row)
         .arg(hkl[1], 0, 'f', 2)
         .arg(hkl[2], 0, 'f', 2)
         .arg(pCount(col, row));
+}
+
+std::optional<QImage> DataSetGraphics::resolutionContours(
+    int n_contours, double d_min, double d_max)
+{
+    if (!_data)
+        return {};
+
+    _params->n_contours = n_contours;
+    _params->d_min = d_min;
+    _params->d_max = d_max;
+
+    QImage contour_image(_data->nCols(), _data->nRows(), QImage::Format_ARGB32);
+    double lambda = _data->diffractometer()->source().selectedMonochromator().wavelength();
+    ohkl::InstrumentState state =
+        ohkl::InterpolatedState::interpolate(_data->instrumentStates(), 0);
+
+    _resolution_labels.clear();
+    _resolution_label_positions.clear();
+    _resolution_labels = std::vector<double>(n_contours * 2);
+    _resolution_label_positions = std::vector<QPoint>(n_contours * 2);
+
+    for (auto& point : _resolution_label_positions)
+        point = {0, 0};
+
+    const double q3max = std::pow(d_min, -3);
+    const double dq3 = (std::pow(d_min, -3) - std::pow(d_max, -3)) / double(n_contours);
+    for (std::size_t i = 0; i < n_contours; ++i)
+        _resolution_labels[i] = std::pow(q3max - i  * dq3, -1.0 / 3.0);
+
+    // Thresholds need to be set per-contour to ensure similar width
+    std::vector<double> thresholds;
+    const double eps = 0.0002;
+    for (double contour : _resolution_labels)
+        // scale eps by volume to get contours of equal width
+        thresholds.push_back(eps * std::pow(contour, 3));
+
+    for (int col = 0; col < _data->nCols(); ++col) {
+        for (int row = 0; row < _data->nRows(); ++row) {
+            ohkl::DirectVector pos = _data->detector().pixelPosition(col, row);
+            double th2 = state.twoTheta(pos);
+            double d = lambda / (2.0 * sin(0.5 * th2));
+            for (std::size_t idx = 0; idx < _resolution_labels.size(); ++idx) {
+                if (std::fabs(_resolution_labels[idx] - d) < thresholds[idx]) {
+                    if (row == _data->nRows()/2 && _resolution_label_positions[idx].isNull())
+                        _resolution_label_positions[idx] = {col, row};
+                    contour_image.setPixelColor(QPoint(col, row), QColor(0, 0, 0, 128));
+                    break;
+                } else {
+                    contour_image.setPixelColor(QPoint(col, row), Qt::transparent);
+                }
+            }
+        }
+    }
+
+    // update the labels for the contours
+    for (std::size_t idx = 0; idx < n_contours; ++idx) {
+        _resolution_labels[idx + n_contours] = _resolution_labels[n_contours - idx - 1];
+        _resolution_label_positions[idx + n_contours] =
+            {static_cast<int>(_data->nCols()) - _resolution_label_positions[n_contours - idx - 1].x(),
+             _resolution_label_positions[n_contours - idx - 1].y()};
+    }
+    return contour_image;
+}
+
+QVector<QGraphicsTextItem*> DataSetGraphics::resolutionLabels()
+{
+    QVector<QGraphicsTextItem*> items;
+    for (std::size_t idx = 0; idx < _resolution_label_positions.size(); ++idx) {
+        QString label = QString("%1").arg(_resolution_labels[idx], 0, 'f', 2);
+        QGraphicsTextItem* text = new QGraphicsTextItem(label);
+        text->setDefaultTextColor(Qt::black);
+        text->setPos(_resolution_label_positions[idx]);
+        items.push_back(text);
+    }
+    return items;
 }
