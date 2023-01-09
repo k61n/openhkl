@@ -255,6 +255,7 @@ void DetectorWidget::setToolbarUp()
     QHBoxLayout* layout = new QHBoxLayout;
 
     _gradient = new QPushButton;
+    _contours = new QPushButton;
     _hide_masks = new QPushButton;
     _peak_labels = new QPushButton;
     _copy_to_clipboard = new QPushButton;
@@ -272,6 +273,9 @@ void DetectorWidget::setToolbarUp()
     _gradient->setCheckable(true);
     _gradient->setChecked(false);
 
+    _contours->setCheckable(true);
+    _contours->setChecked(false);
+
     _hide_masks->setCheckable(true);
     _hide_masks->setChecked(true);
 
@@ -285,6 +289,7 @@ void DetectorWidget::setToolbarUp()
     _select->setChecked(false);
 
     layout->addWidget(_gradient);
+    layout->addWidget(_contours);
     layout->addWidget(_hide_masks);
     layout->addWidget(_peak_labels);
     layout->addSpacing(30);
@@ -303,6 +308,7 @@ void DetectorWidget::setToolbarUp()
         path = path + light;
 
     _gradient->setIcon(QIcon(path + "gradient.svg"));
+    _contours->setIcon(QIcon(path + "contour.svg"));
     _hide_masks->setIcon(QIcon(path + "hide.svg"));
     _peak_labels->setIcon(QIcon(path + "layers.svg"));
     _copy_to_clipboard->setIcon(QIcon(path + "copy.svg"));
@@ -311,6 +317,7 @@ void DetectorWidget::setToolbarUp()
     _select->setIcon(QIcon(path + "select.svg"));
 
     _gradient->setToolTip("Toggle magnitude of gradient of image");
+    _contours->setToolTip("Toggle resolution contours");
     _hide_masks->setToolTip("Show/hide detector masks");
     _peak_labels->setToolTip("Show/hide Miller index labels");
         _copy_to_clipboard->setToolTip("Copy visible detector image to clipboard");
@@ -319,6 +326,7 @@ void DetectorWidget::setToolbarUp()
     _select->setToolTip("Enable rectangle select cursor on detector image");
 
     connect(_gradient, &QPushButton::clicked, this, &DetectorWidget::toggleGradient);
+    connect(_contours, &QPushButton::clicked, this, &DetectorWidget::toggleContours);
     connect(_hide_masks, &QPushButton::clicked, this, &DetectorWidget::toggleMasks);
     connect(_peak_labels, &QPushButton::clicked, this, &DetectorWidget::toggleLabels);
     connect(_copy_to_clipboard, &QPushButton::clicked, this, [=]() {
@@ -384,4 +392,10 @@ void DetectorWidget::toggleLabels()
 {
     scene()->params()->labels = _peak_labels->isChecked();
     scene()->drawPeakItems();
+}
+
+void DetectorWidget::toggleContours()
+{
+    scene()->params()->contours = _contours->isChecked();
+    scene()->loadCurrentImage();
 }

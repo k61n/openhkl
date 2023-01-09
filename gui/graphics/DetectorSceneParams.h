@@ -35,6 +35,7 @@ struct DetectorSceneParams {
     bool detectorSpots = false;
     bool labels = false;
     bool masks = true;
+    bool contours = false;
 
     // values
     int currentIndex = -1;
@@ -48,6 +49,11 @@ struct DetectorSceneParams {
     ohkl::ConvolutionKernelType convolver = ohkl::ConvolutionKernelType::Annular;
     ohkl::GradientKernel gradientKernel = ohkl::GradientKernel::Sobel;
     TooltipMode tooltipMode = Pixel;
+
+    // contours
+    unsigned int n_contours = 0;
+    double d_min = 1.5;
+    double d_max = 50.0;
 };
 
 #endif // OHKL_GUI_GRAPHICS_DETECTORSCENEPARAMS_H

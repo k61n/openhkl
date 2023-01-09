@@ -18,6 +18,7 @@
 #include "base/mask/BoxMask.h"
 #include "base/mask/EllipseMask.h"
 #include "core/detector/DetectorEvent.h"
+#include "core/experiment/Experiment.h"
 #include "core/loader/XFileHandler.h"
 #include "core/peak/Peak3D.h"
 #include "core/shape/KeyPointCollection.h"
@@ -35,6 +36,7 @@
 #include "gui/graphics_tools/CutterItem.h"
 #include "gui/items/PeakCollectionItem.h"
 #include "gui/models/PeakCollectionModel.h"
+#include "gui/models/Project.h"
 #include "gui/models/Session.h"
 #include "gui/subwindows/PeakWindow.h"
 #include "gui/widgets/PeakViewWidget.h"
@@ -708,8 +710,14 @@ void DetectorScene::loadCurrentImage()
         _image->setZValue(-2);
     }
 
+
+    clearPixmapItems();
+    clearContours();
+
     drawIntegrationRegion();
     loadMasksFromData();
+    if (_params.contours)
+        drawResolutionContours();
 
     setSceneRect(_zoomStack.back());
     emit dataChanged();
@@ -722,8 +730,6 @@ void DetectorScene::drawIntegrationRegion()
 {
     if (_peak_graphics.empty())
         return;
-
-    clearIntegrationRegion();
 
     ohkl::Peak3D* peak = nullptr;
     if (_params.singlePeakIntRegion)
@@ -739,7 +745,7 @@ void DetectorScene::drawIntegrationRegion()
     }
 }
 
-void DetectorScene::clearIntegrationRegion()
+void DetectorScene::clearPixmapItems()
 {
     if (!_currentData)
         return;
@@ -801,4 +807,43 @@ QVector<MaskItem*> DetectorScene::maskItems() const
     // sort the vector by address of IMask* object (they are in a vector)
     std::sort(masks.begin(), masks.end(), [](auto m1, auto m2) { return m1->mask() < m2->mask(); });
     return masks;
+}
+
+void DetectorScene::drawResolutionContours()
+{
+    if (_peak_graphics.empty())
+        return;
+
+    int n_contours = 11;
+    double dmin = 1.5;
+    double dmax = 50.0;
+    if (gSession->hasProject()) {
+        auto* expt = gSession->currentProject()->experiment();
+        dmin = expt->peakMerger()->parameters()->d_min;
+        dmax = expt->peakMerger()->parameters()->d_max;
+        n_contours = expt->peakMerger()->parameters()->n_shells;
+    }
+
+    // only reconstruct image if parameters have changed
+    double eps = 0.001;
+    if (!_contours || n_contours != _params.n_contours || (dmin - _params.d_min > eps)
+        || (dmax - _params.d_max > eps))
+        _contours = _dataset_graphics->resolutionContours(n_contours, dmin, dmax);
+
+    QVector<QGraphicsTextItem*> labels;
+    if (_contours) {
+        _contour_overlay = addPixmap(QPixmap::fromImage(_contours.value()));
+        _contour_overlay->setZValue(-2);
+        labels = _dataset_graphics->resolutionLabels();
+        for (auto* label : labels)
+            addItem(label);
+    }
+}
+
+void DetectorScene::clearContours()
+{
+    for (auto item : items()) {
+        if (dynamic_cast<QGraphicsTextItem*>(item) != nullptr)
+            removeItem(item);
+    }
 }

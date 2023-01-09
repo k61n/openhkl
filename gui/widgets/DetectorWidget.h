@@ -94,6 +94,8 @@ class DetectorWidget : public QGridLayout {
     void toggleMasks();
     //! Toggle Miller index labels
     void toggleLabels();
+    //! Toggle resolution contours
+    void toggleContours();
 
  private:
     DetectorView* _detector_view;
@@ -103,6 +105,7 @@ class DetectorWidget : public QGridLayout {
     QComboBox* _cursor_combo = nullptr;
     QSlider* _intensity_slider = nullptr;
     QPushButton* _gradient;
+    QPushButton* _contours;
     QPushButton* _hide_masks;
     QPushButton* _peak_labels;
     QPushButton* _copy_to_clipboard;
