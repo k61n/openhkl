@@ -99,6 +99,9 @@ class SubframeShapes : public QWidget {
     //! Save the shape collection
     void saveShapes();
 
+    //! Get a pointer to the selected shape model
+    ohkl::ShapeModel* shapeModel();
+
     //! Refresh the found peaks list
     void refreshTables();
 

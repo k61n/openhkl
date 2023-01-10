@@ -282,6 +282,9 @@ void SubframeShapes::setComputeShapesUp()
     _left_layout->addWidget(compute_box);
 
     connect(_assign_peak_shapes, &QPushButton::clicked, this, &SubframeShapes::assignPeakShapes);
+    connect(
+        _shape_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+        this, [=](){ _detector_widget->scene()->clearPixmapItems(); });
 }
 
 void SubframeShapes::setShapePreviewUp()
@@ -471,13 +474,14 @@ void SubframeShapes::buildShapeModel()
         ohkl::sptrDataSet data = _data_combo->currentData();
         _shape_model->integrate(fit_peaks, data, handler);
 
-        _shape_model->updateFit(1000); // This does nothing!! - zamaan
+        _shape_model->updateFit(1000);
     } catch (std::exception& e) {
         QMessageBox::critical(this, "Error", QString(e.what()));
     }
+    _detector_widget->scene()->clearPixmapItems();
+    toggleUnsafeWidgets();
     gGui->statusBar()->showMessage(
         QString::number(_shape_model->numberOfPeaks()) + " shapes generated");
-    toggleUnsafeWidgets();
     gGui->setReady(true);
 }
 
@@ -486,11 +490,15 @@ void SubframeShapes::computeProfile()
     if (!gSession->hasProject())
         return;
 
+    auto* model = shapeModel();
+    if (!model)
+        return;
+
     setShapeParameters();
 
     const ohkl::DetectorEvent ev(_x->value(), _y->value(), _frame->value());
 
-    std::optional<ohkl::Profile3D> profile = _shape_model->meanProfile(
+    std::optional<ohkl::Profile3D> profile = model->meanProfile(
         ev, _params->neighbour_range_pixels, _params->neighbour_range_frames);
     if (!profile) {
         return;
@@ -533,11 +541,15 @@ void SubframeShapes::computeProfile()
 
 void SubframeShapes::getPreviewPeak(ohkl::Peak3D* selected_peak)
 {
+    auto* model = shapeModel();
+    if (!model)
+        return;
+
     setShapeParameters();
     int interpol = _interpolation_combo->currentIndex();
     ohkl::PeakInterpolation peak_interpolation = static_cast<ohkl::PeakInterpolation>(interpol);
 
-    auto cov = _shape_model->meanCovariance(
+    auto cov = model->meanCovariance(
         selected_peak, _params->neighbour_range_pixels, _params->neighbour_range_frames,
         _params->min_n_neighbors, peak_interpolation);
     if (cov) {
@@ -567,7 +579,8 @@ void SubframeShapes::saveShapes()
             this, "Unable to add ShapeModel", "Collection with this name already exists!");
         return;
     }
-    std::string name = gSession->currentProject()->experiment()->getShapeModels()[0]->name();
+    // ShapeHandler uses std::move so _shape_model is no longer a valid pointer!
+    _shape_model = nullptr;
     gSession->onShapesChanged();
     toggleUnsafeWidgets();
 }
@@ -614,13 +627,14 @@ void SubframeShapes::toggleUnsafeWidgets()
 
     _build_collection->setEnabled(gSession->currentProject()->hasPeakCollection());
 
-    if (_shape_model) {
+    if (_shape_model)
         _save_shapes->setEnabled(true);
-        _calculate_mean_profile->setEnabled(true);
-    }
 
-    if (gSession->currentProject()->hasShapeModel() && (_predicted_combo->count() > 0))
+    if (gSession->currentProject()->hasShapeModel() &&
+        gSession->currentProject()->hasPeakCollection()) {
+        _calculate_mean_profile->setEnabled(true);
         _assign_peak_shapes->setEnabled(true);
+    }
 }
 
 
@@ -639,8 +653,6 @@ void SubframeShapes::onPeakSelected(ohkl::Peak3D* peak)
     _y->setValue(peak->shape().center()[1]);
     _frame->setValue(peak->shape().center()[2]);
 
-    if (!_shape_model)
-        return;
     computeProfile();
     getPreviewPeak(peak);
     _detector_widget->scene()->setPeak(_preview_peak.get());
@@ -661,4 +673,16 @@ void SubframeShapes::onShapeChanged()
     _preview_peak->setShape(new_shape);
     getPreviewPeak(_preview_peak.get());
     _detector_widget->scene()->setPeak(_preview_peak.get());
+}
+
+ohkl::ShapeModel* SubframeShapes::shapeModel()
+{
+    ohkl::ShapeModel* model = nullptr;
+    if (_shape_model != nullptr)
+        model = _shape_model.get();
+    else {
+        if (gSession->currentProject()->hasShapeModel())
+            model = _shape_combo->currentShapes();
+    }
+    return model;
 }
