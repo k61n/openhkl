@@ -224,12 +224,12 @@ std::size_t DataSet::nFrames() const
 
 std::size_t DataSet::nCols() const
 {
-    return (float)detector().nCols();
+    return detector().nCols();
 }
 
 std::size_t DataSet::nRows() const
 {
-    return (float)detector().nRows();
+    return detector().nRows();
 }
 
 double DataSet::wavelength() const
