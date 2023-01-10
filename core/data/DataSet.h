@@ -116,14 +116,14 @@ class DataSet {
     void setRawReaderParameters(const RawDataReaderParameters& params);
 
     //! Set the parameters for a tif data reader
-    void setTifReaderParameters(const TiffDataReaderParameters& params);
+    void setTiffReaderParameters(const TiffDataReaderParameters& params);
 
     //! Add a raw file to be read as a single detector image frame. Reading frames will be done only
     //! upon request.
     void addRawFrame(const std::string& rawfilename);
 
     //! Add a tif file
-    void addTifFrame(const std::string& filename);
+    void addTiffFrame(const std::string& filename);
 
     //! Finish reading procedure (must be called before using the data stored in the DataSet).
     void finishRead();
