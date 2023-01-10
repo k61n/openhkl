@@ -38,8 +38,8 @@
     // extract file_res from string
     auto pos_x = image_resolution.toStdString().find_first_of("x");
     auto pos_end = image_resolution.toStdString().find_first_of(" ");
-    _file_res_cols = std::stoi(image_resolution.toStdString().substr(0, pos_x));
-    _file_res_rows = std::stoi(image_resolution.toStdString().substr(pos_x+1, pos_end));
+    _img_res_cols = std::stoi(image_resolution.toStdString().substr(0, pos_x));
+    _img_res_rows = std::stoi(image_resolution.toStdString().substr(pos_x+1, pos_end));
 
 
     QGridLayout* main_grid = new QGridLayout();
@@ -70,7 +70,7 @@
     QString det_res, data_bin;
 
     for (int i=0; i<cols.size(); ++i){ // building combo box entries
-        int ratio = _file_res_cols/ int(cols[i]);
+        int ratio = _img_res_cols/ int(cols[i]);
         det_res =
         QString::fromStdString(std::to_string(int(cols[i]))) + " x " +
         QString::fromStdString(std::to_string(int(rows[i]))) + " Pixels";
@@ -165,9 +165,9 @@ void TiffDataDialog::selectDetectorResolution()
 
     std::vector<int> _det_res_cols  = detector->getColRes();
 
-    _buttons->buttons()[0]->setEnabled(_file_res_cols >= _det_res_cols[idx]); 
+    _buttons->buttons()[0]->setEnabled(_img_res_cols >= _det_res_cols[idx]);
 
-    if (_file_res_cols < _det_res_cols[idx])
+    if (_img_res_cols < _det_res_cols[idx])
         QMessageBox::warning(this, tr("Importing Tiff Data"),
             "Target resolution cannot be greater than recorded resolution from data files. Make sure that your selected target resolution is supported by your selected data files.",
             QMessageBox::Ok);
