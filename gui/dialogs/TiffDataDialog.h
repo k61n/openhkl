@@ -37,8 +37,8 @@ class TiffDataDialog : public QDialog {
  public:
     TiffDataDialog(
         const ohkl::TiffDataReaderParameters& parameters0,
-        const QStringList& datanames_cur = QStringList(), 
-        QString file_res = ""
+        const QStringList& datanames_cur = QStringList(),
+        QString img_res = ""
         );
 
     //! Return a copy of the parameters acquired from the dialog
@@ -54,7 +54,7 @@ class TiffDataDialog : public QDialog {
 
     int _file_res_cols;
     int _file_res_rows;
-    QString _file_res;
+    QString _img_res;
 
     QSpinBox* _databits_in_file;
     QSpinBox* _cols_in_file;
@@ -69,7 +69,7 @@ class TiffDataDialog : public QDialog {
     SafeDoubleSpinBox* _gain;
     QDialogButtonBox* _buttons;
     QLineEdit* _datasetName;
-    QLineEdit* _file_resolution;
+    QLineEdit* _image_resolution;
     QComboBox* _detector_resolutions;
     const ohkl::TiffDataReaderParameters& _parameters0; // initial parameters
     const QStringList& _dataset_names; // list of current dataset names
