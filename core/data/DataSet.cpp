@@ -195,19 +195,19 @@ void DataSet::addTifFrame(const std::string& tiffilename)
 
     tifreader.addFrame(tiffilename);
 }
-void DataSet::addTifFrame(const std::string& tiffilename)
+void DataSet::addTiffFrame(const std::string& tiffilename)
 {
     if (!_reader)
-        setReader(DataFormat::TIF);
+        setReader(DataFormat::TIFF);
 
     // no mixing of different data format
-    if (_dataformat != DataFormat::TIF)
+    if (_dataformat != DataFormat::TIFF)
         throw std::runtime_error(
             "DataSet '" + _name + "': To read a tif frame, data format must be tif.");
 
-    TiffDataReader& tifreader = *static_cast<TiffDataReader*>(_reader.get());
+    TiffDataReader& tiffreader = *static_cast<TiffDataReader*>(_reader.get());
 
-    tifreader.addFrame(tiffilename);
+    tiffreader.addFrame(tiffilename);
 }
 
 void DataSet::addRawFrame(const std::string& rawfilename)
@@ -251,12 +251,12 @@ std::size_t DataSet::nFrames() const
 
 std::size_t DataSet::nCols() const
 {
-    return (float)detector().nCols();
+    return detector().nCols();
 }
 
 std::size_t DataSet::nRows() const
 {
-    return (float)detector().nRows();
+    return detector().nRows();
 }
 
 double DataSet::wavelength() const
