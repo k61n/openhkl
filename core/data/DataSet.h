@@ -171,7 +171,6 @@ class DataSet {
     void initBuffer(bool bufferAll = true);
     //! Clear the frame buffer
     void clearBuffer();
-    void setRebin(float nbins) {_rebin = nbins;}
 
     //! get tiff file resolutions
     static std::vector<std::string> getTiffResolutions(std::vector<std::string> filenames);
@@ -218,8 +217,6 @@ class DataSet {
     std::vector<gsl_histogram*> _histograms;
     //! Intensity histogram for whole DataSet
     gsl_histogram* _total_histogram;
-    //! rebin
-    float _rebin;
 
     //! Buffer for image data
     std::vector<std::unique_ptr<Eigen::MatrixXi>> _frame_buffer;
