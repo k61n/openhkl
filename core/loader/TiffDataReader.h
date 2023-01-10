@@ -15,14 +15,14 @@
 #ifndef OHKL_CORE_LOADER_TIFFDATAREADER_H
 #define OHKL_CORE_LOADER_TIFFDATAREADER_H
 
-#include "core/loader/IDataReader.h" 
-#include "core/loader/RawDataReader.h" 
+#include "core/loader/IDataReader.h"
+#include "core/loader/RawDataReader.h"
 #include "core/raw/DataKeys.h"
+#include "base/utils/Logger.h"
 
 #include "tiffio.h"
 #include <string>
 #include <vector>
-
 #include <filesystem>
 
 namespace ohkl {
@@ -32,79 +32,41 @@ namespace ohkl {
     double delta_omega = 0.0;
     double delta_chi = 0.0;
     double delta_phi = 0.0;
-    //bool row_major = true;
     bool swap_endian = false;
-    std::size_t bpp = 2;
     double baseline = 0.0;
     double gain = 1.0;
     // we use this to store the number of pixel which are rebinned
     // we always rebin symmetrically and thus just store the number of
     // total rebinned pixels 2x2 -> 4, 4x4 -> 16
-    int data_binnnig;
+    int data_binnning;
 
-    void LoadDataFromFile(std::string file)
-    {
-        dataset_name = fileBasename(file);
-
-        std::size_t pos1 = file.find_last_of("/");
-        std::size_t pos0 = (file.substr(0, pos1 - 1)).find_last_of("/");
-        std::size_t pos2 = file.find_last_of(".");
-
-        if (pos1 == std::string::npos || pos0 == std::string::npos || pos2 == std::string::npos)
-            return;
-
-        std::string dir = "data_" + file.substr(pos0 + 1, pos1 - pos0 - 1);
-        std::string readme = file.substr(0, pos1 + 1) + dir + ".readme";
-
-        std::ifstream fin(readme.c_str(), std::ios::in);
-
-        if (fin.is_open() || fin.good()) {
-            fin.seekg(0, std::ios::end);
-            auto fsize = fin.tellg();
-            fin.seekg(0, std::ios::beg);
-
-            if (fsize > 0) {
-                std::string buffer;
-                buffer.resize(fsize);
-                fin.read(buffer.data(), fsize);
-                fin.close();
-
-                std::remove_if(buffer.begin(), buffer.end(), isspace);
-
-                auto omega_pos = buffer.find("Omegarange:");
-                if (omega_pos != std::string::npos) {
-                    auto nl_pos = buffer.find(";", omega_pos);
-                    std::string a = buffer.substr(omega_pos + 11, nl_pos - 1);
-                    delta_omega = std::stod(a);
-                }
-
-                auto lambda_pos = buffer.find("Lambda:");
-                if (lambda_pos != std::string::npos) {
-                    auto nl_pos = buffer.find(";", lambda_pos);
-                    std::string b = buffer.substr(lambda_pos + 7, nl_pos - 1);
-                    wavelength = std::stod(b);
-                }
-            }
-        }
-    }
+    /**
+     * This loads .readme file with additional meta date from the folder in which the data is placed
+     * This files can be created by the instrumentalist who is providing these data files and are thought
+     * to help the user to load data files into projects without entering known parameters.
+     */
+    void LoadDataFromFile(std::string file);
 };
 
-    // struct to hold Tiff Tags for an opened Tiff file
-    struct tif_file_metadata{
-        uint32 _width = -1;
-        uint32 _image_length = -1;
+    /*
+        struct to hold Tiff Tags with meta data for an opened Tiff file
+        not all possible tiff tags are covered here only those which are used
+     */
+    struct tiff_file_metadata{
+        uint32 _width = -1; // image width in px
+        uint32 _image_length = -1; // image height in px
         uint16 _bits_per_pixel = -1;
-        uint16 _compression = -1;
-        uint16 _photometric = -1;
-        uint16 _planar_config = -1;
-        uint32 _npixels = -1;
+        uint16 _compression = -1; // does tiff file uses a compression mechanism
+        uint16 _photometric = -1; // black white or colored tiff files
+        uint16 _planar_config = -1; // how are the pixels stored Chunky format or planar format
+        uint32 _npixels = -1; // number of pixels
 
-        friend std::ostream &operator <<(std::ostream &oss, const tif_file_metadata &o){ 
+        friend std::ostream &operator <<(std::ostream &oss, const tiff_file_metadata &o){
             oss
-                << " * * * TIF FILE META DATA * * *\n" << std::setfill('.') 
-                << "\nwidth:" << std::setw(20) << o._width
-                << "\nheight:" << std::setw(19) << o._image_length
-                << "\nbpp:" << std::setw(22) << o._bits_per_pixel
+                << " * * * TIF FILE META DATA * * *\n" << std::setfill('.')
+                << "\nimage width: " << std::setw(20) << o._width
+                << "\nimage height: " << std::setw(19) << o._image_length
+                << "\nbpp: " << std::setw(22) << o._bits_per_pixel
                 << "\ncompression: " << std::setw(13) << o._compression
                 << "\nphotometric: " << std::setw(13) << o._photometric
                 << "\nplanar config: " << std::setw(11) << o._planar_config;
@@ -135,36 +97,36 @@ namespace ohkl {
             //! Swap Endians
             void swapEndian();
             //! Read Tags from Tiff file. Will throw error if necessary tag is not available
-            void readTags(TIFF* );
-            //! Read data from Tiff file
+            void readTags(TIFF*);
+            //! Read data from the opened Tiff file
             void readData();
-            //! Will rebin data
+            //! Will rebin data to target dimensions
             void rebin(int rebins);
-            //! Set Width
-            void setWidth(int nwidth)  {_nwidth = nwidth;};
-            //! Set Height
-            void setHeight(int nheight) {_nheight = nheight;};
-            //! Will scan file for tif meta data
-            tif_file_metadata scanFile(std::string filename);
+            //! Set detector width in px. this is the target width which data is binned to
+            void setTargetWidth(int nwidth)  {_n_target_width = nwidth;};
+            //! Set detector height in px. this is the target height which data is binned to
+            void setTargetHeight(int nheight) {_n_target_height = nheight;};
+            //! this method is scanning a given tiff file for its meta data tags without loading data
+            tiff_file_metadata scanFile(std::string filename);
             //! will register file dimensions as meta data
             void registerFileDimension(std::string filename);
-            //! read file resolutions
+            //! read image (file) resolutions of a given vector of tiff files an return them
             std::vector<std::string> readFileResolutions(std::vector<std::string> filenames);
 
         private:
             template <typename T_> Eigen::Matrix<T_, Eigen::Dynamic, Eigen::Dynamic> matrixFromData() const;
             std::vector<std::string> _filenames;
             std::vector<std::string> _file_resolutions;
-            TiffDataReaderParameters _parameters; // need this too here ?
+            TiffDataReaderParameters _parameters;
             std::size_t _length = 0;
             std::vector<char> _data;
-            std::vector<uint16> _buffer; 
+            std::vector<uint16> _buffer;
 
-            tif_file_metadata _tif_meta_data;
-            int _nwidth;
-            int _nheight;
+            tiff_file_metadata _tiff_meta_data;
+            int _n_target_width;
+            int _n_target_height;
 
-            TIFF* _tif;
+            TIFF* _tiff;
     };
 
     template <typename T_>
