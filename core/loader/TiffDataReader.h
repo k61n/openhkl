@@ -25,6 +25,8 @@
 #include <string>
 #include <vector>
 
+#include <filesystem>
+
 namespace ohkl {
 struct TiffDataReaderParameters {
     std::string dataset_name = kw_datasetDefaultName;
