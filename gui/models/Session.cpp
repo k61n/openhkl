@@ -437,12 +437,11 @@ bool Session::loadTiffData()
 
         detector->setBaseline(params.baseline);
         detector->setGain(params.gain);
-        // this must be called before adding files
-        dataset->setTifReaderParameters(params);
 
-        // candidate for being at the wrong spot
+        dataset->setTiffReaderParameters(params);
+
         for (const auto& filename : filenames)
-                dataset->addTifFrame(filename);
+                dataset->addTiffFrame(filename);
 
         dataset->finishRead();
 
