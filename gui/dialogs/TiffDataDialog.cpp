@@ -27,42 +27,41 @@
 #include <QLabel>
 #include <QMessageBox>
 
-    TiffDataDialog::TiffDataDialog(const ohkl::TiffDataReaderParameters& parameters0, 
-    const QStringList& datanames_cur, QString file_resolution): 
-    _parameters0{parameters0}, _dataset_names{datanames_cur}, _file_res(file_resolution) 
+    TiffDataDialog::TiffDataDialog(const ohkl::TiffDataReaderParameters& parameters0,
+    const QStringList& datanames_cur, QString image_resolution):
+    _parameters0{parameters0}, _dataset_names{datanames_cur}, _img_res(image_resolution)
 {
     setModal(true);
-    resize(470, 350);
 
     auto detector = gSession->currentProject()->experiment()->getDiffractometer()->detector();
 
     // extract file_res from string
-    auto pos_x = file_resolution.toStdString().find_first_of("x");
-    auto pos_end = file_resolution.toStdString().find_first_of(" ");
-    _file_res_cols = std::stoi(file_resolution.toStdString().substr(0, pos_x));
-    _file_res_rows = std::stoi(file_resolution.toStdString().substr(pos_x+1, pos_end));
+    auto pos_x = image_resolution.toStdString().find_first_of("x");
+    auto pos_end = image_resolution.toStdString().find_first_of(" ");
+    _file_res_cols = std::stoi(image_resolution.toStdString().substr(0, pos_x));
+    _file_res_rows = std::stoi(image_resolution.toStdString().substr(pos_x+1, pos_end));
 
-   
+
     QGridLayout* main_grid = new QGridLayout();
     GridFiller gridfiller(main_grid);
     setLayout(main_grid);
- 
+
     QGridLayout* check_grid = new QGridLayout();
     QGroupBox* _check = new QGroupBox("Data from files do not fit selected detector");
 
     _check->setLayout(check_grid);
-    gridfiller.addWidget(_check); 
+    gridfiller.addWidget(_check);
     _check->setVisible(false);
 
     _datasetName = gridfiller.addLineEdit("Name", QString::fromStdString(parameters0.dataset_name));
-
-    _file_resolution = gridfiller.addLineEdit(
-        "File resolution: ", file_resolution, "Shows the resolution which was found in the selected files");
-    _file_resolution->setReadOnly(true);
+    image_resolution += QString(" Pixels");
+    _image_resolution = gridfiller.addLineEdit(
+        "Image resolution: ", image_resolution, "Shows the resolution which was found in the selected files");
+    _image_resolution->setReadOnly(true);
 
     _detector_resolutions = gridfiller.addCombo(
         "Target resolution:",
-        "Select the target resolution to which data from files will be mapped to. Necessart data rebinning is shown in bracket and will be automatically performed.");
+        "Select the target resolution to which data from files will be mapped to. Necessary data rebinning is shown in bracket and will be automatically performed.");
 
     // fill the detector resolution combo box with the available resolution
     auto cols = detector->getColRes();
@@ -72,21 +71,21 @@
 
     for (int i=0; i<cols.size(); ++i){ // building combo box entries
         int ratio = _file_res_cols/ int(cols[i]);
-        det_res = 
-        QString::fromStdString(std::to_string(int(cols[i]))) + " x " + 
+        det_res =
+        QString::fromStdString(std::to_string(int(cols[i]))) + " x " +
         QString::fromStdString(std::to_string(int(rows[i]))) + " Pixels";
 
         if (ratio > 0)
-            data_bin =  "  ( Binning: " + 
-            QString::number(ratio) + " x " + 
+            data_bin =  "  ( Binning: " +
+            QString::number(ratio) + " x " +
             QString::number(ratio) + " -> 1 )";
         else
             data_bin =  "  [ NOT SUPPORTED ]";
 
-        _detector_resolutions->addItem( 
+        _detector_resolutions->addItem(
                 det_res + data_bin
         );
-    }  
+    }
 
     _chi = gridfiller.addDoubleSpinBox(
         QString((QChar)0x0394) + " " + QString((QChar)0x03C7),
@@ -140,10 +139,10 @@
     _phi->setValue(parameters0.delta_phi);
     _wavelength->setValue(parameters0.wavelength);
     _datasetName->setText(QString::fromStdString(parameters0.dataset_name));
-     
+
     _baseline->setValue(detector->baseline());
     _gain->setValue(detector->gain());
-    
+
     selectDetectorResolution();
 
     connect(_buttons, &QDialogButtonBox::accepted, this, &TiffDataDialog::verify);
@@ -154,7 +153,7 @@
         this,
         &TiffDataDialog::selectDetectorResolution
     );
-} 
+}
 
 void TiffDataDialog::selectDetectorResolution()
 {

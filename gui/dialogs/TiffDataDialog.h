@@ -52,13 +52,13 @@ class TiffDataDialog : public QDialog {
 
     bool _allow_rebinning_data;
 
-    int _file_res_cols;
-    int _file_res_rows;
+    int _img_res_cols;
+    int _img_res_rows;
     QString _img_res;
 
-    QSpinBox* _databits_in_file;
-    QSpinBox* _cols_in_file;
-    QSpinBox* _rows_in_file;
+    QSpinBox* _databits_in_img;
+    QSpinBox* _cols_in_img;
+    QSpinBox* _rows_in_img;
 
     SafeDoubleSpinBox* _chi;
     SafeDoubleSpinBox* _omega;
