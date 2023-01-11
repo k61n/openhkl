@@ -118,6 +118,8 @@ class DetectorScene : public QGraphicsScene {
     void loadMasksFromData();
     //! Get pointers to all mask items in the scene
     QVector<MaskItem*> maskItems() const;
+    //! Remove text from scene (contour & peak labels)
+    void clearText();
 
 
  protected:
@@ -165,8 +167,6 @@ class DetectorScene : public QGraphicsScene {
     void deleteGraphicsItem(QGraphicsItem* item);
     //! Draw the resolution contours
     void drawResolutionContours();
-    //! Remove contours + labels from scene
-    void clearContours();
 
     //! Visual parameters of the scene
     DetectorSceneParams _params;
