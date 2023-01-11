@@ -12,12 +12,15 @@
 //
 //  ***********************************************************************************************
 
-#include "core/experiment/Experiment.h" // needed to instatiate Session()
 #include "gui/MainWin.h"
+
+#include "core/experiment/Experiment.h" // needed to instatiate Session()
 #include "gui/models/Project.h" // needed to instantiate vector<unique_ptr<Project>> in Session()
 #include "gui/models/Session.h"
+
 #include <QApplication>
 #include <QLoggingCategory>
+#include <QStyleFactory>
 
 int main(int argc, char* argv[])
 {
@@ -25,6 +28,7 @@ int main(int argc, char* argv[])
     QApplication::setApplicationName("OpenHKL");
     QApplication::setApplicationVersion("1.0");
     QApplication::setOrganizationName("OpenHKL");
+    QApplication::setStyle(QStyleFactory::create("Fusion"));
 
     app.setAttribute(Qt::AA_UseHighDpiPixmaps); // Fixes pixellated .svg icons
 
