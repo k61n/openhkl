@@ -17,7 +17,6 @@
 #include "base/geometry/Ellipsoid.h"
 #include "base/geometry/ReciprocalVector.h"
 #include "base/utils/Units.h"
-
 #include "core/data/DataSet.h"
 #include "core/detector/Detector.h"
 #include "core/instrument/Diffractometer.h"
@@ -25,10 +24,8 @@
 #include "core/peak/IntegrationRegion.h"
 #include "core/raw/DataKeys.h"
 #include "core/raw/MetaData.h"
-
 #include "gui/graphics/PeakPlot.h"
 #include "gui/utility/ColorButton.h"
-
 #include "tables/crystal/MillerIndex.h"
 #include "tables/crystal/UnitCell.h"
 
@@ -61,6 +58,7 @@ void PeakItemGraphic::redraw()
     f.setPixelSize(14);
 
     _label_gi = new QGraphicsTextItem(this);
+    _label_gi->setDefaultTextColor(Qt::black);
     _label_gi->setFont(f);
     _label_gi->setFlag(QGraphicsItem::ItemIgnoresTransformations);
     _label_gi->setParentItem(this);

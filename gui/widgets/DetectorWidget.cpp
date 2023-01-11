@@ -397,5 +397,7 @@ void DetectorWidget::toggleLabels()
 void DetectorWidget::toggleContours()
 {
     scene()->params()->contours = _contours->isChecked();
+    if (!_contours->isChecked())
+        scene()->clearText();
     scene()->loadCurrentImage();
 }

@@ -712,7 +712,6 @@ void DetectorScene::loadCurrentImage()
 
 
     clearPixmapItems();
-    clearContours();
 
     drawIntegrationRegion();
     loadMasksFromData();
@@ -830,7 +829,7 @@ void DetectorScene::drawResolutionContours()
         || (dmax - _params.d_max > eps))
         _contours = _dataset_graphics->resolutionContours(n_contours, dmin, dmax);
 
-    QVector<QGraphicsTextItem*> labels;
+    QVector<ContourLabelItem*> labels;
     if (_contours) {
         _contour_overlay = addPixmap(QPixmap::fromImage(_contours.value()));
         _contour_overlay->setZValue(-2);
@@ -840,10 +839,10 @@ void DetectorScene::drawResolutionContours()
     }
 }
 
-void DetectorScene::clearContours()
+void DetectorScene::clearText()
 {
     for (auto item : items()) {
-        if (dynamic_cast<QGraphicsTextItem*>(item) != nullptr)
+        if (dynamic_cast<ContourLabelItem*>(item) != nullptr)
             removeItem(item);
     }
 }

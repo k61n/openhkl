@@ -35,6 +35,11 @@ typedef Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> RowM
 class MaskItem;
 // Make it easier to remove direct beam
 class DirectBeamGraphic : public QGraphicsEllipseItem { };
+// Make it easier to remove contour text
+class ContourLabelItem : public QGraphicsTextItem {
+ public:
+    ContourLabelItem(const QString& label);
+};
 
 //! Container for settings and pointers for visualising DataSets
 class DataSetGraphics {
@@ -88,7 +93,7 @@ class DataSetGraphics {
     //! Overlay of resolution contours
     std::optional<QImage> resolutionContours(int n_contours, double d_min, double d_max);
     //! Get a vector of labels for resolution contours
-    QVector<QGraphicsTextItem*> resolutionLabels();
+    QVector<ContourLabelItem*> resolutionLabels();
 
  private:
     ohkl::sptrDataSet _data;

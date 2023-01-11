@@ -30,6 +30,8 @@
 
 #include <QPen>
 
+ContourLabelItem::ContourLabelItem(const QString& label) : QGraphicsTextItem(label) {};
+
 DataSetGraphics::DataSetGraphics(DetectorSceneParams* params)
     : _data(nullptr)
     , _cell(nullptr)
@@ -312,12 +314,12 @@ std::optional<QImage> DataSetGraphics::resolutionContours(
     return contour_image;
 }
 
-QVector<QGraphicsTextItem*> DataSetGraphics::resolutionLabels()
+QVector<ContourLabelItem*> DataSetGraphics::resolutionLabels()
 {
-    QVector<QGraphicsTextItem*> items;
+    QVector<ContourLabelItem*> items;
     for (std::size_t idx = 0; idx < _resolution_label_positions.size(); ++idx) {
         QString label = QString("%1").arg(_resolution_labels[idx], 0, 'f', 2);
-        QGraphicsTextItem* text = new QGraphicsTextItem(label);
+        ContourLabelItem* text = new ContourLabelItem(label);
         text->setDefaultTextColor(Qt::black);
         text->setPos(_resolution_label_positions[idx]);
         items.push_back(text);
