@@ -47,23 +47,11 @@
 SubframeHome::SubframeHome()
 {
     QVBoxLayout* main_layout = new QVBoxLayout(this);
-    QSpacerItem* spacer_top = new QSpacerItem(10, 50, QSizePolicy::Minimum, QSizePolicy::Fixed);
-    main_layout->addSpacerItem(spacer_top);
-
     QHBoxLayout* sub_layout = new QHBoxLayout();
-    QSpacerItem* spacer_left = new QSpacerItem(50, 10, QSizePolicy::Fixed, QSizePolicy::Minimum);
-    sub_layout->addSpacerItem(spacer_left);
 
     _setLeftLayout(sub_layout);
     _setRightLayout(sub_layout);
-
-    // QSpacerItem* spacer_right =
-    //     new QSpacerItem(10, 10, QSizePolicy::Minimum, QSizePolicy::Minimum);
-    // sub_layout->addSpacerItem(spacer_right);
     main_layout->addLayout(sub_layout);
-
-    QSpacerItem* spacer_bot = new QSpacerItem(10, 50, QSizePolicy::Minimum, QSizePolicy::Fixed);
-    main_layout->addSpacerItem(spacer_bot);
 
     readSettings();
     toggleUnsafeWidgets();
