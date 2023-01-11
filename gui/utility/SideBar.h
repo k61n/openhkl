@@ -66,7 +66,7 @@ class SideBar : public QWidget {
     QAction* mCheckedAction;
     QAction* mOverAction;
 
-    const unsigned int _min_icon_height = 80;
+    const unsigned int _min_icon_height = 60;
 };
 
 #endif // OHKL_GUI_UTILITY_SIDEBAR_H
