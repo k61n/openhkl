@@ -209,6 +209,7 @@ void SubframeIntegrate::grabIntegrationParameters()
     _compute_gradient->setChecked(params->use_gradient);
     _fft_gradient->setChecked(params->fft_gradient);
     _gradient_kernel->setCurrentIndex(static_cast<int>(params->gradient_type));
+    _remove_masked->setChecked(params->skip_masked);
     _remove_overlaps->setChecked(params->remove_overlaps);
 
     _integrator_combo->setCurrentIndex(static_cast<int>(params->integrator_type));
@@ -249,6 +250,7 @@ void SubframeIntegrate::setIntegrationParameters()
     params->use_gradient = _compute_gradient->isChecked();
     params->fft_gradient = _fft_gradient->isChecked();
     params->gradient_type = static_cast<ohkl::GradientKernel>(_gradient_kernel->currentIndex());
+    params->skip_masked = _remove_masked->isChecked();
     params->remove_overlaps = _remove_overlaps->isChecked();
 
     for (auto it = ohkl::regionTypeDescription.begin(); it != ohkl::regionTypeDescription.end();
