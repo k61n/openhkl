@@ -33,16 +33,22 @@ IntegrationRegion::IntegrationRegion(
     , _peak(peak)
     , _valid(true)
 {
+    _shape = peak->shape();
+    if (_shape.aabb().lower().hasNaN() || _shape.aabb().upper().hasNaN()) {
+        peak->setIntegrationFlag(RejectionFlag::InvalidShape);
+        peak->setSelected(false);
+        _valid = false;
+        return;
+    }
+
     switch (_regionType) {
         case RegionType::VariableEllipsoid: {
-            _shape = peak->shape();
             _peakEnd = peak_end;
             _fixed = false;
             break;
         }
         case RegionType::FixedEllipsoid: {
             // scale the ellipsoid by the average radius in pixels
-            _shape = peak->shape();
             const double r = _shape.radii().sum() / 3.0;
             if (!std::isnan(r)) { // Eigensolver to compute radii can fail, resulting in NaN
                 _shape.scale(peak_end / r);
