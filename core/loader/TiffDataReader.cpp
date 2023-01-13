@@ -232,9 +232,9 @@ void TiffDataReader::rebin(int rebins)
 
 void TiffDataReader::registerFileDimension(std::string filename)
 {
-    auto tags = scanFile(filename);
+    _tiff_meta_data = scanFile(filename);
     _file_resolutions.emplace_back(
-        std::to_string(tags._width) + " x " + std::to_string(tags._image_length));
+        std::to_string(_tiff_meta_data._width) + " x " + std::to_string(_tiff_meta_data._image_length));
 }
 
 bool TiffDataReader::initRead()
@@ -264,6 +264,9 @@ void TiffDataReader::addFrame(const std::string& filename)
     registerFileDimension(filename);
     _dataset_out->metadata().add<std::string>(
         ohkl::at_imageDimensions, ohkl::join(_file_resolutions, ","));
+
+    _dataset_out->metadata().add<int>(
+        ohkl::at_bitDepth, _tiff_meta_data._bits_per_pixel);
 
     const std::size_t nframes = _filenames.size();
     _dataset_out->metadata().add<int>(ohkl::at_frameCount, nframes);
