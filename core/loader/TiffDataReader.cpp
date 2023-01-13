@@ -178,6 +178,11 @@ namespace ohkl {
             throw std::runtime_error("TiffDataReader::readData No stream has been opened");
     }
 
+    /*
+        This rebin method has been primarily developed with the specific case for BIODiff in mind.
+        Though parameters have been hold as generic as possible, this method is mayboe not applicable
+        for every possible instrument which could be added to OpenHKL in the future.
+     */
     void TiffDataReader::rebin(int rebins)
     {
         if (rebins == 1 ) return;
@@ -222,6 +227,9 @@ namespace ohkl {
         if (!init_success)
             throw std::runtime_error("TiffDataReader::initRead(): initialisation failed");
 
+        // see RawDataReader.cpp with that following comment.
+        // NOTE: For correctness, this must be called after setting the parameters and frame files.
+        // Otherwise, results in undefined behaviour.
         isInitialized = true;
         return isInitialized;
     }
