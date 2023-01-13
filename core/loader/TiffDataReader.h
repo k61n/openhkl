@@ -25,7 +25,6 @@
 #include <string>
 #include <vector>
 
-#include <filesystem>
 
 namespace ohkl {
 struct TiffDataReaderParameters {
