@@ -44,8 +44,8 @@
 #include <gsl/gsl_histogram.h>
 
 #include <memory>
-#include <stdexcept>
 #include <regex>
+#include <stdexcept>
 
 namespace ohkl {
 
@@ -75,9 +75,7 @@ void DataSet::setReader(const DataFormat dataformat, const std::string& filename
             // NOTE: RawDataReader needs a list of frame files which should be given later
             _reader.reset(new RawDataReader);
             break;
-        case DataFormat::TIFF:
-            _reader.reset(new TiffDataReader);
-            break;
+        case DataFormat::TIFF: _reader.reset(new TiffDataReader); break;
         default: throw std::invalid_argument("Data format is not recognized.");
     }
 
@@ -113,11 +111,10 @@ void DataSet::addDataFile(const std::string& filename, const std::string& extens
         else if (ext == "raw")
             throw std::runtime_error(
                 "DataSet '" + _name + "': Use 'addRawFrame(<filename>)' for reading raw files.");
-        else if (ext == "tif" || ext == "tiff"){
+        else if (ext == "tif" || ext == "tiff") {
 
             datafmt = DataFormat::TIFF;
-        }
-        else
+        } else
             throw std::runtime_error("DataSet '" + _name + "': Extension unknown.");
 
     } else {
@@ -513,7 +510,7 @@ std::vector<std::string> DataSet::getTiffResolutions(std::vector<std::string> fi
 std::string DataSet::checkTiffResolution(std::vector<std::string> filenames)
 {
     auto resolutions = getTiffResolutions(filenames);
-    for (auto & r : resolutions)
+    for (auto& r : resolutions)
         if (resolutions[0] != r)
             return "";
 
