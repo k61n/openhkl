@@ -344,6 +344,9 @@ void SubframeShapes::setPeakTableUp()
 
 void SubframeShapes::refreshPeakTable()
 {
+    if (!gSession->currentProject()->hasPeakCollection())
+        return;
+
     if (_predicted_combo->count() == 0)
         _peak_collection_item.setPeakCollection(_peak_combo->currentPeakCollection());
     else
