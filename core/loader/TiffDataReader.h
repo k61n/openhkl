@@ -19,7 +19,6 @@
 #include "core/loader/IDataReader.h"
 #include "core/loader/RawDataReader.h"
 #include "core/raw/DataKeys.h"
-#include "base/utils/Logger.h"
 
 #include "tiffio.h"
 #include <filesystem>
