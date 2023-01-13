@@ -27,9 +27,10 @@
 #include <QLabel>
 #include <QMessageBox>
 
-    TiffDataDialog::TiffDataDialog(const ohkl::TiffDataReaderParameters& parameters0,
-    const QStringList& datanames_cur, QString image_resolution):
-    _parameters0{parameters0}, _dataset_names{datanames_cur}, _img_res(image_resolution)
+TiffDataDialog::TiffDataDialog(
+    const ohkl::TiffDataReaderParameters& parameters0, const QStringList& datanames_cur,
+    QString image_resolution)
+    : _parameters0{parameters0}, _dataset_names{datanames_cur}, _img_res(image_resolution)
 {
     setModal(true);
 
@@ -39,7 +40,7 @@
     auto pos_x = image_resolution.toStdString().find_first_of("x");
     auto pos_end = image_resolution.toStdString().find_first_of(" ");
     _img_res_cols = std::stoi(image_resolution.toStdString().substr(0, pos_x));
-    _img_res_rows = std::stoi(image_resolution.toStdString().substr(pos_x+1, pos_end));
+    _img_res_rows = std::stoi(image_resolution.toStdString().substr(pos_x + 1, pos_end));
 
 
     QGridLayout* main_grid = new QGridLayout();
@@ -56,12 +57,14 @@
     _datasetName = gridfiller.addLineEdit("Name", QString::fromStdString(parameters0.dataset_name));
     image_resolution += QString(" Pixels");
     _image_resolution = gridfiller.addLineEdit(
-        "Image resolution: ", image_resolution, "Shows the resolution which was found in the selected files");
+        "Image resolution: ", image_resolution,
+        "Shows the resolution which was found in the selected files");
     _image_resolution->setReadOnly(true);
 
     _detector_resolutions = gridfiller.addCombo(
         "Target resolution:",
-        "Select the target resolution to which data from files will be mapped to. Necessary data rebinning is shown in bracket and will be automatically performed.");
+        "Select the target resolution to which data from files will be mapped to. Necessary data "
+        "rebinning is shown in bracket and will be automatically performed.");
 
     // fill the detector resolution combo box with the available resolution
     auto cols = detector->getColRes();
@@ -69,22 +72,18 @@
 
     QString det_res, data_bin;
 
-    for (int i=0; i<cols.size(); ++i){ // building combo box entries
-        int ratio = _img_res_cols/ int(cols[i]);
-        det_res =
-        QString::fromStdString(std::to_string(int(cols[i]))) + " x " +
-        QString::fromStdString(std::to_string(int(rows[i]))) + " Pixels";
+    for (int i = 0; i < cols.size(); ++i) { // building combo box entries
+        int ratio = _img_res_cols / int(cols[i]);
+        det_res = QString::fromStdString(std::to_string(int(cols[i]))) + " x "
+            + QString::fromStdString(std::to_string(int(rows[i]))) + " Pixels";
 
         if (ratio > 0)
-            data_bin =  "  ( Binning: " +
-            QString::number(ratio) + " x " +
-            QString::number(ratio) + " -> 1 )";
+            data_bin = "  ( Binning: " + QString::number(ratio) + " x " + QString::number(ratio)
+                + " -> 1 )";
         else
-            data_bin =  "  [ NOT SUPPORTED ]";
+            data_bin = "  [ NOT SUPPORTED ]";
 
-        _detector_resolutions->addItem(
-                det_res + data_bin
-        );
+        _detector_resolutions->addItem(det_res + data_bin);
     }
 
     _chi = gridfiller.addDoubleSpinBox(
@@ -148,11 +147,8 @@
     connect(_buttons, &QDialogButtonBox::accepted, this, &TiffDataDialog::verify);
     connect(_buttons, &QDialogButtonBox::rejected, this, &QDialog::reject);
     connect(
-        _detector_resolutions,
-        &QComboBox::currentTextChanged,
-        this,
-        &TiffDataDialog::selectDetectorResolution
-    );
+        _detector_resolutions, &QComboBox::currentTextChanged, this,
+        &TiffDataDialog::selectDetectorResolution);
 }
 
 void TiffDataDialog::selectDetectorResolution()
@@ -163,13 +159,15 @@ void TiffDataDialog::selectDetectorResolution()
 
     detector->selectDetectorResolution(idx);
 
-    std::vector<int> _det_res_cols  = detector->getColRes();
+    std::vector<int> _det_res_cols = detector->getColRes();
 
     _buttons->buttons()[0]->setEnabled(_img_res_cols >= _det_res_cols[idx]);
 
     if (_img_res_cols < _det_res_cols[idx])
-        QMessageBox::warning(this, tr("Importing Tiff Data"),
-            "Target resolution cannot be greater than recorded resolution from data files. Make sure that your selected target resolution is supported by your selected data files.",
+        QMessageBox::warning(
+            this, tr("Importing Tiff Data"),
+            "Target resolution cannot be greater than recorded resolution from data files. Make "
+            "sure that your selected target resolution is supported by your selected data files.",
             QMessageBox::Ok);
     else {
         detector->selectDetectorResolution(idx);

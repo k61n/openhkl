@@ -20,11 +20,11 @@
 #include <QDialog>
 #include <QDialogButtonBox>
 #include <QDoubleSpinBox>
-#include <QSpinBox>
 #include <QGroupBox>
-#include <QLineEdit>
-#include <QString>
 #include <QLabel>
+#include <QLineEdit>
+#include <QSpinBox>
+#include <QString>
 #include <QTextEdit>
 
 #include "core/loader/TiffDataReader.h"
@@ -37,9 +37,7 @@ class TiffDataDialog : public QDialog {
  public:
     TiffDataDialog(
         const ohkl::TiffDataReaderParameters& parameters0,
-        const QStringList& datanames_cur = QStringList(),
-        QString img_res = ""
-        );
+        const QStringList& datanames_cur = QStringList(), QString img_res = "");
 
     //! Return a copy of the parameters acquired from the dialog
     ohkl::TiffDataReaderParameters parameters();
