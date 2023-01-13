@@ -44,16 +44,13 @@
 #include <gsl/gsl_histogram.h>
 
 #include <memory>
-#include <stdexcept>
 #include <regex>
+#include <stdexcept>
 
 namespace ohkl {
 
 DataSet::DataSet(const std::string& dataset_name, Diffractometer* diffractometer)
-    : _diffractometer{diffractometer}
-    , _states(nullptr)
-    , _total_histogram(nullptr)
-    , _buffered(false)
+    : _diffractometer{diffractometer}, _states(nullptr), _total_histogram(nullptr), _buffered(false)
 {
     setName(dataset_name);
     if (!_diffractometer)
@@ -78,9 +75,7 @@ void DataSet::setReader(const DataFormat dataformat, const std::string& filename
             // NOTE: RawDataReader needs a list of frame files which should be given later
             _reader.reset(new RawDataReader);
             break;
-        case DataFormat::TIFF:
-            _reader.reset(new TiffDataReader);
-            break;
+        case DataFormat::TIFF: _reader.reset(new TiffDataReader); break;
         default: throw std::invalid_argument("Data format is not recognized.");
     }
 
@@ -116,11 +111,10 @@ void DataSet::addDataFile(const std::string& filename, const std::string& extens
         else if (ext == "raw")
             throw std::runtime_error(
                 "DataSet '" + _name + "': Use 'addRawFrame(<filename>)' for reading raw files.");
-        else if (ext == "tif" || ext == "tiff"){
+        else if (ext == "tif" || ext == "tiff") {
 
             datafmt = DataFormat::TIFF;
-        }
-        else
+        } else
             throw std::runtime_error("DataSet '" + _name + "': Extension unknown.");
 
     } else {
@@ -417,14 +411,10 @@ InstrumentStateList& DataSet::instrumentStates()
 
 void DataSet::adjustDirectBeam(double x_offset, double y_offset)
 {
-    ohklLog(
-        Level::Info, "DataSet::adjustDirectBeam: offset (",
-        x_offset, ", ", y_offset, ")");
+    ohklLog(Level::Info, "DataSet::adjustDirectBeam: offset (", x_offset, ", ", y_offset, ")");
     double x_coord = x_offset + static_cast<double>(nCols()) / 2.0;
     double y_coord = y_offset + static_cast<double>(nRows()) / 2.0;
-    ohklLog(
-        Level::Info, "DataSet::adjustDirectBeam: position (",
-        x_coord, ", ", y_coord, ")");
+    ohklLog(Level::Info, "DataSet::adjustDirectBeam: position (", x_coord, ", ", y_coord, ")");
     DirectVector direct = detector().pixelPosition(x_coord, y_coord);
     for (auto& state : instrumentStates())
         state.adjustKi(direct);
@@ -521,7 +511,7 @@ std::vector<std::string> DataSet::getTiffResolutions(std::vector<std::string> fi
 std::string DataSet::checkTiffResolution(std::vector<std::string> filenames)
 {
     auto resolutions = getTiffResolutions(filenames);
-    for (auto & r : resolutions)
+    for (auto& r : resolutions)
         if (resolutions[0] != r)
             return "";
 

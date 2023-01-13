@@ -75,9 +75,8 @@ std::vector<std::string> askRawFileNames()
     qset.beginGroup("RecentDirectories");
     QString loadDirectory = qset.value("data_raw", QDir::homePath()).toString();
 
-    QStringList qfilenames =
-        QFileDialog::getOpenFileNames(gGui, "import raw data", loadDirectory,
-                                      "Image files (*.raw);; All files (*.* *)");
+    QStringList qfilenames = QFileDialog::getOpenFileNames(
+        gGui, "import raw data", loadDirectory, "Image files (*.raw);; All files (*.* *)");
     if (qfilenames.empty())
         return {};
 
@@ -108,9 +107,8 @@ std::vector<std::string> askTiffFileNames()
     qset.beginGroup("RecentDirectories");
     QString loadDirectory = qset.value("data_tiff", QDir::homePath()).toString();
 
-    QStringList qfilenames =
-        QFileDialog::getOpenFileNames(gGui, "import tiff data", loadDirectory,
-                                      "Image files (*.tif *.tiff);; All files (*.* *)");
+    QStringList qfilenames = QFileDialog::getOpenFileNames(
+        gGui, "import tiff data", loadDirectory, "Image files (*.tif *.tiff);; All files (*.* *)");
     if (qfilenames.empty())
         return {};
 
@@ -402,9 +400,9 @@ bool Session::loadTiffData()
 
         std::string ext = ""; // let's store the used file extension for later
 
-        for (auto & e : filenames) {
+        for (auto& e : filenames) {
             auto pos = e.find_last_of(".");
-            if (pos == std::string::npos )
+            if (pos == std::string::npos)
                 throw std::runtime_error("E unknown file extension");
 
             std::string tmp_ext = e.substr(pos);
@@ -421,9 +419,10 @@ bool Session::loadTiffData()
         std::string npixels = ohkl::DataSet::checkTiffResolution(filenames);
 
         if (npixels.empty()) // is only empty if tiff file have different resolutions
-            throw std::runtime_error("Differen TIFF file resolutions for one dataset are not supported!");
+            throw std::runtime_error(
+                "Differen TIFF file resolutions for one dataset are not supported!");
 
-        //params.swap_endian = false; // ne default swap for tiff files
+        // params.swap_endian = false; // ne default swap for tiff files
         params.LoadDataFromFile(filenames.at(0));
         TiffDataDialog dialog(params, extant_dataset_names, QString::fromStdString(npixels));
         if (!dialog.exec())
@@ -440,18 +439,17 @@ bool Session::loadTiffData()
         dataset->setTiffReaderParameters(params);
 
         for (const auto& filename : filenames)
-                dataset->addTiffFrame(filename);
+            dataset->addTiffFrame(filename);
 
         dataset->finishRead();
 
         if (!exp->addData(dataset)) {
             // why does this always trigger
-            //throw std::runtime_error("Unable to add dataset");
+            // throw std::runtime_error("Unable to add dataset");
         }
 
         onDataChanged();
-        gGui->sentinel->setLinkedComboList(ComboType::DataSet,
-            currentProject()->getDataNames());
+        gGui->sentinel->setLinkedComboList(ComboType::DataSet, currentProject()->getDataNames());
 
     } catch (std::exception& e) {
         QMessageBox::critical(nullptr, "Error", QString(e.what()));
