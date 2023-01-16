@@ -33,11 +33,11 @@ list in the resulting dialogue.
 .. figure:: images/tutorial/new_experiment.png
    :alt: Create a new experiment
    :name: fig:new_experiment
-   :width: 75.0%
+   :width: 50.0%
 
    Create a new experiment
 
-Next, we need to add the data set, a set of ``.tiff`` image files from the
+Next, we need to add the data set, a set of ``.raw`` image files from the
 detector. From the main menu, select ``Data > Add data set > Add raw/tiff data``.
 Select all of the image files, then click ``Open``. This will open the image
 metadata dialogue.
@@ -47,7 +47,7 @@ metadata dialogue.
 .. figure:: images/tutorial/image_metadata.png
    :alt: Enter the image metadata
    :name: fig:image_metadata
-   :width: 75.0%
+   :width: 30.0%
 
    Enter the image metadata
 
@@ -64,6 +64,36 @@ experiment, we have an angular increment of 0.4 degrees and a wavelength of 2.67
 
    The home widget
 
+.. _experiment:
+
+Adding masks
+------------
+
+There are artifacts on detector image whose position is fixed regardless of the
+sample rotation angle, for example the beam stop and imperfections on the
+detector such as the seam between detector plates. We can ensure that peaks
+intersecting these artifacts are excluded from the final results by applying
+masks. A mask can be applied on any image, and will apply across the whole
+rotation range. Click on the ``Experiment`` icon on the sidebar, and click on the
+``Masks`` tab. When the ``Add detector image masks`` box is checked, clicking and
+dragging on the detector image will add either a rectangular or elliptical mask
+depending on the state of the ``Mask type`` box.
+
+.. _mask:
+.. figure:: images/tutorial/mask.png
+   :alt: Masking the detector images
+   :name: fig:mask
+   :width: 100.0%
+
+   Masking the detector images
+
+Fine adjustments can be made to the mask bounds using the spin boxes on the left
+panel, and any mistakes can be selected and deleted.
+
+In this case we have masked a width of 250 pixels on the left and right of the
+image to remove backscattered peaks and the beam stops, the central beam stop,
+and the seam between detector plates between 1725 and 1740 pixels.
+
 .. _find_peaks:
 
 Finding peaks
@@ -75,54 +105,44 @@ once, instead of on a per-frame basis. This is because OpenHKL constructs a
 real-space 3D model of the peaks, so when processing a frame, it also requires
 information on adjacent frames. Click on the ``Find peaks`` icon on the sidebar.
 
-We apply some masks using the mask tool to the bottom right of the detector
-image, to exclude some problematic areas of the detector, namely the beam stop
-and surrounding air scattering halo, and the seam between the detector plates
-about three quarters of the way across the image. These masks are applied to all
-images, so we only have to apply them once.
-
-.. _mask:
-.. figure:: images/tutorial/mask.png
-   :alt: Masking the detector images
-   :name: fig:mask
-   :width: 100.0%
-
-   Masking the detector images
-
 The most important peak finder parameter is the threshold, which determines the
-minimum number of counts for a pixel to be in a peak region; in this case, the
-value (80) is appropriate, although if our detector image had too few peaks to
-generate a convincing shape model, we might want to decrease these. The danger in
-doing this is, of course, that including very weak peaks will degrade the
-quality of our shape model later on. ``Minimum size`` and ``maximum size``
-specify the minimum and maximum number of counts in a blob (i.e. a peak in real
-space); the latter is important because a blob with too many counts might be a
-heterogeneous background feature. Finally ``maximum width`` defines the maximum
-number of frames over which a blob can extend. Leaving these parameters at their
-current values, click on ``Find peaks``, and wait for the processing to finish
-(this may take a few minutes).
+minimum number of counts for a pixel to be in a peak region; in this case, we
+have decreased it from the default 80 to 50 in order to have more peaks to
+construct a shape model. If our detector images had too few peaks to generate a
+convincing shape model, we could decrease it further, and also decrease the
+``Minimum size``. The danger in doing this is, of course, that including very
+weak peaks will degrade the quality of our shape model later on. ``Minimum
+size`` and ``Maximum size`` specify the minimum and maximum number of counts in
+a blob (i.e. a peak in real space); the latter is important because a blob with
+too many counts might be a heterogeneous background feature. Finally ``Maximum
+width`` defines the maximum number of frames over which a blob can extend.
+Leaving these parameters at their current values, click on ``Find peaks``, and
+wait for the processing to finish (this may take a few minutes).
 
 .. _finder_params:
 .. figure:: images/tutorial/finder_params.png
    :alt: Peak finder parameters
    :name: fig:finder_params
-   :width: 75.0%
+   :width: 30.0%
 
    Peak finder parameters
 
-When the peak finding algorithm has finished, we should have identified 9851
+When the peak finding algorithm has finished, we should have identified 15316
 peaks (this may vary slightly due to numerical imprecision and masking). At this
 point, we need to integrate the peaks. The default integration parameters are a
-good guess for most situations. The shape of a blob can be characterised by an
-covariance (or inertia) matrix, and we simply rescale this matrix to determine
-the integration region. 3 is a good guess for the extent of the peak region
-(``peak end``) because we expect to find 99.54\% of all counts within three
-standard deviations of the peak centre. After clicking on the ``integrate``
-button and waiting, the intensity, :math:`\sigma` and strength columns in the
-table of peaks will be populated. Note that we don't want to make ``peak end``
-too large, since we want to avoid overlapping intensity regions. The extent of
-the background region is less critical, since overlaps will not affect the
-results; however we want it to be large enough to get good statistics.
+good guess for most situations, but check the ``Compute gradient`` box so that
+the mean gradient in the background region is computed (this can be used later
+on to discard peaks with strongly inhomogeneous backgrounds). The shape of a
+blob can be characterised by an covariance (or inertia) matrix, and we simply
+rescale this matrix to determine the integration region. 3 is a good guess for
+the extent of the peak region (``peak end``) because we expect to find 99.54\%
+of all counts within three standard deviations of the peak centre. After
+clicking on the ``integrate`` button and waiting, the intensity, :math:`\sigma`
+and strength columns in the table of peaks will be populated. Note that we don't
+want to make ``peak end`` too large, since we want to avoid overlapping
+intensity regions. The extent of the background region is less critical, since
+overlaps will not affect the results; however we want it to be large enough to
+get good statistics.
 
 .. _found_peaks:
 .. figure:: images/tutorial/found_peaks.png
@@ -132,8 +152,8 @@ results; however we want it to be large enough to get good statistics.
 
    After peak finding and integration
 
-Note that after integration some peaks are marked as invalid; specifically, 8219
-out of 9851 peaks are valid. We can check the ``reason for rejection`` column in
+Note that after integration some peaks are marked as invalid; specifically, 11505
+out of 15316 peaks are valid. We can check the ``reason for rejection`` column in
 the table to see why they were rejected. In the first few frames and last few
 frames of the data set, the reason is usually because the peak extends outside
 the sample rotation range and is therefore incomplete. Also note how peaks close
@@ -156,7 +176,7 @@ the ``Autoindex`` icon on the sidebar.
 .. figure:: images/tutorial/set_beam.png
    :alt: Widget to adjust the direct beam position
    :name: fig:set_beam
-   :width: 75.0%
+   :width: 30.0%
 
    Widget to adjust the direct beam position
 
@@ -187,7 +207,7 @@ setting the crosshair!).
 .. figure:: images/tutorial/indexer_params.png
    :alt: Autoindexer parameters
    :name: fig:indexer_params
-   :width: 75.0%
+   :width: 30.0%
 
    Autoindexer parameters
 
@@ -227,7 +247,7 @@ indexed using this unit cell. Select the best solution and click
 .. figure:: images/tutorial/assign_cell.png
    :alt: Assign the selected unit cell to the ``found`` peak collection
    :name: fig:assign_cell
-   :width: 75.0%
+   :width: 30.0%
 
    Assign the selected unit cell to the ``found`` peak collection
 
@@ -243,15 +263,16 @@ Before generating an exhaustive set of predicted peaks, we need to construct a
 preliminary shape model. We're not too interested in optimising the model at this
 stage, but want to be sure that the predicted peak shapes are reasonable so
 that it's possible to refine them. The most important parameter at this stage is
-``minimum I/sigma``, excluding weak peaks from the model. Set this to 5.0, then
-click ``build shape model`` and wait for the integration to complete. Click on
-``save shape model`` and save the model.
+``minimum I/sigma``, excluding weak peaks from the model. Set this to 3.0, then
+click ``build shape model`` and wait for the integration to complete. In the
+example, around 11491 shapes should be generated, i.e. the model consists of the
+shapes of 11491 strong peaks. Click on ``save shape model`` and save the model.
 
 .. _shape_params:
 .. figure:: images/tutorial/shape_params.png
    :alt: Shape model parameters
    :name: fig:shape_params
-   :width: 75.0%
+   :width: 30.0%
 
    Shape model parameters
 
@@ -264,7 +285,7 @@ pixels and 10 frames.
 .. figure:: images/tutorial/shape_preview.png
    :alt: Shape preview parameters
    :name: fig:shape_preview
-   :width: 75.0%
+   :width: 30.0%
 
    Shape preview parameters
 
@@ -280,6 +301,11 @@ peaks will have a rectangular bounding box, resulting in elliptical peak shapes.
    :width: 100.0%
 
    On generating the preliminary shape model
+
+Note that clicking the peak on the detector image also superimposes the
+integration region for that single peak with the parameters (peak end,
+background begin, background end) specified in the parameters widget on the
+left. The peak region is in yellow, and the background region in green.
 
 .. _predict:
 
@@ -299,7 +325,7 @@ rotation angle.
 .. figure:: images/tutorial/refine_beam.png
    :alt: Candidate unit cells
    :name: fig:refine_beam
-   :width: 75.0%
+   :width: 30.0%
 
    Candidate unit cells
 
@@ -367,7 +393,7 @@ unit cell and aforementioned instrument parameters to vary.
 .. figure:: images/tutorial/refine_params.png
    :alt: Refinement parameters
    :name: fig:refine_params
-   :width: 75.0%
+   :width: 30.0%
 
    Refinement parameters
 
@@ -387,10 +413,24 @@ example, will contain some peaks from batch 1.
 We start with the unit cell found in the :ref:`index` section. The ``use refined
 cells`` checkbox indicates, when checked, that the refiner will use the *batch*
 unit cells instead of the single unit cell indicated in the ``unit cell`` box as
-the starting point (it should be unchecked for the moment). For this data set,
-the optimisation is relatively straightforward, so we can refine all parameters
-simultaneously, so all check boxes under ``parameters to refine`` should be
-checked. Now click ``refine``. This will adjust the instrument parameters and
+the starting point (it should be unchecked for the moment, and the indexed unit
+cell selected). For this data set, the optimisation is relatively
+straightforward, so we can refine all parameters simultaneously, so all check
+boxes under ``parameters to refine`` should be checked. Now click ``refine``.
+The tables should now be populated with the per-image values for unit cell,
+sample position/orientation, detector position and incident wavevector. In the
+screenshot below, I have plotted the change in the a/b/c cell parameters as a
+function of image (i.e. sample rotation angle).
+
+.. _refine_tables:
+.. figure:: images/tutorial/refine_tables.png
+   :alt: Tabulated refined unit cells
+   :name: fig:refine_tables
+   :width: 100.0%
+
+   Unit cell parameters before and after refinement
+
+We have adjusted the instrument parameters and
 unit cells, but we will need to update the predicted unit cells to see what
 physical effect this has. In case we want to compare the predicted peaks before
 and after refinement later on, let's clone the predicted peaks. From the menu,
@@ -482,27 +522,8 @@ with the integration.
 
 The crucial parameters for integration are the integration region bounds (``peak
 end``, ``background begin`` and ``background end``), but we have established
-that the current values (3, 3, 6) are good enough for the moment. Click on the
-``remove overlaps`` checkbox, and observe which peaks are deselected.
-
-.. _overlaps:
-.. figure:: images/tutorial/overlaps.png
-   :alt: Peaks removed due to overlaps
-   :name: fig:overlaps
-   :width: 100.0%
-
-   Peaks removed due to overlaps
-
-In the screenshot above, we can see two instances (red boxes) where peaks were
-invalidated due to overlaps. At the bottom of the detector image there is a
-clear clash, but at the top it is less obvious; the peak is removed because it
-intersects with another one at a different rotation angle (i.e. on a different
-image). Note that both of these overlaps occur close to the sample rotation
-axis. This is to be expected, since such peaks tend to intersect the Ewald
-sphere over a very large rotation angle; they have large variances and appear on
-many frames, and are thus more likely to clash. In this instance, however, we
-have an acceptable number of overlaps, so we can integrate the peaks by clicking
-``integrate peaks``.
+that the current values (3, 3, 6) are good enough for the moment. Check the
+``Compute gradient` box and integrate the peaks by clicking ``integrate peaks``.
 
 .. _integrated:
 .. figure:: images/tutorial/integrated.png
@@ -513,10 +534,23 @@ have an acceptable number of overlaps, so we can integrate the peaks by clicking
    Post-integration screen
 
 Now the ``intensity`` and ``sigma`` columns in the table have been populated,
-and we can see that 54298/58229 peaks were successfully integrated,
-approximately 93\%. For the purposes of this tutorial, this is acceptable, but
+and we can see that 54914/58412 peaks were successfully integrated,
+approximately 94\%. For the purposes of this tutorial, this is acceptable, but
 could be improved. Now we can merge the predicted peaks and get an idea of the
 quality of the integration.
+
+There are two things to note here. Firstly, that peak that intersect masks are
+rejected, but it also seems that a few peaks whose integration regions are just
+outside masks are rejected because they intersect masks (this can be confirmed
+by hovering the cursor over the peak and checking the "Reason for rejection"
+column in the table. Even though a peak does not intersect the mask on this
+image, the same peak may intersect a mask at a different rotation angle (i.e. in
+a different image). Secondly, peaks close to the rotation axis (namely peaks in
+a vertical line going through the central beam stop) are frequently rejected.
+This is because such peaks intersect the Ewald sphere over a large rotation
+range (possibly the whole rotation range), and are thus very difficult to build
+a good shape model for. They also often extend beyond the rotation range of the
+experiment.
 
 .. _merge:
 
@@ -546,9 +580,15 @@ as invalid.
    Resolution shell statistics
 
 There are many different quality metrics, but for this tutorial, we will just
-look at :math:`R_\mathrm{pim}`. It is close to zero at low resolutions (0.022
+look at :math:`R_\mathrm{pim}`. It is close to zero at low resolutions (0.028
 between 3.23 and 50.0 Å), and monotonically increases as the resolution
-increases, up to 0.5 in the 1.5 to 1.55 Å regime.
+increases, up to 0.48 in the 1.5 to 1.55 Å regime. Crucially, we should note
+that the completeness is good, averaging 94\% over all resolution shells. The
+completeness is the fraction of the total number of peaks predicted that have
+been integrated successfully, and can effectively be indefinitely improved just
+by rejecting more and more peaks; however, this would defeat the purpose of our
+data reduction, so we would like to preserve as many peaks as possible by
+ensuring that our predicted spot positions and shape model are good.
 
 .. _merged_peaks:
 .. figure:: images/tutorial/merged_peaks.png
@@ -620,7 +660,17 @@ an exercise for the reader. Here are some hints:
    integration region for all peaks, regardless of their location on the
    detector. This is in general better than having an integration region whose
    size varies with :math:`\sigma` as in the case of the "variable ellipsoid"
-   integration region.
+   integration region, since the count predictions for large integration regions
+   tend to be somewhat noisier. In this tutorial, we have not been very careful
+   about avoiding peak overlaps, namely the clashing of the yellow intensity
+   part of integration regions. Clashing peaks can have a extremely negative
+   effect on the quality of the data reduction, so as well as being careful with
+   our choice of integration bounds, we can also reject overlapping peaks.
+
+4. **Outlier rejection**. The `Reject` widget accessible from the sidebar allows
+   the generation of *peak* statistical models (as opposed to pixel statistics),
+   and rejection of peaks that do not fit that model, for example, peaks with
+   outlying background gradient values can be identified and rejected.
 
 .. bibliography:: references.bib
     :cited:
