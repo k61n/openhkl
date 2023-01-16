@@ -224,6 +224,7 @@ void SubframeExperiment::setAdjustBeamUp()
     _crosshair_linewidth->setMinimum(1);
     _crosshair_linewidth->setMaximum(10);
 
+    connect(_left_widget, &QTabWidget::currentChanged, this, &SubframeExperiment::resetMode);
     connect(
         _set_initial_ki->checkBox(), &QCheckBox::stateChanged, this,
         &SubframeExperiment::refreshVisual);
@@ -898,37 +899,22 @@ void SubframeExperiment::toggleCursorMode()
         case 0: {
             if (_set_initial_ki->isChecked()) {
                 _detector_widget->enableCursorMode(false);
-                _lineplot_box->setChecked(false);
-                _mask_box->setChecked(false);
                 _detector_widget->scene()->changeInteractionMode(7);
-            } else {
-                _detector_widget->enableCursorMode(true);
-                _detector_widget->scene()->changeInteractionMode(0);
             }
             break;
         }
         case 1: {
             if (_lineplot_box->isChecked()) {
                 _detector_widget->enableCursorMode(false);
-                _set_initial_ki->setChecked(false);
-                _mask_box->setChecked(false);
                 setPlotMode();
-            } else {
-                _detector_widget->enableCursorMode(true);
-                _detector_widget->scene()->changeInteractionMode(0);
             }
             break;
         }
         case 2: {
             if (_mask_box->isChecked()) {
-                refreshMaskTable();
                 _detector_widget->enableCursorMode(false);
-                _set_initial_ki->setChecked(false);
-                _lineplot_box->setChecked(false);
                 setMaskMode();
-            } else {
-                _detector_widget->enableCursorMode(true);
-                _detector_widget->scene()->changeInteractionMode(0);
+                refreshMaskTable();
             }
             break;
         }
@@ -951,6 +937,33 @@ void SubframeExperiment::setMaskMode()
         case 0: _detector_widget->scene()->changeInteractionMode(2); break;
         case 1: _detector_widget->scene()->changeInteractionMode(3); break;
     }
+}
+
+void SubframeExperiment::resetMode(int index)
+{
+    QSignalBlocker blocker1(_set_initial_ki);
+    QSignalBlocker blocker2(_lineplot_box);
+    QSignalBlocker blocker3(_mask_box);
+    switch (index) {
+    case 0: {
+        _lineplot_box->setChecked(false);
+        _mask_box->setChecked(false);
+        break;
+    }
+    case 1: {
+        _mask_box->setChecked(false);
+        _set_initial_ki->setChecked(false);
+        break;
+    }
+    case 2: {
+        _set_initial_ki->setChecked(false);
+        _lineplot_box->setChecked(false);
+        break;
+    }
+    default: break;
+    }
+    _detector_widget->enableCursorMode(true);
+    _detector_widget->scene()->changeInteractionMode(0);
 }
 
 void SubframeExperiment::setInitialKi(ohkl::sptrDataSet data)

@@ -121,7 +121,6 @@ class DetectorScene : public QGraphicsScene {
     //! Remove text from scene (contour & peak labels)
     void clearText();
 
-
  protected:
     void mousePressEvent(QGraphicsSceneMouseEvent* event);
     void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
