@@ -540,6 +540,19 @@ std::vector<std::string> DataSet::getTiffResolutions(std::vector<std::string> fi
     return reader.readFileResolutions(filenames);
 }
 
+int DataSet::getTiffBitDepth(std::vector<std::string> filenames)
+{
+    ohkl::TiffDataReader reader;
+    auto bpps = reader.readFileBitDepths(filenames);
+
+   int bpp = bpps[0];
+
+    for (auto& e : bpps)
+        if (bpp != e)
+            bpp = -1;
+    return bpp;
+}
+
 std::string DataSet::checkTiffResolution(std::vector<std::string> filenames)
 {
     auto resolutions = getTiffResolutions(filenames);
