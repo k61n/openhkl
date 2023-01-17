@@ -88,7 +88,11 @@ void TiffDataReaderParameters::LoadDataFromFile(std::string file)
 
 TiffDataReader::TiffDataReader() : IDataReader("::NO-FILENAME::"), _tiff(nullptr) { }
 
-TiffDataReader::~TiffDataReader() { }
+TiffDataReader::~TiffDataReader()
+{
+    _buffer.clear();
+    _data.clear();
+}
 
 // only used when we need to read file resolutions of fiff files before creating DataSet
 std::vector<std::string> TiffDataReader::readFileResolutions(std::vector<std::string> filenames)
@@ -99,6 +103,17 @@ std::vector<std::string> TiffDataReader::readFileResolutions(std::vector<std::st
         res.emplace_back(std::to_string(tags._width) + "x" + std::to_string(tags._image_length));
     }
     return res;
+}
+
+// only used when we need to read file resolutions of fiff files before creating DataSet
+std::vector<int> TiffDataReader::readFileBitDepths(std::vector<std::string> filenames)
+{
+    std::vector<int> bpp;
+    for (auto& fname : filenames) {
+        auto tags = scanFile(fname);
+        bpp.emplace_back(tags._bits_per_pixel);
+    }
+    return bpp;
 }
 
 // to use with readFileResolutions before having a DataSet
@@ -183,6 +198,8 @@ void TiffDataReader::readData()
         // work was 2 before
         std::memcpy(
             _data.data(), _buffer.data(), scale * _buffer.size() / _parameters.data_binnning);
+
+        //_data.clear();
 
         // updating dimensions
         _length = scale * _buffer.size() / _parameters.data_binnning;
@@ -345,6 +362,8 @@ void TiffDataReader::setParameters(const TiffDataReaderParameters& parameters)
     _parameters = parameters;
 
     const std::size_t nrows = _dataset_out->nRows(), ncols = _dataset_out->nCols();
+
+    _tiff_meta_data._bits_per_pixel = parameters.bits_per_pixel;
 
     _length = _tiff_meta_data._bits_per_pixel / 8 * nrows * ncols;
     auto& mono = _dataset_out->diffractometer()->source().selectedMonochromator();
