@@ -26,6 +26,7 @@
 #include "core/instrument/Diffractometer.h"
 #include "core/integration/IIntegrator.h"
 #include "core/loader/RawDataReader.h"
+#include "core/loader/TiffDataReader.h"
 #include "core/raw/DataKeys.h"
 #include "core/shape/PeakFilter.h"
 #include "core/shape/Predictor.h"
@@ -266,6 +267,9 @@ class Experiment {
 
     //! Container for metadata for reading raw data files
     RawDataReaderParameters data_params;
+
+    //! Container for metadata for reading tiff files
+    TiffDataReaderParameters tiff_params;
 
     //! Generate automatic name for PeakCollection
     std::string generatePeakCollectionName();
