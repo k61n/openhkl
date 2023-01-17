@@ -100,16 +100,21 @@ class SubframeExperiment : public QWidget {
     //! Set unit cell for displaying Miller index tooltip
     void setUnitCell();
 
+    //! Update the mask table with correct bounds
     void refreshMaskTable();
 
+    //! Change DetectorScene interaction mode to histogram plot
     void setPlotMode();
+    //! Change DetectorScene interaction mode to draw masks
     void setMaskMode();
+
     //! exports masks to yaml file
     void exportMasks();
     //! imports maks from yaml file
     void importMasks();
     //! deletes selected masks from dataset
     void deleteSelectedMasks();
+    //! Set all graphical mask items to selected
     void selectAllMasks();
 
  public slots:
@@ -117,6 +122,8 @@ class SubframeExperiment : public QWidget {
     void onBeamPosSpinChanged();
     void onMaskChanged();
     void onMaskSelected();
+    //! Reset DetectorScene interaction mode
+    void resetMode(int index);
 
  signals:
     void beamPosChanged(QPointF pos);

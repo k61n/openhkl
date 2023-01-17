@@ -330,7 +330,6 @@ void DetectorScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 
 void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
-    deleteGraphicsItem(_cutter);
     deleteGraphicsItem(_selectionRect);
 
     QPen pen1;
@@ -421,10 +420,12 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
             }
             default: break;
         }
-        if (_cutter != nullptr) {
-            _cutter->setFrom(event->lastScenePos());
-            addItem(_cutter);
-            _lastClickedGI = _cutter;
+        if (_mode == MODE::LINE || _mode == MODE::HORIZONTALSLICE || _mode == MODE::VERTICALSLICE) {
+            if (_cutter != nullptr) {
+                _cutter->setFrom(event->lastScenePos());
+                addItem(_cutter);
+                _lastClickedGI = _cutter;
+            }
         }
     }
     // The right button was pressed
@@ -710,9 +711,7 @@ void DetectorScene::loadCurrentImage()
         _image->setZValue(-2);
     }
 
-
     clearPixmapItems();
-
     drawIntegrationRegion();
     loadMasksFromData();
     if (_params.contours)
