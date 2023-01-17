@@ -437,6 +437,8 @@ bool Session::loadTiffData()
         detector->setBaseline(params.baseline);
         detector->setGain(params.gain);
 
+        params.bits_per_pixel = dataset->getTiffBitDepth(filenames);
+
         dataset->setTiffReaderParameters(params);
 
         for (const auto& filename : filenames)

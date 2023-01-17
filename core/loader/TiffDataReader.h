@@ -38,7 +38,8 @@ struct TiffDataReaderParameters {
     // we use this to store the number of pixel which are rebinned
     // we always rebin symmetrically and thus just store the number of
     // total rebinned pixels 2x2 -> 4, 4x4 -> 16
-    int data_binnning;
+    int data_binnning = 1;
+    int bits_per_pixel = 1;
 
     /**
      * This loads .readme file with additional meta date from the folder in which the data is placed
@@ -111,6 +112,8 @@ class TiffDataReader : public IDataReader {
     void registerFileDimension(std::string filename);
     //! read image (file) resolutions of a given vector of tiff files an return them
     std::vector<std::string> readFileResolutions(std::vector<std::string> filenames);
+    //! returns all bpp values from given filenames
+    std::vector<int>  readFileBitDepths(std::vector<std::string> filenames);
 
  private:
     template <typename T_> Eigen::Matrix<T_, Eigen::Dynamic, Eigen::Dynamic> matrixFromData() const;

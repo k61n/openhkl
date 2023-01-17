@@ -178,6 +178,9 @@ class DataSet {
     //! check tiff file resolutions
     static std::string checkTiffResolution(std::vector<std::string> filenames);
 
+    //! return bit depth of tiff files. returns -1 if different bpp values are found
+    int getTiffBitDepth(std::vector<std::string> filenames);
+
  private:
     void setReader(const DataFormat dataformat, const std::string& filename = "");
 
