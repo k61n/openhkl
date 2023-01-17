@@ -42,6 +42,7 @@
 %shared_ptr(ohkl::BaseHDF5DataReader)
 %shared_ptr(ohkl::IDataReader)
 %shared_ptr(ohkl::ProgressHandler)
+%shared_ptr(ohkl::TiffDataReader)
 %shared_ptr(ohkl::RawDataReader)
 %shared_ptr(ohkl::NexusDataReader)
 %shared_ptr(ohkl::BaseNexusDataReader)
@@ -145,7 +146,9 @@ using Eigen::Quaterniond;
 #include "core/integration/ShapeIntegrator.h"
 #include "core/loader/HDF5DataReader.h"
 #include "core/loader/BaseHDF5DataReader.h"
+#include "core/loader/TiffDataReader.h"
 #include "core/loader/RawDataReader.h"
+
 #include "core/loader/NexusDataReader.h"
 #include "core/loader/BaseNexusDataReader.h"
 #include "core/peak/IntegrationRegion.h"
@@ -311,7 +314,9 @@ ArrayExtendCRef(MillerIndex, int);
 
 %include "core/loader/BaseHDF5DataReader.h"
 %include "core/loader/HDF5DataReader.h"
+%include "core/loader/TiffDataReader.h"
 %include "core/loader/RawDataReader.h"
+
 %include "core/loader/NexusDataReader.h"
 %include "core/loader/BaseNexusDataReader.h"
 
