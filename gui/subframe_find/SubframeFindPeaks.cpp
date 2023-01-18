@@ -85,10 +85,9 @@ SubframeFindPeaks::SubframeFindPeaks()
     _right_element->setStretchFactor(0, 2);
     _right_element->setStretchFactor(1, 1);
 
-    connect(_kernel_combo, &QComboBox::currentTextChanged, [=](QString) {
-        updateConvolutionParameters();
-        showFilteredImage();
-    });
+    connect(
+        _kernel_combo, &QComboBox::currentTextChanged, this,
+        &SubframeFindPeaks::updateConvolutionParameters);
     connect(
         _gradient_kernel, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
         this, &SubframeFindPeaks::onGradientSettingsChanged);
@@ -182,6 +181,10 @@ void SubframeFindPeaks::setBlobUp()
         &SubframeFindPeaks::setIntegrationParameters);
     connect(
         _threshold_spin, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
+        &SubframeFindPeaks::showFilteredImage);
+    connect(
+        _kernel_para_table,
+        static_cast<void (QTableWidget::*)(int, int)>(&QTableWidget::cellChanged), this,
         &SubframeFindPeaks::showFilteredImage);
 
     _left_layout->addWidget(blob_para);
@@ -369,11 +372,6 @@ void SubframeFindPeaks::grabFinderParameters()
 
         currentRow++;
     }
-
-    connect(
-        _kernel_para_table,
-        static_cast<void (QTableWidget::*)(int, int)>(&QTableWidget::cellChanged), this,
-        &SubframeFindPeaks::showFilteredImage);
     _kernel_para_table->resizeColumnsToContents();
 }
 
@@ -429,6 +427,7 @@ void SubframeFindPeaks::setIntegrationParameters()
 
 void SubframeFindPeaks::updateConvolutionParameters()
 {
+    QSignalBlocker blocker(_kernel_para_table);
     std::string kernelName = _kernel_combo->currentText().toStdString();
     ohkl::ConvolverFactory _kernel_comboFactory;
     ohkl::Convolver* kernel = _kernel_comboFactory.create(kernelName, {});
@@ -458,6 +457,7 @@ void SubframeFindPeaks::updateConvolutionParameters()
         currentRow++;
     }
     _kernel_para_table->resizeColumnsToContents();
+    showFilteredImage();
 }
 
 void SubframeFindPeaks::find()
@@ -615,6 +615,7 @@ void SubframeFindPeaks::showFilteredImage()
     _detector_widget->scene()->params()->threshold = _threshold_spin->value();
     _detector_widget->scene()->params()->convolver =
         static_cast<ohkl::ConvolutionKernelType>(_kernel_combo->currentIndex());
-    _detector_widget->scene()->params()->convolver_params = convolutionParameters();
+    for (const auto& [key, value] : convolutionParameters())
+        _detector_widget->scene()->params()->convolver_params.insert_or_assign(key, value);
     _detector_widget->scene()->loadCurrentImage();
 }
