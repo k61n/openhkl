@@ -270,9 +270,6 @@ void SubframeFindPeaks::setFigureUp()
     connect(
         _detector_widget->dataCombo(), QOverload<int>::of(&QComboBox::currentIndexChanged),
         _data_combo, &QComboBox::setCurrentIndex);
-    // connect(
-    //     _detector_widget->spin(), static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
-    //     this, &SubframeFindPeaks::showFilteredImage);
     connect(
         _detector_widget->scene(), &DetectorScene::signalUpdateDetectorScene, this,
         &SubframeFindPeaks::refreshPeakTable);
