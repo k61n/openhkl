@@ -431,7 +431,7 @@ void SubframeExperiment::setPeakFinder2DUp()
     _data_combo = gfiller.addDataCombo("Data set");
     _convolver_combo =
         gfiller.addCombo("Convolution kernel", "Convolver kernel type to use in image filtering");
-    _threshold = gfiller.addSpinBox(
+    _threshold_spin = gfiller.addSpinBox(
         "Filtered image threshold", "Minimum counts to use in image thresholding");
     _blob_min_thresh =
         gfiller.addSpinBox("Minimum blob threshold", "Minimum threshold for blob detection");
@@ -462,6 +462,9 @@ void SubframeExperiment::setPeakFinder2DUp()
         _detector_widget->dataCombo(), &QComboBox::setCurrentIndex);
     connect(_threshold_check, &QCheckBox::clicked, this, &SubframeExperiment::showFilteredImage);
     connect(_find_peaks_2d, &QPushButton::clicked, this, &SubframeExperiment::find_2d);
+    connect(
+        _threshold_spin, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
+        &SubframeExperiment::showFilteredImage);
 
     _strategy_layout->addWidget(peak2D_spoiler);
 }
@@ -605,10 +608,11 @@ void SubframeExperiment::updateRanges()
 void SubframeExperiment::showFilteredImage()
 {
     _detector_widget->scene()->params()->filteredImage = _threshold_check->isChecked();
-    _detector_widget->scene()->params()->threshold = _threshold->value();
+    _detector_widget->scene()->params()->threshold = _threshold_spin->value();
     _detector_widget->scene()->params()->convolver =
         static_cast<ohkl::ConvolutionKernelType>(_convolver_combo->currentIndex());
-    _detector_widget->refresh();
+    _detector_widget->scene()->loadCurrentImage();
+    setFinderParameters();
 }
 
 void SubframeExperiment::plotIntensities()
@@ -809,7 +813,7 @@ void SubframeExperiment::grabFinderParameters()
 
     _blob_min_thresh->setValue(params->minThreshold);
     _blob_max_thresh->setValue(params->maxThreshold);
-    _threshold->setValue(params->threshold);
+    _threshold_spin->setValue(params->threshold);
     _convolver_combo->setCurrentIndex(static_cast<int>(params->kernel));
 }
 
@@ -823,7 +827,7 @@ void SubframeExperiment::setFinderParameters()
 
     params->minThreshold = _blob_min_thresh->value();
     params->maxThreshold = _blob_max_thresh->value();
-    params->threshold = _threshold->value();
+    params->threshold = _threshold_spin->value();
     params->kernel = static_cast<ohkl::ConvolutionKernelType>(_convolver_combo->currentIndex());
 }
 

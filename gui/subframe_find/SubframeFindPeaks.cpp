@@ -87,7 +87,7 @@ SubframeFindPeaks::SubframeFindPeaks()
 
     connect(_kernel_combo, &QComboBox::currentTextChanged, [=](QString) {
         updateConvolutionParameters();
-        refreshPreview();
+        showFilteredImage();
     });
     connect(
         _gradient_kernel, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
@@ -144,10 +144,10 @@ void SubframeFindPeaks::setBlobUp()
 
     _kernel_combo = f.addCombo("Convolution kernel", "Convolution kernel for peak search");
 
-    ohkl::ConvolverFactory convolver_factory;
-    for (const auto& convolution_kernel_combo : convolver_factory.callbacks())
-        _kernel_combo->addItem(QString::fromStdString(convolution_kernel_combo.first));
-    _kernel_combo->setCurrentText("annular");
+    auto kernel_types = ohkl::Convolver::kernelTypes;
+    for (auto it = kernel_types.begin(); it != kernel_types.end(); ++it)
+        _kernel_combo->addItem(QString::fromStdString(it->second));
+    _kernel_combo->setCurrentIndex(1);
 
     QLabel* kernel_para_label = new QLabel("Convolver parameters:");
     kernel_para_label->setAlignment(Qt::AlignLeft | Qt::AlignTop);
@@ -162,7 +162,7 @@ void SubframeFindPeaks::setBlobUp()
     _end_frame_spin =
         f.addSpinBox("Last detector image", "(detector image number) - end image for peak finding");
 
-    _live_check = f.addCheckBox("Apply threshold to preview", "Only show pixels above threshold");
+    _threshold_check = f.addCheckBox("Apply threshold to preview", "Only show pixels above threshold");
 
     _find_button = f.addButton("Find peaks");
 
@@ -173,10 +173,13 @@ void SubframeFindPeaks::setBlobUp()
     _max_width_spin->setMaximum(20);
 
     connect(_find_button, &QPushButton::clicked, this, &SubframeFindPeaks::find);
-    connect(_live_check, &QCheckBox::stateChanged, this, &SubframeFindPeaks::refreshPreview);
+    connect(_threshold_check, &QCheckBox::stateChanged, this, &SubframeFindPeaks::showFilteredImage);
     connect(
         gGui->sideBar(), &SideBar::subframeChanged, this,
         &SubframeFindPeaks::setIntegrationParameters);
+    connect(
+        _threshold_spin, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
+        &SubframeFindPeaks::showFilteredImage);
 
     _left_layout->addWidget(blob_para);
 }
@@ -264,9 +267,9 @@ void SubframeFindPeaks::setFigureUp()
     connect(
         _detector_widget->dataCombo(), QOverload<int>::of(&QComboBox::currentIndexChanged),
         _data_combo, &QComboBox::setCurrentIndex);
-    connect(
-        _detector_widget->spin(), static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
-        this, &SubframeFindPeaks::refreshPreview);
+    // connect(
+    //     _detector_widget->spin(), static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
+    //     this, &SubframeFindPeaks::showFilteredImage);
     connect(
         _detector_widget->scene(), &DetectorScene::signalUpdateDetectorScene, this,
         &SubframeFindPeaks::refreshPeakTable);
@@ -536,49 +539,6 @@ void SubframeFindPeaks::accept()
     gGui->refreshMenu();
 }
 
-void SubframeFindPeaks::refreshPreview()
-{
-    if (!_live_check->isChecked()) {
-        if (_pixmap) {
-            _detector_widget->scene()->removeItem(_pixmap);
-            delete _pixmap;
-            _pixmap = nullptr;
-            _detector_widget->scene()->loadCurrentImage();
-        }
-        return;
-    }
-
-    ohkl::sptrDataSet data = _data_combo->currentData();
-    int nrows = data->nRows();
-    int ncols = data->nCols();
-
-    std::string convolvertype = _kernel_combo->currentText().toStdString();
-    std::map<std::string, double> convolverParams = convolutionParameters();
-    Eigen::MatrixXd convolvedFrame = ohkl::convolvedFrame(
-        data->reader()->data(_detector_widget->spin()->value() - 1), convolvertype,
-        convolverParams);
-    if (_live_check->isChecked()) {
-        double thresholdVal = _threshold_spin->value();
-        for (int i = 0; i < nrows; ++i) {
-            for (int j = 0; j < ncols; ++j)
-                convolvedFrame(i, j) = convolvedFrame(i, j) < thresholdVal ? 0 : 1;
-        }
-    }
-    double minVal = convolvedFrame.minCoeff();
-    double maxVal = convolvedFrame.maxCoeff();
-    if (maxVal - minVal <= 0.0)
-        maxVal = minVal + 1.0;
-    convolvedFrame.array() -= minVal;
-    convolvedFrame.array() /= maxVal - minVal;
-    QRect rect(0, 0, ncols, nrows);
-    ColorMap* m = new ColorMap;
-    QImage image = m->matToImage(convolvedFrame.cast<double>(), rect, maxVal);
-    if (!_pixmap)
-        _pixmap = _detector_widget->scene()->addPixmap(QPixmap::fromImage(image));
-    else
-        _pixmap->setPixmap(QPixmap::fromImage(image));
-}
-
 void SubframeFindPeaks::refreshPeakTable()
 {
     if (!gSession->currentProject()->hasDataSet())
@@ -639,4 +599,13 @@ DetectorWidget* SubframeFindPeaks::detectorWidget()
 void SubframeFindPeaks::onGradientSettingsChanged()
 {
     emit signalGradient(_gradient_kernel->currentIndex(), _fft_gradient_check->isChecked());
+}
+
+void SubframeFindPeaks::showFilteredImage()
+{
+    _detector_widget->scene()->params()->filteredImage = _threshold_check->isChecked();
+    _detector_widget->scene()->params()->threshold = _threshold_spin->value();
+    _detector_widget->scene()->params()->convolver =
+        static_cast<ohkl::ConvolutionKernelType>(_kernel_combo->currentIndex());
+    _detector_widget->scene()->loadCurrentImage();
 }
