@@ -24,6 +24,7 @@ class TestFullWorkFlow(unittest.TestCase):
 
         print('OpenHKL TestTrypsinTiff')
         data_dir = "."
+        #detector_mask_file = "./trypsin_default_masks.yml"
 
         # set up the experiment
         expt = ohkl.Experiment('trypsin', 'BioDiff')
@@ -62,6 +63,12 @@ class TestFullWorkFlow(unittest.TestCase):
         data.detector().setBaseline(0.0)
         data.detector().setGain(1.0)
 
+        # this loads detector masks from given external file into dataset
+        #mimporter = ohkl.MaskImporter(detector_mask_file, dataset.nFrames())
+        #masks = mimporter.getMasks() #VectorIMasks
+        #for i in range(0, len(masks)):
+        #    dataset.addMask(masks[i])
+        #    print ("added detector mask #", i)
 
         print('Finding peaks...')
         peak_finder = expt.peakFinder()
@@ -115,7 +122,7 @@ class TestFullWorkFlow(unittest.TestCase):
         # Even with adjusted direct beam position a much higher value
         # for params.nVertices is require to ensure the script does
         # find the unit cell
-        params.nVertices = 30000 # default is 10k
+        # params.nVertices = 30000 # default is 10k
 
         indexing_peaks = expt.getPeakCollection('indexing')
         indexer.autoIndex(indexing_peaks)
@@ -215,12 +222,12 @@ class TestFullWorkFlow(unittest.TestCase):
         # with tiff files
         rpim_ref = [0.02633, 0.0527758, 0.121082]
         compl_ref = [0.963999, 0.96263, 0.960946]
-        eps = 0.22 # original value 0.1
+        eps = 0.1
 
         for i in range(3):
-            print ("DBG ASSERT TRUE RPIM VALUE ", rpim_ref[i] + eps - merger.shellQuality().shells[i].Rpim)
+            #print ("DBG ASSERT TRUE RPIM VALUE ", rpim_ref[i] + eps - merger.shellQuality().shells[i].Rpim)
             self.assertTrue(rpim_ref[i] + eps - merger.shellQuality().shells[i].Rpim > 0)
-            print ("DBG ASSERT TRUE COMPLT VALUE ", compl_ref[i] + eps - merger.shellQuality().shells[i].Completeness)
+            #print ("DBG ASSERT TRUE COMPLT VALUE ", compl_ref[i] + eps - merger.shellQuality().shells[i].Completeness)
             self.assertTrue(compl_ref[i] + eps - merger.shellQuality().shells[i].Completeness > 0)
 
         print("Workflow complete")
