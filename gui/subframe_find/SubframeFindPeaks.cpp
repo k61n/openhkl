@@ -153,8 +153,8 @@ void SubframeFindPeaks::setBlobUp()
     kernel_para_label->setAlignment(Qt::AlignLeft | Qt::AlignTop);
     f.addWidget(kernel_para_label, 0);
 
-    _kernel_para_table = new QTableWidget(this);
-    f.addWidget(_kernel_para_table, 0);
+    _kernel_para_table = new QTableWidget(0, 2, this);
+    f.addWidget(_kernel_para_table, 1);
 
     _start_frame_spin = f.addSpinBox(
         "First detector image", "(detector image number) - starting image for peak finding");
@@ -166,6 +166,9 @@ void SubframeFindPeaks::setBlobUp()
 
     _find_button = f.addButton("Find peaks");
 
+    _kernel_para_table->setMaximumHeight(_kernel_para_table->verticalHeader()->defaultSectionSize() * 4);
+    _kernel_para_table->verticalHeader()->setVisible(false);
+    _kernel_para_table->setHorizontalHeaderLabels(QStringList{"Parameter", "Value"});
     _threshold_spin->setMaximum(1000);
     _scale_spin->setMaximum(10);
     _min_size_spin->setMaximum(1000);
@@ -357,7 +360,7 @@ void SubframeFindPeaks::grabFinderParameters()
         QString name = QString::fromStdString(it->first);
         QTableWidgetItem* pname = new QTableWidgetItem();
         pname->setData(Qt::DisplayRole, name);
-        pname->setFlags(pname->flags() ^ Qt::ItemIsEditable);
+        pname->setFlags(pname->flags() & ~Qt::ItemIsEditable);
 
 
         double val = it->second;
@@ -369,6 +372,11 @@ void SubframeFindPeaks::grabFinderParameters()
 
         currentRow++;
     }
+
+    connect(
+        _kernel_para_table,
+        static_cast<void (QTableWidget::*)(int, int)>(&QTableWidget::cellChanged), this,
+        &SubframeFindPeaks::showFilteredImage);
     _kernel_para_table->resizeColumnsToContents();
 }
 
@@ -603,9 +611,13 @@ void SubframeFindPeaks::onGradientSettingsChanged()
 
 void SubframeFindPeaks::showFilteredImage()
 {
+    if (!_threshold_check->isChecked())
+        return;
+
     _detector_widget->scene()->params()->filteredImage = _threshold_check->isChecked();
     _detector_widget->scene()->params()->threshold = _threshold_spin->value();
     _detector_widget->scene()->params()->convolver =
         static_cast<ohkl::ConvolutionKernelType>(_kernel_combo->currentIndex());
+    _detector_widget->scene()->params()->convolver_params = convolutionParameters();
     _detector_widget->scene()->loadCurrentImage();
 }
