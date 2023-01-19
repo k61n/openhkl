@@ -57,6 +57,8 @@ class SubframeFindPeaks : public QWidget {
     void grabFinderParameters();
     //! Grab the integration parameters
     void grabIntegrationParameters();
+    //! Show the filtered/thresholded image in DetectorScene
+    void showFilteredImage();
 
  public slots:
     void onGradientSettingsChanged();
@@ -80,8 +82,6 @@ class SubframeFindPeaks : public QWidget {
     //! Set the peak table view up
     void setPeakTableUp();
 
-    //! Refresh the preview
-    void refreshPreview();
     //! Refresh the found peaks list
     void refreshPeakTable();
     //! Change the peak selected in the table
@@ -126,7 +126,7 @@ class SubframeFindPeaks : public QWidget {
     SafeSpinBox* _end_frame_spin;
 
     PeakViewWidget* _peak_view_widget;
-    QCheckBox* _live_check;
+    QCheckBox* _threshold_check;
 
     SafeDoubleSpinBox* _peak_area;
     SafeDoubleSpinBox* _bkg_lower;
