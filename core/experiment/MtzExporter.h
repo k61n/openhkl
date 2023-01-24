@@ -15,31 +15,31 @@
 #ifndef MTZ_EXPORTER_H
 #define MTZ_EXPORTER_H
 
-#include <string.h>
-#include <string>
-#include <vector>
+#include "base/utils/LogLevel.h"
+#include "base/utils/Logger.h"
+#include "core/data/DataSet.h"
+#include "tables/crystal/UnitCell.h"
 
 #include "3rdparty/ccp4/cmtzlib.h"
 #include "3rdparty/ccp4/mtzdata.h"
 
-#include "core/experiment/Experiment.h"
-
-#include "base/utils/LogLevel.h"
-#include "base/utils/Logger.h"
-
-#include "core/statistics/MergedData.h"
-#include "core/statistics/MergedPeak.h"
+#include <string.h>
+#include <string>
+#include <vector>
 
 namespace ohkl {
+
+class MergedData;
+class PeakCollection;
+class PeakMerger;
 
 class MtzExporter {
  public:
     //! Constructor
     MtzExporter(
-        ohkl::Experiment* expt, std::string dataset_name, std::string peakcollection_name,
-        bool use_merged_data, std::string comment, ohkl::MergedData* merged_data,
-        ohkl::sptrUnitCell cell);
-    //! Deconstructor
+        MergedData* merged_data, sptrDataSet data, sptrUnitCell cell, bool merged,
+        std::string comment);
+    //! Destructor
     ~MtzExporter();
     //! Builds whole MtzData structure from ohkl data
     void buildMtzData();
@@ -69,15 +69,16 @@ class MtzExporter {
     CMtz::MTZCOL* CreateMtzCol(
         std::string name, std::string label, int grp, int set_id, int active, int src);
 
-    void process();
-
  private:
-    bool _use_merged_data; // 0 = unmerged, 1 = merged
+    //! Merger object to process the merge if necessary
+    PeakMerger* _merger;
+
     // ohkl data structures
-    ohkl::Experiment* _expt;
-    ohkl::sptrDataSet _ohkl_data;
-    ohkl::UnitCell* _ohkl_uc;
-    ohkl::MergedData* _ohkl_merged_data;
+    MergedData* _merged_data;
+    sptrDataSet _ohkl_data;
+    UnitCell* _ohkl_cell;
+    //! Whether to export merged (true) or unmerged (false) peaks
+    bool _merged;
 
     std::vector<std::string> _history;
     std::string _comment;

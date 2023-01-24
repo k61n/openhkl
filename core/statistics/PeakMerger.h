@@ -77,6 +77,9 @@ class PeakMerger {
     //! Return a string containing a summary of statistics
     std::string summary();
 
+    //! Saves the shell information to file.
+    bool saveStatistics(std::string filename);
+
  private:
     std::unique_ptr<MergedData> _merged_data;
     std::vector<std::unique_ptr<MergedData>> _merged_data_per_shell;

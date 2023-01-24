@@ -22,6 +22,7 @@
 #include "core/statistics/CC.h"
 #include "core/statistics/MergedData.h"
 #include "core/statistics/MergedPeak.h"
+#include "core/statistics/PeakExporter.h"
 #include "core/statistics/PeakMerger.h"
 #include "core/statistics/RFactor.h"
 #include "core/statistics/ResolutionShell.h"
@@ -46,10 +47,11 @@
 #include <fstream>
 #include <iomanip>
 
-#include "gui/dialogs/MtzExportDialog.h"
+#include "gui/dialogs/PeakExportDialog.h"
 
 SubframeMergedPeaks::SubframeMergedPeaks()
 {
+    _exporter = {};
     setSizePolicies();
 
     _frame_set = false;
@@ -292,7 +294,12 @@ void SubframeMergedPeaks::setMergedUp()
     QHBoxLayout* merged_row = new QHBoxLayout;
 
     _merged_save_type = new QComboBox();
-    _merged_save_type->addItems({"ShelX", "FullProf", "Phenix", "MTZ"});
+    for (int idx = 0; idx < static_cast<int>(ohkl::ExportFormat::Count); ++idx) {
+        std::string text =
+            _exporter.exportFormatStrings()->at(static_cast<ohkl::ExportFormat>(idx));
+        _merged_save_type->addItem(QString::fromStdString(text));
+    }
+
     _save_merged = new QPushButton("Save merged");
 
     QLabel* label = new QLabel("Intensity scale factor");
@@ -329,7 +336,11 @@ void SubframeMergedPeaks::setUnmergedUp()
 
     QHBoxLayout* unmerged_row = new QHBoxLayout;
     _unmerged_save_type = new QComboBox();
-    _unmerged_save_type->addItems({"ShelX", "FullProf", "Phenix", "MTZ"});
+    for (int idx = 0; idx < static_cast<int>(ohkl::ExportFormat::Count); ++idx) {
+        std::string text =
+            _exporter.exportFormatStrings()->at(static_cast<ohkl::ExportFormat>(idx));
+        _unmerged_save_type->addItem(QString::fromStdString(text));
+    }
     _save_unmerged = new QPushButton("Save unmerged");
 
     QLabel* label = new QLabel("Intensity scale factor");
@@ -673,128 +684,78 @@ void SubframeMergedPeaks::saveStatistics()
     auto* expt = gSession->currentProject()->experiment();
     auto* merger = expt->peakMerger();
 
-    _exporter.saveStatistics(
-        filename.toStdString(), merger->shellQuality(), merger->overallQuality());
+    merger->saveStatistics(filename.toStdString());
 }
 
-void SubframeMergedPeaks::savePeaks(std::string format, bool merged)
+void SubframeMergedPeaks::savePeaks(bool merged)
 {
-    if (merged) {
-        auto idx = _merged_save_type->findText(QString::fromStdString(format));
-        if (idx == -1)
-            throw std::runtime_error("SubframeMergedPeaks::savePeaks Unknown file format");
-        _merged_save_type->setCurrentIndex(idx);
-        saveMergedPeaks();
-    } else {
-        auto idx = _unmerged_save_type->findText(QString::fromStdString(format));
-        if (idx == -1)
-            throw std::runtime_error("SubframeMergedPeaks::savePeaks Unknown file format");
-        _unmerged_save_type->setCurrentIndex(idx);
-        saveUnmergedPeaks();
-    }
-}
-
-
-void SubframeMergedPeaks::saveMergedPeaks()
-{
-    QString format = _merged_save_type->currentText();
-
     QSettings settings = gGui->qSettings();
     settings.beginGroup("RecentDirectories");
     QString loadDirectory = settings.value("merged", QDir::homePath()).toString();
-
     QString filename;
+    auto* formats = _exporter.exportFormatStrings();
+
+    ohkl::ExportFormat fmt;
+    if (merged)
+        fmt = static_cast<ohkl::ExportFormat>(_merged_save_type->currentIndex());
+    else
+        fmt = static_cast<ohkl::ExportFormat>(_unmerged_save_type->currentIndex());
+
+    switch (fmt) {
+    case ohkl::ExportFormat::Mtz: {
+        filename = QFileDialog::getSaveFileName(
+            this, "Save peaks to CCP4 mtz", loadDirectory, QString::fromStdString(formats->at(fmt)));
+        break;
+    }
+    case ohkl::ExportFormat::Phenix: {
+        filename = QFileDialog::getSaveFileName(
+            this, "Save peaks to Phenix sca", loadDirectory, QString::fromStdString(formats->at(fmt)));
+        break;
+    }
+    case ohkl::ExportFormat::ShelX: {
+        filename = QFileDialog::getSaveFileName(
+            this, "Save peaks to ShelX", loadDirectory, QString::fromStdString(formats->at(fmt)));
+        break;
+    }
+    case ohkl::ExportFormat::FullProf: {
+        filename = QFileDialog::getSaveFileName(
+            this, "Save peaks to FullProf", loadDirectory, QString::fromStdString(formats->at(fmt)));
+        break;
+    }
+    default: return;
+    }
+    if (filename.isEmpty())
+        return;
 
     auto* expt = gSession->currentProject()->experiment();
     auto* merger = expt->peakMerger();
-    auto* merged_data = merger->getMergedData();
-    bool success = false;
+    auto cell = singleBatchRefine();
+    auto data = _peak_combo_1->currentPeakCollection()->data();
 
-    if (format.compare("ShelX") == 0) {
-        filename = QFileDialog::getSaveFileName(
-            this, "Save peaks to ShelX", loadDirectory, "ShelX hkl file (*.hkl)");
+    double scale;
+    if (merged)
+        scale = _intensity_rescale_merged->value();
+    else
+        scale = _intensity_rescale_unmerged->value();
 
-        if (filename.isEmpty())
-            return;
-
-        success = _exporter.saveToShelXMerged(filename.toStdString(), merged_data);
-    } else if (format.compare("FullProf") == 0) {
-        filename = QFileDialog::getSaveFileName(
-            this, "Save peaks to FullProf", loadDirectory, "FullProf hkl file (*.hkl)");
-
-        if (filename.isEmpty())
-            return;
-
-        success = _exporter.saveToFullProfMerged(filename.toStdString(), merged_data);
-    } else if (format.compare("Phenix") == 0) {
-        filename = QFileDialog::getSaveFileName(
-            this, "Save peaks to Phenix sca", loadDirectory, "Phenix sca file (*.sca)");
-
-        if (filename.isEmpty())
-            return;
-
-        ohkl::sptrUnitCell cell = singleBatchRefine();
-        success = _exporter.saveToSCAMerged(
-            filename.toStdString(), merged_data, cell, _intensity_rescale_merged->value());
-    } else if (format.compare("MTZ") == 0)
-        success = exportMtz(true);
-
+    std::string comment = "";
+    bool success = _exporter.exportPeaks(
+        fmt, filename.toStdString(), merger->getMergedData(), data, cell, merged, scale, comment);
     if (!success)
-        QMessageBox::critical(this, "Error", "File open unsuccessful");
+        QMessageBox::critical(this, "Error", "Peak export unsuccessful");
 
     QFileInfo info(filename);
     settings.setValue("merged", info.absolutePath());
+}
+
+void SubframeMergedPeaks::saveMergedPeaks()
+{
+    savePeaks(true);
 }
 
 void SubframeMergedPeaks::saveUnmergedPeaks()
 {
-    QString format = _merged_save_type->currentText();
-
-    QSettings settings = gGui->qSettings();
-    settings.beginGroup("RecentDirectories");
-    QString loadDirectory = settings.value("merged", QDir::homePath()).toString();
-
-    QString filename;
-
-    auto* expt = gSession->currentProject()->experiment();
-    auto* merger = expt->peakMerger();
-    auto* merged_data = merger->getMergedData();
-    bool success = false;
-
-    if (format.compare("ShelX") == 0) {
-        filename = QFileDialog::getSaveFileName(
-            this, "Save peaks to ShelX", loadDirectory, "ShelX hkl file (*.hkl)");
-
-        if (filename.isEmpty())
-            return;
-
-        success = _exporter.saveToShelXUnmerged(filename.toStdString(), merged_data);
-    } else if (format.compare("FullProf") == 0) {
-        filename = QFileDialog::getSaveFileName(
-            this, "Save peaks to FullProf", loadDirectory, "ShelX hkl file (*.hkl)");
-
-        if (filename.isEmpty())
-            return;
-
-        success = _exporter.saveToFullProfUnmerged(filename.toStdString(), merged_data);
-    } else if (format.compare("Phenix") == 0) {
-        filename = QFileDialog::getSaveFileName(
-            this, "Save peaks to Phenix sca", loadDirectory, "Phenix sca file (*.sca)");
-
-        if (filename.isEmpty())
-            return;
-
-        ohkl::sptrUnitCell cell = singleBatchRefine();
-        success = _exporter.saveToSCAUnmerged(
-            filename.toStdString(), merged_data, cell, _intensity_rescale_unmerged->value());
-    } else if (format.compare("MTZ") == 0)
-        success = exportMtz(false);
-
-    if (!success)
-        QMessageBox::critical(this, "Error", "File open unsuccessful");
-
-    QFileInfo info(filename);
-    settings.setValue("merged", info.absolutePath());
+    savePeaks(false);
 }
 
 void SubframeMergedPeaks::toggleUnsafeWidgets()
@@ -841,53 +802,4 @@ ohkl::sptrUnitCell SubframeMergedPeaks::singleBatchRefine()
     }
 
     return refiner->batches()[0].sptrCell();
-}
-
-bool SubframeMergedPeaks::exportMtz(bool use_merged_data)
-{
-    QSettings settings = gGui->qSettings();
-    settings.beginGroup("RecentDirectories");
-    QString loadDirectory = settings.value("mtz", QDir::homePath()).toString() + "/export.mtz";
-
-    ohkl::MtzExportDialog export_dialog(use_merged_data);
-    if (!export_dialog.exec())
-        return false;
-
-    // important note
-    // when trying to access unit cell from MtzExport the unit cell seems to be different
-    // to make sure it is the same as for other exports we access it here and drag it through
-    // the experiment and class
-    ohkl::sptrUnitCell cell = singleBatchRefine();
-
-    /*
-     *      We need to make sure an predicted peak collection will be exported
-     *      we should also maybe include a fully fledged export dialog for this feature
-     *       currently it will work over the already implemented gui elements
-     */
-    auto pc = gSession->currentProject()->experiment()->getPeakCollection(
-        export_dialog.getPeakCollection());
-
-    if (pc->type() == ohkl::PeakCollectionType::FOUND) {
-        QMessageBox::warning(
-            this, "MTZ File Export",
-            "A PeakCollection of PeakCollectionTyp FOUND has been selected which cannot be "
-            "exported to MTZ File.",
-            QMessageBox::Ok);
-        return false;
-    }
-
-    std::string filename =
-        QFileDialog::getSaveFileName(
-            this, "Export Experiment as MTZ file", loadDirectory, "CCP4 MTZ (*.mtz)")
-            .toStdString();
-
-    auto expt = gSession->currentProject()->experiment();
-
-    if (!expt->exportMtz(
-            filename, export_dialog.getDataset(), export_dialog.getPeakCollection(),
-            export_dialog.useMergedData(), export_dialog.getComment(), _merged_data, cell)) {
-        QMessageBox::critical(this, "Error", "Could not export experiment");
-        return false;
-    }
-    return true;
 }

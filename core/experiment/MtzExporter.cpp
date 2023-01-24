@@ -15,8 +15,10 @@
 #include "MtzExporter.h"
 
 #include "core/data/DataTypes.h"
-#include "core/experiment/Experiment.h"
-//#include "3rdparty/ccp4/ccp4_array.h"
+#include "core/instrument/Diffractometer.h"
+#include "core/shape/PeakCollection.h"
+#include "core/statistics/MergedData.h"
+#include "core/statistics/PeakMerger.h"
 
 #include <functional>
 #include <iostream>
@@ -27,30 +29,17 @@
 
 namespace ohkl {
 MtzExporter::MtzExporter(
-    ohkl::Experiment* expt, std::string dataset_name, std::string peakcollection_name,
-    bool use_merged_data, std::string comment, ohkl::MergedData* merged_data,
-    ohkl::sptrUnitCell cell)
-    : _use_merged_data(use_merged_data)
-    , _expt(expt)
-    , _ohkl_data(nullptr)
-    , _ohkl_uc(cell.get())
-    , _ohkl_merged_data(merged_data)
+    MergedData* merged_data, sptrDataSet data, sptrUnitCell cell, bool merged, std::string comment)
+    : _merged_data(merged_data)
+    , _ohkl_data(data)
+    , _ohkl_cell(cell.get())
+    , _merged(merged)
     , _comment(comment)
-    , _peakcollection_name(peakcollection_name)
     , _mtz_data(nullptr)
     , _mtz_xtal(nullptr)
 {
-    if (!_expt)
-        throw std::runtime_error("E MtzExporter::MtzExporter : invalid project ptr ");
-
-    if (dataset_name.empty())
-        throw std::runtime_error("E MtzExporter::MtzExporter : invalid dataset name ");
-
     _mtz_sets.clear();
     _mtz_cols.clear();
-
-    _ohkl_data = _expt->getData(dataset_name);
-    process();
 }
 
 MtzExporter::~MtzExporter()
@@ -110,12 +99,12 @@ void MtzExporter::buildBatch()
 
     /* Retrieving ohkl data */
     // Sample gonio
-    auto gonio = _expt->getDiffractometer()->sample().gonio(); // three axis
+    auto gonio = _ohkl_data->diffractometer()->sample().gonio(); // three axis
 
     // Detector gonio
     // auto gonio = _ohkl_data->diffractometer()->detector()->gonio(); // two axis
 
-    auto omatrix = _ohkl_uc->orientation();
+    auto omatrix = _ohkl_cell->orientation();
 
     /* Building Mtz Batch */
     _mtz_data->batch = CMtz::MtzMallocBatch();
@@ -175,12 +164,12 @@ void MtzExporter::buildBatch()
     // this information has been written twice to the file then
     // in older mtz file version there was a third instance of cell information
     // but this seemed to have been removed
-    _mtz_data->batch->cell[0] = _ohkl_uc->character().a;
-    _mtz_data->batch->cell[1] = _ohkl_uc->character().b;
-    _mtz_data->batch->cell[2] = _ohkl_uc->character().c;
-    _mtz_data->batch->cell[3] = 180.0 / M_PI * _ohkl_uc->character().alpha;
-    _mtz_data->batch->cell[4] = 180.0 / M_PI * _ohkl_uc->character().beta;
-    _mtz_data->batch->cell[5] = 180.0 / M_PI * _ohkl_uc->character().gamma;
+    _mtz_data->batch->cell[0] = _ohkl_cell->character().a;
+    _mtz_data->batch->cell[1] = _ohkl_cell->character().b;
+    _mtz_data->batch->cell[2] = _ohkl_cell->character().c;
+    _mtz_data->batch->cell[3] = 180.0 / M_PI * _ohkl_cell->character().alpha;
+    _mtz_data->batch->cell[4] = 180.0 / M_PI * _ohkl_cell->character().beta;
+    _mtz_data->batch->cell[5] = 180.0 / M_PI * _ohkl_cell->character().gamma;
 
     /* Writing Orientaion Matrix */
     for (int i = 0; i < 9; ++i)
@@ -262,14 +251,14 @@ void MtzExporter::buildSyminfo()
     // Extracting SpaceGrp symbol
     // remove whitespaces
     // this doesnt seemd to be directly processed by phenix
-    std::string symbol = _ohkl_uc->spaceGroup().symbol();
+    std::string symbol = _ohkl_cell->spaceGroup().symbol();
     std::regex r("\\s+");
     symbol = std::regex_replace(symbol, r, "");
 
-    ohkl::SymOpList symops = _ohkl_uc->spaceGroup().groupElements();
+    ohkl::SymOpList symops = _ohkl_cell->spaceGroup().groupElements();
 
     /* Bulding symgrp */
-    _mtz_data->mtzsymm.spcgrp = _ohkl_uc->spaceGroup().id();
+    _mtz_data->mtzsymm.spcgrp = _ohkl_cell->spaceGroup().id();
     strncpy(_mtz_data->mtzsymm.spcgrpname, symbol.c_str(), symbol.size());
     _mtz_data->mtzsymm.nsym = symops.size();
 
@@ -292,22 +281,22 @@ void MtzExporter::buildSyminfo()
     ;
     _mtz_data->mtzsymm.symtyp = symbol.c_str()[0];
     strncpy(_mtz_data->mtzsymm.pgname, "PntGrName\0", 10);
-    _mtz_data->mtzsymm.spg_confidence = _ohkl_uc->spaceGroup().bravaisType();
+    _mtz_data->mtzsymm.spg_confidence = _ohkl_cell->spaceGroup().bravaisType();
 }
 
 void MtzExporter::buildXTAL()
 {
     /* getting cell information */
     float cell[6];
-    cell[0] = _ohkl_uc->character().a;
-    cell[1] = _ohkl_uc->character().b;
-    cell[2] = _ohkl_uc->character().c;
-    cell[3] = 180.0 / M_PI * _ohkl_uc->character().alpha;
-    cell[4] = 180.0 / M_PI * _ohkl_uc->character().beta;
-    cell[5] = 180.0 / M_PI * _ohkl_uc->character().gamma;
+    cell[0] = _ohkl_cell->character().a;
+    cell[1] = _ohkl_cell->character().b;
+    cell[2] = _ohkl_cell->character().c;
+    cell[3] = 180.0 / M_PI * _ohkl_cell->character().alpha;
+    cell[4] = 180.0 / M_PI * _ohkl_cell->character().beta;
+    cell[5] = 180.0 / M_PI * _ohkl_cell->character().gamma;
 
     /* GENERATE XTAL STRUCTURE */
-    _mtz_xtal = MtzAddXtal(_mtz_data, _ohkl_data->name().c_str(), _expt->name().c_str(), cell);
+    _mtz_xtal = MtzAddXtal(_mtz_data, _ohkl_data->name().c_str(), _ohkl_cell->name().c_str(), cell);
 }
 
 void MtzExporter::buildMtzSet()
@@ -331,12 +320,12 @@ void MtzExporter::buildMtzSet()
 CMtz::MTZCOL* MtzExporter::CreateMtzCol(
     std::string name, std::string label, int grp, int set_id, int active, int src)
 {
-    std::string grpname = _use_merged_data ? "MergedPeakData" : "UnmergedPeakData";
+    std::string grpname = _merged ? "MergedPeakData" : "UnmergedPeakData";
 
     CMtz::MTZCOL* ptr = nullptr;
     ptr = MtzAddColumn(_mtz_data, _mtz_xtal->set[set_id], name.c_str(), label.c_str());
     if (ptr != nullptr) {
-        auto nPeaks = _ohkl_merged_data->totalSize();
+        auto nPeaks = _merged_data->totalSize();
         strncpy(ptr->grpname, grpname.c_str(), grpname.size());
         ptr->active = active;
         ptr->source = src;
@@ -356,7 +345,7 @@ void MtzExporter::buildMtzCols()
 
     int grp = 0; // grp idx, counter variable
     ohkl::MergedPeakSet peaks;
-    peaks = _ohkl_merged_data->mergedPeakSet();
+    peaks = _merged_data->mergedPeakSet();
 
     /*
         This part needs to be extended later
@@ -384,14 +373,14 @@ void MtzExporter::buildMtzCols()
     CreateMtzCol("IMean", "J", grp++, 0, 1, 0);
     CreateMtzCol("SIGI", "Q", grp++, 0, 1, 0);
 
-    if (!_use_merged_data) // only if we are processing unmerged data
+    if (!_merged) // only if we are processing unmerged data
         CreateMtzCol("Frame", "R", grp++, 0, 1, 0);
 
     /*
      *   Filling MtzCols with data
      */
     int idx = 0;
-    if (_use_merged_data) { /* MERGED DATA */
+    if (_merged) { /* MERGED DATA */
         for (const ohkl::MergedPeak& peak : peaks) {
             const auto hkl = peak.index();
             ohkl::Intensity I = peak.intensity();
@@ -440,7 +429,6 @@ void MtzExporter::buildMtzCols()
 
 void MtzExporter::buildMtzData()
 {
-    process();
     ohklLog(ohkl::Level::Debug, "Building Mtz data structure'");
     buildMtz();
     buildSyminfo();
@@ -491,14 +479,4 @@ bool MtzExporter::exportToFile(std::string filename)
     return true;
 }
 
-void MtzExporter::process()
-{
-    auto* merger = _expt->peakMerger();
-    merger->reset();
-    ohkl::SpaceGroup group = _expt->getUnitCells().at(0)->spaceGroup();
-    merger->setSpaceGroup(group);
-    merger->addPeakCollection(_expt->getPeakCollection(_peakcollection_name));
-    merger->mergePeaks();
-    _ohkl_merged_data = merger->getMergedData();
-}
 } // ohkl namespace

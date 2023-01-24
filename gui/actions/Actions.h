@@ -33,16 +33,7 @@ class Actions : public QObject {
     QAction* save_experiment;
     QAction* save_experiment_as;
     QAction* save_all_experiment;
-    QAction* export_merged;
-    QAction* export_merged_mtz;
-    QAction* export_merged_shelX;
-    QAction* export_merged_fullProf;
-    QAction* export_merged_phenix;
-    QAction* export_unmerged;
-    QAction* export_unmerged_mtz;
-    QAction* export_unmerged_shelX;
-    QAction* export_unmerged_fullProf;
-    QAction* export_unmerged_phenix;
+    QAction* export_peaks;
     QAction* remove_experiment;
     QAction* quit;
 
@@ -90,6 +81,7 @@ class Actions : public QObject {
     void aboutBox();
     void closePeakWindows();
     void openWebsite();
+    void exportPeaks();
 };
 
 #endif // OHKL_GUI_ACTIONS_ACTIONS_H
