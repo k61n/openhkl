@@ -1,9 +1,9 @@
-//  ***********************************************************************************************
+//  ******************e*****************************************************************************k
 //
 //  OpenHKL: data reduction for single crystal diffraction
 //
-//! @file      gui/dialogs/MtzExportDialog.h
-//! @brief     Defines class MtzExportDialog
+//! @file      gui/dialogs/PeakExportDialog.h
+//! @brief     Defines class PeakExportDialog
 //!
 //! @homepage  ###HOMEPAGE###
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -12,8 +12,15 @@
 //
 //  ***********************************************************************************************
 
-#ifndef _MTZ_EXPORT_DIALOG
-#define _MTZ_EXPORT_DIALOG
+#ifndef OHKL_GUI_DIALOG_PEAKEXPORTDIALOG
+#define OHKL_GUI_DIALOG_PEAKEXPORTDIALOG
+
+#include "core/experiment/Experiment.h"
+#include "core/statistics/PeakExporter.h"
+#include "gui/models/Project.h"
+#include "gui/models/Session.h"
+#include "gui/utility/GridFiller.h"
+#include "tables/crystal/UnitCell.h"
 
 #include <QCheckBox>
 #include <QComboBox>
@@ -33,25 +40,14 @@
 
 #include <string>
 
+class DataComboBox;
+class IntegratedPeakComboBox;
 
-#include "core/experiment/Experiment.h"
-#include "gui/models/Project.h"
-#include "gui/models/Session.h"
-#include "gui/utility/DataComboBox.h"
-#include "gui/utility/GridFiller.h"
-#include "gui/utility/LinkedComboBox.h"
-#include "gui/utility/PeakComboBox.h"
-
-namespace ohkl {
-
-class MtzExportDialog : public QDialog {
+class PeakExportDialog : public QDialog {
 
  public:
-    //! Constructor
-    MtzExportDialog(bool merged_data);
-    //! Destructor
-    ~MtzExportDialog();
-    //! loads parameters from PeaakMerger to gui
+    PeakExportDialog();
+    //! loads parameters from PeakMerger to gui
     void loadMergeParams();
     //! sets changed parameters from gui to PeakMerger
     void setMergeParams();
@@ -67,29 +63,36 @@ class MtzExportDialog : public QDialog {
     bool useMergedData() { return _merged_data; };
 
  private:
+    //! Update parameters on change of data set
+    void onDataChanged();
+    //! Process the merge
+    void processMerge();
+    //! Do a single-batch refine to get a single unit cell for export
+    ohkl::sptrUnitCell singleBatchRefine();
+
+    //! For exporting peak lists
+    ohkl::PeakExporter _exporter;
+
     QDialogButtonBox* _button_box;
-    DataComboBox* _datacombo;
-    QComboBox* _peakcombo;
+    DataComboBox* _data_combo;
+    IntegratedPeakComboBox* _peak_combo_1;
+    IntegratedPeakComboBox* _peak_combo_2;
+    QComboBox* _format_combo;
     QTextEdit* _textbox;
     QRadioButton* _rb_merged;
     QRadioButton* _rb_unmerged;
-    QGroupBox* _rb_group;
 
     std::string _selected_data;
     std::string _selected_pc;
     std::string _comment;
     bool _merged_data;
 
-    QGroupBox* _comment_grp_box;
-    QGroupBox* _merge_param_box;
     QDoubleSpinBox* _drange_min;
     QDoubleSpinBox* _drange_max;
-    QDoubleSpinBox* _frame_min;
-    QDoubleSpinBox* _frame_max;
-    QDoubleSpinBox* _shell_res;
+    QSpinBox* _frame_min;
+    QSpinBox* _frame_max;
+    QDoubleSpinBox* _scale_factor;
     QCheckBox* _friedel;
 };
 
-} // namespace ohkl
-
-#endif
+#endif // OHKL_GUI_DIALOG_PEAKEXPORTDIALOG

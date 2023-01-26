@@ -15,11 +15,9 @@
 #ifndef OHKL_GUI_SUBWINDOWS_INSTRUMENTSTATEWINDOW_H
 #define OHKL_GUI_SUBWINDOWS_INSTRUMENTSTATEWINDOW_H
 
-#include "gui/utility/LinkedComboBox.h"
-
 #include <QDialog>
 
-class LinkedComboBox;
+class DataComboBox;
 class QGridLayout;
 class QSpinBox;
 class QLineEdit;
@@ -43,7 +41,7 @@ class InstrumentStateWindow : public QDialog {
     void onFrameChanged(int frame);
 
  private:
-    LinkedComboBox* _data_combo;
+    DataComboBox* _data_combo;
     QSpinBox* _frame_spin;
     QWidget* _instrument_state_widget;
 

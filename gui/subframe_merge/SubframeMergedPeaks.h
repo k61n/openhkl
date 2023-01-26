@@ -48,10 +48,7 @@ class SubframeMergedPeaks : public QWidget {
     //! Get the merge parameters
     void grabMergeParameters();
     //! Save unmerged/merged Peaks
-    void savePeaks(std::string format, bool merged);
-    //! Exports project into Mtz file
-    bool exportMtz(bool merged_data);
-
+    void savePeaks(bool merged);
 
  private:
     //! Set the merge parameters

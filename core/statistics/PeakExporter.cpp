@@ -18,6 +18,7 @@
 #include "core/data/DataSet.h"
 #include "core/data/DataTypes.h"
 #include "core/experiment/DataQuality.h"
+#include "core/experiment/MtzExporter.h"
 #include "core/raw/DataKeys.h"
 #include "core/statistics/CC.h"
 #include "core/statistics/RFactor.h"
@@ -36,56 +37,14 @@
 
 namespace ohkl {
 
-bool PeakExporter::saveStatistics(
-    std::string filename, const ohkl::DataResolution* perShell, const ohkl::DataResolution* overall)
+PeakExporter::PeakExporter()
 {
-    std::fstream file(filename, std::ios::out);
-    if (!file.is_open())
-        return false;
-
-    file << std::fixed << std::setw(10) << "dmax" << std::fixed << std::setw(10) << "dmin"
-         << std::fixed << std::setw(10) << "nobs" << std::fixed << std::setw(10) << "nmerge"
-         << std::fixed << std::setw(11) << "Redundancy" << std::fixed << std::setw(10) << "R meas."
-         << std::fixed << std::setw(12) << "R exp. meas." << std::fixed << std::setw(11)
-         << "R merge" << std::fixed << std::setw(13) << "R exp. merge" << std::fixed
-         << std::setw(10) << "Rpim" << std::fixed << std::setw(11) << "Rpim exp." << std::fixed
-         << std::setw(10) << "CC half" << std::fixed << std::setw(10) << "CC star" << std::fixed
-         << std::setw(10) << "compl." << std::endl;
-
-    for (const auto& shell : perShell->shells) {
-        file << std::fixed << std::setw(10) << std::setprecision(2) << shell.dmin << std::fixed
-             << std::setw(10) << std::setprecision(2) << shell.dmax << std::fixed << std::setw(10)
-             << shell.nobserved << std::fixed << std::setw(10) << shell.nunique << std::fixed
-             << std::setw(11) << std::setprecision(3) << shell.redundancy << std::fixed
-             << std::setw(10) << std::setprecision(3) << shell.Rmeas << std::fixed << std::setw(12)
-             << std::setprecision(3) << shell.expectedRmeas << std::fixed << std::setw(11)
-             << std::setprecision(3) << shell.Rmerge << std::fixed << std::setw(13)
-             << std::setprecision(3) << shell.expectedRmerge << std::fixed << std::setw(10)
-             << std::setprecision(3) << shell.Rpim << std::fixed << std::setw(11)
-             << std::setprecision(3) << shell.expectedRpim << std::fixed << std::setw(10)
-             << std::setprecision(3) << shell.CChalf << std::fixed << std::setw(10)
-             << std::setprecision(3) << shell.CCstar << std::fixed << std::setw(10)
-             << std::setprecision(3) << shell.Completeness << std::endl;
-    }
-
-    for (const auto& shell : overall->shells) {
-        file << std::fixed << std::setw(10) << std::setprecision(2) << shell.dmin << std::fixed
-             << std::setw(10) << std::setprecision(2) << shell.dmax << std::fixed << std::setw(10)
-             << shell.nobserved << std::fixed << std::setw(10) << shell.nunique << std::fixed
-             << std::setw(11) << std::setprecision(3) << shell.redundancy << std::fixed
-             << std::setw(10) << std::setprecision(3) << shell.Rmeas << std::fixed << std::setw(12)
-             << std::setprecision(3) << shell.expectedRmeas << std::fixed << std::setw(11)
-             << std::setprecision(3) << shell.Rmerge << std::fixed << std::setw(13)
-             << std::setprecision(3) << shell.expectedRmerge << std::fixed << std::setw(10)
-             << std::setprecision(3) << shell.Rpim << std::fixed << std::setw(11)
-             << std::setprecision(3) << shell.expectedRpim << std::fixed << std::setw(10)
-             << std::setprecision(3) << shell.CChalf << std::fixed << std::setw(10)
-             << std::setprecision(3) << shell.CCstar << std::fixed << std::setw(10)
-             << std::setprecision(3) << shell.Completeness << std::endl;
-    }
-
-    file.close();
-    return true;
+    _export_fmt_strings = {
+        {ExportFormat::Mtz, "CCP4 (*.mtz)"},
+        {ExportFormat::Phenix, "Phenix (*.sca)"},
+        {ExportFormat::ShelX, "ShelX (*.hkl)"},
+        {ExportFormat::FullProf, "FullProf (*.hkl)"},
+    };
 }
 
 bool PeakExporter::saveToShelXUnmerged(const std::string& filename, ohkl::MergedData* mergedData)
@@ -310,6 +269,54 @@ bool PeakExporter::saveToSCAMerged(
     }
     file.close();
     return true;
+}
+
+bool PeakExporter::saveToShellX(const std::string filename, MergedData* merged_data, bool merged)
+{
+    if (merged)
+        return saveToShelXMerged(filename, merged_data);
+    else
+        return saveToShelXUnmerged(filename, merged_data);
+}
+
+bool PeakExporter::saveToFullProf(const std::string filename, MergedData* merged_data, bool merged)
+{
+    if (merged)
+        return saveToFullProfMerged(filename, merged_data);
+    else
+        return saveToFullProfUnmerged(filename, merged_data);
+}
+
+bool PeakExporter::saveToSCA(
+    const std::string filename, MergedData* merged_data, sptrUnitCell cell, bool merged,
+    double scale)
+{
+    if (merged)
+        return saveToSCAMerged(filename, merged_data, cell, scale);
+    else
+        return saveToSCAUnmerged(filename, merged_data, cell, scale);
+}
+
+bool PeakExporter::exportPeaks(
+    ExportFormat fmt, const std::string& filename, MergedData* merged_data, sptrDataSet data,
+    sptrUnitCell cell, bool merged, double scale, std::string comment)
+{
+    switch (fmt) {
+    case ExportFormat::Mtz: {
+        MtzExporter exporter(merged_data, data, cell, merged, comment);
+        return exporter.exportToFile(filename);
+    }
+    case ExportFormat::Phenix: {
+        return saveToSCA(filename, merged_data, cell, merged, scale);
+    }
+    case ExportFormat::ShelX: {
+        return saveToShellX(filename, merged_data, merged);
+    }
+    case ExportFormat::FullProf: {
+        return saveToFullProf(filename, merged_data, merged);
+    }
+    default: return false;
+    }
 }
 
 } // namespace ohkl

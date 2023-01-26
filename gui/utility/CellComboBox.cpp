@@ -24,6 +24,11 @@ CellComboBox::CellComboBox(QWidget* parent) : QComboBox(parent)
     _all_combos.push_back(this);
 }
 
+CellComboBox::~CellComboBox()
+{
+    _all_combos.erase(std::find(_all_combos.begin(), _all_combos.end(), this));
+}
+
 void CellComboBox::addCell(const ohkl::sptrUnitCell& cell)
 {
     QSignalBlocker blocker(this);

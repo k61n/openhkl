@@ -648,14 +648,4 @@ std::vector<ShapeModel*> Experiment::getShapeModels()
     return _shape_handler->getShapeModels();
 }
 
-bool Experiment::exportMtz(
-    const std::string filename, const std::string dataset_name, const std::string peak_collection,
-    bool use_merged_data, const std::string comment, ohkl::MergedData* merged_data,
-    sptrUnitCell cell)
-{
-    MtzExporter exporter(
-        this, dataset_name, peak_collection, use_merged_data, comment, merged_data, cell);
-    exporter.exportToFile(filename);
-    return true;
-}
 } // namespace ohkl

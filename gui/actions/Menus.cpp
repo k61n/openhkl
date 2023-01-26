@@ -47,19 +47,7 @@ Menus::Menus(QMenuBar* menu_bar) : _menu_bar{menu_bar}
     _expt_menu->addAction(actions->save_experiment_as);
     _expt_menu->addAction(actions->save_all_experiment);
     _expt_menu->addSeparator();
-
-    _exp_sub_uexport = _expt_menu->addMenu("Export unmerged");
-    _exp_sub_uexport->addAction(actions->export_unmerged_mtz);
-    _exp_sub_uexport->addAction(actions->export_unmerged_phenix);
-    _exp_sub_uexport->addAction(actions->export_unmerged_fullProf);
-    _exp_sub_uexport->addAction(actions->export_unmerged_shelX);
-
-    _exp_sub_mexport = _expt_menu->addMenu("Export merged");
-    _exp_sub_mexport->addAction(actions->export_merged_mtz);
-    _exp_sub_mexport->addAction(actions->export_merged_phenix);
-    _exp_sub_mexport->addAction(actions->export_merged_fullProf);
-    _exp_sub_mexport->addAction(actions->export_merged_shelX);
-
+    _expt_menu->addAction(actions->export_peaks);
     _expt_menu->addSeparator();
     _expt_menu->addAction(actions->quit);
 
@@ -145,54 +133,33 @@ void Menus::toggleEntries()
         actions->save_all_experiment->setDisabled(true);
         actions->save_experiment->setDisabled(true);
         actions->save_experiment_as->setDisabled(true);
-
-        actions->export_merged->setDisabled(true);
-        actions->export_unmerged->setDisabled(true);
-
+        actions->export_peaks->setDisabled(true);
         actions->remove_experiment->setDisabled(true);
 
         _view_menu->setDisabled(true);
         _data_menu->setDisabled(true);
         _peaks_menu->setDisabled(true);
         _cells_menu->setDisabled(true);
-        _exp_sub_uexport->setDisabled(true);
-        _exp_sub_mexport->setDisabled(true);
         return;
     }
 
-    auto prj = gSession->experimentAt(gSession->currentProjectNum());
-    auto expt = prj->experiment();
-
-    bool no_projects = (gSession->currentProjectNum() < 0);
-    bool no_datasets = expt->numData() == 0;
-    bool no_pcollections = (expt->numPeakCollections() == 0);
-    bool no_unitcell = (expt->numUnitCells() == 0);
+    bool no_projects = !gSession->hasProject();
+    bool no_datasets = !gSession->currentProject()->hasDataSet();
+    bool no_pcollections = !gSession->currentProject()->hasPeakCollection();
+    bool no_unitcell = !gSession->currentProject()->hasUnitCell();
 
     actions->remove_data->setDisabled(no_datasets);
 
     actions->save_all_experiment->setDisabled(true); // not implemented yet
     actions->save_experiment->setDisabled(no_projects);
     actions->save_experiment_as->setDisabled(no_projects);
-
-    actions->export_merged->setDisabled(no_datasets);
-    actions->export_merged_fullProf->setDisabled(no_datasets);
-    actions->export_merged_mtz->setDisabled(no_datasets);
-    actions->export_merged_phenix->setDisabled(no_datasets);
-    actions->export_merged_shelX->setDisabled(no_datasets);
-    actions->export_unmerged->setDisabled(no_datasets);
-    actions->export_unmerged_fullProf->setDisabled(no_datasets);
-    actions->export_unmerged_mtz->setDisabled(no_datasets);
-    actions->export_unmerged_phenix->setDisabled(no_datasets);
-    actions->export_unmerged_shelX->setDisabled(no_datasets);
-
+    actions->export_peaks->setDisabled(no_pcollections);
     actions->remove_experiment->setDisabled(no_projects);
 
     actions->show_input_files->setDisabled(no_datasets);
     actions->show_peaks->setDisabled(no_pcollections);
     _view_menu->setDisabled(no_projects);
     _data_menu->setDisabled(no_projects);
-    _exp_sub_uexport->setDisabled(no_datasets);
-    _exp_sub_mexport->setDisabled(no_datasets);
     _peaks_menu->setDisabled(no_pcollections);
     _cells_menu->setDisabled(no_unitcell);
 }

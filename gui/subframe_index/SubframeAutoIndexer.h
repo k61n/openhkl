@@ -37,6 +37,7 @@ class SpoilerCheck;
 class SafeSpinBox;
 class SafeDoubleSpinBox;
 class QVBoxLayout;
+class QSlider;
 class QSplitter;
 class QTabWidget;
 class QCheckBox;

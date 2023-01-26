@@ -32,6 +32,7 @@ class DataComboBox : public QComboBox {
 
  public:
     DataComboBox(QWidget* parent = nullptr);
+    ~DataComboBox();
 
     //! Add a cell via its pointer
     void addDataSet(const ohkl::sptrDataSet& data);

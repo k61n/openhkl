@@ -25,7 +25,6 @@
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
 #include "gui/utility/GridFiller.h"
-#include "gui/utility/LinkedComboBox.h"
 #include "gui/utility/PeakComboBox.h"
 #include "gui/utility/PropertyScrollArea.h"
 #include "gui/utility/SafeSpinBox.h"

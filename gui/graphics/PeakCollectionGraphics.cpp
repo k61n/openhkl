@@ -26,6 +26,7 @@
 #include "gui/utility/ColorButton.h"
 
 #include <QCheckBox>
+#include <QComboBox>
 #include <QDoubleSpinBox>
 #include <QVector>
 

@@ -29,10 +29,11 @@ namespace ohkl {
 struct MergeParameters {
     double d_min = 1.5; //!< Minimum d (Bragg's law)
     double d_max = 50.0; //!< Maximum d (Bragg's law)
-    int frame_min = -1;
-    int frame_max = -1;
+    int frame_min = -1; //!< First image to include
+    int frame_max = -1; //!< Last image to include
     size_t n_shells = 10; //!< Number of resolution shells
     bool friedel = true; //!< Whether to include the Friedel relation
+    double scale = 1.0; //!< Scale factor for intensities (Phenix only)
 
     void log(const Level& level) const;
 };
@@ -76,6 +77,9 @@ class PeakMerger {
 
     //! Return a string containing a summary of statistics
     std::string summary();
+
+    //! Saves the shell information to file.
+    bool saveStatistics(std::string filename);
 
  private:
     std::unique_ptr<MergedData> _merged_data;

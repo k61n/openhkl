@@ -20,6 +20,7 @@
 #include "gui/utility/ColorButton.h"
 
 #include <QCheckBox>
+#include <QComboBox>
 #include <QDoubleSpinBox>
 #include <QFrame>
 #include <QLabel>
@@ -83,12 +84,12 @@ QDoubleSpinBox* PeakViewWidget::addDoubleSpinBox(int row, double value)
     return spinbox;
 }
 
-LinkedComboBox* PeakViewWidget::addCombo(int row, ComboType combo_type)
+QComboBox* PeakViewWidget::addCombo(int row)
 {
-    auto* combo = new LinkedComboBox(combo_type, gGui->sentinel);
+    auto* combo = new QComboBox;
     addWidget(combo, row, 1, 1, 1);
     connect(
-        combo, static_cast<void (LinkedComboBox::*)(int)>(&LinkedComboBox::currentIndexChanged),
+        combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
         this, &PeakViewWidget::settingsChanged);
 
     return combo;
@@ -130,7 +131,7 @@ void PeakViewWidget::addIntegrationRegion(Set& set, const QColor& peak, const QC
     set.drawIntegrationRegion =
         addCheckBox(row++, 1, "Integration region", Qt::CheckState::Unchecked);
     set.previewIntRegion = addCheckBox(row++, 1, "Preview new parameters", Qt::CheckState::Checked);
-    set.regionType = addCombo(row++, ComboType::RegionType);
+    set.regionType = addCombo(row++);
 
     for (int i = 0; i < static_cast<int>(ohkl::RegionType::Count); ++i) {
         std::string description = ohkl::regionTypeDescription.at(static_cast<ohkl::RegionType>(i));

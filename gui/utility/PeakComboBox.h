@@ -21,7 +21,7 @@ namespace ohkl {
 class PeakCollection;
 }
 
-enum class ComboType;
+enum class ComboType { PeakCollection, FoundPeaks, PredictedPeaks, IntegratedPeaks };
 
 using PeakList = std::vector<ohkl::PeakCollection*>;
 
@@ -31,6 +31,7 @@ class PeakComboBox : public QComboBox {
 
  public:
     PeakComboBox(QWidget* parent = nullptr);
+    ~PeakComboBox();
 
     //! Add a PeakCollection via its pointer
     void addPeakCollection(ohkl::PeakCollection* peaks);

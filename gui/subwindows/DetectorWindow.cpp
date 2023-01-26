@@ -25,7 +25,6 @@
 #include "gui/utility/CellComboBox.h"
 #include "gui/utility/ColorButton.h"
 #include "gui/utility/GridFiller.h"
-#include "gui/utility/LinkedComboBox.h"
 #include "gui/utility/PeakComboBox.h"
 #include "gui/utility/PropertyScrollArea.h"
 #include "gui/utility/SafeSpinBox.h"

@@ -27,6 +27,11 @@ DataComboBox::DataComboBox(QWidget* parent) : QComboBox(parent), _current_index(
         &DataComboBox::onDataChanged);
 }
 
+DataComboBox::~DataComboBox()
+{
+    _all_combos.erase(std::find(_all_combos.begin(), _all_combos.end(), this));
+}
+
 void DataComboBox::addDataSet(const ohkl::sptrDataSet& data)
 {
     QSignalBlocker blocker(this);

@@ -30,6 +30,7 @@ class CellComboBox : public QComboBox {
 
  public:
     CellComboBox(QWidget* parent = nullptr);
+    ~CellComboBox();
 
     //! Add a cell via its pointer
     void addCell(const ohkl::sptrUnitCell& cell);
