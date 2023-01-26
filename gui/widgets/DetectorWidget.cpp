@@ -24,7 +24,6 @@
 #include "gui/models/Session.h" // gSession
 #include "gui/subwindows/InstrumentStateWindow.h"
 #include "gui/utility/DataComboBox.h"
-#include "gui/utility/LinkedComboBox.h"
 #include "gui/widgets/PeakViewWidget.h"
 
 #include <QButtonGroup>

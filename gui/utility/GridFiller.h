@@ -21,7 +21,6 @@
 class CellComboBox;
 class ColorButton;
 class DataComboBox;
-class LinkedComboBox;
 class PeakComboBox;
 class ShapeComboBox;
 class Spoiler;
@@ -59,12 +58,6 @@ class GridFiller {
     //! Add a row with a lable and a line edit widget
     QLineEdit* addLineEdit(
         const QString& labelText = QString(), const QString& defaultText = QString(),
-        const QString& tooltip = QString());
-
-    //! Add a row with a label and a linked combo box. If labelText is empty, then no label is
-    //! created, and the tooltip is set on the created combo box directly.
-    LinkedComboBox* addLinkedCombo(
-        ComboType comboType, const QString& labelText = QString(),
         const QString& tooltip = QString());
 
     //! Add a row with a check box. The check box is placed in the given column, with span to the

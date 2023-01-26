@@ -15,7 +15,6 @@
 #include "gui/utility/PeakComboBox.h"
 
 #include "core/shape/PeakCollection.h"
-#include "gui/utility/LinkedComboBox.h"
 
 #include <QSignalBlocker>
 

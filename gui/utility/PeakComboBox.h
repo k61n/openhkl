@@ -21,7 +21,7 @@ namespace ohkl {
 class PeakCollection;
 }
 
-enum class ComboType;
+enum class ComboType { PeakCollection, FoundPeaks, PredictedPeaks, IntegratedPeaks };
 
 using PeakList = std::vector<ohkl::PeakCollection*>;
 

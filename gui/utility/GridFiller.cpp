@@ -19,7 +19,7 @@
 #include "gui/utility/ColorButton.h"
 #include "gui/utility/DataComboBox.h"
 #include "gui/utility/FoundPeakComboBox.h"
-#include "gui/utility/LinkedComboBox.h"
+#include "gui/utility/IntegratedPeakComboBox.h"
 #include "gui/utility/PeakComboBox.h"
 #include "gui/utility/PredictedPeakComboBox.h"
 #include "gui/utility/SafeSpinBox.h"
@@ -121,6 +121,8 @@ PeakComboBox* GridFiller::addPeakCombo(
         comboBox = new FoundPeakComboBox();
     else if (type == ComboType::PredictedPeaks)
         comboBox = new PredictedPeakComboBox();
+    else if (type == ComboType::IntegratedPeaks)
+        comboBox = new IntegratedPeakComboBox();
     else // type == ComboType::PeakCollection
         comboBox = new PeakComboBox();
 
@@ -142,25 +144,6 @@ ShapeComboBox* GridFiller::addShapeCombo(const QString& labelText, const QString
         addLabel(labelText, tooltip);
 
     ShapeComboBox* comboBox = new ShapeComboBox();
-    if (!createLabel)
-        comboBox->setToolTip(tooltip);
-    comboBox->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
-    comboBox->setSizeAdjustPolicy(QComboBox::AdjustToContents);
-    _mainLayout->addWidget(comboBox, _nextRow, createLabel ? 1 : 0, 1, -1);
-
-    _nextRow++;
-
-    return comboBox;
-}
-
-LinkedComboBox* GridFiller::addLinkedCombo(
-    ComboType comboType, const QString& labelText, const QString& tooltip)
-{
-    const bool createLabel = !labelText.isEmpty();
-    if (createLabel)
-        addLabel(labelText, tooltip);
-
-    LinkedComboBox* comboBox = new LinkedComboBox(comboType, gGui->sentinel);
     if (!createLabel)
         comboBox->setToolTip(tooltip);
     comboBox->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);

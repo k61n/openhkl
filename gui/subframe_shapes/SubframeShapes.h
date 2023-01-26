@@ -41,7 +41,6 @@ class PeakComboBox;
 class FoundPeakComboBox;
 class DataComboBox;
 class DetectorWidget;
-class LinkedComboBox;
 class PeakItemGraphic;
 class PeakTableView;
 class PeakViewWidget;

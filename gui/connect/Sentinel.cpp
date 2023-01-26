@@ -14,24 +14,7 @@
 
 #include "gui/connect/Sentinel.h"
 
-#include "gui/utility/LinkedComboBox.h"
 
 #include "gui/MainWin.h"
 
 Sentinel::Sentinel() { }
-
-void Sentinel::onLinkedComboChanged(
-    const ComboType combo_type, const int id, const QStringList& list)
-{
-    emit linkedComboChanged(combo_type, id, list);
-}
-
-void Sentinel::addLinkedComboItem(const ComboType combo_type, const QString& item)
-{
-    emit linkedComboItemAdded(combo_type, item);
-}
-
-void Sentinel::setLinkedComboItems(const ComboType combo_type, const QStringList& list)
-{
-    emit setLinkedComboList(combo_type, list);
-}

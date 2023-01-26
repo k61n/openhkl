@@ -39,7 +39,6 @@
 #include "gui/utility/DataComboBox.h"
 #include "gui/utility/FoundPeakComboBox.h"
 #include "gui/utility/IntegratedPeakComboBox.h"
-#include "gui/utility/LinkedComboBox.h"
 #include "gui/utility/PeakComboBox.h"
 #include "gui/utility/PredictedPeakComboBox.h"
 #include "gui/utility/ShapeComboBox.h"
@@ -287,8 +286,6 @@ void Session::loadData(ohkl::DataFormat format)
     // select the first dataset
     currentProject()->selectData(currentProject()->getIndex(QString::fromStdString(dataset1_name)));
     onDataChanged();
-    auto data_list = currentProject()->getDataNames();
-    gGui->sentinel->setLinkedComboList(ComboType::DataSet, data_list);
 }
 
 void Session::removeData()
@@ -340,8 +337,6 @@ bool Session::loadRawData()
         exp->addData(dataset);
 
         onDataChanged();
-        gGui->sentinel->setLinkedComboList(ComboType::DataSet, currentProject()->getDataNames());
-
     } catch (std::exception& e) {
         QMessageBox::critical(nullptr, "Error", QString(e.what()));
     } catch (...) {

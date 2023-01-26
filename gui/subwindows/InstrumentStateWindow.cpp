@@ -20,7 +20,7 @@
 #include "gui/graphics/DetectorScene.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
-#include "gui/utility/LinkedComboBox.h"
+#include "gui/utility/DataComboBox.h"
 
 #include <QGridLayout>
 #include <QLineEdit>
@@ -38,7 +38,7 @@ InstrumentStateWindow::InstrumentStateWindow(QWidget* parent) : QDialog(parent)
     auto* main_layout = new QVBoxLayout(this);
     auto* top_layout = new QHBoxLayout(top_widget);
 
-    _data_combo = new LinkedComboBox(ComboType::DataSet, gGui->sentinel);
+    _data_combo = new DataComboBox(this);
     _frame_spin = new QSpinBox();
     _instrument_state_widget = new QWidget(this);
 
@@ -130,21 +130,14 @@ void InstrumentStateWindow::setStateGridsUp()
 
 void InstrumentStateWindow::updateData()
 {
-    if (gSession->numExperiments() == 0)
+    if (!gSession->hasProject())
         return;
 
-    const QSignalBlocker blocker(this);
-    QString current_data = _data_combo->currentText();
-    _data_combo->clear();
+    if (!gSession->currentProject()->hasDataSet())
+        return;
 
-    const QStringList& datanames{gSession->currentProject()->getDataNames()};
-    if (!datanames.empty()) {
-        _data_combo->addItems(datanames);
-        _data_combo->setCurrentText(current_data);
-        const auto* expt = gSession->currentProject()->experiment();
-        const auto data = expt->getData(_data_combo->currentText().toStdString());
-        _frame_spin->setMaximum(data->nFrames() - 1);
-    }
+    _data_combo->refresh();
+    _frame_spin->setMaximum(_data_combo->currentData()->nFrames());
 }
 
 void InstrumentStateWindow::updateState()
@@ -152,12 +145,10 @@ void InstrumentStateWindow::updateState()
     if (!gSession->hasProject())
         return;
 
-    const auto* expt = gSession->currentProject()->experiment();
-
-    if (!expt->hasData(_data_combo->currentText().toStdString()))
+    if (!gSession->currentProject()->hasDataSet())
         return;
 
-    const auto data = expt->getData(_data_combo->currentText().toStdString());
+    const auto data = _data_combo->currentData();
     const auto state = data->instrumentStates()[_frame_spin->value()];
     for (std::size_t i = 0; i < 3; ++i) {
         _sample_pos_elements[i]->setText(QString::number(state.samplePosition[i], 'f', 4));
