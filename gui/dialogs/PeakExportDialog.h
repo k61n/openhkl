@@ -47,7 +47,6 @@ class IntegratedPeakComboBox;
 class PeakExportDialog : public QDialog {
 
  public:
-    //! Constructor
     PeakExportDialog();
     //! loads parameters from PeakMerger to gui
     void loadMergeParams();
@@ -93,7 +92,6 @@ class PeakExportDialog : public QDialog {
     QDoubleSpinBox* _drange_max;
     QSpinBox* _frame_min;
     QSpinBox* _frame_max;
-    QSpinBox* _n_shells;
     QDoubleSpinBox* _scale_factor;
     QCheckBox* _friedel;
 };

@@ -28,6 +28,11 @@ PeakComboBox::PeakComboBox(QWidget* parent) : QComboBox(parent)
     _all_combos.push_back(this);
 }
 
+PeakComboBox::~PeakComboBox()
+{
+    _all_combos.erase(std::find(_all_combos.begin(), _all_combos.end(), this));
+}
+
 void PeakComboBox::addPeakCollection(ohkl::PeakCollection* peaks)
 {
     QSignalBlocker blocker(this);

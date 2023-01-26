@@ -27,14 +27,15 @@
 #include <string>
 
 PeakExportDialog::PeakExportDialog()
-    : _exporter()
+    : QDialog()
+    , _exporter()
 {
     setModal(true);
     setWindowTitle("Export to .mtz file");
 
-    _data_combo = new DataComboBox;
-    _peak_combo_1 = new IntegratedPeakComboBox;
-    _peak_combo_2 = new IntegratedPeakComboBox;
+    _data_combo = new DataComboBox(this);
+    _peak_combo_1 = new IntegratedPeakComboBox(this);
+    _peak_combo_2 = new IntegratedPeakComboBox(this);
     _format_combo = new QComboBox;
     _peak_combo_2->setEmptyFirst();
 
@@ -84,26 +85,23 @@ PeakExportDialog::PeakExportDialog()
     _drange_max = new QDoubleSpinBox();
     _frame_min = new QSpinBox();
     _frame_max = new QSpinBox();
-    _n_shells = new QSpinBox();
     _scale_factor = new QDoubleSpinBox();
     _friedel = new QCheckBox("Friedel");
 
     QGridLayout* params_grid = new QGridLayout;
+    int row = 0;
     label = new QLabel("Resolution (d) range:");
-    params_grid->addWidget(label, 0, 0, 1, 1);
-    params_grid->addWidget(_drange_min, 0, 1, 1, 1);
-    params_grid->addWidget(_drange_max, 0, 2, 1, 1);
+    params_grid->addWidget(label, row, 0, 1, 1);
+    params_grid->addWidget(_drange_min, row, 1, 1, 1);
+    params_grid->addWidget(_drange_max, row++, 2, 1, 1);
     label = new QLabel("Image range:");
-    params_grid->addWidget(label, 1, 0, 1, 1);
-    params_grid->addWidget(_frame_min, 1, 1, 1, 1);
-    params_grid->addWidget(_frame_max, 1, 2, 1, 1);
-    label = new QLabel("Number of shells:");
-    params_grid->addWidget(label, 2, 0, 1, 1);
-    params_grid->addWidget(_n_shells, 2, 1, 1, 1);
+    params_grid->addWidget(label, row, 0, 1, 1);
+    params_grid->addWidget(_frame_min, row, 1, 1, 1);
+    params_grid->addWidget(_frame_max, row++, 2, 1, 1);
     label = new QLabel("Scale factor:");
-    params_grid->addWidget(label, 3, 0, 1, 1);
-    params_grid->addWidget(_scale_factor, 3, 1, 1, 1);
-    params_grid->addWidget(_friedel, 4, 1, 1, 1);
+    params_grid->addWidget(label, row, 0, 1, 1);
+    params_grid->addWidget(_scale_factor, row++, 1, 1, 1);
+    params_grid->addWidget(_friedel, row++, 1, 1, 1);
     merge_param_group->setLayout(params_grid);
 
     // set layout for 2 element rows
@@ -159,8 +157,8 @@ void PeakExportDialog::loadMergeParams()
     _drange_max->setValue(params->d_max);
     _frame_min->setValue(0);
     _frame_max->setValue(_data_combo->currentData()->nFrames());
-    _n_shells->setValue(params->n_shells);
     _friedel->setChecked(params->friedel);
+    _scale_factor->setValue(params->scale);
 }
 
 void PeakExportDialog::setMergeParams()
@@ -171,8 +169,8 @@ void PeakExportDialog::setMergeParams()
     params->d_max = _drange_max->value();
     params->frame_min = _frame_min->value();
     params->frame_max = _frame_max->value();
-    params->n_shells = _n_shells->value();
     params->friedel = _friedel->isChecked();
+    params->scale = _scale_factor->value();
 }
 
 void PeakExportDialog::refresh()
@@ -208,7 +206,7 @@ void PeakExportDialog::processMerge()
     // Get the file name and save the file
     QSettings settings = gGui->qSettings();
     settings.beginGroup("RecentDirectories");
-    QString loadDirectory = settings.value("mtz", QDir::homePath()).toString() + "/export.mtz";
+    QString loadDirectory = settings.value("experiment", QDir::homePath()).toString();
     std::string filter =
         _exporter.exportFormatStrings()->at(
             static_cast<ohkl::ExportFormat>(_format_combo->currentIndex()));

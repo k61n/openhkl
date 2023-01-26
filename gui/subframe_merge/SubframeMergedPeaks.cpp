@@ -109,6 +109,8 @@ void SubframeMergedPeaks::grabMergeParameters()
     _frame_max->setValue(params->frame_max + 1);
     _d_shells->setValue(params->n_shells);
     _friedel->setChecked(params->friedel);
+    _intensity_rescale_merged->setValue(params->scale);
+    _intensity_rescale_unmerged->setValue(params->scale);
 }
 
 void SubframeMergedPeaks::setMergeParameters()
@@ -124,6 +126,7 @@ void SubframeMergedPeaks::setMergeParameters()
     params->frame_max = _frame_max->value() - 1;
     params->n_shells = _d_shells->value();
     params->friedel = _friedel->isChecked();
+    params->scale = _intensity_rescale_merged->value();
 }
 
 void SubframeMergedPeaks::setSizePolicies()

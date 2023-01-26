@@ -31,6 +31,7 @@ class PeakComboBox : public QComboBox {
 
  public:
     PeakComboBox(QWidget* parent = nullptr);
+    ~PeakComboBox();
 
     //! Add a PeakCollection via its pointer
     void addPeakCollection(ohkl::PeakCollection* peaks);

@@ -22,6 +22,7 @@
 #include "gui/dialogs/ComboDialog.h"
 #include "gui/dialogs/Messages.h"
 #include "gui/dialogs/NewCellDialog.h"
+#include "gui/dialogs/PeakExportDialog.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h" //for gSession
 #include "gui/subframe_home/SubframeHome.h"
@@ -67,7 +68,7 @@ void Actions::setupExperiment()
     connect(save_experiment, &QAction::triggered, []() { gGui->home->saveCurrent(); });
     connect(save_experiment_as, &QAction::triggered, []() { gGui->home->saveCurrent(true); });
     connect(save_all_experiment, &QAction::triggered, []() { gGui->home->saveAll(); });
-    connect(export_peaks, &QAction::triggered, []() {} );
+    connect(export_peaks, &QAction::triggered, this, &Actions::exportPeaks);
     connect(remove_experiment, &QAction::triggered, this, &Actions::removeExperiment);
     connect(quit, &QAction::triggered, []() { gGui->close(); });
 }
@@ -318,5 +319,6 @@ void Actions::openWebsite()
 
 void Actions::exportPeaks()
 {
-    
+    PeakExportDialog export_dialog;
+    export_dialog.exec();
 }
