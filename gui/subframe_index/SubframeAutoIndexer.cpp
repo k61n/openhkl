@@ -311,7 +311,7 @@ void SubframeAutoIndexer::setPeakTableUp()
     _peak_table = new PeakTableView(this);
     _peak_collection_model.setRoot(&_peak_collection_item);
     _peak_table->setModel(&_peak_collection_model);
-    _peak_table->setColumnHidden(PeakColumn::Selected, true);
+    _peak_table->setColumnHidden(PeakColumn::Enabled, true);
     _peak_table->setColumnHidden(PeakColumn::Count, true);
     _peak_table->setColumnHidden(PeakColumn::BkgGradient, true);
     _peak_table->setColumnHidden(PeakColumn::BkgGradientSigma, true);

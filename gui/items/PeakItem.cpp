@@ -86,9 +86,9 @@ double PeakItem::bkg_gradient_sigma() const
     }
 }
 
-bool PeakItem::selected() const
+bool PeakItem::enabled() const
 {
-    return _peak->selected();
+    return _peak->enabled();
 }
 
 QVariant PeakItem::peakData(const QModelIndex& index, int role, PeakDisplayModes mode) const
@@ -155,15 +155,12 @@ QVariant PeakItem::peakData(const QModelIndex& index, int role, PeakDisplayModes
                 case PeakColumn::Filtered: {
                     return QString::number(_peak->caughtByFilter());
                 }
-                    // case PeakColumn::Selected: {
-                    //     return _peak->selected();
-                    // }
             }
             break;
 
         case Qt::CheckStateRole: {
-            if (index.column() == PeakColumn::Selected) {
-                if (_peak->selected())
+            if (index.column() == PeakColumn::Enabled) {
+                if (_peak->enabled())
                     return Qt::Checked;
                 else
                     return Qt::Unchecked;

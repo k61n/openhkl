@@ -68,7 +68,7 @@ bool PeakCollectionModel::indexIsValid(const QModelIndex& index) const
 
 QVariant PeakCollectionModel::data(const QModelIndex& index, int role = Qt::DisplayRole) const
 {
-    if (role == Qt::CheckStateRole && index.column() == PeakColumn::Selected)
+    if (role == Qt::CheckStateRole && index.column() == PeakColumn::Enabled)
         return _root_item->data(index, role);
     if (!indexIsValid(index))
         return QVariant();
@@ -79,7 +79,7 @@ Qt::ItemFlags PeakCollectionModel::flags(const QModelIndex& index) const
 {
     if (!indexIsValid(index))
         return Qt::ItemIsEnabled;
-    if (index.column() == PeakColumn::Selected)
+    if (index.column() == PeakColumn::Enabled)
         return (QAbstractTableModel::flags(index) | Qt::ItemIsEnabled | Qt::ItemIsUserCheckable);
     return QAbstractTableModel::flags(index);
 }
@@ -139,7 +139,7 @@ QVariant PeakCollectionModel::headerData(int section, Qt::Orientation orientatio
             case PeakColumn::Filtered: {
                 return QString("Caught by filter");
             }
-            case PeakColumn::Selected: {
+            case PeakColumn::Enabled: {
                 return QString("Valid");
             }
             default: return QVariant();
@@ -167,14 +167,13 @@ bool PeakCollectionModel::setData(const QModelIndex& index, const QVariant& valu
 {
     if (!index.isValid())
         return false;
-    if (role == Qt::CheckStateRole && index.column() == PeakColumn::Selected) {
+    if (role == Qt::CheckStateRole && index.column() == PeakColumn::Enabled) {
         if ((Qt::CheckState)value.toInt() == Qt::Checked) {
-            _root_item->peakItemAt(index.row())->peak()->setSelected(true);
+            _root_item->peakItemAt(index.row())->peak()->setRejectionFlag(
+                ohkl::RejectionFlag::NotRejected, true);
         } else {
-            _root_item->peakItemAt(index.row())->peak()->setSelected(false);
-            _root_item->peakItemAt(index.row())
-                ->peak()
-                ->setRejectionFlag(ohkl::RejectionFlag::ManuallyRejected, true);
+            _root_item->peakItemAt(index.row()) ->peak() ->setRejectionFlag(
+                ohkl::RejectionFlag::ManuallyRejected, true);
         }
         emit dataChanged(index, index);
         return true;

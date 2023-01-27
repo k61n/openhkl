@@ -116,8 +116,6 @@ class PeakCollection {
     //! Get the shape collection
     ShapeModel* shapeModel() const { return _shape_model.get(); };
 
-    //! Count selected peaks
-    int countSelected() const;
     //! Count enabled peaks
     int countEnabled() const;
 

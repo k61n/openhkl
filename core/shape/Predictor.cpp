@@ -64,7 +64,7 @@ std::vector<Peak3D*> Predictor::buildPeaksFromMillerIndices(
 
         // setShape may disable the peak if the centre is out of bounds
         peak->setShape(Ellipsoid(center, 1.0));
-        if (peak->selected()) {
+        if (peak->enabled()) {
             peak->setUnitCell(unit_cell);
             peaks.push_back(peak);
         }

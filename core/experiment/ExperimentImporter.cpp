@@ -117,7 +117,7 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
 
     using Eigen_VecXd = Eigen::Matrix<double, Eigen::Dynamic, Eigen::RowMajor>;
     using Eigen_VecXint = Eigen::Matrix<int, Eigen::Dynamic, Eigen::RowMajor>;
-    using Eigen_VecXbool = Eigen::Matrix<bool, Eigen::Dynamic, Eigen::RowMajor>;
+    // using Eigen_VecXbool = Eigen::Matrix<bool, Eigen::Dynamic, Eigen::RowMajor>;
 
     try {
         H5::H5File file(_file_name.c_str(), H5F_ACC_RDONLY);
@@ -192,6 +192,7 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
             Eigen_VecXd mean_bkg_grad(n_peaks);
             Eigen_VecXd mean_bkg_grad_sig(n_peaks);
 
+            Eigen_VecXint region_type(n_peaks);
             Eigen_VecXint rejection_flag(n_peaks);
             Eigen_VecXint integration_flag(n_peaks);
 
@@ -209,18 +210,15 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
                 {ohkl::ds_bkgGradSigma, &mean_bkg_grad_sig}};
 
             std::map<std::string, Eigen_VecXint*> int_keys{
+                {ohkl::ds_RegionType, &region_type},
                 {ohkl::ds_RejectionFlag, &rejection_flag},
                 {ohkl::ds_IntegrationFlag, &integration_flag},
             };
 
-            Eigen_VecXbool predicted(n_peaks);
-            Eigen_VecXbool masked(n_peaks);
-            Eigen_VecXbool selected(n_peaks);
+            // Eigen_VecXbool selected(n_peaks);
 
-            std::map<std::string, Eigen_VecXbool*> bool_keys{
-                {ohkl::ds_Predicted, &predicted},
-                {ohkl::ds_Masked, &masked},
-                {ohkl::ds_Selected, &selected}};
+            // std::map<std::string, Eigen_VecXbool*> bool_keys{
+            //     {ohkl::ds_Selected, &selected}};
 
             Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> center(
                 n_peaks, 3);
@@ -250,13 +248,13 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
                 data_set.read(val->data(), H5::PredType::NATIVE_INT, space, space);
             }
 
-            ohklLog(Level::Debug, "Importing booleans");
-            // Load all booleans
-            for (const auto& [key, val] : bool_keys) {
-                H5::DataSet data_set = peak_collection.openDataSet(key);
-                H5::DataSpace space(data_set.getSpace());
-                data_set.read(val->data(), H5::PredType::NATIVE_HBOOL, space, space);
-            }
+            // ohklLog(Level::Debug, "Importing booleans");
+            // // Load all booleans
+            // for (const auto& [key, val] : bool_keys) {
+            //     H5::DataSet data_set = peak_collection.openDataSet(key);
+            //     H5::DataSpace space(data_set.getSpace());
+            //     data_set.read(val->data(), H5::PredType::NATIVE_HBOOL, space, space);
+            // }
 
             ohklLog(Level::Debug, "Importing centers");
             // Load the centers
@@ -353,9 +351,9 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
                 const ohkl::Intensity peak_bkg_grad(mean_bkg_grad[k], mean_bkg_grad_sig[k]);
 
                 peak->setManually(
-                    peak_intensity, peak_end[k], bkg_begin[k], bkg_end[k], scale[k],
-                    transmission[k], peak_mean_bkg, predicted[k], selected[k], masked[k],
-                    rejection_flag[k], integration_flag[k], peak_bkg_grad);
+                    peak_intensity, peak_end[k], bkg_begin[k], bkg_end[k], region_type[k], scale[k],
+                    transmission[k], peak_mean_bkg, rejection_flag[k], integration_flag[k],
+                    peak_bkg_grad);
 
 
                 if (experiment->numUnitCells() > 0) {

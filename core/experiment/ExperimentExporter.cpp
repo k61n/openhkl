@@ -349,13 +349,12 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
         metric.setZero(3 * nPeaks, 3);
 
         // initialize integers
+        std::vector<int> region_type(nPeaks);
         std::vector<int> rejection_flag(nPeaks);
         std::vector<int> integration_flag(nPeaks);
 
         // initialize the booleans
-        std::unique_ptr<bool[]> selected{new bool[nPeaks]};
-        std::unique_ptr<bool[]> masked{new bool[nPeaks]};
-        std::unique_ptr<bool[]> predicted{new bool[nPeaks]};
+        // std::unique_ptr<bool[]> selected{new bool[nPeaks]};
 
         // initialize the datanames
         std::vector<std::string> data_names;
@@ -380,12 +379,11 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
             mean_bkg_grad[i] = peak->meanBkgGradient().value();
             mean_bkg_grad_sigma[i] = peak->meanBkgGradient().sigma();
 
+            region_type[i] = static_cast<int>(peak->regionType());
             rejection_flag[i] = static_cast<int>(peak->getRejectionFlag());
             integration_flag[i] = static_cast<int>(peak->getIntegrationFlag());
 
-            selected[i] = peak->selected();
-            masked[i] = peak->masked();
-            predicted[i] = peak->predicted();
+            // selected[i] = peak->selected();
 
             data_names.push_back(peak->dataSet()->name());
 
@@ -436,13 +434,12 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
                 {ohkl::ds_Center, H5::PredType::NATIVE_DOUBLE, center_space, center.data()},
                 {ohkl::ds_Metric, H5::PredType::NATIVE_DOUBLE, metric_space, metric.data()},
                 // NATIVE_INT32
+                {ohkl::ds_RegionType, H5::PredType::NATIVE_INT32, peak_space, region_type.data()},
                 {ohkl::ds_RejectionFlag, H5::PredType::NATIVE_INT32, peak_space, rejection_flag.data()},
                 {ohkl::ds_IntegrationFlag, H5::PredType::NATIVE_INT32, peak_space, integration_flag.data()},
                 {ohkl::ds_hkl, H5::PredType::NATIVE_INT32, hkl_space, hkl.data()},
                 // NATIVE_HBOOL
-                {ohkl::ds_Selected, H5::PredType::NATIVE_HBOOL, peak_space, selected.get()},
-                {ohkl::ds_Masked, H5::PredType::NATIVE_HBOOL, peak_space, masked.get()},
-                {ohkl::ds_Predicted, H5::PredType::NATIVE_HBOOL, peak_space, predicted.get()},
+                // {ohkl::ds_Selected, H5::PredType::NATIVE_HBOOL, peak_space, selected.get()},
                 {ohkl::ds_bkgGrad, H5::PredType::NATIVE_DOUBLE, peak_space, mean_bkg_grad.data()},
                 {ohkl::ds_bkgGradSigma, H5::PredType::NATIVE_DOUBLE, peak_space,
                  mean_bkg_grad_sigma.data()}};

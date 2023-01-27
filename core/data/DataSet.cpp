@@ -244,7 +244,6 @@ void DataSet::maskPeaks(
         if (peak->dataSet().get() != this)
             continue;
 
-        peak->setMasked(false);
         // scale the peak shape to the maximum background radius
         Ellipsoid shape = peak->shape();
         if (bkg_end < 0.0)
@@ -255,7 +254,7 @@ void DataSet::maskPeaks(
             // If the background of the peak intercepts the mask, unselected the peak
             if (m->collide(shape)) {
                 rejection_map.insert_or_assign(peak, peak->rejectionFlag());
-                peak->setMasked(true);
+                peak->setRejectionFlag(RejectionFlag::Masked, true);
                 ++n_masked;
                 break;
             }

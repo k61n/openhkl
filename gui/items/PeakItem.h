@@ -40,7 +40,7 @@ enum PeakColumn {
     d,
     Rejection,
     Filtered,
-    Selected,
+    Enabled,
     Count,
 };
 
@@ -55,7 +55,7 @@ class PeakItem : public QStandardItem {
     double strength() const;
     double bkg_gradient() const;
     double bkg_gradient_sigma() const;
-    bool selected() const;
+    bool enabled() const;
     //! Retrieve the data of column and row
     QVariant peakData(const QModelIndex& index, int role, PeakDisplayModes mode) const;
     //! Get the peak pointer

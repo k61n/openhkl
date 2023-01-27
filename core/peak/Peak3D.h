@@ -26,6 +26,7 @@
 
 namespace ohkl {
 
+enum class RegionType;
 class IIntegrator;
 class MillerIndex;
 
@@ -126,19 +127,8 @@ class Peak3D {
     //! Set the scaling factor.
     void setScale(double factor);
 
-    //! Is the peak selected? Selected peaks are "valid", and have not been
-    //! automatically rejected by the integrator.
-    bool selected() const;
-    //! Set the peak selection state
-    void setSelected(bool);
     //! Reject a peak
     void reject(RejectionFlag flag);
-    //! Is the peak masked? Masked peaks are "invalid", and have been manually
-    //! deselected via a selection box in a DetectorScene.
-    bool masked() const;
-    //! Return the peak masking state
-    void setMasked(bool masked);
-
     //! Is the peak enabled (selected and not masked)?
     bool enabled() const;
 
@@ -152,11 +142,6 @@ class Peak3D {
     //! Returns the unit cell
     const UnitCell* unitCell() const;
 
-    //! Designates the peak as predicted (true) or observed (false)
-    void setPredicted(bool predicted);
-    //! Is the peak predicted (as opposed to observed)?
-    bool predicted() const;
-
     //! Designates the peak as "caught" by a filter
     void caughtYou(bool caught);
     //! Designates the peak as "rejected" by a filter
@@ -168,9 +153,9 @@ class Peak3D {
 
     //! Manually set the integration parameters for this peak
     void setManually(
-        Intensity intensity, double peakEnd, double bkgBegin, double bkgEnd, double scale,
-        double transmission, Intensity mean_bkg, bool predicted, bool selected, bool masked,
-        int rejection_flag, int integration_flag, Intensity mean_bkg_grad = {});
+        Intensity intensity, double peakEnd, double bkgBegin, double bkgEnd, int region_type,
+        double scale, double transmission, Intensity mean_bkg, int rejection_flag,
+        int integration_flag, Intensity mean_bkg_grad = {});
 
     //! Update the integration parameters for this peak
     void updateIntegration(
@@ -194,7 +179,9 @@ class Peak3D {
     double getBkgBegin() { return _bkgBegin; };
     //! Return the end of the background region (in peak scales)
     double getBkgEnd() { return _bkgEnd; };
-    //! Set the reason for this peak being rejected (unselected)
+    //! Return the integration region type
+    RegionType regionType() { return _regionType; };
+    //! Set the reason for this peak being disabled
     void setRejectionFlag(RejectionFlag flag, bool overwrite = false);
     //! Set the reason for rejection during integration
     void setIntegrationFlag(RejectionFlag flag) { _integration_flag = flag; };
@@ -231,6 +218,8 @@ class Peak3D {
     double _bkgBegin;
     //! Shape scale factor for end of background
     double _bkgEnd;
+    //! Integration region type for the above bounds
+    RegionType _regionType;
     //! Miller indices calculated during autoindexing
     MillerIndex _hkl = {0, 0, 0};
 
@@ -238,12 +227,6 @@ class Peak3D {
     std::weak_ptr<UnitCell> _unitCell;
 
     double _scale;
-    //! Whether this peak is selected (valid)
-    bool _selected;
-    //! Whether this peak has been masked (invalid)
-    bool _masked;
-    //! Whether this peak has been predicted (as opposed to observed)
-    bool _predicted;
     //! Whether this peak has been caught by a filter
     bool _caught_by_filter;
     //! Whether this peak has been rejected by a filter

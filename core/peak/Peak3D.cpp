@@ -20,6 +20,7 @@
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/InstrumentState.h"
 #include "core/instrument/InterpolatedState.h"
+#include "core/peak/IntegrationRegion.h"
 #include "tables/crystal/MillerIndex.h"
 
 #include <algorithm>
@@ -67,10 +68,8 @@ Peak3D::Peak3D(sptrDataSet data)
     , _peakEnd(3.0)
     , _bkgBegin(3.0)
     , _bkgEnd(6.0)
+    , _regionType(RegionType::VariableEllipsoid)
     , _scale(1.0)
-    , _selected(true)
-    , _masked(false)
-    , _predicted(true)
     , _caught_by_filter(false)
     , _rejected_by_filter(false)
     , _transmission(1.0)
@@ -93,11 +92,9 @@ Peak3D::Peak3D(sptrDataSet data, const MillerIndex& hkl)
     , _peakEnd(3.0)
     , _bkgBegin(3.0)
     , _bkgEnd(6.0)
+    , _regionType(RegionType::VariableEllipsoid)
     , _hkl(hkl)
     , _scale(1.0)
-    , _selected(true)
-    , _masked(false)
-    , _predicted(true)
     , _caught_by_filter(false)
     , _rejected_by_filter(false)
     , _transmission(1.0)
@@ -116,11 +113,9 @@ Peak3D::Peak3D(std::shared_ptr<ohkl::Peak3D> peak)
     _peakEnd = peak->peakEnd();
     _bkgBegin = peak->bkgBegin();
     _bkgEnd = peak->bkgEnd();
+    _regionType = peak->regionType();
     _unitCell = peak->_unitCell;
     _scale = peak->scale();
-    _selected = peak->selected();
-    _masked = peak->masked();
-    _predicted = peak->predicted();
     _transmission = peak->transmission();
     _data = peak->dataSet();
     _rockingCurve = peak->rockingCurve();
@@ -138,7 +133,6 @@ void Peak3D::setShape(const Ellipsoid& shape)
         Eigen::Vector3d c = shape.center();
         if (c[2] < 0.0 || c[2] > _data->nFrames() - 1 || c[0] < 0.0 || c[0] > _data->nCols() - 1
             || c[1] < 0.0 || c[1] > _data->nRows() - 1) {
-            setSelected(false);
             setRejectionFlag(RejectionFlag::OutsideFrames);
         }
     }
@@ -217,50 +211,14 @@ void Peak3D::setTransmission(double transmission)
 
 bool Peak3D::enabled() const
 {
-    return (!_masked && _selected);
-}
-
-void Peak3D::setSelected(bool s)
-{
-    _selected = s;
-    if (s)
-        setRejectionFlag(RejectionFlag::NotRejected, true);
+    return (_rejection_flag == RejectionFlag::NotRejected &&
+            _integration_flag == RejectionFlag::NotRejected);
 }
 
 void Peak3D::reject(RejectionFlag flag)
 {
-    _selected = false;
     if (flag == RejectionFlag::NotRejected)
         _rejection_flag = flag;
-}
-
-bool Peak3D::selected() const
-{
-    return _selected;
-}
-
-void Peak3D::setMasked(bool masked)
-{
-    _masked = masked;
-    if (_masked)
-        _rejection_flag = RejectionFlag::Masked;
-    else
-        _rejection_flag = RejectionFlag::NotRejected;
-}
-
-bool Peak3D::masked() const
-{
-    return _masked;
-}
-
-void Peak3D::setPredicted(bool predicted)
-{
-    _predicted = predicted;
-}
-
-bool Peak3D::predicted() const
-{
-    return _predicted;
 }
 
 void Peak3D::updateIntegration(
@@ -273,14 +231,10 @@ void Peak3D::updateIntegration(
     _meanBkgGradient = meanBkgGradient;
     _rawIntensity = integratedIntensity;
 
-    if (_rawIntensity.sigma() < _sigma2_eps) { // NaN sigma handled by Intensity constructor
-        setSelected(false);
+    if (_rawIntensity.sigma() < _sigma2_eps) // NaN sigma handled by Intensity constructor
         setRejectionFlag(RejectionFlag::InvalidSigma, true);
-    }
-    if (_meanBackground.sigma() < _sigma2_eps) { // NaN sigma handled by Intensity constructor
-        setSelected(false);
+    if (_meanBackground.sigma() < _sigma2_eps) // NaN sigma handled by Intensity constructor
         setRejectionFlag(RejectionFlag::InvalidBkgSigma, true);
-    }
 
     //_rawIntensity = integrator.peakIntensity(); // TODO: test, reactivate ???
     //_shape = integrator.fitShape(); // TODO: test, reactivate ???
@@ -369,17 +323,15 @@ void Peak3D::rejectYou(bool reject)
 }
 
 void Peak3D::setManually(
-    Intensity intensity, double peakEnd, double bkgBegin, double bkgEnd, double scale,
-    double transmission, Intensity mean_bkg, bool predicted, bool selected, bool masked,
-    int rejection_flag, int integration_flag, Intensity mean_bkg_grad /* = {} */)
+    Intensity intensity, double peakEnd, double bkgBegin, double bkgEnd, int region_type,
+    double scale, double transmission, Intensity mean_bkg, int rejection_flag,
+    int integration_flag, Intensity mean_bkg_grad /* = {} */)
 {
     _peakEnd = peakEnd;
     _bkgBegin = bkgBegin;
     _bkgEnd = bkgEnd;
+    _regionType = static_cast<RegionType>(region_type);
     _scale = scale;
-    _selected = selected;
-    _masked = masked;
-    _predicted = predicted;
     _transmission = transmission;
     _meanBackground = mean_bkg;
     _rawIntensity = intensity;
@@ -427,7 +379,6 @@ void Peak3D::setMillerIndices()
             _hkl = MillerIndex(q(), *unitCell());
         } else {
             _hkl = {0, 0, 0};
-            _selected = false;
             _rejection_flag = RejectionFlag::InterpolationFailure;
         }
     }

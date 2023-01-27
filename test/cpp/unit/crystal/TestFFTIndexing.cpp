@@ -82,7 +82,6 @@ TEST_CASE("test/crystal/TestFFTIndexing.cpp", "")
         // dummy shape
         try {
             peak.setShape(ohkl::Ellipsoid(center, 1.0));
-            peak.setSelected(true);
             CHECK(ohkl::MillerIndex(peak.q(), uc).error().norm() < 1e-10);
             peak_collection.push_back(peak);
         } catch (...) {

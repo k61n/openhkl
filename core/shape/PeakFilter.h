@@ -27,12 +27,10 @@ namespace ohkl {
 
 //! Enable/disable the various types of filters
 struct PeakFilterFlags {
-    bool selected; //!< filter by selection
+    bool enabled; //!< filter by enabled
     bool masked; //!< filter by mask
-    bool predicted; //!< filter by predicted peaks
     bool indexed; //!< filter by indexed peaks
     bool index_tol; //!
-    bool state; //!
     bool strength; //!< filter by strength (intensity/sigma)
     bool d_range; //!< filter by detector range
     bool extinct; //!< filter by extinction (allowed by unit cell)
@@ -93,9 +91,6 @@ class PeakFilter {
     //! Filter only enabled peaks
     void filterEnabled(PeakCollection* peak_collection) const;
 
-    //! Filter only selected peaks
-    void filterSelected(PeakCollection* peak_collection) const;
-
     //! Filter only masked peaks
     void filterMasked(PeakCollection* peak_collection) const;
 
@@ -114,9 +109,6 @@ class PeakFilter {
 
     //! Filter peaks with I/sigma above threshold
     void filterStrength(PeakCollection* peak_collection) const;
-
-    //! Filter those peaks which are predicted
-    void filterPredicted(PeakCollection* peak_collection) const;
 
     //! Remove peaks which are not in a d-range
     void filterDRange(PeakCollection* peak_collection) const;
