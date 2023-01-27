@@ -275,7 +275,7 @@ void IIntegrator::removeOverlaps(const std::map<Peak3D*, std::unique_ptr<Integra
         unsigned int j = collision.second - &ellipsoids[0];
         peaks.at(i)->setSelected(false);
         peaks.at(i)->setIntegrationFlag(RejectionFlag::OverlappingPeak);
-        peaks.at(j)->rejectYou(false);
+        peaks.at(j)->setSelected(false);
         peaks.at(j)->setIntegrationFlag(RejectionFlag::OverlappingPeak);
         nrejected += 2;
     }
