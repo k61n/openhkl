@@ -217,11 +217,11 @@ void PeakFilter::filterMasked(PeakCollection* peak_collection) const
     int nrejected = 0;
     for (int i = 0; i < peak_collection->numberOfPeaks(); ++i) {
         ohkl::Peak3D* peak_ptr = peak_collection->getPeak(i);
-        if (peak_ptr->rejectionFlag() == RejectionFlag::Masked)
-            peak_ptr->caughtYou(true);
-        else {
+        if (peak_ptr->rejectionFlag() == RejectionFlag::Masked) {
             peak_ptr->rejectYou(true);
             ++nrejected;
+        } else {
+                peak_ptr->caughtYou(true);
         }
     }
     ohklLog(Level::Info, "PeakFilter::filterMasked: ", nrejected, " peaks rejected");
@@ -449,6 +449,18 @@ void PeakFilter::filterFrameRange(PeakCollection* peak_collection) const
         }
     }
     ohklLog(Level::Info, "PeakFilter::filterFrameRange: ", nrejected, " peaks rejected");
+}
+
+std::vector<Peak3D*> PeakFilter::filterFrameRange(
+    const std::vector<Peak3D*>& peaks, int frame_min, int frame_max) const
+{
+    std::vector<Peak3D*> filtered_peaks;
+    for (auto* peak : peaks) {
+        auto c = peak->shape().center();
+        if (c[2] >= static_cast<double>(frame_min) && c[2] <= static_cast<double>(frame_max))
+            filtered_peaks.push_back(peak);
+    }
+    return filtered_peaks;
 }
 
 void PeakFilter::filterRejectionFlag(PeakCollection* peak_collection) const

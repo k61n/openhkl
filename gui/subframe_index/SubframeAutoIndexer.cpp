@@ -492,9 +492,6 @@ void SubframeAutoIndexer::runAutoIndexer()
 
     auto* expt = gSession->currentProject()->experiment();
     auto* autoindexer = expt->autoIndexer();
-    auto* params = autoindexer->parameters();
-    auto* filter = expt->peakFilter();
-    ohkl::PeakCollection* collection = _peak_combo->currentPeakCollection();
 
     // Manally adjust the direct beam position
     if (_set_initial_ki->isChecked()) {
@@ -508,28 +505,16 @@ void SubframeAutoIndexer::runAutoIndexer()
     std::shared_ptr<ohkl::ProgressHandler> handler(new ohkl::ProgressHandler());
     autoindexer->setHandler(handler);
 
-    filter->resetFiltering(collection);
-    filter->resetFilterFlags();
-    filter->flags()->strength = true;
-    filter->flags()->d_range = true;
-    filter->flags()->frames = true;
-    filter->parameters()->d_min = params->d_min;
-    filter->parameters()->d_max = params->d_max;
-    filter->parameters()->strength_min = params->strength_min;
-    filter->parameters()->strength_max = params->strength_max;
-    filter->parameters()->frame_min = params->first_frame;
-    filter->parameters()->frame_max = params->last_frame;
-
-    filter->filter(collection);
-    _peak_collection.populateFromFiltered(collection);
     _solutions.clear();
-    refreshPeakTable();
 
-    bool success = autoindexer->autoIndex(&_peak_collection);
+    bool success = autoindexer->autoIndex(_peak_combo->currentPeakCollection());
     if (!success) {
         gGui->statusBar()->showMessage("Indexing failed");
         return;
     }
+
+    _peak_collection.populate(*autoindexer->filteredPeaks());
+    refreshPeakTable();
 
     _solutions = autoindexer->solutions();
     buildSolutionsTable();

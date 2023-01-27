@@ -150,6 +150,10 @@ class PeakFilter {
     std::vector<Peak3D*> filterIndexed(
         const std::vector<Peak3D*>& peaks, const UnitCell* cell = nullptr) const;
 
+    //! Remove peaks from outside a frame range for a vector
+    std::vector<Peak3D*> filterFrameRange(
+        const std::vector<Peak3D*>& peaks, int frame_min, int frame_max) const;
+
     //! Filter d-range on peak vector (intended for a single frame, hence the state)
     std::vector<Peak3D*> filterDRange(
         const std::vector<Peak3D*>& peaks, double d_min, double d_max,
