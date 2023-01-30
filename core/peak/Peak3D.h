@@ -106,8 +106,12 @@ class Peak3D {
     //! Return the shape of the peak as an ellipsoid in detector coordinates
     const Ellipsoid& shape() const;
 
-    //! Return the intensity, after scaling, transmission, and Lorentz factor corrections
-    Intensity correctedIntensity() const;
+    //! Return intensity, after scaling, transmission, and Lorentz factor corrections
+    Intensity correctedIntensity(const Intensity& intensity) const;
+    //! Return corrected pixel sum intensity
+    Intensity correctedSumIntensity() const;
+    //! Return corrected profile intensity
+    Intensity correctedProfileIntensity() const;
     //! Return the pixel sum intensity of the peak.
     Intensity sumIntensity() const { return _sumIntensity; };
     //! Return the profile integrated intensity of the peak.

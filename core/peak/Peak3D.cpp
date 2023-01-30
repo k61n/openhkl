@@ -105,7 +105,10 @@ Peak3D::Peak3D(sptrDataSet data, const MillerIndex& hkl)
 Peak3D::Peak3D(std::shared_ptr<ohkl::Peak3D> peak)
 {
     setShape(peak->shape());
-    _sumBackground = peak->meanBackground();
+    _sumIntensity = peak->sumIntensity();
+    _profileIntensity = peak->profileIntensity();
+    _sumBackground = peak->sumBackground();
+    _profileBackground = peak->profileBackground();
     _meanBkgGradient = peak->meanBkgGradient();
     _peakEnd = peak->peakEnd();
     _bkgBegin = peak->bkgBegin();
@@ -116,8 +119,6 @@ Peak3D::Peak3D(std::shared_ptr<ohkl::Peak3D> peak)
     _transmission = peak->transmission();
     _data = peak->dataSet();
     _rockingCurve = peak->rockingCurve();
-    _sumIntensity = peak->rawIntensity();
-    _profileIntensity = peak->profileIntensity();
     _hkl = peak->hkl();
 
     _caught_by_filter = false;
@@ -160,7 +161,7 @@ const UnitCell* Peak3D::unitCell() const
         return nullptr;
 }
 
-Intensity Peak3D::correctedIntensity() const
+Intensity Peak3D::correctedIntensity(const Intensity& intensity) const
 {
     auto c = _shape.center();
     auto state = InterpolatedState::interpolate(_data->instrumentStates(), c[2]);
@@ -179,7 +180,17 @@ Intensity Peak3D::correctedIntensity() const
 
     const double lorentz = state.lorentzFactor(c[0], c[1]);
     const double factor = _scale / lorentz / _transmission;
-    return rawIntensity() * factor / state.stepSize;
+    return intensity * factor / state.stepSize;
+}
+
+Intensity Peak3D::correctedSumIntensity() const
+{
+    return correctedIntensity(_sumIntensity);
+}
+
+Intensity Peak3D::correctedProfileIntensity() const
+{
+    return correctedIntensity(_profileIntensity);
 }
 
 double Peak3D::transmission() const
@@ -222,25 +233,25 @@ void Peak3D::updateIntegration(
 {
     _rockingCurve = rockingCurve;
     _meanBkgGradient = meanBkgGradient;
-    if (sumBkg.valid()) {
+    if (sumBkg.isValid()) {
         if (sumBkg.sigma() < _sigma2_eps) // NaN sigma handled by Intensity constructor
             setIntegrationFlag(RejectionFlag::InvalidBkgSigma);
         else
             _sumBackground = sumBkg;
     }
-    if (profBkg.valid()) {
+    if (profBkg.isValid()) {
         if (profBkg.sigma() < _sigma2_eps) // NaN sigma handled by Intensity constructor
             setIntegrationFlag(RejectionFlag::InvalidBkgSigma);
         else
             _profileBackground = profBkg;
     }
-    if (sumInt.valid()) { // Default intensity constructor is zero, _valid = false
+    if (sumInt.isValid()) { // Default intensity constructor is zero, _valid = false
         if (sumInt.sigma() < _sigma2_eps) // NaN sigma handled by Intensity constructor
             setIntegrationFlag(RejectionFlag::InvalidSigma);
         else
             _sumIntensity = sumInt;
     }
-    if (profInt.valid()) {
+    if (profInt.isValid()) {
         if (profInt.sigma() < _sigma2_eps) // NaN sigma handled by Intensity constructor
             setIntegrationFlag(RejectionFlag::InvalidSigma);
         else
@@ -248,7 +259,7 @@ void Peak3D::updateIntegration(
     }
 
 
-    //_rawIntensity = integrator.peakIntensity(); // TODO: test, reactivate ???
+    //_sumIntensity = integrator.peakIntensity(); // TODO: test, reactivate ???
     //_shape = integrator.fitShape(); // TODO: test, reactivate ???
     _peakEnd = peakEnd;
     _bkgBegin = bkgBegin;
@@ -328,7 +339,7 @@ void Peak3D::rejectYou(bool reject)
 void Peak3D::setManually(
     const Intensity& sumInt, const Intensity& profInt,
     double peakEnd, double bkgBegin, double bkgEnd, int region_type,
-    double scale, double transmission, const Intensity& sumBkg, const Intensity& profBkg;
+    double scale, double transmission, const Intensity& sumBkg, const Intensity& profBkg,
     int rejection_flag, int integration_flag, Intensity sumBkgGrad /* = {} */)
 {
     _peakEnd = peakEnd;
@@ -416,8 +427,8 @@ std::string Peak3D::toString() const
         << std::setprecision(2) << shape().center()[0] << std::fixed << std::setw(10)
         << std::setprecision(2) << shape().center()[1] << std::fixed << std::setw(10)
         << std::setprecision(2) << shape().center()[2] << std::fixed << std::setw(10)
-        << std::setprecision(2) << correctedIntensity().value() << std::fixed << std::setw(10)
-        << std::setprecision(2) << correctedIntensity().sigma();
+        << std::setprecision(2) << correctedSumIntensity().value() << std::fixed << std::setw(10)
+        << std::setprecision(2) << correctedSumIntensity().sigma();
     return oss.str();
 }
 

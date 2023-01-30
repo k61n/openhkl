@@ -188,7 +188,7 @@ void IIntegrator::integrate(
                     peak->updateIntegration(
                         _rockingCurve, _sumBackground, _profileBackground, _meanBkgGradient,
                         _sumIntensity, _profileIntensity,
-                        _params.peak_end, _params.bkg_begin, _params.bkg_end< _params.region_type);
+                        _params.peak_end, _params.bkg_begin, _params.bkg_end, _params.region_type);
                     if (saturated)
                         peak->setIntegrationFlag(RejectionFlag::SaturatedPixel);
                 } else {
