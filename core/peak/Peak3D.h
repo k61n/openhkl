@@ -108,12 +108,21 @@ class Peak3D {
 
     //! Return the intensity, after scaling, transmission, and Lorentz factor corrections
     Intensity correctedIntensity() const;
-    //! Return the raw intensity of the peak.
-    Intensity rawIntensity() const;
-    //! Return mean background of the peak
-    Intensity meanBackground() const;
+    //! Return the pixel sum intensity of the peak.
+    Intensity sumIntensity() const { return _sumIntensity; };
+    //! Return the profile integrated intensity of the peak.
+    Intensity profileIntensity() const { return _profileIntensity; };
+    //! Return pixel sum background of the peak
+    Intensity sumBackground() const { return _sumBackground; };
+    //! Return the profile background
+    Intensity profileBackground() const { return _profileBackground; };
     //! Return the mean background gradient of the peak
-    Intensity meanBkgGradient() const;
+    Intensity meanBkgGradient() const { return _meanBkgGradient; };
+    //! Set the pixel sum intensity  with no corrections
+    // TODO: restore normalization ??: / data()->getSampleStepSize();
+    void setSumIntensity(const Intensity& i) { _sumIntensity = i; };
+    //! Set the profile integrated intensity  with no corrections
+    void setProfileIntensity(const Intensity& i) { _profileIntensity = i; };
 
     //! Return shape scale used to define peak region
     double peakEnd() const;
@@ -153,15 +162,17 @@ class Peak3D {
 
     //! Manually set the integration parameters for this peak
     void setManually(
-        Intensity intensity, double peakEnd, double bkgBegin, double bkgEnd, int region_type,
-        double scale, double transmission, Intensity mean_bkg, int rejection_flag,
-        int integration_flag, Intensity mean_bkg_grad = {});
+        const Intensity& sumInt, const Intensity& profInt,
+        double peakEnd, double bkgBegin, double bkgEnd, int region_type,
+        double scale, double transmission, const Intensity& sumBkg, const Intensity& profBkg,
+        int rejection_flag, int integration_flag, Intensity sumBkgGrad = {});
 
     //! Update the integration parameters for this peak
     void updateIntegration(
-        const std::vector<Intensity>& rockingCurve, const Intensity& meanBackground,
-        const Intensity& meanBkgGradient, const Intensity& integratedIntensity, double peakEnd,
-        double bkgBegin, double bkgEnd);
+        const std::vector<Intensity>& rockingCurve,
+        const Intensity& sumBkg, const Intensity& profBkg, const Intensity& meanBkgGradient,
+        const Intensity& sumInt, const Intensity& profInt,
+        double peakEnd, double bkgBegin, double bkgEnd, RegionType regionType);
     //! Return the q vector of the peak, transformed into sample coordinates.
     ReciprocalVector q() const;
     //! Return q vector in cases where we do *not* want to interpolate the InstrumentState
@@ -169,8 +180,6 @@ class Peak3D {
     ReciprocalVector q(const InstrumentState& state) const;
     //! Return the data set to which this peak belongs
     sptrDataSet dataSet() const { return _data; }
-    //! Set the raw intensity count (from image), with no corrections
-    void setRawIntensity(const Intensity& i);
     //! Get the Miller indices for this peak
     const MillerIndex& hkl() const;
     //! Return the peak scale
@@ -206,10 +215,14 @@ class Peak3D {
  private:
     //! Shape describing the Peak zone
     Ellipsoid _shape;
-    //! Raw intensity (count), background corrected
-    Intensity _rawIntensity;
-    //! Mean background estimate
-    Intensity _meanBackground;
+    //! Pixel sum intensity intensity (count), background corrected
+    Intensity _sumIntensity;
+    //! Profile integrated intensity
+    Intensity _profileIntensity;
+    //! Pixel sum background estimate
+    Intensity _sumBackground;
+    //! Profile background estimate
+    Intensity _profileBackground;
     //! Mean background gradient
     Intensity _meanBkgGradient;
     //! Shape scale factor for peak

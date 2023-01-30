@@ -21,6 +21,7 @@
 #include "core/instrument/InstrumentState.h"
 #include "core/instrument/InterpolatedState.h"
 #include "core/peak/IntegrationRegion.h"
+#include "core/peak/Intensity.h"
 #include "tables/crystal/MillerIndex.h"
 
 #include <algorithm>
@@ -63,8 +64,6 @@ const std::map<RejectionFlag, std::string> Peak3D::_rejection_map{
 
 Peak3D::Peak3D(sptrDataSet data)
     : _shape()
-    , _meanBackground()
-    , _meanBkgGradient()
     , _peakEnd(3.0)
     , _bkgBegin(3.0)
     , _bkgEnd(6.0)
@@ -87,8 +86,6 @@ Peak3D::Peak3D(sptrDataSet data, const Ellipsoid& shape) : Peak3D(data)
 
 Peak3D::Peak3D(sptrDataSet data, const MillerIndex& hkl)
     : _shape()
-    , _meanBackground()
-    , _meanBkgGradient()
     , _peakEnd(3.0)
     , _bkgBegin(3.0)
     , _bkgEnd(6.0)
@@ -108,7 +105,7 @@ Peak3D::Peak3D(sptrDataSet data, const MillerIndex& hkl)
 Peak3D::Peak3D(std::shared_ptr<ohkl::Peak3D> peak)
 {
     setShape(peak->shape());
-    _meanBackground = peak->meanBackground();
+    _sumBackground = peak->meanBackground();
     _meanBkgGradient = peak->meanBkgGradient();
     _peakEnd = peak->peakEnd();
     _bkgBegin = peak->bkgBegin();
@@ -119,7 +116,8 @@ Peak3D::Peak3D(std::shared_ptr<ohkl::Peak3D> peak)
     _transmission = peak->transmission();
     _data = peak->dataSet();
     _rockingCurve = peak->rockingCurve();
-    _rawIntensity = peak->rawIntensity();
+    _sumIntensity = peak->rawIntensity();
+    _profileIntensity = peak->profileIntensity();
     _hkl = peak->hkl();
 
     _caught_by_filter = false;
@@ -160,11 +158,6 @@ const UnitCell* Peak3D::unitCell() const
         return uc.get();
     else
         return nullptr;
-}
-
-Intensity Peak3D::rawIntensity() const
-{
-    return _rawIntensity;
 }
 
 Intensity Peak3D::correctedIntensity() const
@@ -222,31 +215,44 @@ void Peak3D::reject(RejectionFlag flag)
 }
 
 void Peak3D::updateIntegration(
-    const std::vector<Intensity>& rockingCurve, const Intensity& meanBackground,
-    const Intensity& meanBkgGradient, const Intensity& integratedIntensity, double peakEnd,
-    double bkgBegin, double bkgEnd)
+    const std::vector<Intensity>& rockingCurve,
+    const Intensity& sumBkg, const Intensity& profBkg, const Intensity& meanBkgGradient,
+    const Intensity& sumInt, const Intensity& profInt,
+    double peakEnd, double bkgBegin, double bkgEnd, RegionType regionType)
 {
     _rockingCurve = rockingCurve;
-    _meanBackground = meanBackground;
     _meanBkgGradient = meanBkgGradient;
-    _rawIntensity = integratedIntensity;
+    if (sumBkg.valid()) {
+        if (sumBkg.sigma() < _sigma2_eps) // NaN sigma handled by Intensity constructor
+            setIntegrationFlag(RejectionFlag::InvalidBkgSigma);
+        else
+            _sumBackground = sumBkg;
+    }
+    if (profBkg.valid()) {
+        if (profBkg.sigma() < _sigma2_eps) // NaN sigma handled by Intensity constructor
+            setIntegrationFlag(RejectionFlag::InvalidBkgSigma);
+        else
+            _profileBackground = profBkg;
+    }
+    if (sumInt.valid()) { // Default intensity constructor is zero, _valid = false
+        if (sumInt.sigma() < _sigma2_eps) // NaN sigma handled by Intensity constructor
+            setIntegrationFlag(RejectionFlag::InvalidSigma);
+        else
+            _sumIntensity = sumInt;
+    }
+    if (profInt.valid()) {
+        if (profInt.sigma() < _sigma2_eps) // NaN sigma handled by Intensity constructor
+            setIntegrationFlag(RejectionFlag::InvalidSigma);
+        else
+            _profileIntensity = profInt;
+    }
 
-    if (_rawIntensity.sigma() < _sigma2_eps) // NaN sigma handled by Intensity constructor
-        setRejectionFlag(RejectionFlag::InvalidSigma, true);
-    if (_meanBackground.sigma() < _sigma2_eps) // NaN sigma handled by Intensity constructor
-        setRejectionFlag(RejectionFlag::InvalidBkgSigma, true);
 
     //_rawIntensity = integrator.peakIntensity(); // TODO: test, reactivate ???
     //_shape = integrator.fitShape(); // TODO: test, reactivate ???
     _peakEnd = peakEnd;
     _bkgBegin = bkgBegin;
     _bkgEnd = bkgEnd;
-}
-
-void Peak3D::setRawIntensity(const Intensity& i)
-{
-    // note: the scaling factor is taken to be consistent with Peak3D::getRawIntensity()
-    _rawIntensity = i; // TODO: restore normalization ??: / data()->getSampleStepSize();
 }
 
 ReciprocalVector Peak3D::q() const
@@ -275,9 +281,6 @@ ReciprocalVector Peak3D::q(const InstrumentState& state) const
 //!
 //! This method can throw if there is no valid q-shape corresponding to the
 //! detector space shape.
-
-// found unused except in TestQShape (JWu 11jun19)
-
 Ellipsoid Peak3D::qShape() const
 {
     if (!_data)
@@ -323,9 +326,10 @@ void Peak3D::rejectYou(bool reject)
 }
 
 void Peak3D::setManually(
-    Intensity intensity, double peakEnd, double bkgBegin, double bkgEnd, int region_type,
-    double scale, double transmission, Intensity mean_bkg, int rejection_flag,
-    int integration_flag, Intensity mean_bkg_grad /* = {} */)
+    const Intensity& sumInt, const Intensity& profInt,
+    double peakEnd, double bkgBegin, double bkgEnd, int region_type,
+    double scale, double transmission, const Intensity& sumBkg, const Intensity& profBkg;
+    int rejection_flag, int integration_flag, Intensity sumBkgGrad /* = {} */)
 {
     _peakEnd = peakEnd;
     _bkgBegin = bkgBegin;
@@ -333,22 +337,13 @@ void Peak3D::setManually(
     _regionType = static_cast<RegionType>(region_type);
     _scale = scale;
     _transmission = transmission;
-    _meanBackground = mean_bkg;
-    _rawIntensity = intensity;
+    _sumBackground = sumBkg;
+    _profileBackground = profBkg;
+    _sumIntensity = sumInt;
+    _profileIntensity = profInt;
     _rejection_flag = static_cast<RejectionFlag>(rejection_flag);
     _integration_flag = static_cast<RejectionFlag>(integration_flag);
-    _meanBkgGradient = mean_bkg_grad;
-}
-
-
-Intensity Peak3D::meanBackground() const
-{
-    return _meanBackground;
-}
-
-Intensity Peak3D::meanBkgGradient() const
-{
-    return _meanBkgGradient;
+    _meanBkgGradient = sumBkgGrad;
 }
 
 double Peak3D::peakEnd() const
