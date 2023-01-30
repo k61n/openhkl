@@ -37,8 +37,8 @@ bool ISigmaIntegrator::compute(
 
     // first get mean background
     PixelSumIntegrator::compute(peak, shape_model, region);
-    const double mean_bkg = _meanBackground.value();
-    const double var_bkg = _meanBackground.variance();
+    const double mean_bkg = _sumBackground.value();
+    const double var_bkg = _sumBackground.variance();
 
     const auto& events = region.peakData().events();
     const auto& counts = region.peakData().counts();
@@ -96,10 +96,10 @@ bool ISigmaIntegrator::compute(
     const double M = profile.counts()[best_idx];
     const int n = profile.npoints()[best_idx];
 
-    _integratedIntensity = Intensity(M - n * mean_bkg, M + n * n * var_bkg);
-    _integratedIntensity = _integratedIntensity / mean_profile.value()[best_idx];
+    _profileIntensity = Intensity(M - n * mean_bkg, M + n * n * var_bkg);
+    _profileIntensity = _profileIntensity / mean_profile.value()[best_idx];
 
-    double sigma = _integratedIntensity.sigma();
+    double sigma = _profileIntensity.sigma();
 
     if (std::isnan(sigma) && sigma > 0) {
         peak->setIntegrationFlag(RejectionFlag::InvalidSigma);

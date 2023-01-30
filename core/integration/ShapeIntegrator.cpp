@@ -47,13 +47,13 @@ bool ShapeIntegrator::compute(
 
     PixelSumIntegrator::compute(peak, shape_model, region);
 
-    const double mean_bkg = _meanBackground.value();
+    const double mean_bkg = _sumBackground.value();
     const auto& events = region.peakData().events();
     const auto& counts = region.peakData().counts();
 
     Profile3D profile(_aabb, _nx, _ny, _nz);
     // todo: don't use default constructor!
-    Profile1D integrated_profile(_meanBackground, region.peakEnd());
+    Profile1D integrated_profile(_sumBackground, region.peakEnd());
     PeakCoordinateSystem frame(peak);
 
     Ellipsoid e = peak->shape();

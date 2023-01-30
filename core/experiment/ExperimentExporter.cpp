@@ -332,10 +332,14 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
         std::vector<double> bkg_end(nPeaks);
         std::vector<double> scale(nPeaks);
         std::vector<double> transmission(nPeaks);
-        std::vector<double> intensity(nPeaks);
-        std::vector<double> sigma(nPeaks);
-        std::vector<double> mean_bkg_val(nPeaks);
-        std::vector<double> mean_bkg_sig(nPeaks);
+        std::vector<double> sum_int(nPeaks);
+        std::vector<double> sum_sigma(nPeaks);
+        std::vector<double> profile_int(nPeaks);
+        std::vector<double> profile_sigma(nPeaks);
+        std::vector<double> sum_bkg_val(nPeaks);
+        std::vector<double> sum_bkg_sig(nPeaks);
+        std::vector<double> profile_bkg_val(nPeaks);
+        std::vector<double> profile_bkg_sig(nPeaks);
         std::vector<double> mean_bkg_grad(nPeaks);
         std::vector<double> mean_bkg_grad_sigma(nPeaks);
 
@@ -372,10 +376,14 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
             bkg_end[i] = peak->bkgEnd();
             scale[i] = peak->scale();
             transmission[i] = peak->transmission();
-            intensity[i] = peak->rawIntensity().value();
-            sigma[i] = peak->rawIntensity().sigma();
-            mean_bkg_val[i] = peak->meanBackground().value();
-            mean_bkg_sig[i] = peak->meanBackground().sigma();
+            sum_int[i] = peak->sumIntensity().value();
+            sum_sigma[i] = peak->sumIntensity().sigma();
+            profile_int[i] = peak->profileIntensity().value();
+            profile_sigma[i] = peak->profileIntensity().sigma();
+            sum_bkg_val[i] = peak->sumBackground().value();
+            sum_bkg_sig[i] = peak->sumBackground().sigma();
+            profile_bkg_val[i] = peak->profileBackground().value();
+            profile_bkg_sig[i] = peak->profileBackground().sigma();
             mean_bkg_grad[i] = peak->meanBkgGradient().value();
             mean_bkg_grad_sigma[i] = peak->meanBkgGradient().sigma();
 
@@ -425,18 +433,27 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
                 {ohkl::ds_Scale, H5::PredType::NATIVE_DOUBLE, peak_space, scale.data()},
                 {ohkl::ds_Transmission, H5::PredType::NATIVE_DOUBLE, peak_space,
                  transmission.data()},
-                {ohkl::ds_Intensity, H5::PredType::NATIVE_DOUBLE, peak_space, intensity.data()},
-                {ohkl::ds_Sigma, H5::PredType::NATIVE_DOUBLE, peak_space, sigma.data()},
-                {ohkl::ds_BkgIntensity, H5::PredType::NATIVE_DOUBLE, peak_space,
-                 mean_bkg_val.data()},
-                {ohkl::ds_BkgSigma, H5::PredType::NATIVE_DOUBLE, peak_space, mean_bkg_sig.data()},
+                {ohkl::ds_sumIntensity, H5::PredType::NATIVE_DOUBLE, peak_space, sum_int.data()},
+                {ohkl::ds_sumSigma, H5::PredType::NATIVE_DOUBLE, peak_space, sum_sigma.data()},
+                {ohkl::ds_profileIntensity, H5::PredType::NATIVE_DOUBLE, peak_space,
+                 profile_int.data()},
+                {ohkl::ds_profileSigma, H5::PredType::NATIVE_DOUBLE, peak_space,
+                 profile_sigma.data()},
+                {ohkl::ds_sumBkg, H5::PredType::NATIVE_DOUBLE, peak_space, sum_bkg_val.data()},
+                {ohkl::ds_sumBkgSigma, H5::PredType::NATIVE_DOUBLE, peak_space, sum_bkg_sig.data()},
+                {ohkl::ds_profileBkg, H5::PredType::NATIVE_DOUBLE, peak_space,
+                 profile_bkg_val.data()},
+                {ohkl::ds_profileBkgSigma, H5::PredType::NATIVE_DOUBLE, peak_space,
+                 profile_bkg_sig.data()},
                 {ohkl::ds_hklError, H5::PredType::NATIVE_DOUBLE, hkl_error_space, hkl_error.data()},
                 {ohkl::ds_Center, H5::PredType::NATIVE_DOUBLE, center_space, center.data()},
                 {ohkl::ds_Metric, H5::PredType::NATIVE_DOUBLE, metric_space, metric.data()},
                 // NATIVE_INT32
                 {ohkl::ds_RegionType, H5::PredType::NATIVE_INT32, peak_space, region_type.data()},
-                {ohkl::ds_RejectionFlag, H5::PredType::NATIVE_INT32, peak_space, rejection_flag.data()},
-                {ohkl::ds_IntegrationFlag, H5::PredType::NATIVE_INT32, peak_space, integration_flag.data()},
+                {ohkl::ds_RejectionFlag, H5::PredType::NATIVE_INT32, peak_space,
+                 rejection_flag.data()},
+                {ohkl::ds_IntegrationFlag, H5::PredType::NATIVE_INT32, peak_space,
+                 integration_flag.data()},
                 {ohkl::ds_hkl, H5::PredType::NATIVE_INT32, hkl_space, hkl.data()},
                 // NATIVE_HBOOL
                 // {ohkl::ds_Selected, H5::PredType::NATIVE_HBOOL, peak_space, selected.get()},
