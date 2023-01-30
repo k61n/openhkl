@@ -116,10 +116,12 @@ class AutoIndexer {
     //! Check if list of solutions contains reference unit cell. If it does,
     //! return a pointer, otherwise return nullptr
     sptrUnitCell goodSolution(const UnitCell* reference_cell, double length_tol, double angle_tol);
+    //! Get a list of filtered peaks used in indexing
+    std::vector<Peak3D*>* filteredPeaks() { return &_filtered_peaks; };
 
  private:
     //! Filter the peaks according to AutoIndexerParameters
-    std::vector<Peak3D*> filterPeaks(
+    void filterPeaks(
         const std::vector<Peak3D*>& peaks, const InstrumentState* state = nullptr);
     //! Get a vector of candidate unit cells from a list of peaks using the
     //! Fourier transform method
@@ -133,6 +135,7 @@ class AutoIndexer {
     //! Remove bad candidate unit cells
     void removeBad(double quality);
 
+    std::vector<Peak3D*> _filtered_peaks;
     std::unique_ptr<IndexerParameters> _params;
     std::vector<RankedSolution> _solutions;
     std::shared_ptr<ProgressHandler> _handler;

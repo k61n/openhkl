@@ -108,9 +108,8 @@ void SubframeFilterPeaks::setStateUp()
     _state_box = new SpoilerCheck("Type of peak");
     GridFiller f(_state_box);
 
-    _selected = f.addCheckBox("Valid");
+    _enabled = f.addCheckBox("Valid");
     _masked = f.addCheckBox("Masked");
-    _predicted = f.addCheckBox("Predicted");
     _indexed_peaks = f.addCheckBox("Indexed");
 
     _left_layout->addWidget(_state_box);
@@ -358,13 +357,11 @@ void SubframeFilterPeaks::grabFilterParameters()
 
     auto* flags = gSession->currentProject()->experiment()->peakFilter()->flags();
 
-    _selected->setChecked(flags->selected);
+    _enabled->setChecked(flags->enabled);
     _masked->setChecked(flags->masked);
-    _predicted->setChecked(flags->predicted);
     _indexed_peaks->setChecked(flags->indexed);
     _extinct_spacegroup->setChecked(flags->extinct);
     _keep_complementary->setChecked(flags->complementary);
-    _state_box->setChecked(flags->state);
     _unit_cell_box->setChecked(flags->index_tol);
     _strength_box->setChecked(flags->strength);
     _d_range_box->setChecked(flags->d_range);
@@ -384,36 +381,25 @@ void SubframeFilterPeaks::setFilterParameters()
     auto* flags = filter->flags();
     filter->resetFilterFlags();
 
-    if (_selected->isChecked())
-        flags->selected = true;
-    if (_masked->isChecked())
-        flags->masked = true;
-    if (_predicted->isChecked())
-        flags->predicted = true;
-    if (_indexed_peaks->isChecked())
-        flags->indexed = true;
-    if (_extinct_spacegroup->isChecked())
-        flags->extinct = true;
-    if (_overlap_box->isChecked())
-        flags->overlapping = true;
-    if (_keep_complementary->isChecked())
-        flags->complementary = true;
-    if (_state_box->isChecked())
-        flags->state = true;
-    if (_unit_cell_box->isChecked())
-        flags->index_tol = true;
-    if (_strength_box->isChecked())
-        flags->strength = true;
-    if (_d_range_box->isChecked())
-        flags->d_range = true;
-    if (_frame_range_box->isChecked())
-        flags->frames = true;
-    if (_sparse_box->isChecked())
-        flags->sparse = true;
-    if (_merge_box->isChecked())
-        flags->significance = true;
-    if (_rejection_flag_box->isChecked())
-        flags->rejection_flag = true;
+    if (_state_box->isChecked()) {
+        flags->enabled = _enabled->isChecked();
+        flags->masked = _masked->isChecked();
+        flags->indexed = _indexed_peaks->isChecked();
+    } else {
+        flags->enabled = false;
+        flags->masked = false;
+        flags->indexed = false;
+    }
+    flags->extinct = _extinct_spacegroup->isChecked();
+    flags->overlapping = _overlap_box->isChecked();
+    flags->complementary = _keep_complementary->isChecked();
+    flags->index_tol = _unit_cell_box->isChecked();
+    flags->strength = _strength_box->isChecked();
+    flags->d_range = _d_range_box->isChecked();
+    flags->frames = _frame_range_box->isChecked();
+    flags->sparse = _sparse_box->isChecked();
+    flags->significance = _merge_box->isChecked();
+    flags->rejection_flag = _rejection_flag_box->isChecked();
 
     auto* params = filter->parameters();
 

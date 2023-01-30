@@ -43,8 +43,8 @@ PeakFilter::PeakFilter()
 
 void PeakFilter::resetFilterFlags()
 {
-    *_filter_flags = {true,  false, false, false, false, false, false, false, false, false,
-                      false, false, false, false, false, false, false, false, false};
+    *_filter_flags = {true, false, false, false, false, false, false, false, false, false,
+                      false, false, false, false, false, false, false};
 }
 
 void PeakFilter::filterSignificance(PeakCollection* peak_collection) const
@@ -212,31 +212,16 @@ std::vector<Peak3D*> PeakFilter::filterEnabled(
     return filtered_peaks;
 }
 
-void PeakFilter::filterSelected(PeakCollection* peak_collection) const
-{
-    int nrejected = 0;
-    for (int i = 0; i < peak_collection->numberOfPeaks(); ++i) {
-        ohkl::Peak3D* peak_ptr = peak_collection->getPeak(i);
-        if (peak_ptr->selected())
-            peak_ptr->caughtYou(true);
-        else {
-            peak_ptr->rejectYou(true);
-            ++nrejected;
-        }
-    }
-    ohklLog(Level::Info, "PeakFilter::filterSelected: ", nrejected, " peaks rejected");
-}
-
 void PeakFilter::filterMasked(PeakCollection* peak_collection) const
 {
     int nrejected = 0;
     for (int i = 0; i < peak_collection->numberOfPeaks(); ++i) {
         ohkl::Peak3D* peak_ptr = peak_collection->getPeak(i);
-        if (peak_ptr->masked())
-            peak_ptr->caughtYou(true);
-        else {
+        if (peak_ptr->rejectionFlag() == RejectionFlag::Masked) {
             peak_ptr->rejectYou(true);
             ++nrejected;
+        } else {
+                peak_ptr->caughtYou(true);
         }
     }
     ohklLog(Level::Info, "PeakFilter::filterMasked: ", nrejected, " peaks rejected");
@@ -387,21 +372,6 @@ std::vector<Peak3D*> PeakFilter::filterStrength(
     return filtered_peaks;
 }
 
-void PeakFilter::filterPredicted(PeakCollection* peak_collection) const
-{
-    int nrejected = 0;
-    for (int i = 0; i < peak_collection->numberOfPeaks(); ++i) {
-        ohkl::Peak3D* peak_ptr = peak_collection->getPeak(i);
-        if (peak_ptr->predicted())
-            peak_ptr->caughtYou(true);
-        else {
-            peak_ptr->rejectYou(true);
-            ++nrejected;
-        }
-    }
-    ohklLog(Level::Info, "PeakFilter::filterPredicted: ", nrejected, " peaks rejected");
-}
-
 void PeakFilter::filterDRange(PeakCollection* peak_collection) const
 {
     int nrejected = 0;
@@ -479,6 +449,18 @@ void PeakFilter::filterFrameRange(PeakCollection* peak_collection) const
         }
     }
     ohklLog(Level::Info, "PeakFilter::filterFrameRange: ", nrejected, " peaks rejected");
+}
+
+std::vector<Peak3D*> PeakFilter::filterFrameRange(
+    const std::vector<Peak3D*>& peaks, int frame_min, int frame_max) const
+{
+    std::vector<Peak3D*> filtered_peaks;
+    for (auto* peak : peaks) {
+        auto c = peak->shape().center();
+        if (c[2] >= static_cast<double>(frame_min) && c[2] <= static_cast<double>(frame_max))
+            filtered_peaks.push_back(peak);
+    }
+    return filtered_peaks;
 }
 
 void PeakFilter::filterRejectionFlag(PeakCollection* peak_collection) const
@@ -596,19 +578,15 @@ void PeakFilter::filterGradientSigma(PeakCollection* peak_collection) const
 void PeakFilter::filter(PeakCollection* peak_collection) const
 {
     ohklLog(Level::Info, "PeakFilter::filter: filtering peaks");
-    if (_filter_flags->state) {
-        if (_filter_flags->selected) {
-            ohklLog(Level::Info, "Filtering out unselected peaks");
-            filterSelected(peak_collection);
-        }
-        if (_filter_flags->masked) {
-            ohklLog(Level::Info, "Filtering out unmasked peaks");
-            filterMasked(peak_collection);
-        }
-        if (_filter_flags->predicted) {
-            ohklLog(Level::Info, "Filtering by prediction");
-            filterPredicted(peak_collection);
-        }
+
+    if (_filter_flags->enabled) {
+        ohklLog(Level::Info, "Filtering out disabled peaks");
+        filterMasked(peak_collection);
+    }
+
+    if (_filter_flags->masked) {
+        ohklLog(Level::Info, "Filtering out unmasked peaks");
+        filterMasked(peak_collection);
     }
 
     if (_filter_flags->indexed) {

@@ -298,7 +298,7 @@ void SubframeFindPeaks::setPeakTableUp()
     _peak_table->setColumnHidden(PeakColumn::h, true);
     _peak_table->setColumnHidden(PeakColumn::k, true);
     _peak_table->setColumnHidden(PeakColumn::l, true);
-    _peak_table->setColumnHidden(PeakColumn::Selected, true);
+    _peak_table->setColumnHidden(PeakColumn::Enabled, true);
     _peak_table->setColumnHidden(PeakColumn::Count, true);
 
     peak_grid->addWidget(_peak_table, 0, 0, 0, 0);
@@ -561,7 +561,7 @@ void SubframeFindPeaks::refreshPeakTable()
     _peak_table->setColumnHidden(PeakColumn::h, true);
     _peak_table->setColumnHidden(PeakColumn::k, true);
     _peak_table->setColumnHidden(PeakColumn::l, true);
-    _peak_table->setColumnHidden(PeakColumn::Selected, true);
+    _peak_table->setColumnHidden(PeakColumn::Enabled, true);
     _peak_table->setColumnHidden(PeakColumn::Count, true);
 
     _detector_widget->refresh();

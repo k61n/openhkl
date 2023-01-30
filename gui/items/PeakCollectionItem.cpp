@@ -290,11 +290,11 @@ void PeakCollectionItem::sort(int column, Qt::SortOrder order)
             };
             break;
         }
-        case PeakColumn::Selected: {
+        case PeakColumn::Enabled: {
             compareFn = [&](std::unique_ptr<PeakItem>& p1, std::unique_ptr<PeakItem>& p2) {
-                bool s_1 = p1->peak()->selected();
-                bool s_2 = p2->peak()->selected();
-                return (s_1 < s_2);
+                bool e_1 = p1->peak()->enabled();
+                bool e_2 = p2->peak()->enabled();
+                return (e_1 < e_2);
             };
             break;
         }

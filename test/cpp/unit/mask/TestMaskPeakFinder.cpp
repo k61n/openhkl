@@ -88,9 +88,8 @@ TEST_CASE("test/data/TestPeakFinder2D.cpp", "")
     ohkl::PeakCollection* peaks = experiment.getPeakCollection("found");
 
     ohkl::PeakFilter* filter = experiment.peakFilter();
-    filter->flags()->selected = false;
-    filter->flags()->rejection_flag = true;
-    filter->parameters()->rejection_flag = ohkl::RejectionFlag::Masked;
+    filter->flags()->masked = true;
+    filter->flags()->enabled = false;
     filter->filter(peaks);
 
     int npeaks = peaks->numberOfPeaks();

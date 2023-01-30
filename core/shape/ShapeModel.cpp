@@ -351,12 +351,10 @@ std::optional<Eigen::Matrix3d> ShapeModel::meanCovariance(
 
     if (!neighbors) {
         reference_peak->setRejectionFlag(RejectionFlag::NoNeighbours);
-        reference_peak->setSelected(false);
         return {};
     }
     if (neighbors.value().size() < min_neighbors) {
         reference_peak->setRejectionFlag(RejectionFlag::TooFewNeighbours);
-        reference_peak->setSelected(false);
         return {};
     }
 
@@ -387,7 +385,6 @@ std::optional<Eigen::Matrix3d> ShapeModel::meanCovariance(
             }
             default: {
                 reference_peak->setRejectionFlag(RejectionFlag::InterpolationFailure);
-                reference_peak->setSelected(false);
                 return {};
             }
         }
@@ -421,9 +418,6 @@ void ShapeModel::setPredictedShapes(PeakCollection* peaks)
     int n_bad_shapes = 0;
 #pragma omp parallel for
     for (auto peak : peaks->getPeakList()) {
-        peak->setPredicted(true);
-        peak->setSelected(true);
-
         // Skip the peak if any error occur when computing its mean covariance (e.g.
         // too few or no neighbouring peaks found)
         if (auto cov = meanCovariance(

@@ -230,16 +230,6 @@ Peak3D* PeakCollection::findPeakByIndex(const MillerIndex& hkl)
     return nullptr;
 }
 
-int PeakCollection::countSelected() const
-{
-    int nselected = 0;
-    for (auto peak : getPeakList()) {
-        if (peak->selected())
-            ++nselected;
-    }
-    return nselected;
-}
-
 int PeakCollection::countEnabled() const
 {
     int nenabled = 0;
@@ -276,11 +266,7 @@ void PeakCollection::resetIntegrationFlags()
 {
     ohklLog(Level::Info, "PeakCollection::resetIntegrationFlags");
     for (auto* peak : getPeakList())
-        if (peak->getRejectionFlag() == RejectionFlag::NotRejected) {
-            // Set to selected only if _rejection_flag == RejectionFlag::NotRejected
-            peak->setSelected(true);
         peak->setIntegrationFlag(RejectionFlag::NotRejected);
-    }
 }
 
 } // namespace ohkl

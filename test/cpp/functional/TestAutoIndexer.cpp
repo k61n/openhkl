@@ -41,7 +41,6 @@ TEST_CASE("test/data/TestPeakFinder.cpp", "")
     reference_cell.setSpaceGroup(ohkl::SpaceGroup{"P 21 21 21"});
 
     auto data = experiment.getAllData()[0];
-    data->adjustDirectBeam(-2.5, -1.0);
     auto* found_peaks = experiment.getPeakCollection("found");
     CHECK(found_peaks->numberOfPeaks() == 492);
 

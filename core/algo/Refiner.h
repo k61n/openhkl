@@ -49,7 +49,7 @@ struct RefinerParameters {
     //! Maximum number of iteration for minimisation
     unsigned int max_iter = 1000;
     //! Use unit cells assigned to batches in further refinement
-    bool use_batch_cells = true;
+    bool use_batch_cells = false;
     //! Assign unit cell to peaks when making batches
     bool set_unit_cell = true;
 

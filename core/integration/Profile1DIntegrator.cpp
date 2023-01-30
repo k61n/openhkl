@@ -80,7 +80,6 @@ bool Profile1DIntegrator::compute(
 {
     if (!shape_model) {
         peak->setIntegrationFlag(RejectionFlag::NoShapeModel);
-        peak->setSelected(false);
         return false;
     }
 
@@ -93,7 +92,6 @@ bool Profile1DIntegrator::compute(
     // TODO: should this be hard-coded??
     if (events.size() < 29) {
         peak->setIntegrationFlag(RejectionFlag::TooFewPoints);
-        peak->setSelected(false);
         return false;
     }
 
@@ -142,7 +140,6 @@ bool Profile1DIntegrator::compute(
 
     if (std::isnan(sigma) || sigma <= 0.0) {
         peak->setIntegrationFlag(RejectionFlag::InvalidSigma);
-        peak->setSelected(false);
         return false;
     }
 

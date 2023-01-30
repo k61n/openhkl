@@ -36,7 +36,6 @@ IntegrationRegion::IntegrationRegion(
     _shape = peak->shape();
     if (_shape.aabb().lower().hasNaN() || _shape.aabb().upper().hasNaN()) {
         peak->setIntegrationFlag(RejectionFlag::InvalidShape);
-        peak->setSelected(false);
         _valid = false;
         return;
     }
@@ -50,25 +49,24 @@ IntegrationRegion::IntegrationRegion(
         case RegionType::FixedEllipsoid: {
             // scale the ellipsoid by the average radius in pixels
             const double r = _shape.radii().sum() / 3.0;
-            if (!std::isnan(r)) { // Eigensolver to compute radii can fail, resulting in NaN
+            if (!std::isnan(r)) // Eigensolver to compute radii can fail, resulting in NaN
                 _shape.scale(peak_end / r);
-            } else {
+            else
                 peak->setIntegrationFlag(RejectionFlag::InvalidRegion);
-                peak->setSelected(false);
-            }
+
             _peakEnd = peak_end;
             _fixed = true;
             break;
         }
         default: {
             peak->setIntegrationFlag(RejectionFlag::InvalidRegion);
-            peak->setSelected(false);
             break;
         }
     }
 
-    if (peak->rejectionFlag() == RejectionFlag::InvalidRegion
-        || peak->rejectionFlag() == RejectionFlag::InterpolationFailure || peak->masked()) {
+    if (peak->rejectionFlag() == RejectionFlag::InvalidRegion ||
+        peak->rejectionFlag() == RejectionFlag::InterpolationFailure ||
+        peak->rejectionFlag() == RejectionFlag::Masked) {
         _valid = false;
     } else {
         Ellipsoid bkg(_shape);

@@ -329,7 +329,6 @@ int Refiner::updatePredictions(std::vector<Peak3D*> peaks)
             q_pred, peak->dataSet()->instrumentStates(), peak->dataSet()->detector(), _nframes);
 
         if (events.size() == 0) { // No event found
-            peak->setSelected(false);
             peak->setRejectionFlag(RejectionFlag::PredictionUpdateFailure);
             continue;
         } else if (events.size() > 1) { // Some peaks cross the Ewald sphere more than once

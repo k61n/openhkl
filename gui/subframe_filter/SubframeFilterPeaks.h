@@ -108,9 +108,8 @@ class SubframeFilterPeaks : public QWidget {
     QVBoxLayout* _left_layout;
     QSplitter* _right_element;
 
-    QCheckBox* _selected;
+    QCheckBox* _enabled;
     QCheckBox* _masked;
-    QCheckBox* _predicted;
     QCheckBox* _indexed_peaks;
     QCheckBox* _extinct_spacegroup;
     QCheckBox* _keep_complementary;

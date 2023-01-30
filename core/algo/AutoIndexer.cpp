@@ -68,10 +68,10 @@ bool AutoIndexer::autoIndex(const std::vector<Peak3D*>& peaks, const InstrumentS
 {
     _params->log(Level::Info);
     ohklLog(Level::Info, "AutoIndexer::autoindex: indexing using ", peaks.size(), " peaks");
+    filterPeaks(peaks, state);
     // Find the Q-space directions along which the projection of the the Q-vectors
     // shows the highest periodicity
-    std::vector<Peak3D*> filtered_peaks = filterPeaks(peaks, state);
-    bool success = computeFFTSolutions(filtered_peaks, state);
+    bool success = computeFFTSolutions(_filtered_peaks, state);
     if (!success)
         return success;
     refineSolutions(peaks);
@@ -91,11 +91,10 @@ bool AutoIndexer::autoIndex(const std::vector<Peak3D*>& peaks, const InstrumentS
 bool AutoIndexer::autoIndex(PeakCollection* peaks)
 {
     ohklLog(Level::Info, "AutoIndexer::autoindex: indexing PeakCollection '", peaks->name(), "'");
-    std::vector<Peak3D*> peak_list = peaks->getPeakList();
-    std::vector<Peak3D*> filtered_peaks = filterPeaks(peak_list);
     _params->peaks_integrated = peaks->isIntegrated();
+    std::vector<Peak3D*> peak_list = peaks->getPeakList();
 
-    if (autoIndex(filtered_peaks)) {
+    if (autoIndex(peak_list)) {
         peaks->setIndexed(true);
         return true;
     }
@@ -118,25 +117,31 @@ const std::vector<std::pair<sptrUnitCell, double>>& AutoIndexer::solutions() con
     return _solutions;
 }
 
-std::vector<Peak3D*> AutoIndexer::filterPeaks(
-    const std::vector<Peak3D*>& peaks, const InstrumentState* state)
+void AutoIndexer::filterPeaks(const std::vector<Peak3D*>& peaks, const InstrumentState* state)
 {
-    const std::vector<Peak3D*> enabled_peaks = PeakFilter{}.filterEnabled(peaks, true);
+    _filtered_peaks.clear();
+    std::vector<Peak3D*> tmp_peaks;
+    const std::vector<Peak3D*> frame_range_peaks =
+        PeakFilter{}.filterFrameRange(peaks, _params->first_frame, _params->last_frame);
+    ohklLog(
+        Level::Info, "AutoIndexer::filterPeaks: ", frame_range_peaks.size(),
+        " peaks in frame range");
+    const std::vector<Peak3D*> enabled_peaks = PeakFilter{}.filterEnabled(frame_range_peaks, true);
     ohklLog(Level::Info, "AutoIndexer::filterPeaks: ", enabled_peaks.size(), " enabled peaks");
-    const std::vector<Peak3D*> filtered_peaks =
-        PeakFilter{}.filterDRange(enabled_peaks, _params->d_min, _params->d_max, state);
-    if (_params->peaks_integrated) {
-        const std::vector<Peak3D*> filtered_peaks_2 = PeakFilter{}.filterStrength(
-            filtered_peaks, _params->strength_min, _params->strength_max);
-        ohklLog(
-            Level::Info, "AutoIndexer::filterPeaks: ", filtered_peaks_2.size(),
-            " peaks used in indexing");
-        return filtered_peaks_2;
+    if (!_params->peaks_integrated) {
+        ohklLog(Level::Info, "AutoIndexer::filterPeaks: filtering by resolution");
+        _filtered_peaks =
+            PeakFilter{}.filterDRange(enabled_peaks, _params->d_min, _params->d_max, state);
+    } else {
+        ohklLog(Level::Info, "AutoIndexer::filterPeaks: filtering by resolution and strength");
+        tmp_peaks = PeakFilter{}.filterStrength(
+            enabled_peaks, _params->strength_min, _params->strength_max);
+        _filtered_peaks =
+            PeakFilter{}.filterDRange(tmp_peaks, _params->d_min, _params->d_max, state);
     }
     ohklLog(
-        Level::Info, "AutoIndexer::filterPeaks: ", filtered_peaks.size(),
+        Level::Info, "AutoIndexer::filterPeaks: ", _filtered_peaks.size(),
         " peaks used in indexing");
-    return filtered_peaks;
 }
 
 bool AutoIndexer::computeFFTSolutions(

@@ -68,7 +68,6 @@ TEST_CASE("test/integrate/Test_6_12_38.cpp", "")
     const Eigen::Vector3d q0 = Eigen::RowVector3d(-6, 12, -38) * B;
     ohkl::Ellipsoid shape(Eigen::Vector3d(434, 802, 10), 2);
     auto peak = ohkl::Peak3D(dataset_ptr, shape);
-    peak.setSelected(true);
 
     Eigen::Vector3d q1 = peak.q().rowVector();
     CHECK(std::abs((q1 - q0).norm() / q0.norm()) < 1e-1);

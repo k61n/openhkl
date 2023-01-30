@@ -47,7 +47,7 @@ TEST_CASE("test/data/TestShapeModel.cpp", "")
     auto* filter = experiment.peakFilter();
     auto* filter_flags = filter->flags();
     auto* filter_params = filter->parameters();
-    filter_flags->selected = true;
+    filter_flags->enabled = true;
     filter_flags->d_range = true;
     filter_flags->strength = true;
     filter_params->d_min = 1.5;

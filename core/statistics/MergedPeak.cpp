@@ -39,7 +39,6 @@ MergeFlag MergedPeak::addPeak(Peak3D* peak)
     const UnitCell* cell = peak->unitCell();
     const ReciprocalVector q = peak->q();
     if (!q.isValid()) {
-        peak->setSelected(false);
         peak->setRejectionFlag(RejectionFlag::InterpolationFailure);
         return MergeFlag::InvalidQ;
     }

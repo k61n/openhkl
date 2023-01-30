@@ -535,7 +535,6 @@ void SubframeReject::rejectOutliers()
     filter->resetFiltering(collection);
 
     for (auto* peak : outliers) {
-        peak->setSelected(false);
         peak->setRejectionFlag(ohkl::RejectionFlag::Outlier);
         peak->caughtYou(true); // For sorting in the peak table
     }

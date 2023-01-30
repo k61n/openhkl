@@ -620,7 +620,6 @@ void PeakFinder::find(const sptrDataSet data)
         // peak overlaps with mask
         for (IMask* mask : data->masks()) {
             if (mask->collide(p->shape())) {
-                p->setMasked(true);
                 p->setRejectionFlag(RejectionFlag::Masked);
                 ++numPeaksMasked;
             }
@@ -629,25 +628,21 @@ void PeakFinder::find(const sptrDataSet data)
         // peak too small or too large
         if ((extents.maxCoeff() > peaksTooLargeLimit || extents.minCoeff() < peaksTooSmallLimit)
             && !p->enabled()) {
-            p->setSelected(false);
             p->setRejectionFlag(RejectionFlag::OutsideThreshold);
             ++numPeaksTooSmallOrLarge;
         }
 
         if (extents(2) > _params->maximum_frames && !p->enabled()) {
-            p->setSelected(false);
             p->setRejectionFlag(RejectionFlag::OutsideFrames);
             ++numPeaksOutsideFrames;
         }
 
         // peak's bounding box not completely contained in detector image
         if (!dAABB.contains(p->shape().aabb()) && !p->enabled()) {
-            p->setSelected(false);
             p->setRejectionFlag(RejectionFlag::OutsideDetector);
             ++numPeaksNotInDetArea;
         }
 
-        p->setPredicted(false);
         peaks.push_back(p);
         _current_peaks.push_back(p);
 

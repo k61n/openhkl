@@ -642,7 +642,6 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
             if (PeakItemGraphic* peak_item = dynamic_cast<PeakItemGraphic*>(item)) {
                 // Remove a peak item
                 peak_item->peak()->setRejectionFlag(ohkl::RejectionFlag::ManuallyRejected, true);
-                peak_item->peak()->setSelected(false);
                 peak_item->setCenterColor(Qt::red);
             } else if (BoxMaskItem* mask_item = dynamic_cast<BoxMaskItem*>(item)) {
                 // Remove a mask item
@@ -672,7 +671,6 @@ void DetectorScene::keyPressEvent(QKeyEvent* event)
 
             if (PeakItemGraphic* peak_item = dynamic_cast<PeakItemGraphic*>(item)) {
                 peak_item->peak()->setRejectionFlag(ohkl::RejectionFlag::NotRejected, true);
-                peak_item->peak()->setSelected(true);
                 peak_item->setCenterColor(Qt::green);
             }
             if (p == _lastClickedGI)
