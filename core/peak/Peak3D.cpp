@@ -389,6 +389,12 @@ void Peak3D::setRejectionFlag(RejectionFlag flag, bool overwrite /* = false */)
     }
 }
 
+void Peak3D::setIntegrationFlag(RejectionFlag flag)
+{
+    if (_integration_flag == RejectionFlag::NotRejected)
+        _integration_flag = flag;
+}
+
 RejectionFlag Peak3D::rejectionFlag() const
 {
     if (_integration_flag == RejectionFlag::NotRejected)

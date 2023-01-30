@@ -193,7 +193,7 @@ class Peak3D {
     //! Set the reason for this peak being disabled
     void setRejectionFlag(RejectionFlag flag, bool overwrite = false);
     //! Set the reason for rejection during integration
-    void setIntegrationFlag(RejectionFlag flag) { _integration_flag = flag; };
+    void setIntegrationFlag(RejectionFlag flag);
     //! Return the rejection flag only
     RejectionFlag getRejectionFlag() const { return _rejection_flag; };
     //! Return the integration flag only
