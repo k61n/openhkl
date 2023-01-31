@@ -300,6 +300,9 @@ void SubframeFindPeaks::setPeakTableUp()
     _peak_table->setColumnHidden(PeakColumn::l, true);
     _peak_table->setColumnHidden(PeakColumn::Enabled, true);
     _peak_table->setColumnHidden(PeakColumn::Count, true);
+    _peak_table->setColumnHidden(PeakColumn::ProfileIntensity, true);
+    _peak_table->setColumnHidden(PeakColumn::ProfileSigma, true);
+    _peak_table->setColumnHidden(PeakColumn::ProfileStrength, true);
 
     peak_grid->addWidget(_peak_table, 0, 0, 0, 0);
 
