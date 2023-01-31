@@ -24,6 +24,7 @@
 #include <QDoubleSpinBox>
 #include <QHBoxLayout>
 #include <QPushButton>
+#include <QRadioButton>
 #include <QSizePolicy>
 #include <QSpinBox>
 #include <QSplitter>
@@ -33,6 +34,7 @@
 #include <QTableWidget>
 #include <QVBoxLayout>
 #include <QWidget>
+#include <qradiobutton.h>
 
 class IntegratedPeakComboBox;
 class PeakComboBox;
@@ -114,6 +116,8 @@ class SubframeMergedPeaks : public QWidget {
     IntegratedPeakComboBox* _peak_combo_1;
     IntegratedPeakComboBox* _peak_combo_2;
 
+    QRadioButton* _sum_radio;
+    QRadioButton* _profile_radio;
     QTableView* _d_shell_view;
     QDoubleSpinBox* _d_min;
     QDoubleSpinBox* _d_max;

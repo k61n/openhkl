@@ -41,28 +41,55 @@ double PeakItem::peak_d() const
     }
 }
 
-double PeakItem::intensity() const
+double PeakItem::sum_intensity() const
 {
     try {
-        return _peak->correctedIntensity().value();
+        return _peak->sumIntensity().value();
     } catch (std::range_error& e) {
         return 0.0;
     }
 }
 
-double PeakItem::sigma_intensity() const
+double PeakItem::sum_sigma() const
 {
     try {
-        return _peak->correctedIntensity().sigma();
+        return _peak->sumIntensity().sigma();
     } catch (std::range_error& e) {
         return 0.0;
     }
 }
 
-double PeakItem::strength() const
+double PeakItem::profile_intensity() const
 {
     try {
-        return _peak->correctedIntensity().strength();
+        return _peak->profileIntensity().value();
+    } catch (std::range_error& e) {
+        return 0.0;
+    }
+}
+
+double PeakItem::profile_sigma() const
+{
+    try {
+        return _peak->profileIntensity().sigma();
+    } catch (std::range_error& e) {
+        return 0.0;
+    }
+}
+
+double PeakItem::sum_strength() const
+{
+    try {
+        return _peak->sumIntensity().strength();
+    } catch (std::range_error& e) {
+        return 0.0;
+    }
+}
+
+double PeakItem::profile_strength() const
+{
+    try {
+        return _peak->profileIntensity().strength();
     } catch (std::range_error& e) {
         return 0.0;
     }
@@ -122,14 +149,23 @@ QVariant PeakItem::peakData(const QModelIndex& index, int role, PeakDisplayModes
                 case PeakColumn::Frame: {
                     return peak_center(2);
                 }
-                case PeakColumn::Intensity: {
-                    return intensity();
+                case PeakColumn::SumIntensity: {
+                    return sum_intensity();
                 }
-                case PeakColumn::Sigma: {
-                    return sigma_intensity();
+                case PeakColumn::SumSigma: {
+                    return sum_sigma();
                 }
-                case PeakColumn::Strength: {
-                    return strength();
+                case PeakColumn::ProfileIntensity: {
+                    return profile_intensity();
+                }
+                case PeakColumn::ProfileSigma: {
+                    return profile_sigma();
+                }
+                case PeakColumn::SumStrength: {
+                    return sum_strength();
+                }
+                case PeakColumn::ProfileStrength: {
+                    return profile_strength();
                 }
                 case PeakColumn::BkgGradient: {
                     return bkg_gradient();

@@ -46,6 +46,7 @@
 
 #include <fstream>
 #include <iomanip>
+#include <qradiobutton.h>
 
 #include "gui/dialogs/PeakExportDialog.h"
 
@@ -167,31 +168,38 @@ void SubframeMergedPeaks::setDShellUp()
 
     QLabel* label_ptr;
 
-    label_ptr = new QLabel("Resolution (d) range:");
+    label_ptr = new QLabel("Integration type:");
     label_ptr->setAlignment(Qt::AlignRight);
     d_shell_down_left->addWidget(label_ptr, 0, 0, 1, 1);
     label_ptr->setSizePolicy(*_size_policy_widgets);
 
-    label_ptr = new QLabel("Image range:");
+    label_ptr = new QLabel("Resolution (d) range:");
     label_ptr->setAlignment(Qt::AlignRight);
     d_shell_down_left->addWidget(label_ptr, 1, 0, 1, 1);
     label_ptr->setSizePolicy(*_size_policy_widgets);
 
-    label_ptr = new QLabel("Num. resolution shells:");
+    label_ptr = new QLabel("Image range:");
     label_ptr->setAlignment(Qt::AlignRight);
     d_shell_down_left->addWidget(label_ptr, 2, 0, 1, 1);
     label_ptr->setSizePolicy(*_size_policy_widgets);
 
-    label_ptr = new QLabel("Space group:");
+    label_ptr = new QLabel("Num. resolution shells:");
     label_ptr->setAlignment(Qt::AlignRight);
     d_shell_down_left->addWidget(label_ptr, 3, 0, 1, 1);
     label_ptr->setSizePolicy(*_size_policy_widgets);
 
-    label_ptr = new QLabel("Plot y axis:");
+    label_ptr = new QLabel("Space group:");
     label_ptr->setAlignment(Qt::AlignRight);
-    d_shell_down_left->addWidget(label_ptr, 5, 0, 1, 1);
+    d_shell_down_left->addWidget(label_ptr, 4, 0, 1, 1);
     label_ptr->setSizePolicy(*_size_policy_widgets);
 
+    label_ptr = new QLabel("Plot y axis:");
+    label_ptr->setAlignment(Qt::AlignRight);
+    d_shell_down_left->addWidget(label_ptr, 6, 0, 1, 1);
+    label_ptr->setSizePolicy(*_size_policy_widgets);
+
+    _sum_radio = new QRadioButton("Sum", this);
+    _profile_radio = new QRadioButton("Profile", this);
     _d_min = new QDoubleSpinBox();
     _d_max = new QDoubleSpinBox();
     _frame_min = new QSpinBox();
@@ -202,6 +210,7 @@ void SubframeMergedPeaks::setDShellUp()
     _plottable_statistics = new QComboBox();
     _save_shell = new QPushButton("Save statistics");
 
+    _sum_radio->setChecked(true);
     _d_min->setValue(1.5);
     _d_min->setSingleStep(0.1);
     _d_min->setMaximum(100);
@@ -232,15 +241,17 @@ void SubframeMergedPeaks::setDShellUp()
     }
     _plottable_statistics->addItems(selection_stats);
 
-    d_shell_down_left->addWidget(_d_min, 0, 1, 1, 1);
-    d_shell_down_left->addWidget(_d_max, 0, 2, 1, 1);
-    d_shell_down_left->addWidget(_frame_min, 1, 1, 1, 1);
-    d_shell_down_left->addWidget(_frame_max, 1, 2, 1, 1);
-    d_shell_down_left->addWidget(_d_shells, 2, 1, 1, 2);
-    d_shell_down_left->addWidget(_space_group, 3, 1, 1, 2);
-    d_shell_down_left->addWidget(_friedel, 4, 1, 1, 2);
-    d_shell_down_left->addWidget(_plottable_statistics, 5, 1, 1, 3);
-    d_shell_down_left->addWidget(_save_shell, 6, 0, 1, 3);
+    d_shell_down_left->addWidget(_sum_radio, 0, 1, 1, 1);
+    d_shell_down_left->addWidget(_profile_radio, 0, 2, 1, 1);
+    d_shell_down_left->addWidget(_d_min, 1, 1, 1, 1);
+    d_shell_down_left->addWidget(_d_max, 1, 2, 1, 1);
+    d_shell_down_left->addWidget(_frame_min, 2, 1, 1, 1);
+    d_shell_down_left->addWidget(_frame_max, 2, 2, 1, 1);
+    d_shell_down_left->addWidget(_d_shells, 3, 1, 1, 2);
+    d_shell_down_left->addWidget(_space_group, 4, 1, 1, 2);
+    d_shell_down_left->addWidget(_friedel, 5, 1, 1, 2);
+    d_shell_down_left->addWidget(_plottable_statistics, 6, 1, 1, 3);
+    d_shell_down_left->addWidget(_save_shell, 7, 0, 1, 3);
     d_shell_down->addLayout(d_shell_down_left);
 
     _statistics_plot = new SXPlot;
@@ -556,6 +567,7 @@ void SubframeMergedPeaks::refreshMergedTable()
     if (_merged_data == nullptr)
         return;
 
+    _merged_data->computeChi2();
     for (const ohkl::MergedPeak& peak : _merged_data->mergedPeakSet()) {
         const auto hkl = peak.index();
 
@@ -563,14 +575,21 @@ void SubframeMergedPeaks::refreshMergedTable()
         const int k = hkl[1];
         const int l = hkl[2];
 
-        ohkl::Intensity I = peak.intensity();
+        ohkl::Intensity I;
+        double chi2, p;
+        if (_sum_radio->isChecked()) {
+            I = peak.sumIntensity();
+            chi2 = peak.sumChi2();
+            p = peak.sumPValue();
+        } else {
+            I = peak.profileIntensity();
+            chi2 = peak.profileChi2();
+            p = peak.profilePValue();
+        }
 
         const double intensity = I.value();
         const double sigma = I.sigma();
         const int nobs = peak.redundancy();
-
-        const double chi2 = peak.chi2();
-        const double p = peak.pValue();
 
         QList<QStandardItem*> row;
         row.push_back(new QStandardItem(QString::number(h)));
@@ -605,7 +624,11 @@ void SubframeMergedPeaks::refreshUnmergedTable()
             const int l = hkl[2];
 
             const Eigen::Vector3d& c = unmerged_peak->shape().center();
-            ohkl::Intensity I = unmerged_peak->correctedIntensity();
+            ohkl::Intensity I;
+            if (_sum_radio->isChecked())
+                I = unmerged_peak->sumIntensity();
+            else
+                I = unmerged_peak->profileIntensity();
 
             const double intensity = I.value();
             const double sigma = I.sigma();

@@ -463,7 +463,7 @@ void SubframeShapes::buildShapeModel()
             if (d > _params->d_max || d < _params->d_min)
                 continue;
 
-            const ohkl::Intensity intensity = peak->correctedIntensity();
+            const ohkl::Intensity intensity = peak->sumIntensity();
 
             if (intensity.value() <= _params->strength_min * intensity.sigma())
                 continue;

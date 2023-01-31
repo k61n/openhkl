@@ -109,14 +109,23 @@ QVariant PeakCollectionModel::headerData(int section, Qt::Orientation orientatio
             case PeakColumn::Frame: {
                 return QString("Frame");
             }
-            case PeakColumn::Intensity: {
-                return QString("Intensity");
+            case PeakColumn::SumIntensity: {
+                return QString("Intensity (sum)");
             }
-            case PeakColumn::Sigma: {
-                return QString(QChar(0x03C3)) + " (Int.)";
+            case PeakColumn::SumSigma: {
+                return QString(QChar(0x03C3)) + " (sum)";
             }
-            case PeakColumn::Strength: {
-                return QString("Strength");
+            case PeakColumn::ProfileIntensity: {
+                return QString("Intensity (profile)");
+            }
+            case PeakColumn::ProfileSigma: {
+                return QString(QChar(0x03C3)) + " (profile)";
+            }
+            case PeakColumn::SumStrength: {
+                return QString("Strength (sum)");
+            }
+            case PeakColumn::ProfileStrength: {
+                return QString("Strength (profile)");
             }
             case PeakColumn::BkgGradient: {
                 return QString("Gradient");
