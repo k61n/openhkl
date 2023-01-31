@@ -41,6 +41,7 @@ class CC {
     double _CChalf;
     double _CCstar;
     unsigned int _nPeaks{0};
+    bool _sum_intensities; // use pixel sum intensities if true, otherwise profile
 };
 
 } // namespace ohkl

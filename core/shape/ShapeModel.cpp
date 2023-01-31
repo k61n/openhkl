@@ -377,7 +377,7 @@ std::optional<Eigen::Matrix3d> ShapeModel::meanCovariance(
                 break;
             }
             case (PeakInterpolation::Intensity): {
-                auto corrected_intensity = peak->correctedIntensity();
+                auto corrected_intensity = peak->sumIntensity();
                 double intensity = corrected_intensity.value();
                 double sigma = corrected_intensity.sigma();
                 weight = intensity / sigma;
@@ -515,7 +515,7 @@ void ShapeModel::build(PeakCollection* peaks, sptrDataSet data)
         if (d > _params->d_max || d < _params->d_min)
             continue;
 
-        const ohkl::Intensity intensity = peak->correctedIntensity();
+        const ohkl::Intensity intensity = peak->sumIntensity();
 
         if (intensity.value() <= _params->strength_min * intensity.sigma())
             continue;

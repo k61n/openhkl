@@ -23,6 +23,7 @@
 
 namespace ohkl {
 
+class Intensity;
 class Peak3D;
 class PeakCollection;
 
@@ -75,6 +76,8 @@ class PeakStatistics {
     void _clearHistogram();
     //! Get the data for the histogram from the peak collection.
     void _getPeakData(PeakHistogramType type);
+    //! Get sum or profile intensity, depending on flag
+    Intensity intensity(Peak3D* peak) const;
 
     PeakCollection* _peaks;
 
@@ -83,6 +86,7 @@ class PeakStatistics {
     double _min_value;
     gsl_histogram* _current_histogram;
     std::vector<std::pair<double, Peak3D*>> _peak_data;
+    bool _sum_intensities; // use pixel sum intensities if true, otherwise profile
 
     static const std::map<PeakHistogramType, std::string> _histogram_strings;
 };

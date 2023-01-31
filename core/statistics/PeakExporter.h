@@ -24,6 +24,7 @@ namespace ohkl {
 
 class Peak3D;
 class MergedData;
+class MergedPeak;
 class ResolutionShell;
 class SpaceGroup;
 struct DataResolution;
@@ -66,7 +67,11 @@ class PeakExporter {
     std::map<ExportFormat, std::string>* exportFormatStrings() { return &_export_fmt_strings; };
 
  private:
+    Intensity unmergedIntensity(const Peak3D* peak);
+    Intensity mergedIntensity(const MergedPeak& peak);
+
     std::map<ExportFormat, std::string> _export_fmt_strings;
+    bool _sum_intensities; // use pixel sum intensities if true, otherwise profile
 };
 
 } // namespace ohkl

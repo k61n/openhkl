@@ -30,6 +30,7 @@ class RFactor : public IMergedPeakStatistic {
         , _expectedRmerge(0.0)
         , _expectedRmeas(0.0)
         , _expectedRpim(0.0)
+        , _sum_intensities(true)
     {
     }
     ~RFactor() { }
@@ -50,6 +51,7 @@ class RFactor : public IMergedPeakStatistic {
  private:
     double _Rmerge, _Rmeas, _Rpim;
     double _expectedRmerge, _expectedRmeas, _expectedRpim;
+    bool _sum_intensities; // use pixel sum intensities if true, otherwise profile
 };
 
 } // namespace ohkl

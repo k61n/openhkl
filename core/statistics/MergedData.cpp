@@ -143,4 +143,12 @@ double MergedData::dMax() const
     return _d_max;
 }
 
+void MergedData::computeChi2()
+{
+    for (auto peak : _merged_peak_set) {
+        peak.chi2();
+        peak.pValue();
+    }
+}
+
 } // namespace ohkl

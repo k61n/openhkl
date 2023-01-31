@@ -39,17 +39,20 @@ class MergedPeak {
     //! Returns a representative Miller index of the peak.
     MillerIndex index() const;
 
-    //! Returns the merged intensity of the peak.
-    Intensity intensity() const;
+    //! Returns the merged pixel sum intensity of the peak.
+    Intensity sumIntensity() const;
+
+    //! Returns the merged profile intensity of the peak.
+    Intensity profileIntensity() const;
 
     //! Returns the redundancy (number of symmetry-equivalent observations) of the merged peak.
     size_t redundancy() const;
 
     //! Compute the chi-squared statistic of a merged peak.
-    double chi2() const;
+    void chi2();
 
     //! Compute the p-value of the chi-squared statistic of the merged peak.
-    double pValue() const;
+    void pValue();
 
     //! Returns vector of peaks used to compute the merged peak.
     std::vector<Peak3D*> peaks() const;
@@ -57,16 +60,26 @@ class MergedPeak {
     //! split the merged peak randomly into two, for calculation of CC
     std::pair<MergedPeak, MergedPeak> split() const;
 
+    double sumChi2() const { return _sumChi2; };
+    double profileChi2() const { return _profileChi2; };
+    double sumPValue() const { return _sumPValue; };
+    double profilePValue() const { return _profilePValue; };
+
  private:
     //! Update the hkl that represents the set of equivalences.
     void determineRepresentativeHKL();
     void update();
 
     MillerIndex _hkl;
-    Intensity _intensitySum;
+    Intensity _sumIntensity;
+    Intensity _profileIntensity;
     std::vector<Peak3D*> _peaks;
     SpaceGroup _grp;
     bool _friedel;
+    double _sumChi2;
+    double _profileChi2;
+    double _sumPValue;
+    double _profilePValue;
 };
 
 #ifndef SWIG

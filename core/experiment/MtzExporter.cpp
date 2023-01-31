@@ -29,11 +29,13 @@
 
 namespace ohkl {
 MtzExporter::MtzExporter(
-    MergedData* merged_data, sptrDataSet data, sptrUnitCell cell, bool merged, std::string comment)
+    MergedData* merged_data, sptrDataSet data, sptrUnitCell cell, bool merged,
+    bool sum_intensities, std::string comment)
     : _merged_data(merged_data)
     , _ohkl_data(data)
     , _ohkl_cell(cell.get())
     , _merged(merged)
+    , _sum_intensities(sum_intensities)
     , _comment(comment)
     , _mtz_data(nullptr)
     , _mtz_xtal(nullptr)
@@ -255,7 +257,7 @@ void MtzExporter::buildSyminfo()
     std::regex r("\\s+");
     symbol = std::regex_replace(symbol, r, "");
 
-    ohkl::SymOpList symops = _ohkl_cell->spaceGroup().groupElements();
+    SymOpList symops = _ohkl_cell->spaceGroup().groupElements();
 
     /* Bulding symgrp */
     _mtz_data->mtzsymm.spcgrp = _ohkl_cell->spaceGroup().id();
@@ -344,7 +346,7 @@ void MtzExporter::buildMtzCols()
         throw std::runtime_error("Error MtzExporter::buildMtzColData Invalid Mtz data structures");
 
     int grp = 0; // grp idx, counter variable
-    ohkl::MergedPeakSet peaks;
+    MergedPeakSet peaks;
     peaks = _merged_data->mergedPeakSet();
 
     /*
@@ -381,30 +383,38 @@ void MtzExporter::buildMtzCols()
      */
     int idx = 0;
     if (_merged) { /* MERGED DATA */
-        for (const ohkl::MergedPeak& peak : peaks) {
+        for (const MergedPeak& peak : peaks) {
             const auto hkl = peak.index();
-            ohkl::Intensity I = peak.intensity();
+            Intensity intensity;
+            if (_sum_intensities)
+                intensity = peak.sumIntensity();
+            else
+                intensity = peak.profileIntensity();
 
             _mtz_cols[0]->ref[idx] = hkl.h();
             _mtz_cols[1]->ref[idx] = hkl.k();
             _mtz_cols[2]->ref[idx] = hkl.l();
-            _mtz_cols[3]->ref[idx] = I.value();
-            _mtz_cols[4]->ref[idx] = I.sigma();
+            _mtz_cols[3]->ref[idx] = intensity.value();
+            _mtz_cols[4]->ref[idx] = intensity.sigma();
             idx++;
         }
     } else { /* UNMERGED DATA */
         for (auto& peak : peaks) {
             for (auto unmerged_peak : peak.peaks()) {
-                const ohkl::UnitCell& cell = *(unmerged_peak->unitCell());
-                const ohkl::ReciprocalVector& q = unmerged_peak->q();
-                const ohkl::MillerIndex hkl(q, cell);
-                ohkl::Intensity I = unmerged_peak->correctedIntensity();
+                const UnitCell& cell = *(unmerged_peak->unitCell());
+                const ReciprocalVector& q = unmerged_peak->q();
+                const MillerIndex hkl(q, cell);
+                Intensity intensity;
+                if (_sum_intensities)
+                    intensity = unmerged_peak->sumIntensity();
+                else
+                    intensity = unmerged_peak->profileIntensity();
 
                 _mtz_cols[0]->ref[idx] = hkl.h();
                 _mtz_cols[1]->ref[idx] = hkl.k();
                 _mtz_cols[2]->ref[idx] = hkl.l();
-                _mtz_cols[3]->ref[idx] = I.value();
-                _mtz_cols[4]->ref[idx] = I.sigma();
+                _mtz_cols[3]->ref[idx] = intensity.value();
+                _mtz_cols[4]->ref[idx] = intensity.sigma();
                 _mtz_cols[5]->ref[idx] = unmerged_peak->shape().center()[2];
                 idx++;
             }
@@ -429,7 +439,7 @@ void MtzExporter::buildMtzCols()
 
 void MtzExporter::buildMtzData()
 {
-    ohklLog(ohkl::Level::Debug, "Building Mtz data structure'");
+    ohklLog(Level::Debug, "Building Mtz data structure'");
     buildMtz();
     buildSyminfo();
     buildXTAL();
@@ -458,7 +468,7 @@ void MtzExporter::addHistory(std::string line)
 
 bool MtzExporter::exportToFile(std::string filename)
 {
-    ohklLog(ohkl::Level::Debug, "Export OpenHKL project to Mtz file ... '");
+    ohklLog(Level::Debug, "Export OpenHKL project to Mtz file ... '");
 
     /* Check and build Mtz data structure if needed */
     if (!_mtz_data)
@@ -470,9 +480,9 @@ bool MtzExporter::exportToFile(std::string filename)
 
     /* saving mtz file */
     if (CMtz::MtzPut(_mtz_data, filename.c_str()) == 1)
-        ohklLog(ohkl::Level::Info, "Project has been succesfully exported to '" + filename + "'");
+        ohklLog(Level::Info, "Project has been succesfully exported to '" + filename + "'");
     else {
-        ohklLog(ohkl::Level::Error, "Project export to '" + filename + " failed '");
+        ohklLog(Level::Error, "Project export to '" + filename + " failed '");
         return false;
     }
 
