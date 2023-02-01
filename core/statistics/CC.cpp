@@ -19,7 +19,12 @@
 
 namespace ohkl {
 
-CC::CC() : _CChalf(0), _CCstar(0), _sum_intensities(true) { }
+CC::CC(bool sum_intensities)
+    : _CChalf(0)
+    , _CCstar(0)
+    , _sum_intensities(sum_intensities)
+{
+}
 
 void CC::calculate(MergedData* data)
 {

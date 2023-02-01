@@ -112,6 +112,7 @@ void SubframeMergedPeaks::grabMergeParameters()
     _friedel->setChecked(params->friedel);
     _intensity_rescale_merged->setValue(params->scale);
     _intensity_rescale_unmerged->setValue(params->scale);
+    _sum_radio->setChecked(params->sum_intensity);
 }
 
 void SubframeMergedPeaks::setMergeParameters()
@@ -128,6 +129,7 @@ void SubframeMergedPeaks::setMergeParameters()
     params->n_shells = _d_shells->value();
     params->friedel = _friedel->isChecked();
     params->scale = _intensity_rescale_merged->value();
+    params->sum_intensity = _sum_radio->isChecked();
 }
 
 void SubframeMergedPeaks::setSizePolicies()
@@ -279,6 +281,10 @@ void SubframeMergedPeaks::setDShellUp()
         &SubframeMergedPeaks::processMerge);
 
     connect(_friedel, &QCheckBox::clicked, this, &SubframeMergedPeaks::processMerge);
+
+    connect(
+        _sum_radio, static_cast<void (QRadioButton::*)(bool)>(&QRadioButton::toggled), this,
+        &SubframeMergedPeaks::processMerge);
 
     connect(
         _plottable_statistics,

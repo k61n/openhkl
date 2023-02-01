@@ -43,7 +43,7 @@ struct DataQuality {
     double CCstar; //!< estimate of CC_{true} derived from CC_{1/2}
     double Completeness; //!< # valid predicted peaks / # predicted peaks
 
-    void computeQuality(MergedData& merged_peaks);
+    void computeQuality(MergedData& merged_peaks, bool sum_intensities = true);
     std::string toString() const;
     void log() const;
 };

@@ -26,7 +26,7 @@
 
 namespace ohkl {
 
-void DataQuality::computeQuality(MergedData& merged_peaks)
+void DataQuality::computeQuality(MergedData& merged_peaks, bool sum_intensities)
 {
     nobserved = merged_peaks.totalSize();
     int max_peaks = merged_peaks.maxPeaks();
@@ -34,9 +34,9 @@ void DataQuality::computeQuality(MergedData& merged_peaks)
     redundancy = merged_peaks.redundancy();
     Completeness = static_cast<double>(nobserved) / static_cast<double>(max_peaks);
 
-    ohkl::RFactor rfactor;
+    ohkl::RFactor rfactor(sum_intensities);
     rfactor.calculate(&merged_peaks);
-    ohkl::CC cc;
+    ohkl::CC cc(sum_intensities);
     cc.calculate(&merged_peaks);
     Rmerge = rfactor.Rmerge();
     expectedRmerge = rfactor.expectedRmerge();

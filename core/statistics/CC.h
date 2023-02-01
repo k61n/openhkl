@@ -25,7 +25,7 @@ class MergedData;
 
 class CC {
  public:
-    CC();
+    CC(bool sum_intensities);
     //! Calculate the statistic on the given set of merged peaks.
     void calculate(std::vector<MergedPeak> peaks);
     //! Calculate the statistic on the given data.

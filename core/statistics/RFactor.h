@@ -23,14 +23,14 @@ namespace ohkl {
 
 class RFactor : public IMergedPeakStatistic {
  public:
-    RFactor()
+    RFactor(bool sum_intensities)
         : _Rmerge(0.0)
         , _Rmeas(0.0)
         , _Rpim(0.0)
         , _expectedRmerge(0.0)
         , _expectedRmeas(0.0)
         , _expectedRpim(0.0)
-        , _sum_intensities(true)
+        , _sum_intensities(sum_intensities)
     {
     }
     ~RFactor() { }
