@@ -144,7 +144,10 @@ bool Profile1DIntegrator::compute(
     }
 
     _profileIntensity = I;
-    _sumBackground = B;
+    _profileBackground = B;
+
+    _sumIntensity = {};
+    _sumBackground = {};
 
     // TODO: rocking curve!
 

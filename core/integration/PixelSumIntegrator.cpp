@@ -240,6 +240,8 @@ bool PixelSumIntegrator::compute(Peak3D* peak, ShapeModel*, const IntegrationReg
             intensity_per_frame[i] - n_peak_points_per_frame[i] * mean_bkg;
         _rockingCurve[i] = Intensity(corrected_intensity, sqrt(corrected_intensity));
     }
+    _profileIntensity = {};
+    _profileBackground = {};
 
     return true;
 }

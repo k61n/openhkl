@@ -192,6 +192,8 @@ bool GaussianIntegrator::compute(
         peak->setIntegrationFlag(RejectionFlag::BadIntegrationFit);
         return false;
     }
+    _sumIntensity = {};
+    _sumBackground = {};
 
     peak->setShape({x0, from_cholesky(a)});
     return true;

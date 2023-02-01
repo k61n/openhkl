@@ -264,6 +264,7 @@ void Peak3D::updateIntegration(
     _peakEnd = peakEnd;
     _bkgBegin = bkgBegin;
     _bkgEnd = bkgEnd;
+    _regionType = regionType;
 }
 
 ReciprocalVector Peak3D::q() const

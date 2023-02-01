@@ -105,6 +105,8 @@ bool ISigmaIntegrator::compute(
         peak->setIntegrationFlag(RejectionFlag::InvalidSigma);
         return false;
     }
+    _sumIntensity = {};
+    _sumBackground = {};
 
     return true;
 }

@@ -56,7 +56,8 @@ IIntegrator::IIntegrator()
     , _sumIntensity()
     , _profileIntensity()
     , _rockingCurve()
-    , _handler(nullptr), _params{}
+    , _handler(nullptr)
+    , _params{}
 {
 }
 
