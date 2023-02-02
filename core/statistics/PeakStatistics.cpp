@@ -136,9 +136,9 @@ std::vector<Peak3D*> PeakStatistics::findOutliers(double factor /* = 3.0 */)
 Intensity PeakStatistics::intensity(Peak3D* peak) const
 {
     if (_sum_intensities)
-        return peak->sumIntensity();
+        return peak->correctedSumIntensity();
     else
-        return peak->profileIntensity();
+        return peak->correctedProfileIntensity();
 }
 
 } // namespace ohkl

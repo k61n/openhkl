@@ -57,9 +57,9 @@ void RFactor::calculate(MergedData* data)
         for (const auto& p : peak.peaks()) {
             Intensity I;
             if (_sum_intensities)
-                I = p->sumIntensity();
+                I = p->correctedSumIntensity();
             else
-                I = p->profileIntensity();
+                I = p->correctedProfileIntensity();
 
             double diff = std::fabs(I.value() - Iave);
 

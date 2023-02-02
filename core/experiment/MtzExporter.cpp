@@ -406,9 +406,9 @@ void MtzExporter::buildMtzCols()
                 const MillerIndex hkl(q, cell);
                 Intensity intensity;
                 if (_sum_intensities)
-                    intensity = unmerged_peak->sumIntensity();
+                    intensity = unmerged_peak->correctedSumIntensity();
                 else
-                    intensity = unmerged_peak->profileIntensity();
+                    intensity = unmerged_peak->correctedProfileIntensity();
 
                 _mtz_cols[0]->ref[idx] = hkl.h();
                 _mtz_cols[1]->ref[idx] = hkl.k();

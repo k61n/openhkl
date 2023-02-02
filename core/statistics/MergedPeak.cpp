@@ -167,8 +167,8 @@ void MergedPeak::chi2()
     const double I_merge_sum = sumIntensity().value();
     const double I_merge_prof = profileIntensity().value();
 
-    double chi_sq_sum = 0.0;
-    double chi_sq_prof = 0.0;
+    double _sumChi2 = 0.0;
+    double _profileChi2 = 0.0;
 
     // if there is no redundancy, we cannot compute chi2
     if (redundancy() < 1.99)
@@ -181,8 +181,8 @@ void MergedPeak::chi2()
         const double x_sum = (I_sum.value() - I_merge_sum) / (std_sum * std_sum);
         const double std_prof = I_prof.sigma();
         const double x_prof = (I_prof.value() - I_merge_prof) / (std_prof * std_prof);
-        chi_sq_sum += x_sum * x_sum;
-        chi_sq_prof += x_prof * x_prof;
+        _sumChi2 += x_sum * x_sum;
+        _profileChi2 += x_prof * x_prof;
     }
 }
 

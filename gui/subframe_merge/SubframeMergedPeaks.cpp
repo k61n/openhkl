@@ -632,9 +632,9 @@ void SubframeMergedPeaks::refreshUnmergedTable()
             const Eigen::Vector3d& c = unmerged_peak->shape().center();
             ohkl::Intensity I;
             if (_sum_radio->isChecked())
-                I = unmerged_peak->sumIntensity();
+                I = unmerged_peak->correctedSumIntensity();
             else
-                I = unmerged_peak->profileIntensity();
+                I = unmerged_peak->correctedProfileIntensity();
 
             const double intensity = I.value();
             const double sigma = I.sigma();

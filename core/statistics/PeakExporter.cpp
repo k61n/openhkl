@@ -320,9 +320,9 @@ bool PeakExporter::exportPeaks(
 Intensity PeakExporter::unmergedIntensity(const Peak3D* peak)
 {
     if (_sum_intensities)
-        return peak->sumIntensity();
+        return peak->correctedSumIntensity();
     else
-        return peak->profileIntensity();
+        return peak->correctedProfileIntensity();
 }
 
 Intensity PeakExporter::mergedIntensity(const MergedPeak& peak)

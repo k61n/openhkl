@@ -161,12 +161,12 @@ void PeakCollectionItem::sort(int column, Qt::SortOrder order)
                 double intensity1 = 0.0;
                 double intensity2 = 0.0;
                 try {
-                    intensity1 = p1->peak()->sumIntensity().value();
+                    intensity1 = p1->peak()->correctedSumIntensity().value();
                 } catch (std::range_error& e) {
                     // interpolation error
                 }
                 try {
-                    intensity2 = p2->peak()->sumIntensity().value();
+                    intensity2 = p2->peak()->correctedSumIntensity().value();
                 } catch (std::range_error& e) {
                     // interpolation error
                 }
@@ -179,12 +179,12 @@ void PeakCollectionItem::sort(int column, Qt::SortOrder order)
                 double sigma_intensity1 = 0.0;
                 double sigma_intensity2 = 0.0;
                 try {
-                    sigma_intensity1 = p1->peak()->sumIntensity().sigma();
+                    sigma_intensity1 = p1->peak()->correctedSumIntensity().sigma();
                 } catch (std::range_error& e) {
                     // interpolation error
                 }
                 try {
-                    sigma_intensity2 = p2->peak()->sumIntensity().sigma();
+                    sigma_intensity2 = p2->peak()->correctedSumIntensity().sigma();
                 } catch (std::range_error& e) {
                     // interpolation error
                 }
@@ -197,12 +197,12 @@ void PeakCollectionItem::sort(int column, Qt::SortOrder order)
                 double intensity1 = 0.0;
                 double intensity2 = 0.0;
                 try {
-                    intensity1 = p1->peak()->profileIntensity().value();
+                    intensity1 = p1->peak()->correctedProfileIntensity().value();
                 } catch (std::range_error& e) {
                     // interpolation error
                 }
                 try {
-                    intensity2 = p2->peak()->profileIntensity().value();
+                    intensity2 = p2->peak()->correctedProfileIntensity().value();
                 } catch (std::range_error& e) {
                     // interpolation error
                 }
@@ -215,12 +215,12 @@ void PeakCollectionItem::sort(int column, Qt::SortOrder order)
                 double sigma_intensity1 = 0.0;
                 double sigma_intensity2 = 0.0;
                 try {
-                    sigma_intensity1 = p1->peak()->profileIntensity().sigma();
+                    sigma_intensity1 = p1->peak()->correctedProfileIntensity().sigma();
                 } catch (std::range_error& e) {
                     // interpolation error
                 }
                 try {
-                    sigma_intensity2 = p2->peak()->profileIntensity().sigma();
+                    sigma_intensity2 = p2->peak()->correctedProfileIntensity().sigma();
                 } catch (std::range_error& e) {
                     // interpolation error
                 }
@@ -233,12 +233,12 @@ void PeakCollectionItem::sort(int column, Qt::SortOrder order)
                 double strength1 = 0.0;
                 double strength2 = 0.0;
                 try {
-                    strength1 = p1->peak()->sumIntensity().strength();
+                    strength1 = p1->peak()->correctedSumIntensity().strength();
                 } catch (std::range_error& e) {
                     // interpolation error
                 }
                 try {
-                    strength2 = p2->peak()->sumIntensity().strength();
+                    strength2 = p2->peak()->correctedSumIntensity().strength();
                 } catch (std::range_error& e) {
                     // interpolation error
                 }
@@ -251,12 +251,12 @@ void PeakCollectionItem::sort(int column, Qt::SortOrder order)
                 double strength1 = 0.0;
                 double strength2 = 0.0;
                 try {
-                    strength1 = p1->peak()->profileIntensity().strength();
+                    strength1 = p1->peak()->correctedProfileIntensity().strength();
                 } catch (std::range_error& e) {
                     // interpolation error
                 }
                 try {
-                    strength2 = p2->peak()->profileIntensity().strength();
+                    strength2 = p2->peak()->correctedProfileIntensity().strength();
                 } catch (std::range_error& e) {
                     // interpolation error
                 }

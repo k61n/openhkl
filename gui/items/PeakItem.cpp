@@ -44,7 +44,7 @@ double PeakItem::peak_d() const
 double PeakItem::sum_intensity() const
 {
     try {
-        return _peak->sumIntensity().value();
+        return _peak->correctedSumIntensity().value();
     } catch (std::range_error& e) {
         return 0.0;
     }
@@ -53,7 +53,7 @@ double PeakItem::sum_intensity() const
 double PeakItem::sum_sigma() const
 {
     try {
-        return _peak->sumIntensity().sigma();
+        return _peak->correctedSumIntensity().sigma();
     } catch (std::range_error& e) {
         return 0.0;
     }
@@ -62,7 +62,7 @@ double PeakItem::sum_sigma() const
 double PeakItem::profile_intensity() const
 {
     try {
-        return _peak->profileIntensity().value();
+        return _peak->correctedProfileIntensity().value();
     } catch (std::range_error& e) {
         return 0.0;
     }
@@ -71,7 +71,7 @@ double PeakItem::profile_intensity() const
 double PeakItem::profile_sigma() const
 {
     try {
-        return _peak->profileIntensity().sigma();
+        return _peak->correctedProfileIntensity().sigma();
     } catch (std::range_error& e) {
         return 0.0;
     }
@@ -80,7 +80,7 @@ double PeakItem::profile_sigma() const
 double PeakItem::sum_strength() const
 {
     try {
-        return _peak->sumIntensity().strength();
+        return _peak->correctedSumIntensity().strength();
     } catch (std::range_error& e) {
         return 0.0;
     }
@@ -89,7 +89,7 @@ double PeakItem::sum_strength() const
 double PeakItem::profile_strength() const
 {
     try {
-        return _peak->profileIntensity().strength();
+        return _peak->correctedProfileIntensity().strength();
     } catch (std::range_error& e) {
         return 0.0;
     }
