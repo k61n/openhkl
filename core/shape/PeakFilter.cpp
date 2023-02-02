@@ -75,10 +75,9 @@ void PeakFilter::filterSignificance(PeakCollection* peak_collection) const
         MergedData merged(cell->spaceGroup(), collection_vector, true);
         for (const auto& peak : filtered_peaks)
             merged.addPeak(peak);
-        merged.computeChi2();
 
         for (const auto& merged_peak : merged.mergedPeakSet()) {
-            if (merged_peak.sumPValue() > _filter_params->significance) { // TODO: modify for profile
+            if (merged_peak.pValue(true) > _filter_params->significance) { // TODO: modify for profile
                 for (const auto& m : merged_peak.peaks())
                     m->rejectYou(true);
             }

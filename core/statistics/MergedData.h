@@ -56,8 +56,6 @@ class MergedData {
     double dMin() const;
     //! Get maximum d
     double dMax() const;
-    //! Compute chi2 for all merged peaks
-    void computeChi2();
 
     SpaceGroup spaceGroup() const { return _group; };
 

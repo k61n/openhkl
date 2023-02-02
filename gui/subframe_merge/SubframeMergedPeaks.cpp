@@ -573,7 +573,6 @@ void SubframeMergedPeaks::refreshMergedTable()
     if (_merged_data == nullptr)
         return;
 
-    _merged_data->computeChi2();
     for (const ohkl::MergedPeak& peak : _merged_data->mergedPeakSet()) {
         const auto hkl = peak.index();
 
@@ -582,16 +581,13 @@ void SubframeMergedPeaks::refreshMergedTable()
         const int l = hkl[2];
 
         ohkl::Intensity I;
-        double chi2, p;
         if (_sum_radio->isChecked()) {
             I = peak.sumIntensity();
-            chi2 = peak.sumChi2();
-            p = peak.sumPValue();
         } else {
             I = peak.profileIntensity();
-            chi2 = peak.profileChi2();
-            p = peak.profilePValue();
         }
+        const double chi2 = peak.chi2(_sum_radio->isChecked());
+        const double p = peak.chi2(_sum_radio->isChecked());
 
         const double intensity = I.value();
         const double sigma = I.sigma();

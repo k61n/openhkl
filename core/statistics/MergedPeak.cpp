@@ -162,28 +162,29 @@ bool operator<(const MergedPeak& p, const MergedPeak& q)
 //! method computes the statistic \f[ \chi^2 = \frac{\sum_i
 //! (I_i-I_{\mathrm{merge}})^2}{N \sigma_{\mathrm{merge}}^2}, \f] which is
 //! approximately a chi-squared statistic with \f$N-1\f$ degrees of freedom.
-void MergedPeak::chi2()
+double MergedPeak::chi2(bool sum_intensities) const
 {
-    const double I_merge_sum = sumIntensity().value();
-    const double I_merge_prof = profileIntensity().value();
+    double I_merge;
+    if (sum_intensities)
+        I_merge = sumIntensity().value();
+    else
+        I_merge = profileIntensity().value();
 
-    double _sumChi2 = 0.0;
-    double _profileChi2 = 0.0;
+    if (redundancy() < 1.99) // if there is no redundancy, we cannot compute chi2
+        return 0;
 
-    // if there is no redundancy, we cannot compute chi2
-    if (redundancy() < 1.99)
-        return;
-
+    double chi_sq = 0;
     for (const auto& peak : _peaks) {
-        auto&& I_sum = peak->sumIntensity();
-        auto&& I_prof = peak->profileIntensity();
-        const double std_sum = I_sum.sigma();
-        const double x_sum = (I_sum.value() - I_merge_sum) / (std_sum * std_sum);
-        const double std_prof = I_prof.sigma();
-        const double x_prof = (I_prof.value() - I_merge_prof) / (std_prof * std_prof);
-        _sumChi2 += x_sum * x_sum;
-        _profileChi2 += x_prof * x_prof;
+        Intensity I;
+        if (sum_intensities)
+            I = peak->correctedSumIntensity();
+        else
+            I = peak->correctedProfileIntensity();
+        const double std = I.sigma();
+        const double x = (I.value() - I_merge) / (std * std);
+        chi_sq += x * x;
     }
+    return chi_sq;
 }
 
 //! This method returns the probability that a chi-squared random variable takes
@@ -191,20 +192,17 @@ void MergedPeak::chi2()
 //! indicates that the computed variance is larger than the expected variance,
 //! indicating the possibility of a systematic error either in the integrated
 //! intensities or in the computed error.
-void MergedPeak::pValue()
+double MergedPeak::pValue(bool sum_intensities) const
 {
     // todo: k or k-1?? need to check
     const double k = redundancy() - 1.0;
 
-    _sumPValue = 0.0;
-    _profilePValue = 0.0;
-
     // if there is only one observation, we cannot compute a p-value
     if (k < 0.9)
-        return;
+        return 0;
 
-    _sumPValue =  gsl_cdf_chisq_P(_sumChi2, k);
-    _profilePValue = gsl_cdf_chisq_P(_profileChi2, k);
+    const double x = chi2(sum_intensities);
+    return gsl_cdf_chisq_P(x, k);
 }
 
 } // namespace ohkl

@@ -49,21 +49,16 @@ class MergedPeak {
     size_t redundancy() const;
 
     //! Compute the chi-squared statistic of a merged peak.
-    void chi2();
+    double chi2(bool sum_intensities) const;
 
     //! Compute the p-value of the chi-squared statistic of the merged peak.
-    void pValue();
+    double pValue(bool sum_intensities) const;
 
     //! Returns vector of peaks used to compute the merged peak.
     std::vector<Peak3D*> peaks() const;
 
     //! split the merged peak randomly into two, for calculation of CC
     std::pair<MergedPeak, MergedPeak> split() const;
-
-    double sumChi2() const { return _sumChi2; };
-    double profileChi2() const { return _profileChi2; };
-    double sumPValue() const { return _sumPValue; };
-    double profilePValue() const { return _profilePValue; };
 
  private:
     //! Update the hkl that represents the set of equivalences.
@@ -76,10 +71,6 @@ class MergedPeak {
     std::vector<Peak3D*> _peaks;
     SpaceGroup _grp;
     bool _friedel;
-    double _sumChi2;
-    double _profileChi2;
-    double _sumPValue;
-    double _profilePValue;
 };
 
 #ifndef SWIG
