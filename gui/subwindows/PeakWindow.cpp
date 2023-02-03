@@ -284,9 +284,9 @@ void PeakWindow::setLabel()
                        << _integration_region->peak()->shape().center()[0] << ", "
                        << _integration_region->peak()->shape().center()[1] << ", "
                        << _integration_region->peak()->shape().center()[2]
-                       << ")   I = " << _integration_region->peak()->correctedIntensity().value()
+                       << ")   I = " << _integration_region->peak()->correctedSumIntensity().value()
                        << "   " << QString(QChar(0x03C3)) << " = "
-                       << _integration_region->peak()->correctedIntensity().sigma();
+                       << _integration_region->peak()->correctedSumIntensity().sigma();
     QLineEdit* line = new QLineEdit();
     line->setText(text);
     line->setReadOnly(true);

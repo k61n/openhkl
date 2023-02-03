@@ -25,7 +25,7 @@ class MergedData;
 
 class CC {
  public:
-    CC();
+    CC(bool sum_intensities);
     //! Calculate the statistic on the given set of merged peaks.
     void calculate(std::vector<MergedPeak> peaks);
     //! Calculate the statistic on the given data.
@@ -41,6 +41,7 @@ class CC {
     double _CChalf;
     double _CCstar;
     unsigned int _nPeaks{0};
+    bool _sum_intensities; // use pixel sum intensities if true, otherwise profile
 };
 
 } // namespace ohkl

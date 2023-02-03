@@ -185,10 +185,14 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
             Eigen_VecXd peak_end(n_peaks);
             Eigen_VecXd scale(n_peaks);
             Eigen_VecXd transmission(n_peaks);
-            Eigen_VecXd intensity(n_peaks);
-            Eigen_VecXd sigma(n_peaks);
-            Eigen_VecXd mean_bkg_val(n_peaks);
-            Eigen_VecXd mean_bkg_sig(n_peaks);
+            Eigen_VecXd sum_intensity(n_peaks);
+            Eigen_VecXd sum_sigma(n_peaks);
+            Eigen_VecXd profile_intensity(n_peaks);
+            Eigen_VecXd profile_sigma(n_peaks);
+            Eigen_VecXd sum_bkg_val(n_peaks);
+            Eigen_VecXd sum_bkg_sig(n_peaks);
+            Eigen_VecXd profile_bkg_val(n_peaks);
+            Eigen_VecXd profile_bkg_sig(n_peaks);
             Eigen_VecXd mean_bkg_grad(n_peaks);
             Eigen_VecXd mean_bkg_grad_sig(n_peaks);
 
@@ -202,10 +206,14 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
                 {ohkl::ds_PeakEnd, &peak_end},
                 {ohkl::ds_Scale, &scale},
                 {ohkl::ds_Transmission, &transmission},
-                {ohkl::ds_Intensity, &intensity},
-                {ohkl::ds_Sigma, &sigma},
-                {ohkl::ds_BkgIntensity, &mean_bkg_val},
-                {ohkl::ds_BkgSigma, &mean_bkg_sig},
+                {ohkl::ds_sumIntensity, &sum_intensity},
+                {ohkl::ds_sumSigma, &sum_sigma},
+                {ohkl::ds_profileIntensity, &profile_intensity},
+                {ohkl::ds_profileSigma, &profile_sigma},
+                {ohkl::ds_sumBkg, &sum_bkg_val},
+                {ohkl::ds_sumBkgSigma, &sum_bkg_sig},
+                {ohkl::ds_profileBkg, &profile_bkg_val},
+                {ohkl::ds_profileBkgSigma, &profile_bkg_sig},
                 {ohkl::ds_bkgGrad, &mean_bkg_grad},
                 {ohkl::ds_bkgGradSigma, &mean_bkg_grad_sig}};
 
@@ -346,14 +354,16 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
                 sptrDataSet data_pointer = experiment->getData(std::string(data_names[k]));
                 ohkl::Peak3D* peak = new ohkl::Peak3D(data_pointer, ellipsoid);
 
-                const ohkl::Intensity peak_intensity(intensity[k], sigma[k]);
-                const ohkl::Intensity peak_mean_bkg(mean_bkg_val[k], mean_bkg_sig[k]);
+                const ohkl::Intensity sum_int(sum_intensity[k], sum_sigma[k]);
+                const ohkl::Intensity sum_bkg(sum_bkg_val[k], sum_bkg_sig[k]);
+                const ohkl::Intensity prof_int(profile_intensity[k], profile_sigma[k]);
+                const ohkl::Intensity prof_bkg(profile_bkg_val[k], profile_bkg_sig[k]);
                 const ohkl::Intensity peak_bkg_grad(mean_bkg_grad[k], mean_bkg_grad_sig[k]);
 
                 peak->setManually(
-                    peak_intensity, peak_end[k], bkg_begin[k], bkg_end[k], region_type[k], scale[k],
-                    transmission[k], peak_mean_bkg, rejection_flag[k], integration_flag[k],
-                    peak_bkg_grad);
+                    sum_int, prof_int, peak_end[k], bkg_begin[k], bkg_end[k], region_type[k],
+                    scale[k], transmission[k], sum_bkg, prof_bkg,
+                    rejection_flag[k], integration_flag[k], peak_bkg_grad);
 
 
                 if (experiment->numUnitCells() > 0) {

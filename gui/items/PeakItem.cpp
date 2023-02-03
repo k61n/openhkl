@@ -23,6 +23,7 @@
 #include "core/raw/DataKeys.h"
 #include "core/raw/MetaData.h"
 #include "core/shape/PeakFilter.h"
+#include "gui/items/PeakCollectionItem.h"
 #include "tables/crystal/MillerIndex.h"
 #include "tables/crystal/UnitCell.h"
 
@@ -41,28 +42,91 @@ double PeakItem::peak_d() const
     }
 }
 
-double PeakItem::intensity() const
+double PeakItem::sum_intensity() const
 {
     try {
-        return _peak->correctedIntensity().value();
+        return _peak->correctedSumIntensity().value();
     } catch (std::range_error& e) {
         return 0.0;
     }
 }
 
-double PeakItem::sigma_intensity() const
+double PeakItem::sum_sigma() const
 {
     try {
-        return _peak->correctedIntensity().sigma();
+        return _peak->correctedSumIntensity().sigma();
     } catch (std::range_error& e) {
         return 0.0;
     }
 }
 
-double PeakItem::strength() const
+double PeakItem::profile_intensity() const
 {
     try {
-        return _peak->correctedIntensity().strength();
+        return _peak->correctedProfileIntensity().value();
+    } catch (std::range_error& e) {
+        return 0.0;
+    }
+}
+
+double PeakItem::profile_sigma() const
+{
+    try {
+        return _peak->correctedProfileIntensity().sigma();
+    } catch (std::range_error& e) {
+        return 0.0;
+    }
+}
+
+double PeakItem::sum_strength() const
+{
+    try {
+        return _peak->correctedSumIntensity().strength();
+    } catch (std::range_error& e) {
+        return 0.0;
+    }
+}
+
+double PeakItem::profile_strength() const
+{
+    try {
+        return _peak->correctedProfileIntensity().strength();
+    } catch (std::range_error& e) {
+        return 0.0;
+    }
+}
+
+double PeakItem::sum_bkg() const
+{
+    try {
+        return _peak->sumBackground().value();
+    } catch (std::range_error& e) {
+        return 0.0;
+    }
+}
+
+double PeakItem::sum_bkg_sigma() const
+{
+    try {
+        return _peak->sumBackground().sigma();
+    } catch (std::range_error& e) {
+        return 0.0;
+    }
+}
+
+double PeakItem::profile_bkg() const
+{
+    try {
+        return _peak->profileBackground().value();
+    } catch (std::range_error& e) {
+        return 0.0;
+    }
+}
+
+double PeakItem::profile_bkg_sigma() const
+{
+    try {
+        return _peak->profileBackground().sigma();
     } catch (std::range_error& e) {
         return 0.0;
     }
@@ -122,14 +186,35 @@ QVariant PeakItem::peakData(const QModelIndex& index, int role, PeakDisplayModes
                 case PeakColumn::Frame: {
                     return peak_center(2);
                 }
-                case PeakColumn::Intensity: {
-                    return intensity();
+                case PeakColumn::SumIntensity: {
+                    return sum_intensity();
                 }
-                case PeakColumn::Sigma: {
-                    return sigma_intensity();
+                case PeakColumn::SumSigma: {
+                    return sum_sigma();
                 }
-                case PeakColumn::Strength: {
-                    return strength();
+                case PeakColumn::ProfileIntensity: {
+                    return profile_intensity();
+                }
+                case PeakColumn::ProfileSigma: {
+                    return profile_sigma();
+                }
+                case PeakColumn::SumBkg: {
+                    return sum_bkg();
+                }
+                case PeakColumn::SumBkgSigma: {
+                    return sum_bkg_sigma();
+                }
+                case PeakColumn::ProfileBkg: {
+                    return profile_bkg();
+                }
+                case PeakColumn::ProfileBkgSigma: {
+                    return profile_bkg_sigma();
+                }
+                case PeakColumn::SumStrength: {
+                    return sum_strength();
+                }
+                case PeakColumn::ProfileStrength: {
+                    return profile_strength();
                 }
                 case PeakColumn::BkgGradient: {
                     return bkg_gradient();

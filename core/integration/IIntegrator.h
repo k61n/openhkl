@@ -87,25 +87,23 @@ class IIntegrator {
     virtual ~IIntegrator();
     //! Integrate all peaks in the list which are contained in the specified data set.
     void integrate(std::vector<Peak3D*> peaks, ShapeModel* shape_model, sptrDataSet data);
-    //! Return the mean background.
-    Intensity meanBackground() const;
-    //! Return the mean background gradient
-    Intensity meanBkgGradient() const;
-    //! Return the integrated intensity.
-    Intensity integratedIntensity() const;
-    //! Return the peak rocking curve.
     const std::vector<Intensity>& rockingCurve() const;
     //! Set the progress handler.
     void setHandler(sptrProgressHandler handler);
 
  protected:
-    //! Mean local background of peak. The uncertainty is the uncertainty of the
+    //! Mean local pixel sum background of peak. The uncertainty is the uncertainty of the
     //! _estimate_ of the background.
-    Intensity _meanBackground;
+    Intensity _sumBackground;
+    //! Profile integrated background of peak. The uncertainty is the uncertainty of the
+    //! _estimate_ of the background.
+    Intensity _profileBackground;
     //! Mean gradient of background (Gaussian statistics)
     Intensity _meanBkgGradient;
-    //! Net integrated intensity, after background correction.
-    Intensity _integratedIntensity;
+    //! Pixel sum integrated intensity, after background correction.
+    Intensity _sumIntensity;
+    //! Profile integrated intensity, after background correction.
+    Intensity _profileIntensity;
     //! The rocking curve of the peak.
     std::vector<Intensity> _rockingCurve;
     //! Optional pointer to progress handler.

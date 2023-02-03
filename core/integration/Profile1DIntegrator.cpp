@@ -143,8 +143,11 @@ bool Profile1DIntegrator::compute(
         return false;
     }
 
-    _integratedIntensity = I;
-    _meanBackground = B;
+    _profileIntensity = I;
+    _profileBackground = B;
+
+    _sumIntensity = {};
+    _sumBackground = {};
 
     // TODO: rocking curve!
 

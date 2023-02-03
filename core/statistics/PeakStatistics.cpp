@@ -27,7 +27,7 @@ const std::map<PeakHistogramType, std::string> PeakStatistics::_histogram_string
     {PeakHistogramType::BkgGradient, "Background gradient"},
     {PeakHistogramType::BkgGradientSigma, "Background gradient sigma"}};
 
-PeakStatistics::PeakStatistics() : _current_histogram(nullptr) { }
+PeakStatistics::PeakStatistics() : _current_histogram(nullptr), _sum_intensities(true) { }
 
 PeakStatistics::~PeakStatistics()
 {
@@ -66,13 +66,13 @@ void PeakStatistics::_getPeakData(PeakHistogramType type)
             continue;
         switch (type) {
             case PeakHistogramType::Intensity:
-                _peak_data.push_back({peak->correctedIntensity().value(), peak});
+                _peak_data.push_back({intensity(peak).value(), peak});
                 break;
             case PeakHistogramType::Sigma:
-                _peak_data.push_back({peak->correctedIntensity().sigma(), peak});
+                _peak_data.push_back({intensity(peak).sigma(), peak});
                 break;
             case PeakHistogramType::Strength:
-                _peak_data.push_back({peak->correctedIntensity().strength(), peak});
+                _peak_data.push_back({intensity(peak).strength(), peak});
                 break;
             case PeakHistogramType::BkgGradient:
                 _peak_data.push_back({peak->meanBkgGradient().value(), peak});
@@ -131,6 +131,14 @@ std::vector<Peak3D*> PeakStatistics::findOutliers(double factor /* = 3.0 */)
             break;
     }
     return outliers;
+}
+
+Intensity PeakStatistics::intensity(Peak3D* peak) const
+{
+    if (_sum_intensities)
+        return peak->correctedSumIntensity();
+    else
+        return peak->correctedProfileIntensity();
 }
 
 } // namespace ohkl

@@ -30,7 +30,10 @@
 namespace ohkl {
 
 MergedPeak::MergedPeak(const SpaceGroup& grp, bool friedel)
-    : _intensitySum(0.0, 0.0), _grp(grp), _friedel(friedel)
+    : _sumIntensity(0.0, 0.0)
+    , _profileIntensity(0.0, 0.0)
+    , _grp(grp)
+    , _friedel(friedel)
 {
 }
 
@@ -53,7 +56,8 @@ MergeFlag MergedPeak::addPeak(Peak3D* peak)
     }
     // add peak to list
     _peaks.push_back(peak);
-    _intensitySum += peak->correctedIntensity();
+    _sumIntensity += peak->correctedSumIntensity();
+    _profileIntensity += peak->correctedProfileIntensity();
     return MergeFlag::Valid;
 }
 
@@ -62,9 +66,14 @@ MillerIndex MergedPeak::index() const
     return _hkl;
 }
 
-Intensity MergedPeak::intensity() const
+Intensity MergedPeak::sumIntensity() const
 {
-    return _intensitySum / _peaks.size();
+    return _sumIntensity / _peaks.size();
+}
+
+Intensity MergedPeak::profileIntensity() const
+{
+    return _profileIntensity / _peaks.size();
 }
 
 size_t MergedPeak::redundancy() const
@@ -153,23 +162,28 @@ bool operator<(const MergedPeak& p, const MergedPeak& q)
 //! method computes the statistic \f[ \chi^2 = \frac{\sum_i
 //! (I_i-I_{\mathrm{merge}})^2}{N \sigma_{\mathrm{merge}}^2}, \f] which is
 //! approximately a chi-squared statistic with \f$N-1\f$ degrees of freedom.
-double MergedPeak::chi2() const
+double MergedPeak::chi2(bool sum_intensities) const
 {
-    const double I_merge = intensity().value();
+    double I_merge;
+    if (sum_intensities)
+        I_merge = sumIntensity().value();
+    else
+        I_merge = profileIntensity().value();
 
-    // if there is no redundancy, we cannot compute chi2
-    if (redundancy() < 1.99)
-        return 0.0;
+    if (redundancy() < 1.99) // if there is no redundancy, we cannot compute chi2
+        return 0;
 
-    double chi_sq = 0.0;
-
+    double chi_sq = 0;
     for (const auto& peak : _peaks) {
-        auto&& I = peak->correctedIntensity();
+        Intensity I;
+        if (sum_intensities)
+            I = peak->correctedSumIntensity();
+        else
+            I = peak->correctedProfileIntensity();
         const double std = I.sigma();
         const double x = (I.value() - I_merge) / (std * std);
         chi_sq += x * x;
     }
-
     return chi_sq;
 }
 
@@ -178,16 +192,16 @@ double MergedPeak::chi2() const
 //! indicates that the computed variance is larger than the expected variance,
 //! indicating the possibility of a systematic error either in the integrated
 //! intensities or in the computed error.
-double MergedPeak::pValue() const
+double MergedPeak::pValue(bool sum_intensities) const
 {
     // todo: k or k-1?? need to check
     const double k = redundancy() - 1.0;
 
     // if there is only one observation, we cannot compute a p-value
     if (k < 0.9)
-        return 0.0;
+        return 0;
 
-    const double x = chi2();
+    const double x = chi2(sum_intensities);
     return gsl_cdf_chisq_P(x, k);
 }
 

@@ -38,12 +38,14 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
+#include <qobjectdefs.h>
 #include <string>
 
 class DataComboBox;
 class IntegratedPeakComboBox;
 
 class PeakExportDialog : public QDialog {
+    Q_OBJECT
 
  public:
     PeakExportDialog();
@@ -61,6 +63,9 @@ class PeakExportDialog : public QDialog {
     std::string getComment() { return _comment; }
     //! get if unmerged/merged data should be exported
     bool useMergedData() { return _merged_data; };
+
+ public slots:
+    void setSumIntensities(bool flag);
 
  private:
     //! Update parameters on change of data set
@@ -81,6 +86,8 @@ class PeakExportDialog : public QDialog {
     QTextEdit* _textbox;
     QRadioButton* _rb_merged;
     QRadioButton* _rb_unmerged;
+    QRadioButton* _rb_sum;
+    QRadioButton* _rb_profile;
 
     std::string _selected_data;
     std::string _selected_pc;

@@ -50,26 +50,18 @@ void IntegrationParameters::log(const Level& level) const
 }
 
 IIntegrator::IIntegrator()
-    : _meanBackground(), _integratedIntensity(), _rockingCurve(), _handler(nullptr), _params{}
+    : _sumBackground()
+    , _profileBackground()
+    , _meanBkgGradient()
+    , _sumIntensity()
+    , _profileIntensity()
+    , _rockingCurve()
+    , _handler(nullptr)
+    , _params{}
 {
 }
 
 IIntegrator::~IIntegrator() = default;
-
-Intensity IIntegrator::meanBackground() const
-{
-    return _meanBackground;
-}
-
-Intensity IIntegrator::meanBkgGradient() const
-{
-    return _meanBkgGradient;
-}
-
-Intensity IIntegrator::integratedIntensity() const
-{
-    return _integratedIntensity;
-}
 
 const std::vector<Intensity>& IIntegrator::rockingCurve() const
 {
@@ -195,13 +187,15 @@ void IIntegrator::integrate(
                 current_peak->peakData().standardizeCoords();
                 if (compute(peak, shape_model, *current_peak)) {
                     peak->updateIntegration(
-                        rockingCurve(), meanBackground(), meanBkgGradient(), integratedIntensity(),
-                        _params.peak_end, _params.bkg_begin, _params.bkg_end);
+                        _rockingCurve, _sumBackground, _profileBackground, _meanBkgGradient,
+                        _sumIntensity, _profileIntensity,
+                        _params.peak_end, _params.bkg_begin, _params.bkg_end, _params.region_type);
                     if (saturated)
                         peak->setIntegrationFlag(RejectionFlag::SaturatedPixel);
                 } else {
 #pragma omp atomic
                     ++nfailures;
+                    // This is a fallback. The RejectionFlag should have been set by this point.
                     peak->setIntegrationFlag(RejectionFlag::IntegrationFailure);
                 }
                 // free memory (important!!)

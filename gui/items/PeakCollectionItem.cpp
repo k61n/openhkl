@@ -156,17 +156,17 @@ void PeakCollectionItem::sort(int column, Qt::SortOrder order)
             };
             break;
         }
-        case PeakColumn::Intensity: {
+        case PeakColumn::SumIntensity: {
             compareFn = [](std::unique_ptr<PeakItem>& p1, std::unique_ptr<PeakItem>& p2) {
                 double intensity1 = 0.0;
                 double intensity2 = 0.0;
                 try {
-                    intensity1 = p1->peak()->correctedIntensity().value();
+                    intensity1 = p1->peak()->correctedSumIntensity().value();
                 } catch (std::range_error& e) {
                     // interpolation error
                 }
                 try {
-                    intensity2 = p2->peak()->correctedIntensity().value();
+                    intensity2 = p2->peak()->correctedSumIntensity().value();
                 } catch (std::range_error& e) {
                     // interpolation error
                 }
@@ -174,17 +174,17 @@ void PeakCollectionItem::sort(int column, Qt::SortOrder order)
             };
             break;
         }
-        case PeakColumn::Sigma: {
+        case PeakColumn::SumSigma: {
             compareFn = [](std::unique_ptr<PeakItem>& p1, std::unique_ptr<PeakItem>& p2) {
                 double sigma_intensity1 = 0.0;
                 double sigma_intensity2 = 0.0;
                 try {
-                    sigma_intensity1 = p1->peak()->correctedIntensity().sigma();
+                    sigma_intensity1 = p1->peak()->correctedSumIntensity().sigma();
                 } catch (std::range_error& e) {
                     // interpolation error
                 }
                 try {
-                    sigma_intensity2 = p2->peak()->correctedIntensity().sigma();
+                    sigma_intensity2 = p2->peak()->correctedSumIntensity().sigma();
                 } catch (std::range_error& e) {
                     // interpolation error
                 }
@@ -192,17 +192,143 @@ void PeakCollectionItem::sort(int column, Qt::SortOrder order)
             };
             break;
         }
-        case PeakColumn::Strength: {
+        case PeakColumn::ProfileIntensity: {
             compareFn = [](std::unique_ptr<PeakItem>& p1, std::unique_ptr<PeakItem>& p2) {
-                double strength1 = 0.0;
-                double strength2 = 0.0;
+                double intensity1 = 0.0;
+                double intensity2 = 0.0;
                 try {
-                    strength1 = p1->peak()->correctedIntensity().strength();
+                    intensity1 = p1->peak()->correctedProfileIntensity().value();
                 } catch (std::range_error& e) {
                     // interpolation error
                 }
                 try {
-                    strength2 = p2->peak()->correctedIntensity().strength();
+                    intensity2 = p2->peak()->correctedProfileIntensity().value();
+                } catch (std::range_error& e) {
+                    // interpolation error
+                }
+                return (intensity1 < intensity2);
+            };
+            break;
+        }
+        case PeakColumn::ProfileSigma: {
+            compareFn = [](std::unique_ptr<PeakItem>& p1, std::unique_ptr<PeakItem>& p2) {
+                double sigma_intensity1 = 0.0;
+                double sigma_intensity2 = 0.0;
+                try {
+                    sigma_intensity1 = p1->peak()->correctedProfileIntensity().sigma();
+                } catch (std::range_error& e) {
+                    // interpolation error
+                }
+                try {
+                    sigma_intensity2 = p2->peak()->correctedProfileIntensity().sigma();
+                } catch (std::range_error& e) {
+                    // interpolation error
+                }
+                return (sigma_intensity1 < sigma_intensity2);
+            };
+            break;
+        }
+        case PeakColumn::SumBkg: {
+            compareFn = [](std::unique_ptr<PeakItem>& p1, std::unique_ptr<PeakItem>& p2) {
+                double bkg1 = 0.0;
+                double bkg2 = 0.0;
+                try {
+                    bkg1 = p1->peak()->sumBackground().value();
+                } catch (std::range_error& e) {
+                    // interpolation error
+                }
+                try {
+                    bkg2 = p2->peak()->sumBackground().value();
+                } catch (std::range_error& e) {
+                    // interpolation error
+                }
+                return (bkg1 < bkg2);
+            };
+            break;
+        }
+        case PeakColumn::SumBkgSigma: {
+            compareFn = [](std::unique_ptr<PeakItem>& p1, std::unique_ptr<PeakItem>& p2) {
+                double sigma1 = 0.0;
+                double sigma2 = 0.0;
+                try {
+                    sigma1 = p1->peak()->sumBackground().sigma();
+                } catch (std::range_error& e) {
+                    // interpolation error
+                }
+                try {
+                    sigma2 = p2->peak()->sumBackground().sigma();
+                } catch (std::range_error& e) {
+                    // interpolation error
+                }
+                return (sigma1 < sigma2);
+            };
+            break;
+        }
+        case PeakColumn::ProfileBkg: {
+            compareFn = [](std::unique_ptr<PeakItem>& p1, std::unique_ptr<PeakItem>& p2) {
+                double bkg1 = 0.0;
+                double bkg2 = 0.0;
+                try {
+                    bkg1 = p1->peak()->profileBackground().value();
+                } catch (std::range_error& e) {
+                    // interpolation error
+                }
+                try {
+                    bkg2 = p2->peak()->profileBackground().value();
+                } catch (std::range_error& e) {
+                    // interpolation error
+                }
+                return (bkg1 < bkg2);
+            };
+            break;
+        }
+        case PeakColumn::ProfileBkgSigma: {
+            compareFn = [](std::unique_ptr<PeakItem>& p1, std::unique_ptr<PeakItem>& p2) {
+                double sigma1 = 0.0;
+                double sigma2 = 0.0;
+                try {
+                    sigma1 = p1->peak()->profileBackground().sigma();
+                } catch (std::range_error& e) {
+                    // interpolation error
+                }
+                try {
+                    sigma2 = p2->peak()->profileBackground().sigma();
+                } catch (std::range_error& e) {
+                    // interpolation error
+                }
+                return (sigma1 < sigma2);
+            };
+            break;
+        }
+        case PeakColumn::SumStrength: {
+            compareFn = [](std::unique_ptr<PeakItem>& p1, std::unique_ptr<PeakItem>& p2) {
+                double strength1 = 0.0;
+                double strength2 = 0.0;
+                try {
+                    strength1 = p1->peak()->correctedSumIntensity().strength();
+                } catch (std::range_error& e) {
+                    // interpolation error
+                }
+                try {
+                    strength2 = p2->peak()->correctedSumIntensity().strength();
+                } catch (std::range_error& e) {
+                    // interpolation error
+                }
+                return (strength1 < strength2);
+            };
+            break;
+        }
+        case PeakColumn::ProfileStrength: {
+            compareFn = [](std::unique_ptr<PeakItem>& p1, std::unique_ptr<PeakItem>& p2) {
+                double strength1 = 0.0;
+                double strength2 = 0.0;
+                try {
+                    strength1 = p1->peak()->correctedProfileIntensity().strength();
+                } catch (std::range_error& e) {
+                    // interpolation error
+                }
+                try {
+                    strength2 = p2->peak()->correctedProfileIntensity().strength();
                 } catch (std::range_error& e) {
                     // interpolation error
                 }

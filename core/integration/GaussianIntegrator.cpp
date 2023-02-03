@@ -121,7 +121,7 @@ bool GaussianIntegrator::compute(
     FitParameters params;
 
     double B = 0.0;
-    double I = peak->rawIntensity().value();
+    double I = peak->sumIntensity().value();
 
     params.addParameter(&B);
     params.addParameter(&I);
@@ -180,8 +180,8 @@ bool GaussianIntegrator::compute(
     }
 
     const auto& covar = min.covariance();
-    _meanBackground = {B, covar(0, 0)};
-    _integratedIntensity = {I, covar(1, 1)};
+    _profileBackground = {B, covar(0, 0)};
+    _profileIntensity = {I, covar(1, 1)};
 
     // Gets pearson coefficient of fit
     double pearson;
@@ -192,6 +192,8 @@ bool GaussianIntegrator::compute(
         peak->setIntegrationFlag(RejectionFlag::BadIntegrationFit);
         return false;
     }
+    _sumIntensity = {};
+    _sumBackground = {};
 
     peak->setShape({x0, from_cholesky(a)});
     return true;

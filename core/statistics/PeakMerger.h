@@ -34,6 +34,7 @@ struct MergeParameters {
     size_t n_shells = 10; //!< Number of resolution shells
     bool friedel = true; //!< Whether to include the Friedel relation
     double scale = 1.0; //!< Scale factor for intensities (Phenix only)
+    bool sum_intensity = true; //!< Whether to use sum or profile intensities
 
     void log(const Level& level) const;
 };

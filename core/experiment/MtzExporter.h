@@ -38,7 +38,7 @@ class MtzExporter {
     //! Constructor
     MtzExporter(
         MergedData* merged_data, sptrDataSet data, sptrUnitCell cell, bool merged,
-        std::string comment);
+        bool sum_intensities, std::string comment);
     //! Destructor
     ~MtzExporter();
     //! Builds whole MtzData structure from ohkl data
@@ -79,6 +79,8 @@ class MtzExporter {
     UnitCell* _ohkl_cell;
     //! Whether to export merged (true) or unmerged (false) peaks
     bool _merged;
+    //! Whether to use pixel sum (true) or profile intensities
+    bool _sum_intensities;
 
     std::vector<std::string> _history;
     std::string _comment;

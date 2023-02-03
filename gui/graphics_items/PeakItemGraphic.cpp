@@ -233,7 +233,7 @@ void PeakItemGraphic::plot(SXPlot* plot)
     const double n = state.nu(position) / ohkl::deg;
     info += " " + QString(QChar(0x03B3)) + "," + QString(QChar(0x03BD)) + ":"
         + QString::number(g, 'f', 2) + "," + QString::number(n, 'f', 2) + "\n";
-    const ohkl::Intensity corr_int = _peak->correctedIntensity();
+    const ohkl::Intensity corr_int = _peak->correctedSumIntensity();
     const double intensity = corr_int.value();
     const double sI = corr_int.sigma();
     info += "Intensity (" + QString(QChar(0x03C3)) + "I): " + QString::number(intensity) + " ("

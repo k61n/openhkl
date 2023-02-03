@@ -17,6 +17,7 @@
 #include "core/data/DataSet.h"
 #include "core/peak/Peak3D.h"
 #include "gui/items/PeakCollectionItem.h"
+#include "gui/items/PeakItem.h"
 
 PeakCollectionModel::PeakCollectionModel() : QAbstractTableModel()
 {
@@ -109,14 +110,35 @@ QVariant PeakCollectionModel::headerData(int section, Qt::Orientation orientatio
             case PeakColumn::Frame: {
                 return QString("Frame");
             }
-            case PeakColumn::Intensity: {
-                return QString("Intensity");
+            case PeakColumn::SumIntensity: {
+                return QString("I (sum)");
             }
-            case PeakColumn::Sigma: {
-                return QString(QChar(0x03C3)) + " (Int.)";
+            case PeakColumn::SumSigma: {
+                return QString(QChar(0x03C3)) + " (sum)";
             }
-            case PeakColumn::Strength: {
-                return QString("Strength");
+            case PeakColumn::ProfileIntensity: {
+                return QString("I (profile)");
+            }
+            case PeakColumn::ProfileSigma: {
+                return QString(QChar(0x03C3)) + " (profile)";
+            }
+            case PeakColumn::SumStrength: {
+                return QString("I/") + QChar(0x03C3) + QString(" (sum)");
+            }
+            case PeakColumn::ProfileStrength: {
+                return QString("I/") + QChar(0x03C3) + QString(" (profile)");
+            }
+            case PeakColumn::SumBkg: {
+                return QString("B (sum)");
+            }
+            case PeakColumn::SumBkgSigma: {
+                return QString(QChar(0x03C3)) + " (B, sum)";
+            }
+            case PeakColumn::ProfileBkg: {
+                return QString("B (profile)");
+            }
+            case PeakColumn::ProfileBkgSigma: {
+                return QString(QChar(0x03C3)) + " (B, profile)";
             }
             case PeakColumn::BkgGradient: {
                 return QString("Gradient");

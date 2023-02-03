@@ -76,8 +76,8 @@ bool Profile3DIntegrator::compute(
     }
 
     // dummy value for initial guess
-    _meanBackground = Intensity(1.0, 1.0);
-    _integratedIntensity = Intensity(0.0, 0.0);
+    _profileBackground = Intensity(1.0, 1.0);
+    _profileIntensity = Intensity(0.0, 0.0);
 
     std::vector<double> profile;
     std::vector<double> obs_counts;
@@ -117,13 +117,13 @@ bool Profile3DIntegrator::compute(
 
     // todo: stopping criterion
     for (auto i = 0; i < 20; ++i) {
-        Intensity old_intensity = _integratedIntensity;
-        const double I0 = _integratedIntensity.value();
-        updateFit(_integratedIntensity, _meanBackground, profile, obs_counts);
-        const double I1 = _integratedIntensity.value();
+        Intensity old_intensity = _profileIntensity;
+        const double I0 = _profileIntensity.value();
+        updateFit(_profileIntensity, _profileBackground, profile, obs_counts);
+        const double I1 = _profileIntensity.value();
 
-        if (std::isnan(I1) || std::isnan(_meanBackground.value())) {
-            _integratedIntensity = old_intensity;
+        if (std::isnan(I1) || std::isnan(_profileBackground.value())) {
+            _profileIntensity = old_intensity;
             break;
         }
 
@@ -131,12 +131,14 @@ bool Profile3DIntegrator::compute(
             break;
     }
 
-    double sigma = _integratedIntensity.sigma();
+    double sigma = _profileIntensity.sigma();
 
     if (std::isnan(sigma) && sigma > 0) {
         peak->setIntegrationFlag(RejectionFlag::InvalidSigma);
         return false;
     }
+    _sumIntensity = {};
+    _sumBackground = {};
 
     return true;
 }

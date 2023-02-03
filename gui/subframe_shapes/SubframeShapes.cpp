@@ -336,6 +336,11 @@ void SubframeShapes::setPeakTableUp()
     _peak_table->setColumnHidden(PeakColumn::Count, true);
     _peak_table->setColumnHidden(PeakColumn::BkgGradient, true);
     _peak_table->setColumnHidden(PeakColumn::BkgGradientSigma, true);
+    _peak_table->setColumnHidden(PeakColumn::ProfileIntensity, true);
+    _peak_table->setColumnHidden(PeakColumn::ProfileSigma, true);
+    _peak_table->setColumnHidden(PeakColumn::ProfileStrength, true);
+    _peak_table->setColumnHidden(PeakColumn::ProfileBkg, true);
+    _peak_table->setColumnHidden(PeakColumn::ProfileBkgSigma, true);
 
     peak_grid->addWidget(_peak_table, 0, 0, 0, 0);
 
@@ -463,7 +468,7 @@ void SubframeShapes::buildShapeModel()
             if (d > _params->d_max || d < _params->d_min)
                 continue;
 
-            const ohkl::Intensity intensity = peak->correctedIntensity();
+            const ohkl::Intensity intensity = peak->correctedSumIntensity();
 
             if (intensity.value() <= _params->strength_min * intensity.sigma())
                 continue;

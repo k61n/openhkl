@@ -106,16 +106,16 @@ bool PixelSumIntegrator::compute(Peak3D* peak, ShapeModel*, const IntegrationReg
         peak->setIntegrationFlag(RejectionFlag::TooFewPoints);
         return false;
     }
-    _meanBackground = meanBackground;
+    _sumBackground = meanBackground;
     _meanBkgGradient = bkgGradient;
 
     PeakCoordinateSystem frame(peak);
 
     double sum_peak = 0.0;
-    const double mean_bkg = _meanBackground.value();
+    const double mean_bkg = _sumBackground.value();
     // note that this is the std of the _estimate_ of the background
     // should be approximately mean_bkg / num_bkg for Poisson statistics
-    const double std_bkg = _meanBackground.sigma();
+    const double std_bkg = _sumBackground.sigma();
     size_t npeak = 0.0;
     size_t nbkg = 0.0;
     Blob3D blob;
@@ -142,11 +142,11 @@ bool PixelSumIntegrator::compute(Peak3D* peak, ShapeModel*, const IntegrationReg
         }
     }
 
-    sum_peak -= npeak * _meanBackground.value();
+    sum_peak -= npeak * _sumBackground.value();
 
     // TODO: ERROR ESTIMATE!!
     // This INCORRECTLY assumes Poisson statistics (no gain or baseline)
-    _integratedIntensity =
+    _sumIntensity =
         Intensity(sum_peak, sum_peak + npeak * mean_bkg + npeak * npeak * std_bkg * std_bkg);
 
     // TODO: compute rocking curve
@@ -240,6 +240,8 @@ bool PixelSumIntegrator::compute(Peak3D* peak, ShapeModel*, const IntegrationReg
             intensity_per_frame[i] - n_peak_points_per_frame[i] * mean_bkg;
         _rockingCurve[i] = Intensity(corrected_intensity, sqrt(corrected_intensity));
     }
+    _profileIntensity = {};
+    _profileBackground = {};
 
     return true;
 }
