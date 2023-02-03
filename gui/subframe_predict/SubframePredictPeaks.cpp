@@ -350,6 +350,8 @@ void SubframePredictPeaks::setPeakTableUp()
     _peak_table->setColumnHidden(PeakColumn::ProfileIntensity, true);
     _peak_table->setColumnHidden(PeakColumn::ProfileSigma, true);
     _peak_table->setColumnHidden(PeakColumn::ProfileStrength, true);
+    _peak_table->setColumnHidden(PeakColumn::ProfileBkg, true);
+    _peak_table->setColumnHidden(PeakColumn::ProfileBkgSigma, true);
 
     peak_grid->addWidget(_peak_table, 0, 0, 0, 0);
     _right_element->addWidget(peak_group);

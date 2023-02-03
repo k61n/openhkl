@@ -31,11 +31,15 @@ enum PeakColumn {
     py,
     Frame,
     SumIntensity,
-    SumSigma,
-    SumStrength,
     ProfileIntensity,
+    SumSigma,
     ProfileSigma,
+    SumStrength,
     ProfileStrength,
+    SumBkg,
+    ProfileBkg,
+    SumBkgSigma,
+    ProfileBkgSigma,
     BkgGradient,
     BkgGradientSigma,
     DataSet,
@@ -59,6 +63,10 @@ class PeakItem : public QStandardItem {
     double profile_sigma() const;
     double sum_strength() const;
     double profile_strength() const;
+    double sum_bkg() const;
+    double sum_bkg_sigma() const;
+    double profile_bkg() const;
+    double profile_bkg_sigma() const;
     double bkg_gradient() const;
     double bkg_gradient_sigma() const;
     bool enabled() const;

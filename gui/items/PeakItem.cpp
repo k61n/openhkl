@@ -23,6 +23,7 @@
 #include "core/raw/DataKeys.h"
 #include "core/raw/MetaData.h"
 #include "core/shape/PeakFilter.h"
+#include "gui/items/PeakCollectionItem.h"
 #include "tables/crystal/MillerIndex.h"
 #include "tables/crystal/UnitCell.h"
 
@@ -95,6 +96,42 @@ double PeakItem::profile_strength() const
     }
 }
 
+double PeakItem::sum_bkg() const
+{
+    try {
+        return _peak->sumBackground().value();
+    } catch (std::range_error& e) {
+        return 0.0;
+    }
+}
+
+double PeakItem::sum_bkg_sigma() const
+{
+    try {
+        return _peak->sumBackground().sigma();
+    } catch (std::range_error& e) {
+        return 0.0;
+    }
+}
+
+double PeakItem::profile_bkg() const
+{
+    try {
+        return _peak->profileBackground().value();
+    } catch (std::range_error& e) {
+        return 0.0;
+    }
+}
+
+double PeakItem::profile_bkg_sigma() const
+{
+    try {
+        return _peak->profileBackground().sigma();
+    } catch (std::range_error& e) {
+        return 0.0;
+    }
+}
+
 double PeakItem::bkg_gradient() const
 {
     try {
@@ -160,6 +197,18 @@ QVariant PeakItem::peakData(const QModelIndex& index, int role, PeakDisplayModes
                 }
                 case PeakColumn::ProfileSigma: {
                     return profile_sigma();
+                }
+                case PeakColumn::SumBkg: {
+                    return sum_bkg();
+                }
+                case PeakColumn::SumBkgSigma: {
+                    return sum_bkg_sigma();
+                }
+                case PeakColumn::ProfileBkg: {
+                    return profile_bkg();
+                }
+                case PeakColumn::ProfileBkgSigma: {
+                    return profile_bkg_sigma();
                 }
                 case PeakColumn::SumStrength: {
                     return sum_strength();
