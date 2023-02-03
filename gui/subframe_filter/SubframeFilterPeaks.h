@@ -35,13 +35,15 @@
 class DetectorWidget;
 class PeakComboBox;
 class PeakItemGraphic;
-class SpoilerCheck;
 class PeakViewWidget;
+class QRadioButton;
 class SafeSpinBox;
 class SafeDoubleSpinBox;
+class SpoilerCheck;
 
 //! Frame containing interface for filtering peak collections
 class SubframeFilterPeaks : public QWidget {
+    Q_OBJECT
  public:
     SubframeFilterPeaks();
 
@@ -54,6 +56,10 @@ class SubframeFilterPeaks : public QWidget {
     DetectorWidget* detectorWidget();
     //! Grab the finder parameters
     void grabFilterParameters();
+
+ public slots:
+    //! Synchronise radio buttons
+    void syncRadios(bool flag);
 
  private:
     //! Build the input
@@ -137,6 +143,11 @@ class SubframeFilterPeaks : public QWidget {
     SpoilerCheck* _merge_box;
     SpoilerCheck* _overlap_box;
     SpoilerCheck* _rejection_flag_box;
+
+    QRadioButton* _sum_radio_1;
+    QRadioButton* _sum_radio_2;
+    QRadioButton* _profile_radio_1;
+    QRadioButton* _profile_radio_2;
 
     QComboBox* _rejection_flag_combo;
 

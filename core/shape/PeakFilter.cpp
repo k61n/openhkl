@@ -320,7 +320,8 @@ void PeakFilter::filterStrength(PeakCollection* peak_collection) const
     int nrejected = 0;
     for (int i = 0; i < peak_collection->numberOfPeaks(); ++i) {
         ohkl::Peak3D* peak_ptr = peak_collection->getPeak(i);
-        Intensity corrected_intensity = peak_ptr->correctedSumIntensity();
+        Intensity corrected_intensity = peakIntensity(peak_ptr);
+
         if (!corrected_intensity.isValid()) {
             peak_ptr->rejectYou(true);
             ++nrejected;
@@ -356,7 +357,7 @@ std::vector<Peak3D*> PeakFilter::filterStrength(
 {
     std::vector<Peak3D*> filtered_peaks;
     for (auto* peak : peaks) {
-        Intensity corrected_intensity = peak->correctedSumIntensity();
+        Intensity corrected_intensity = peakIntensity(peak);
         if (!corrected_intensity.isValid())
             continue;
         double intensity = corrected_intensity.value();
@@ -480,7 +481,7 @@ void PeakFilter::filterIntensity(PeakCollection* peak_collection) const
 {
     int nrejected = 0;
     for (auto* peak : peak_collection->getPeakList()) {
-        Intensity corrected_intensity = peak->correctedSumIntensity();
+        Intensity corrected_intensity = peakIntensity(peak);
         if (!corrected_intensity.isValid()) {
             peak->rejectYou(true);
             ++nrejected;
@@ -505,7 +506,7 @@ void PeakFilter::filterSigma(PeakCollection* peak_collection) const
 {
     int nrejected = 0;
     for (auto* peak : peak_collection->getPeakList()) {
-        Intensity corrected_intensity = peak->correctedSumIntensity();
+        Intensity corrected_intensity = peakIntensity(peak);
         if (!corrected_intensity.isValid()) {
             peak->rejectYou(true);
             ++nrejected;
@@ -687,6 +688,14 @@ PeakFilterParameters* PeakFilter::parameters()
 PeakFilterFlags* PeakFilter::flags()
 {
     return _filter_flags.get();
+}
+
+Intensity PeakFilter::peakIntensity(Peak3D* peak) const
+{
+    if (_filter_params->sum_intensities)
+        return peak->correctedSumIntensity();
+    else
+        return peak->correctedProfileIntensity();
 }
 
 } // namespace ohkl

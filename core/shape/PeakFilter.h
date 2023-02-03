@@ -69,6 +69,7 @@ struct PeakFilterParameters {
     double peak_end = 3.0; //!< scale for peak intensity ellipsoid (sigmas)
     double bkg_end = 6.0; //!< scale for background ellipsoid (sigmas)
     RejectionFlag rejection_flag = RejectionFlag::NotRejected; //!< rejection flag to keep
+    bool sum_intensities = true;
 };
 
 /*! \brief Remove peaks that meet specific criteria from a collection
@@ -175,6 +176,7 @@ class PeakFilter {
     PeakFilterFlags* flags();
 
  private:
+    Intensity peakIntensity(Peak3D* peak) const;
     //! booleans for filtering
     std::unique_ptr<PeakFilterFlags> _filter_flags;
     std::unique_ptr<PeakFilterParameters> _filter_params;

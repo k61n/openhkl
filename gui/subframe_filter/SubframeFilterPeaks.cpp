@@ -41,7 +41,9 @@
 #include <QItemDelegate>
 #include <QLabel>
 #include <QMessageBox>
+#include <QRadioButton>
 #include <QScrollBar>
+#include <QSignalBlocker>
 #include <QSpacerItem>
 #include <QTableWidgetItem>
 
@@ -87,6 +89,8 @@ SubframeFilterPeaks::SubframeFilterPeaks()
     connect(
         _peak_view_widget, &PeakViewWidget::settingsChanged, _detector_widget,
         &DetectorWidget::refresh);
+    connect(_sum_radio_1, &QRadioButton::toggled, this, &SubframeFilterPeaks::syncRadios);
+    connect(_sum_radio_2, &QRadioButton::toggled, this, &SubframeFilterPeaks::syncRadios);
 }
 
 void SubframeFilterPeaks::setInputUp()
@@ -134,6 +138,12 @@ void SubframeFilterPeaks::setStrengthUp()
 {
     _strength_box = new SpoilerCheck("Strength (I/sigma)");
     GridFiller f(_strength_box);
+
+    _sum_radio_1 = new QRadioButton("Sum intensities", _strength_box);
+    _profile_radio_1 = new QRadioButton("Profile intensities", _strength_box);
+    f.addWidget(_sum_radio_1, 1);
+    f.addWidget(_profile_radio_1, 1);
+    _sum_radio_1->setChecked(true);
 
     _strength_min = f.addDoubleSpinBox("Minimum:");
     _strength_min->setValue(1.00000);
@@ -201,7 +211,13 @@ void SubframeFilterPeaks::setMergeUp()
     _merge_box = new SpoilerCheck("Merged peak significance");
     GridFiller f(_merge_box);
 
-    _significance_level = f.addDoubleSpinBox("Significant level:");
+    _sum_radio_2 = new QRadioButton("Sum intensities", _strength_box);
+    _profile_radio_2 = new QRadioButton("Profile intensities", _strength_box);
+    f.addWidget(_sum_radio_2, 1);
+    f.addWidget(_profile_radio_2, 1);
+    _sum_radio_2->setChecked(true);
+
+    _significance_level = f.addDoubleSpinBox("Significance:");
     _significance_level->setValue(0.990000);
     _significance_level->setMaximum(1000);
     _significance_level->setDecimals(6);
@@ -211,7 +227,7 @@ void SubframeFilterPeaks::setMergeUp()
 
 void SubframeFilterPeaks::setOverlapUp()
 {
-    _overlap_box = new SpoilerCheck("Remove overlapping peaks");
+    _overlap_box = new SpoilerCheck("Overlapping peaks");
     GridFiller f(_overlap_box);
 
     _peak_end = f.addDoubleSpinBox("Peak end");
@@ -231,7 +247,7 @@ void SubframeFilterPeaks::setOverlapUp()
 
 void SubframeFilterPeaks::setRejectionFlagsUp()
 {
-    _rejection_flag_box = new SpoilerCheck("Catch rejected peaks");
+    _rejection_flag_box = new SpoilerCheck("Rejection reason");
     GridFiller f(_rejection_flag_box);
 
     _rejection_flag_combo = f.addCombo("Rejection reason");
@@ -353,6 +369,7 @@ void SubframeFilterPeaks::grabFilterParameters()
     _significance_level->setValue(params->significance);
     _peak_end->setValue(params->peak_end);
     _bkg_end->setValue(params->bkg_end);
+    _sum_radio_1->setChecked(params->sum_intensities);
     _rejection_flag_combo->setCurrentIndex(static_cast<int>(params->rejection_flag));
 
     auto* flags = gSession->currentProject()->experiment()->peakFilter()->flags();
@@ -414,6 +431,7 @@ void SubframeFilterPeaks::setFilterParameters()
     params->unit_cell = _unit_cell->currentText().toStdString();
     params->peak_end = _peak_end->value();
     params->bkg_end = _bkg_end->value();
+    params->sum_intensities = _sum_radio_1->isChecked();
     params->rejection_flag =
         static_cast<ohkl::RejectionFlag>(_rejection_flag_combo->currentIndex());
 }
@@ -508,4 +526,14 @@ void SubframeFilterPeaks::toggleUnsafeWidgets()
 DetectorWidget* SubframeFilterPeaks::detectorWidget()
 {
     return _detector_widget;
+}
+
+void SubframeFilterPeaks::syncRadios(bool flag)
+{
+    QSignalBlocker blocker1(_sum_radio_1);
+    QSignalBlocker blocker2(_sum_radio_2);
+    _sum_radio_1->setChecked(flag);
+    _sum_radio_2->setChecked(flag);
+    _profile_radio_1->setChecked(!flag);
+    _profile_radio_2->setChecked(!flag);
 }
