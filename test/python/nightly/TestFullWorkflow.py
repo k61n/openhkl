@@ -84,24 +84,7 @@ class TestFullWorkFlow(unittest.TestCase):
         reference_cell = expt.getUnitCell('reference')
         reference_cell.setSpaceGroup(space_group)
         indexer = expt.autoIndexer();
-        params = indexer.parameters();
-        params.length_tol = 1.5
-        params.angle_tol = 0.1
-
-        # Filter to generate the peak collection for indexing
-        filter = expt.peakFilter();
-        filter.resetFilterFlags();
-        filter.flags().strength = True;
-        filter.flags().d_range = True;
-        filter.flags().frames = True;
-        filter.parameters().d_min = 1.5
-        filter.parameters().frame_min = 10
-        filter.parameters().frame_max= 20
-        filter.parameters().strength_min = 1.0
-        filter.filter(found_peaks)
-        expt.acceptFilter('indexing', found_peaks, ohkl.PeakCollectionType_INDEXING, data)
-
-        indexing_peaks = expt.getPeakCollection('indexing')
+        indexing_peaks = expt.getPeakCollection('found')
         indexer.autoIndex(indexing_peaks)
         indexed_cell = indexer.goodSolution(reference_cell, 1.5, 0.2)
         indexed_cell.setSpaceGroup(space_group)
