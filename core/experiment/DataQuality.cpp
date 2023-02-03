@@ -49,9 +49,10 @@ void DataQuality::computeQuality(MergedData& merged_peaks, bool sum_intensities)
 }
 
 
-void ShellQuality::computeQuality(MergedData& merged_peaks, double d_min, double d_max)
+void ShellQuality::computeQuality(
+    MergedData& merged_peaks, double d_min, double d_max, bool sum_intensities)
 {
-    DataQuality::computeQuality(merged_peaks);
+    DataQuality::computeQuality(merged_peaks, sum_intensities);
     dmin = d_min;
     dmax = d_max;
 }

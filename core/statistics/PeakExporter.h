@@ -58,6 +58,7 @@ class PeakExporter {
         const std::string filename, MergedData* merged_data, sptrUnitCell cell, bool merged,
         double scale = 1.0);
 
+    void setSumIntensities(bool flag) { _sum_intensities = flag; };
 
     //! Export peaks to the specified format
     bool exportPeaks(

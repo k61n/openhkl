@@ -67,18 +67,25 @@ PeakExportDialog::PeakExportDialog()
 
     QVBoxLayout* main_layout = new QVBoxLayout(this);
 
-    QGroupBox* radio_group = new QGroupBox;
-    _rb_merged = new QRadioButton("Merged peaks");
-    _rb_unmerged = new QRadioButton("Unmerged peaks");
+    QGroupBox* merge_radio_group = new QGroupBox;
+    _rb_merged = new QRadioButton("Merged peaks", merge_radio_group);
+    _rb_unmerged = new QRadioButton("Unmerged peaks", merge_radio_group);
 
-    QHBoxLayout* radio_layout = new QHBoxLayout(radio_group);
-    radio_group->setLayout(radio_layout);
+    QHBoxLayout* merge_radio_layout = new QHBoxLayout(merge_radio_group);
+    merge_radio_layout->addWidget(_rb_merged);
+    merge_radio_layout->addWidget(_rb_unmerged);
 
-    radio_layout->addWidget(_rb_unmerged);
-    radio_layout->addWidget(_rb_merged);
+    QGroupBox* sum_radio_group = new QGroupBox;
+    _rb_sum = new QRadioButton("Sum intensities", sum_radio_group);
+    _rb_profile = new QRadioButton("Profile intensities", sum_radio_group);
+
+    QHBoxLayout* sum_radio_layout = new QHBoxLayout(sum_radio_group);
+    sum_radio_layout->addWidget(_rb_sum);
+    sum_radio_layout->addWidget(_rb_profile);
 
     main_layout->addLayout(combo_grid);
-    main_layout->addWidget(radio_group);
+    main_layout->addWidget(merge_radio_group);
+    main_layout->addWidget(sum_radio_group);
 
     QGroupBox* merge_param_group = new QGroupBox();
     _drange_min = new QDoubleSpinBox();
@@ -126,8 +133,8 @@ PeakExportDialog::PeakExportDialog()
 
     main_layout->addWidget(_button_box);
 
-    _rb_merged->setChecked(_merged_data);
-    _rb_unmerged->setChecked(!_merged_data);
+    _rb_merged->setChecked(true);
+    _rb_sum->setChecked(true);
 
     loadMergeParams();
 
@@ -136,6 +143,7 @@ PeakExportDialog::PeakExportDialog()
     connect(
         _data_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
         &PeakExportDialog::onDataChanged);
+    connect(_rb_sum, &QRadioButton::toggled, this, &PeakExportDialog::setSumIntensities);
 
     refresh();
     onDataChanged();
@@ -250,4 +258,9 @@ ohkl::sptrUnitCell PeakExportDialog::singleBatchRefine()
     }
 
     return refiner->batches()[0].sptrCell();
+}
+
+void PeakExportDialog::setSumIntensities(bool flag)
+{
+    _exporter.setSumIntensities(flag);
 }
