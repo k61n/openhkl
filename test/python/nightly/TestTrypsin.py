@@ -21,6 +21,14 @@ import pyohkl as ohkl
 class TestFullWorkFlow(unittest.TestCase):
 
     def test(self):
+        # correctness threshold for integers
+        eps = 5
+        # Reference values
+        expected_n_files = 169;
+        expected_found_peaks = 9913
+        expected_valid_found_peaks = 8432
+        expected_predicted_peaks = 70835
+        expected_shapes = 8248
 
         print('OpenHKL TestTrypsin')
         data_dir = '.' # Path to .raw data files
@@ -44,7 +52,7 @@ class TestFullWorkFlow(unittest.TestCase):
             dataset.addRawFrame(str(filename))
 
         nfiles = len(raw_data_files)
-        self.assertTrue(nfiles == 169, f"found {nfiles} raw data files")
+        self.assertTrue(nfiles == expected_n_files, f"found {nfiles} raw data files")
 
         dataset.finishRead()
         expt.addData(dataset)
@@ -54,14 +62,13 @@ class TestFullWorkFlow(unittest.TestCase):
         data.detector().setBaseline(0.0)
         data.detector().setGain(1.0)
 
-
         print('Finding peaks...')
         peak_finder = expt.peakFinder()
         params = peak_finder.parameters()
         params.threshold = 80
         peak_finder.find(data)
-        print(f'Found {peak_finder.numberFound()} peaks')
-        self.assertTrue(peak_finder.numberFound() == 9913)
+        self.assertTrue(peak_finder.numberFound() == expected_found_peaks,
+                        f'Found {peak_finder.numberFound()} peaks')
 
 
         print('Integrating found peaks...')
@@ -74,9 +81,9 @@ class TestFullWorkFlow(unittest.TestCase):
         expt.acceptFoundPeaks('found') # Peak collection is now saved to experiment as "found"
         expt.saveToFile("test.ohkl");
         found_peaks = expt.getPeakCollection('found')
-        print(f'Integrated {found_peaks.numberOfValid()} valid peaks')
-        self.assertTrue(found_peaks.numberOfValid() > 8420 and
-                        found_peaks.numberOfValid() < 8450)
+        self.assertTrue(found_peaks.numberOfValid() > (expected_valid_found_peaks - eps) and
+                        found_peaks.numberOfValid() < (expected_valid_found_peaks + eps),
+                        f'Integrated {found_peaks.numberOfValid()} valid peaks')
 
 
         print('Filter peaks for indexing...')
@@ -141,9 +148,9 @@ class TestFullWorkFlow(unittest.TestCase):
         predictor.predictPeaks(data, indexed_cell)
         expt.addPeakCollection('predicted', ohkl.PeakCollectionType_PREDICTED, predictor.peaks(), data)
         predicted_peaks = expt.getPeakCollection('predicted')
-        print(f'{predicted_peaks.numberOfPeaks()} peaks predicted')
-        self.assertTrue(predicted_peaks.numberOfPeaks() > 58720 and
-                        predicted_peaks.numberOfPeaks() < 58750)
+        self.assertTrue(predicted_peaks.numberOfPeaks() > expected_predicted_peaks - eps and
+                        predicted_peaks.numberOfPeaks() < expected_predicted_peaks + eps,
+                        f'{predicted_peaks.numberOfPeaks()} peaks predicted')
 
 
         print('Building shape model...')
@@ -152,9 +159,10 @@ class TestFullWorkFlow(unittest.TestCase):
         params.sigma_d = filtered_peaks.sigmaD()
         params.sigma_m = filtered_peaks.sigmaM()
         filtered_peaks.buildShapeModel(data, params)
-        print(f'{filtered_peaks.shapeModel().numberOfPeaks()} shapes generated')
-        self.assertTrue(filtered_peaks.shapeModel().numberOfPeaks() > 8240 and
-                        filtered_peaks.shapeModel().numberOfPeaks() < 8260)
+        self.assertTrue(
+            filtered_peaks.shapeModel().numberOfPeaks() > expected_shapes - eps and
+            filtered_peaks.shapeModel().numberOfPeaks() < expected_shapes + eps,
+            f'{filtered_peaks.shapeModel().numberOfPeaks()} shapes generated')
 
         print('Assigning shapes to predicted peaks...')
         filtered_peaks.shapeModel().setPredictedShapes(predicted_peaks)
