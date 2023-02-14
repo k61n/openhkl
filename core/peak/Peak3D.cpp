@@ -130,10 +130,10 @@ void Peak3D::setShape(const Ellipsoid& shape)
     // shape should be consistent with data
     if (_data) {
         Eigen::Vector3d c = shape.center();
-        if (c[2] < 0.0 || c[2] > _data->nFrames() - 1 || c[0] < 0.0 || c[0] > _data->nCols() - 1
-            || c[1] < 0.0 || c[1] > _data->nRows() - 1) {
+        if (c[2] < 0.0 || c[2] > _data->nFrames() - 1)
             setRejectionFlag(RejectionFlag::OutsideFrames);
-        }
+        else if (c[0] < 0.0 || c[0] > _data->nCols() - 1 || c[1] < 0.0 || c[1] > _data->nRows() - 1)
+            setRejectionFlag(RejectionFlag::OutsideDetector);
     }
     _shape = shape;
 }
