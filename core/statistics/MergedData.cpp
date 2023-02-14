@@ -38,9 +38,6 @@ MergedData::MergedData(
         ohklLog(Level::Info, "MergedData::MergedData: ", totalSize(), " merged peaks");
         ohklLog(Level::Info, "MergedData::MergedData: ", _nExtinct, " extinct peaks");
         ohklLog(Level::Info, "MergedData::MergedData: ", _nInvalid, " disabled peaks");
-        ohklLog(Level::Info, "MergedData::MergedData: ", _nDupes, " duplicate peaks");
-        ohklLog(Level::Info, "MergedData::MergedData: ", _nNoCell, " peaks without cell");
-        ohklLog(Level::Info, "MergedData::MergedData: ", _nBadInterp, " bad interpolations");
     }
 }
 
@@ -62,14 +59,10 @@ bool MergedData::addPeak(Peak3D* peak)
 
     if (!peak->enabled()) {
         ++_nInvalid;
-        ++_nPeaks;
-        ++_nDisabled;
         return false;
     }
     if (!peak->unitCell()) {
         ++_nInvalid;
-        ++_nPeaks;
-        ++_nNoCell;
         return false;
     }
     MergedPeak new_peak(_group, _friedel);
@@ -77,11 +70,8 @@ bool MergedData::addPeak(Peak3D* peak)
     MergeFlag success = new_peak.addPeak(peak);
     if (success == MergeFlag::InvalidQ) { // Interpolation error check
         ++_nInvalid;
-        ++_nPeaks;
-        ++_nBadInterp;
         return false;
     } else if (success == MergeFlag::Extinct) {
-        ++_nPeaks;
         --_max_peaks;
         ohklLog(Level::Info, "Extinct: ", peak->toString());
         return false;
@@ -94,11 +84,9 @@ bool MergedData::addPeak(Peak3D* peak)
         merged.addPeak(peak);
         _merged_peak_set.erase(it);
         _merged_peak_set.emplace(std::move(merged));
-        ++_nDupes;
         return false;
     }
     _merged_peak_set.emplace(std::move(new_peak));
-    ++_nPeaks;
 
     return true;
 }
