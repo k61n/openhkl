@@ -67,6 +67,11 @@ std::vector<Peak3D*> Predictor::buildPeaksFromMillerIndices(
         peak->setShape(Ellipsoid(center, 1.0));
         peak->setUnitCell(unit_cell);
         peaks.push_back(peak);
+
+        // Check whether extinct from space group
+        if (unit_cell->spaceGroup().isExtinct(hkl))
+            peak->setRejectionFlag(RejectionFlag::Extinct);
+
         if (peak->enabled())
             ++n_enabled;
     }

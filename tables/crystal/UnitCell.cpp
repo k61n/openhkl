@@ -316,10 +316,6 @@ std::vector<MillerIndex> UnitCell::generateReflectionsInShell(
                 if (d > dmax)
                     continue;
 
-                // skip those HKL which are forbidden by the space group
-                if (_space_group.isExtinct(hkl))
-                    continue;
-
                 hkls.emplace_back(hkl);
             }
         }
