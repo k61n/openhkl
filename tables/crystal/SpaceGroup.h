@@ -56,6 +56,8 @@ class SpaceGroup {
     bool isFriedelEquivalent(const MillerIndex& hkl1, const MillerIndex& hkl2) const;
     //! Return the symbol as a string
     std::string toString() const;
+    //! Return the hkl that represents the set of equivalences.
+    MillerIndex determineRepresentativeHKL(const MillerIndex& hkl, bool friedel) const;
 
  private:
     void generateGroupElements();
