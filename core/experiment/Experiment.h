@@ -97,10 +97,10 @@ class Experiment {
     //! Create a new PeakCollection from a vector of peaks
     bool addPeakCollection(
         const std::string& name, const PeakCollectionType type, std::vector<Peak3D*> peaks,
-        sptrDataSet data);
+        sptrDataSet data, sptrUnitCell cell);
     bool addPeakCollection(
         const std::string& name, const PeakCollectionType type, std::vector<Peak3D*> peaks,
-        sptrDataSet data, bool indexed, bool integrated, bool gradient);
+        sptrDataSet data, sptrUnitCell cell, bool indexed, bool integrated, bool gradient);
     //! Check if the handler has the named peak collection
     bool hasPeakCollection(const std::string& name);
     //! Check if handler has Peak Collections of a certain type

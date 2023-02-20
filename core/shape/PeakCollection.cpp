@@ -27,10 +27,11 @@ namespace ohkl {
 
 PeakCollection::PeakCollection()
     : _id(0)
-    , _name{ohkl::kw_peakCollectionDefaultName}
+    , _name{kw_peakCollectionDefaultName}
     , _data(nullptr)
-    , _type{ohkl::PeakCollectionType::FOUND}
+    , _type{PeakCollectionType::FOUND}
     , _shape_model(nullptr)
+    , _cell(nullptr)
     , _indexed(false)
     , _integrated(false)
     , _gradient(false)
@@ -38,12 +39,13 @@ PeakCollection::PeakCollection()
 }
 
 PeakCollection::PeakCollection(
-    const std::string& name, ohkl::PeakCollectionType type, sptrDataSet data)
+    const std::string& name, PeakCollectionType type, sptrDataSet data)
     : _id(0)
     , _name{std::string(name)}
     , _data(data)
     , _type{type}
     , _shape_model(nullptr)
+    , _cell(nullptr)
     , _indexed(false)
     , _integrated(false)
     , _gradient(false)
@@ -56,26 +58,26 @@ void PeakCollection::setId(unsigned int id)
         _id = id;
 }
 
-void PeakCollection::populate(const std::vector<std::shared_ptr<ohkl::Peak3D>> peak_list)
+void PeakCollection::populate(const std::vector<std::shared_ptr<Peak3D>> peak_list)
 {
     reset();
     for (const auto& peak : peak_list)
         push_back(*peak);
 }
 
-void PeakCollection::populate(const std::vector<ohkl::Peak3D*> peak_list)
+void PeakCollection::populate(const std::vector<Peak3D*> peak_list)
 {
     reset();
-    for (ohkl::Peak3D* peak : peak_list)
+    for (Peak3D* peak : peak_list)
         push_back(*peak);
 }
 
-void PeakCollection::push_back(const ohkl::Peak3D& peak)
+void PeakCollection::push_back(const Peak3D& peak)
 {
-    _peaks.push_back(std::unique_ptr<ohkl::Peak3D>{new Peak3D(peak)});
+    _peaks.push_back(std::unique_ptr<Peak3D>{new Peak3D(peak)});
 }
 
-void PeakCollection::addPeak(const std::shared_ptr<ohkl::Peak3D>& peak)
+void PeakCollection::addPeak(const std::shared_ptr<Peak3D>& peak)
 {
     push_back(peak);
 }
@@ -84,9 +86,9 @@ void PeakCollection::populateFromFiltered(PeakCollection* collection)
 {
     reset();
 
-    std::vector<ohkl::Peak3D*> peak_list = collection->getPeakList();
+    std::vector<Peak3D*> peak_list = collection->getPeakList();
 
-    for (ohkl::Peak3D* peak : peak_list) {
+    for (Peak3D* peak : peak_list) {
         if (peak->caughtByFilter())
             push_back(*peak);
     }
@@ -97,9 +99,9 @@ void PeakCollection::reset()
     _peaks.clear();
 }
 
-std::vector<ohkl::Peak3D*> PeakCollection::getPeakList() const
+std::vector<Peak3D*> PeakCollection::getPeakList() const
 {
-    std::vector<ohkl::Peak3D*> peak_list(_peaks.size());
+    std::vector<Peak3D*> peak_list(_peaks.size());
 
     for (int i = 0; i < _peaks.size(); i++)
         peak_list[i] = _peaks[i].get();
@@ -107,9 +109,9 @@ std::vector<ohkl::Peak3D*> PeakCollection::getPeakList() const
     return peak_list;
 }
 
-std::vector<ohkl::Peak3D*> PeakCollection::getFilteredPeakList() const
+std::vector<Peak3D*> PeakCollection::getFilteredPeakList() const
 {
-    std::vector<ohkl::Peak3D*> peak_list;
+    std::vector<Peak3D*> peak_list;
     for (int i = 0; i < _peaks.size(); i++) {
         if (_peaks[i]->caughtByFilter())
             peak_list.push_back(_peaks[i].get());
@@ -149,15 +151,19 @@ int PeakCollection::numberRejectedByFilter() const
 
 MetaData& PeakCollection::metadata()
 {
-    _metadata.add<int>(ohkl::at_peakCount, numberOfPeaks());
-    _metadata.add<int>(ohkl::at_peakType, static_cast<int>(type()));
+    _metadata.add<int>(at_peakCount, numberOfPeaks());
+    _metadata.add<int>(at_peakType, static_cast<int>(type()));
 
     // converting booleans to std::strings with 1 bytes size
     // while saving data to files only Int32, String and DBL seemed to supported
-    _metadata.add<std::string>(ohkl::at_indexed, std::to_string(isIndexed()));
-    _metadata.add<std::string>(ohkl::at_integrated, std::to_string(isIntegrated()));
-    _metadata.add<std::string>(ohkl::at_gradient, std::to_string(hasBkgGradient()));
-    _metadata.add<std::string>(ohkl::at_datasetName, _data->name());
+    _metadata.add<std::string>(at_indexed, std::to_string(isIndexed()));
+    _metadata.add<std::string>(at_integrated, std::to_string(isIntegrated()));
+    _metadata.add<std::string>(at_gradient, std::to_string(hasBkgGradient()));
+    _metadata.add<std::string>(at_datasetName, _data->name());
+    if (_cell)
+        _metadata.add<std::string>(at_unitCellName, _cell->name());
+    else
+        _metadata.add<std::string>(at_unitCellName, kw_null);
     return _metadata;
 }
 
@@ -256,8 +262,11 @@ void PeakCollection::buildShapeModel(sptrDataSet data, const ShapeModelParameter
     ohklLog(Level::Info, "PeakCollection::buildShapeModel finished");
 }
 
-void PeakCollection::setUnitCell(const sptrUnitCell& cell)
+void PeakCollection::setUnitCell(const sptrUnitCell& cell, bool setPeaks)
 {
+    _cell = cell;
+    if (!setPeaks)
+        return;
     for (auto* peak : getPeakList())
         peak->setUnitCell(cell);
 }

@@ -16,6 +16,7 @@
 #include "base/utils/Logger.h"
 #include "core/peak/Peak3D.h"
 #include "core/shape/PeakCollection.h"
+
 #include <stdexcept>
 
 namespace ohkl {
@@ -29,7 +30,7 @@ const PeakCollectionMap* PeakHandler::getPeakCollectionMap() const
 
 bool PeakHandler::addPeakCollection(
     const std::string& name, const PeakCollectionType type, const std::vector<ohkl::Peak3D*> peaks,
-    sptrDataSet data)
+    sptrDataSet data, sptrUnitCell cell)
 {
     // abort if name is aleady in use
     if (hasPeakCollection(name))
@@ -38,13 +39,14 @@ bool PeakHandler::addPeakCollection(
     std::unique_ptr<PeakCollection> ptr(new PeakCollection(name, type, data));
     ptr->populate(peaks);
     ptr->setId(_last_index++);
+    ptr->setUnitCell(cell, false);
     _peak_collections.insert_or_assign(name, std::move(ptr));
     return hasPeakCollection(name); // now name must be in use
 }
 
 bool PeakHandler::addPeakCollection(
     const std::string& name, const PeakCollectionType type, const std::vector<ohkl::Peak3D*> peaks,
-    sptrDataSet data, bool indexed, bool integrated, bool gradient)
+    sptrDataSet data, sptrUnitCell cell, bool indexed, bool integrated, bool gradient)
 {
     // abort if name is aleady in use
     if (hasPeakCollection(name))
@@ -52,6 +54,7 @@ bool PeakHandler::addPeakCollection(
     ohklLog(Level::Info, "PeakHandler::addPeakCollection '", name, "': ", peaks.size(), " peaks");
     std::unique_ptr<PeakCollection> ptr(new PeakCollection(name, type, data));
     ptr->setId(_last_index++);
+    ptr->setUnitCell(cell, false);
     ptr->setIndexed(indexed);
     ptr->setIntegrated(integrated);
     ptr->setBkgGradient(gradient);
@@ -157,6 +160,7 @@ bool PeakHandler::clonePeakCollection(std::string name, std::string new_name)
     new_peaks->populate(peaks->getPeakList());
     new_peaks->setIndexed(peaks->isIndexed());
     new_peaks->setIntegrated(peaks->isIntegrated());
+    new_peaks->setUnitCell(peaks->unitCell());
     new_peaks->setType(peaks->type());
     return hasPeakCollection(name);
 }

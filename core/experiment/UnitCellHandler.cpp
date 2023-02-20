@@ -164,9 +164,7 @@ bool UnitCellHandler::checkAndAssignUnitCell(
 
 void UnitCellHandler::assignUnitCell(PeakCollection* peaks, std::string cellName) const
 {
-    std::vector<Peak3D*> peak_list = peaks->getPeakList();
-    for (auto* peak : peak_list)
-        peak->setUnitCell(getSptrUnitCell(cellName));
+    peaks->setUnitCell(getSptrUnitCell(cellName));
 }
 
 std::vector<std::string> UnitCellHandler::getCompatibleSpaceGroups() const

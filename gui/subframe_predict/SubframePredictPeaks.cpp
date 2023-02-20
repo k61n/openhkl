@@ -628,6 +628,7 @@ void SubframePredictPeaks::accept()
     auto* project = gSession->currentProject();
     auto* expt = project->experiment();
     auto data = _detector_widget->currentData();
+    auto cell = _cell_combo->currentCell();
     std::string suggestion = expt->generatePeakCollectionName();
     std::unique_ptr<ListNameDialog> dlg(new ListNameDialog(QString::fromStdString(suggestion)));
     dlg->exec();
@@ -638,7 +639,7 @@ void SubframePredictPeaks::accept()
 
     if (!expt->addPeakCollection(
             dlg->listName().toStdString(), ohkl::PeakCollectionType::PREDICTED,
-            _peak_collection.getPeakList(), data)) {
+            _peak_collection.getPeakList(), data, cell)) {
         QMessageBox::warning(
             this, "Unable to add PeakCollection",
             "Unable to add PeakCollection, please use a unique name");

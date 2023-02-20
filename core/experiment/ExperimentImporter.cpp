@@ -137,6 +137,7 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
             std::string indexed;
             std::string integrated;
             std::string gradient;
+            std::string cell_name;
 
             if (peak_collection.attrExists(ohkl::at_peakCount)) {
                 const H5::Attribute attr = peak_collection.openAttribute(ohkl::at_peakCount);
@@ -173,6 +174,13 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
                 const H5::DataType attr_type = attr.getDataType();
                 attr.read(attr_type, &integrated);
             }
+
+            if (peak_collection.attrExists(ohkl::at_unitCellName)) {
+                const H5::Attribute attr = peak_collection.openAttribute(ohkl::at_unitCellName);
+                const H5::DataType attr_type = attr.getDataType();
+                attr.read(attr_type, cell_name);
+            }
+
 
             ohklLog(
                 Level::Debug, "ExperimentImporter::loadPeaks: found ", n_peaks,
@@ -382,9 +390,13 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
 
             // DataSets have been loaded so we can get the pointer from experiment
             sptrDataSet data = experiment->getData(dataset_name);
+            // UnitCells have been loaded so we can get the pointer from experiment
+            sptrUnitCell cell = nullptr;
+            if (cell_name != kw_null)
+                cell = experiment->getSptrUnitCell(cell_name);
             // converting data types. Ascii code of '0' is 48, of '1' is 49
             experiment->addPeakCollection(
-                collection_name, collection_type, peaks, data, static_cast<bool>(indexed[0] - 48),
+                collection_name, collection_type, peaks, data, cell, static_cast<bool>(indexed[0] - 48),
                 static_cast<bool>(integrated[0] - 48), static_cast<bool>(gradient[0] - 48));
 
             ohklLog(Level::Debug, "Finished creating the peak collection");

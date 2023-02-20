@@ -115,6 +115,7 @@ const std::string at_spacegroup{"spacegroup"};
 const std::string at_z{"z"};
 
 //-- Default names
+const std::string kw_null{"null"};
 const std::string kw_experimentDefaultName{"DEFAULT EXPERIMENT"}; // default name for an experiment
 const std::string kw_diffractometerDefaultName{
     "DEFAULT INSTRUMENT"}; // default name for an experiment
