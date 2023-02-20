@@ -322,19 +322,9 @@ std::vector<MillerIndex> UnitCell::generateReflectionsInShell(
         }
     }
 
-    std::set<MillerIndex> hkls_unique;
-
-    for (auto& hkl : hkls) {
-        MillerIndex rep  = _space_group.determineRepresentativeHKL(hkl, true);
-        hkls_unique.insert(rep);
-    }
-
     ohklLog(
         Level::Info, "UnitCell::generateReflectionsInShell: generated ", hkls.size(),
         " hkl in d-range [", dmin, ", ", dmax, "]");
-    ohklLog(
-        Level::Info, "UnitCell::generateReflectionsInShell: generated ", hkls_unique.size(),
-        " unique hkl in d-range [", dmin, ", ", dmax, "]");
 
     return hkls;
 }
@@ -895,6 +885,18 @@ void UnitCell::setId(const unsigned int id)
 {
     if (_id == 0)
         _id = id;
+}
+
+int UnitCell::maxPeaks(double dmin, double dmax, double wavelength)
+{
+    std::vector<MillerIndex> hkls = generateReflectionsInShell(dmin, dmax, wavelength);
+    std::set<MillerIndex> hkls_unique;
+
+    for (auto& hkl : hkls) {
+        MillerIndex rep = _space_group.determineRepresentativeHKL(hkl, true);
+        hkls_unique.insert(rep);
+    }
+    return hkls_unique.size();
 }
 
 } // namespace ohkl
