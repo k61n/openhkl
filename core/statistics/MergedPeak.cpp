@@ -39,12 +39,11 @@ MergedPeak::MergedPeak(const SpaceGroup& grp, bool friedel)
 
 MergeFlag MergedPeak::addPeak(Peak3D* peak)
 {
+    if (!peak->enabled())
+        return MergeFlag::Invalid;
+
     const UnitCell* cell = peak->unitCell();
     const ReciprocalVector q = peak->q();
-    if (!q.isValid()) {
-        peak->setRejectionFlag(RejectionFlag::InterpolationFailure);
-        return MergeFlag::InvalidQ;
-    }
 
     if (_peaks.empty()) {
         _hkl = MillerIndex(q, *cell);
@@ -52,13 +51,13 @@ MergeFlag MergedPeak::addPeak(Peak3D* peak)
     } else {
         MillerIndex hkl(q, *cell);
         if (!_grp.isEquivalent(_hkl, hkl, _friedel))
-            return MergeFlag::Extinct;
+            return MergeFlag::Inequivalent;
     }
     // add peak to list
     _peaks.push_back(peak);
     _sumIntensity += peak->correctedSumIntensity();
     _profileIntensity += peak->correctedProfileIntensity();
-    return MergeFlag::Valid;
+    return MergeFlag::Added;
 }
 
 MillerIndex MergedPeak::index() const

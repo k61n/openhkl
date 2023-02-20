@@ -39,7 +39,7 @@ class MergedData {
     MergedData(SpaceGroup space_group, bool friedel, int fmin = -1, int fmax = -1);
     //! Add a peak to the data set. It will be automatically merged correctly
     //! according to the space group symmetry.
-    bool addPeak(Peak3D* peak);
+    void addPeak(Peak3D* peak);
     //! Return the set of merged peaks.
     const MergedPeakSet& mergedPeakSet() const;
     //! Returns redundancy = observations / symmetry-inequvialent peaks.
@@ -71,7 +71,7 @@ class MergedData {
 
     //! Number of invalid peaks
     int _nInvalid = 0;
-    int _nExtinct = 0;
+    int _nInequivalent = 0;
     int _max_peaks = 0;
 };
 

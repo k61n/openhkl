@@ -13,6 +13,7 @@
 //  ***********************************************************************************************
 
 #include "core/statistics/MergedData.h"
+
 #include "base/utils/Logger.h"
 
 namespace ohkl {
@@ -36,8 +37,8 @@ MergedData::MergedData(
     if (_nInvalid > 0) {
         ohklLog(Level::Info, "MergedData::MergedData: ", _max_peaks, " maximum possible peaks");
         ohklLog(Level::Info, "MergedData::MergedData: ", totalSize(), " merged peaks");
-        ohklLog(Level::Info, "MergedData::MergedData: ", _nExtinct, " extinct peaks");
         ohklLog(Level::Info, "MergedData::MergedData: ", _nInvalid, " disabled peaks");
+        ohklLog(Level::Info, "MergedData::MergedData: ", _nInequivalent, " inequivalent peaks");
     }
 }
 
@@ -47,48 +48,36 @@ MergedData::MergedData(SpaceGroup space_group, bool friedel, int fmin, int fmax)
     _group = space_group;
 }
 
-bool MergedData::addPeak(Peak3D* peak)
+void MergedData::addPeak(Peak3D* peak)
 {
     auto c = peak->shape().center();
     // Ignore the peaks outside the frame range (mainly to exclude peaks that can't be interpolated)
     if (_frame_min >= 0 && _frame_max >= 0) {
         if (c[2] >= _frame_max && c[2] <= _frame_min)
-            return false;
+            return;
     }
     ++_max_peaks;
 
-    if (!peak->enabled()) {
-        ++_nInvalid;
-        return false;
-    }
-    if (!peak->unitCell()) {
-        ++_nInvalid;
-        return false;
-    }
     MergedPeak new_peak(_group, _friedel);
 
-    MergeFlag success = new_peak.addPeak(peak);
-    if (success == MergeFlag::InvalidQ) { // Interpolation error check
+    MergeFlag flag = new_peak.addPeak(peak);
+    if (flag == MergeFlag::Invalid) {
         ++_nInvalid;
-        return false;
-    } else if (success == MergeFlag::Extinct) {
-        --_max_peaks;
-        ohklLog(Level::Info, "Extinct: ", peak->toString());
-        return false;
+        return;
     }
 
     auto it = _merged_peak_set.find(new_peak);
 
     if (it != _merged_peak_set.end()) { // Found this peak in the set already
         MergedPeak merged(*it);
-        merged.addPeak(peak);
+        MergeFlag flag = merged.addPeak(peak);
+        if (flag == MergeFlag::Inequivalent)
+            ++_nInequivalent;
         _merged_peak_set.erase(it);
         _merged_peak_set.emplace(std::move(merged));
-        return false;
+        return;
     }
     _merged_peak_set.emplace(std::move(new_peak));
-
-    return true;
 }
 
 const MergedPeakSet& MergedData::mergedPeakSet() const
