@@ -15,6 +15,7 @@
 #include "core/statistics/MergedData.h"
 
 #include "base/utils/Logger.h"
+#include "core/data/DataSet.h"
 
 namespace ohkl {
 
@@ -35,7 +36,6 @@ MergedData::MergedData(
             addPeak(peaks[j]);
     }
     if (_nInvalid > 0) {
-        ohklLog(Level::Info, "MergedData::MergedData: ", _max_peaks, " maximum possible peaks");
         ohklLog(Level::Info, "MergedData::MergedData: ", totalSize(), " merged peaks");
         ohklLog(Level::Info, "MergedData::MergedData: ", _nInvalid, " disabled peaks");
         ohklLog(Level::Info, "MergedData::MergedData: ", _nInequivalent, " inequivalent peaks");
@@ -56,7 +56,6 @@ void MergedData::addPeak(Peak3D* peak)
         if (c[2] >= _frame_max && c[2] <= _frame_min)
             return;
     }
-    ++_max_peaks;
 
     MergedPeak new_peak(_group, _friedel);
 
@@ -78,6 +77,11 @@ void MergedData::addPeak(Peak3D* peak)
         return;
     }
     _merged_peak_set.emplace(std::move(new_peak));
+}
+
+void MergedData::addPeakCollection(PeakCollection* peaks)
+{
+    _peak_collections.push_back(peaks);
 }
 
 const MergedPeakSet& MergedData::mergedPeakSet() const
@@ -108,6 +112,10 @@ void MergedData::setDRange(const double d_min, const double d_max)
 {
     _d_min = d_min;
     _d_max = d_max;
+    double lambda = _peak_collections[0]->data()->wavelength();
+    sptrUnitCell cell = _peak_collections[0]->unitCell();
+    _max_peaks = cell->maxPeaks(d_min, d_max, lambda);
+    ohklLog(Level::Info, "MergedData::setDRange: ", _max_peaks, " maximum possible peaks");
 }
 
 double MergedData::dMin() const

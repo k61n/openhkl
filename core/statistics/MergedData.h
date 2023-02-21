@@ -40,12 +40,16 @@ class MergedData {
     //! Add a peak to the data set. It will be automatically merged correctly
     //! according to the space group symmetry.
     void addPeak(Peak3D* peak);
+    //! Add a peak collection (without processing the peaks)
+    void addPeakCollection(PeakCollection* peaks);
     //! Return the set of merged peaks.
     const MergedPeakSet& mergedPeakSet() const;
     //! Returns redundancy = observations / symmetry-inequvialent peaks.
     double redundancy() const;
     //! Returns total number of observations (including redundant ones)
     size_t totalSize() const;
+    //! Returns number of symmetry-unique observation
+    size_t nUnique() const { return _merged_peak_set.size(); };
     //! Return theoretical maximum number of peaks
     int maxPeaks() const { return _max_peaks; };
     //! Clear the merged data
