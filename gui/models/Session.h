@@ -60,6 +60,7 @@ class Session {
 
     void loadData(ohkl::DataFormat format);
     bool loadRawData();
+    void loadSingleImage();
     void removeData();
 
     void onDataChanged();

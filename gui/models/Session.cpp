@@ -345,6 +345,11 @@ bool Session::loadRawData()
     return true;
 }
 
+void Session::loadSingleImage()
+{
+    
+}
+
 void Session::onDataChanged()
 {
     DataList data = currentProject()->experiment()->getAllData();

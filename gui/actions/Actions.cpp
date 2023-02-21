@@ -99,6 +99,7 @@ void Actions::setupView()
 void Actions::setupData()
 {
     add_data = new QAction("Add data set");
+    add_single_image = new QAction("Load single image (strategy)");
     show_input_files = new QAction("Show input files");
     remove_data = new QAction("Remove data set");
     add_raw = new QAction("Add raw/tiff data");
@@ -109,6 +110,7 @@ void Actions::setupData()
         if (gSession->loadRawData())
             gGui->sideBar()->refreshCurrent();
     });
+    connect(add_single_image, &QAction::triggered, []() { gSession->loadSingleImage(); });
     connect(add_hdf5, &QAction::triggered, []() { gSession->loadData(ohkl::DataFormat::OHKL); });
     connect(add_hdf5, &QAction::triggered, []() { gSession->loadData(ohkl::DataFormat::NEXUS); });
     connect(add_hdf5, &QAction::triggered, []() { gGui->sideBar()->refreshCurrent(); });
