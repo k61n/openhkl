@@ -161,10 +161,12 @@ class DataSet {
     //! Clear the frame buffer
     void clearBuffer();
 
- private:
+    //! Data shape (columns, rows, frames)
+    std::size_t datashape[3]{0, 0, 0};
+
+ protected:
     void setReader(const DataFormat dataformat, const std::string& filename = "");
 
- private:
     std::string _name = ohkl::kw_datasetDefaultName;
     std::vector<Eigen::MatrixXi> _data;
     std::vector<IMask*> _masks;
@@ -187,10 +189,6 @@ class DataSet {
     std::vector<std::unique_ptr<Eigen::MatrixXi>> _frame_buffer;
     //! Whether or not the buffer is active
     bool _buffered;
-
- public:
-    //! Data shape (columns, rows, frames)
-    std::size_t datashape[3]{0, 0, 0};
 };
 
 /*! @}*/
