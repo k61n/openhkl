@@ -256,6 +256,7 @@ void SubframeExperiment::setStrategyUp()
     setAdjustBeamUp();
     setPeakFinder2DUp();
     setIndexerUp();
+    setPredictUp();
     _strategy_layout->addStretch();
 }
 
@@ -551,6 +552,58 @@ void SubframeExperiment::setIndexerUp()
     _strategy_layout->addWidget(index_spoiler);
 }
 
+void SubframeExperiment::setPredictUp()
+{
+    Spoiler* predict_spoiler = new Spoiler("Predict peaks");
+    GridFiller gfiller(predict_spoiler, true);
+
+    _predict_cell_combo = gfiller.addCellCombo("Unit cell", "Unit cell to use for peak prediction");
+    _delta_chi = gfiller.addDoubleSpinBox(
+        QString((QChar)0x0394) + " " + QString((QChar)0x03C7),
+        "Angle increment about the chi instrument axis");
+    _delta_omega = gfiller.addDoubleSpinBox(
+        QString((QChar)0x0394) + " " + QString((QChar)0x03C9),
+        "Angle increment about the omega instrument axis");
+    _delta_phi = gfiller.addDoubleSpinBox(
+        QString((QChar)0x0394) + " " + QString((QChar)0x03C6),
+        "Angle incremet about the phi instrument axis");
+    _n_increments = gfiller.addSpinBox(
+        "Number of increments", "Number of angular steps to use in strategy prediction");
+    std::tie(_predict_d_min, _predict_d_max) =
+        gfiller.addDoubleSpinBoxPair("d range", "Resolution range for peaks used in indexing");
+    _predict_button = gfiller.addButton("Predict", "Predict peaks using given strategy");
+
+    _delta_chi->setSingleStep(0.1);
+    _delta_chi->setValue(0);
+    _delta_chi->setMaximum(5);
+
+    _delta_omega->setSingleStep(0.1);
+    _delta_omega->setValue(0.5);
+    _delta_omega->setMaximum(5);
+
+    _delta_phi->setSingleStep(0.1);
+    _delta_phi->setValue(0);
+    _delta_phi->setMaximum(5);
+
+    _n_increments->setMaximum(1000);
+    _n_increments->setValue(100);
+
+    _predict_d_min->setMinimum(0);
+    _predict_d_min->setMaximum(100);
+    _predict_d_min->setValue(1.5);
+
+    _predict_d_max->setMaximum(0);
+    _predict_d_max->setMaximum(100);
+    _predict_d_max->setValue(50);
+
+    connect(_predict_button, &QPushButton::clicked, this, &SubframeExperiment::predict);
+    connect(
+        gGui->sideBar(), &SideBar::subframeChanged, this,
+        &SubframeExperiment::setPredictorParameters);
+
+    _strategy_layout->addWidget(predict_spoiler);
+}
+
 void SubframeExperiment::setLogarithmicScale()
 {
     _plot->setYLog(_yLog->isChecked());
@@ -803,6 +856,10 @@ void SubframeExperiment::autoindex()
     _tab_widget->setCurrentIndex(1);
 }
 
+void SubframeExperiment::predict()
+{
+}
+
 void SubframeExperiment::grabFinderParameters()
 {
     if (!gSession->hasProject())
@@ -874,6 +931,16 @@ void SubframeExperiment::setIndexerParameters()
     params->frequencyTolerance = _frequency_tolerance->value();
     params->minUnitCellVolume = _min_cell_volume->value();
     params->peaks_integrated = false;
+}
+
+void SubframeExperiment::grabPredictorParameters()
+{
+    
+}
+
+void SubframeExperiment::setPredictorParameters()
+{
+    
 }
 
 void SubframeExperiment::onBeamPosChanged(QPointF pos)

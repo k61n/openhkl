@@ -24,6 +24,7 @@
 
 #include <QWidget>
 
+class CellComboBox;
 class DataComboBox;
 class DetectorWidget;
 class PlotPanel;
@@ -54,6 +55,7 @@ class SubframeExperiment : public QWidget {
     void setAdjustBeamUp();
     void setPeakFinder2DUp();
     void setIndexerUp();
+    void setPredictUp();
 
     DetectorWidget* detectorWidget();
 
@@ -65,6 +67,7 @@ class SubframeExperiment : public QWidget {
 
     void find_2d();
     void autoindex();
+    void predict();
     void plotIntensities();
     void toggleUnsafeWidgets();
     void updateRanges();
@@ -79,6 +82,9 @@ class SubframeExperiment : public QWidget {
 
     void grabIndexerParameters();
     void setIndexerParameters();
+
+    void grabPredictorParameters();
+    void setPredictorParameters();
 
     //! Transmit crosshair changes to DetectorScene
     void changeCrosshair();
@@ -154,6 +160,7 @@ class SubframeExperiment : public QWidget {
     QSpinBox* _minY;
     QSpinBox* _maxY;
 
+    // direct beam adjustment
     SpoilerCheck* _set_initial_ki;
     QCheckBox* _direct_beam;
     SafeDoubleSpinBox* _beam_offset_x;
@@ -161,6 +168,7 @@ class SubframeExperiment : public QWidget {
     QSlider* _crosshair_size;
     SafeSpinBox* _crosshair_linewidth;
 
+    // 2D peak finder
     DataComboBox* _data_combo;
     QComboBox* _convolver_combo;
     SafeSpinBox* _threshold_spin;
@@ -170,6 +178,7 @@ class SubframeExperiment : public QWidget {
     QCheckBox* _threshold_check;
     QPushButton* _find_peaks_2d;
 
+    // index
     SafeDoubleSpinBox* _gruber;
     SafeDoubleSpinBox* _niggli;
     SafeDoubleSpinBox* _max_cell_dimension;
@@ -185,6 +194,17 @@ class SubframeExperiment : public QWidget {
     QPushButton* _index_button;
     QPushButton* _save_button;
     CellComboBox* _cell_combo;
+
+    // predict
+    CellComboBox* _predict_cell_combo;
+    SafeDoubleSpinBox* _delta_chi;
+    SafeDoubleSpinBox* _delta_omega;
+    SafeDoubleSpinBox* _delta_phi;
+    SafeSpinBox* _n_increments;
+    SafeDoubleSpinBox* _predict_d_min;
+    SafeDoubleSpinBox* _predict_d_max;
+    QPushButton* _predict_button;
+
 
     UnitCellTableView* _solution_table;
 
