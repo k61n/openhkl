@@ -72,11 +72,11 @@ class DataSet {
         double bkg_end = -1.0) const;
 
     //! Read a single frame
-    Eigen::MatrixXi frame(const std::size_t idx) const;
+    virtual Eigen::MatrixXi frame(const std::size_t idx) const;
     //! Returns frame after transforming to account for detector gain and baseline
-    Eigen::MatrixXd transformedFrame(std::size_t idx) const;
+    virtual Eigen::MatrixXd transformedFrame(std::size_t idx) const;
     //! Return per-pixel magnitude of gradient of a given frame
-    Eigen::MatrixXd gradientFrame(
+    virtual Eigen::MatrixXd gradientFrame(
         std::size_t idx, GradientKernel kernel, bool realspace = true) const;
 
     //! Gets the file handle.
