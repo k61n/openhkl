@@ -69,6 +69,7 @@ void PeakMerger::mergePeaks()
     _params->log(Level::Info);
     _merged_data = std::make_unique<MergedData>(
         _space_group, _peak_collections, _params->friedel, _params->frame_min, _params->frame_max);
+    _merged_data->setDRange(_params->d_min, _params->d_max);
     ResolutionShell resolution_shell{_params->d_min, _params->d_max, _params->n_shells};
 
     // Sort the peaks by resolution shell (concentric shells in d)

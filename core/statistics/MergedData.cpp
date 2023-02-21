@@ -36,9 +36,10 @@ MergedData::MergedData(
             addPeak(peaks[j]);
     }
     if (_nInvalid > 0) {
-        ohklLog(Level::Info, "MergedData::MergedData: ", totalSize(), " merged peaks");
+        ohklLog(Level::Info, "MergedData::MergedData: ", totalSize(), " observed peaks");
         ohklLog(Level::Info, "MergedData::MergedData: ", _nInvalid, " disabled peaks");
         ohklLog(Level::Info, "MergedData::MergedData: ", _nInequivalent, " inequivalent peaks");
+        ohklLog(Level::Info, "MergedData::MergedData: ", nUnique(), " symmetry-unique peaks");
     }
 }
 
