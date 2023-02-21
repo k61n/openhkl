@@ -103,7 +103,7 @@ bool Experiment::acceptFoundPeaks(const std::string& name)
 {
     std::vector<Peak3D*> peaks = _peak_finder->currentPeaks();
     sptrDataSet data = _peak_finder->currentData();
-    return addPeakCollection(name, PeakCollectionType::FOUND, peaks, data);
+    return addPeakCollection(name, PeakCollectionType::FOUND, peaks, data, nullptr);
 }
 
 bool Experiment::acceptFoundPeaks(const std::string& name, const PeakCollection& found)
@@ -111,8 +111,8 @@ bool Experiment::acceptFoundPeaks(const std::string& name, const PeakCollection&
     std::vector<Peak3D*> peaks = found.getPeakList();
 
     if (!addPeakCollection(
-            name, PeakCollectionType::FOUND, peaks, _peak_finder->currentData(), found.isIndexed(),
-            _peak_finder->isIntegrated(), _peak_finder->hasBkgGradient())) {
+            name, PeakCollectionType::FOUND, peaks, _peak_finder->currentData(), nullptr,
+            found.isIndexed(), _peak_finder->isIntegrated(), _peak_finder->hasBkgGradient())) {
         return false;
     }
     _peak_finder->setIntegrated(false); // reset for next use
@@ -381,10 +381,10 @@ void Experiment::removeData(const std::string& name)
 // Peak handler methods
 bool Experiment::addPeakCollection(
     const std::string& name, const PeakCollectionType type, std::vector<Peak3D*> peaks,
-    sptrDataSet data)
+    sptrDataSet data, sptrUnitCell cell)
 {
     if (!_peak_handler->hasPeakCollection(name)) {
-        _peak_handler->addPeakCollection(name, type, peaks, data);
+        _peak_handler->addPeakCollection(name, type, peaks, data, cell);
         return true;
     }
     return false;
@@ -392,9 +392,10 @@ bool Experiment::addPeakCollection(
 
 bool Experiment::addPeakCollection(
     const std::string& name, const PeakCollectionType type, std::vector<Peak3D*> peaks,
-    sptrDataSet data, bool indexed, bool integrated, bool gradient)
+    sptrDataSet data, sptrUnitCell cell, bool indexed, bool integrated, bool gradient)
 {
-    return _peak_handler->addPeakCollection(name, type, peaks, data, indexed, integrated, gradient);
+    return _peak_handler->addPeakCollection(
+        name, type, peaks, data, cell, indexed, integrated, gradient);
 }
 
 bool Experiment::hasPeakCollection(const std::string& name)

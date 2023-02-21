@@ -51,6 +51,8 @@ class PeakCollection {
     void setData(sptrDataSet data) { _data = data; };
     //! Get the DataSet associated with these peaks
     sptrDataSet data() const { return _data; };
+    //! Get the unit cell from autoindexing or used to predict these peaks
+    sptrUnitCell unitCell() const { return _cell; };
     //! Returns description of the PeakCollection
     std::string description() const { return _description; };
     //! set description
@@ -135,7 +137,7 @@ class PeakCollection {
     //! Background gradient flag
     void setBkgGradient(bool value) { _gradient = value; }
 
-    void setUnitCell(const sptrUnitCell& cell);
+    void setUnitCell(const sptrUnitCell& cell, bool setPeaks = true);
 
     //! Reset peak selection status to pre-integration values
     void resetIntegrationFlags();
@@ -154,6 +156,10 @@ class PeakCollection {
     std::string _parent;
 
     std::unique_ptr<ShapeModel> _shape_model;
+
+    //! Unit cell i) assigned by indexer ii) used to predict peaks (note that after
+    //! refinement, different peaks may have different unit cell pointers)
+    sptrUnitCell _cell;
 
     //! Beam divergence sigma
     double _sigma_d;

@@ -20,7 +20,7 @@
 
 namespace ohkl {
 
-enum class MergeFlag { Valid, InvalidQ, Extinct };
+enum class MergeFlag { Added, Inequivalent, Invalid };
 
 //! A list of peaks, and crystallographic information (SpaceGroup, MillerIndex, ...).
 class MergedPeak {

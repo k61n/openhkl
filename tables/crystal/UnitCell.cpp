@@ -27,6 +27,7 @@
 #include <iomanip>
 #include <iostream>
 #include <stdexcept>
+#include <set>
 
 namespace {
 bool smallDiff(double a, double b, double tolerance)
@@ -314,10 +315,6 @@ std::vector<MillerIndex> UnitCell::generateReflectionsInShell(
 
                 // scattering angle too small
                 if (d > dmax)
-                    continue;
-
-                // skip those HKL which are forbidden by the space group
-                if (_space_group.isExtinct(hkl))
                     continue;
 
                 hkls.emplace_back(hkl);
@@ -888,6 +885,18 @@ void UnitCell::setId(const unsigned int id)
 {
     if (_id == 0)
         _id = id;
+}
+
+int UnitCell::maxPeaks(double dmin, double dmax, double wavelength)
+{
+    std::vector<MillerIndex> hkls = generateReflectionsInShell(dmin, dmax, wavelength);
+    std::set<MillerIndex> hkls_unique;
+
+    for (auto& hkl : hkls) {
+        MillerIndex rep = _space_group.determineRepresentativeHKL(hkl, true);
+        hkls_unique.insert(rep);
+    }
+    return hkls_unique.size();
 }
 
 } // namespace ohkl

@@ -326,7 +326,6 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
 
         // initialize doubles
         const std::size_t nPeaks = collection_item->numberOfPeaks();
-        // TODO: no peak_begin?
         std::vector<double> peak_end(nPeaks);
         std::vector<double> bkg_begin(nPeaks);
         std::vector<double> bkg_end(nPeaks);

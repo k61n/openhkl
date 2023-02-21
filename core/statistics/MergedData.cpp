@@ -13,7 +13,9 @@
 //  ***********************************************************************************************
 
 #include "core/statistics/MergedData.h"
+
 #include "base/utils/Logger.h"
+#include "core/data/DataSet.h"
 
 namespace ohkl {
 
@@ -34,13 +36,10 @@ MergedData::MergedData(
             addPeak(peaks[j]);
     }
     if (_nInvalid > 0) {
-        ohklLog(Level::Info, "MergedData::MergedData: ", _max_peaks, " maximum possible peaks");
-        ohklLog(Level::Info, "MergedData::MergedData: ", totalSize(), " merged peaks");
-        ohklLog(Level::Info, "MergedData::MergedData: ", _nExtinct, " extinct peaks");
+        ohklLog(Level::Info, "MergedData::MergedData: ", totalSize(), " observed peaks");
         ohklLog(Level::Info, "MergedData::MergedData: ", _nInvalid, " disabled peaks");
-        ohklLog(Level::Info, "MergedData::MergedData: ", _nDupes, " duplicate peaks");
-        ohklLog(Level::Info, "MergedData::MergedData: ", _nNoCell, " peaks without cell");
-        ohklLog(Level::Info, "MergedData::MergedData: ", _nBadInterp, " bad interpolations");
+        ohklLog(Level::Info, "MergedData::MergedData: ", _nInequivalent, " inequivalent peaks");
+        ohklLog(Level::Info, "MergedData::MergedData: ", nUnique(), " symmetry-unique peaks");
     }
 }
 
@@ -50,57 +49,40 @@ MergedData::MergedData(SpaceGroup space_group, bool friedel, int fmin, int fmax)
     _group = space_group;
 }
 
-bool MergedData::addPeak(Peak3D* peak)
+void MergedData::addPeak(Peak3D* peak)
 {
     auto c = peak->shape().center();
     // Ignore the peaks outside the frame range (mainly to exclude peaks that can't be interpolated)
     if (_frame_min >= 0 && _frame_max >= 0) {
         if (c[2] >= _frame_max && c[2] <= _frame_min)
-            return false;
+            return;
     }
-    ++_max_peaks;
 
-    if (!peak->enabled()) {
-        ++_nInvalid;
-        ++_nPeaks;
-        ++_nDisabled;
-        return false;
-    }
-    if (!peak->unitCell()) {
-        ++_nInvalid;
-        ++_nPeaks;
-        ++_nNoCell;
-        return false;
-    }
     MergedPeak new_peak(_group, _friedel);
 
-    MergeFlag success = new_peak.addPeak(peak);
-    if (success == MergeFlag::InvalidQ) { // Interpolation error check
+    MergeFlag flag = new_peak.addPeak(peak);
+    if (flag == MergeFlag::Invalid) {
         ++_nInvalid;
-        ++_nPeaks;
-        ++_nBadInterp;
-        return false;
-    } else if (success == MergeFlag::Extinct) {
-        ++_nPeaks;
-        --_max_peaks;
-        ohklLog(Level::Info, "Extinct: ", peak->toString());
-        return false;
+        return;
     }
 
     auto it = _merged_peak_set.find(new_peak);
 
     if (it != _merged_peak_set.end()) { // Found this peak in the set already
         MergedPeak merged(*it);
-        merged.addPeak(peak);
+        MergeFlag flag = merged.addPeak(peak);
+        if (flag == MergeFlag::Inequivalent)
+            ++_nInequivalent;
         _merged_peak_set.erase(it);
         _merged_peak_set.emplace(std::move(merged));
-        ++_nDupes;
-        return false;
+        return;
     }
     _merged_peak_set.emplace(std::move(new_peak));
-    ++_nPeaks;
+}
 
-    return true;
+void MergedData::addPeakCollection(PeakCollection* peaks)
+{
+    _peak_collections.push_back(peaks);
 }
 
 const MergedPeakSet& MergedData::mergedPeakSet() const
@@ -131,6 +113,10 @@ void MergedData::setDRange(const double d_min, const double d_max)
 {
     _d_min = d_min;
     _d_max = d_max;
+    double lambda = _peak_collections[0]->data()->wavelength();
+    sptrUnitCell cell = _peak_collections[0]->unitCell();
+    _max_peaks = cell->maxPeaks(d_min, d_max, lambda);
+    ohklLog(Level::Info, "MergedData::setDRange: ", _max_peaks, " maximum possible peaks");
 }
 
 double MergedData::dMin() const

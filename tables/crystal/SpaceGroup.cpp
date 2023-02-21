@@ -15,6 +15,7 @@
 #include "tables/crystal/SpaceGroup.h"
 
 #include "base/utils/StringIO.h"
+#include "tables/crystal/MillerIndex.h"
 #include "tables/crystal/UnitCell.h"
 
 #include <algorithm>
@@ -557,6 +558,36 @@ bool SpaceGroup::isFriedelEquivalent(const MillerIndex& hkl1, const MillerIndex&
 std::string SpaceGroup::toString() const
 {
     return _symbol;
+}
+
+MillerIndex SpaceGroup::determineRepresentativeHKL(const MillerIndex& hkl, bool friedel) const
+{
+    Eigen::RowVector3d best_hkl = hkl.rowVector().cast<double>();
+    std::vector<Eigen::RowVector3d> equivs;
+
+    for (const auto& g : groupElements()) {
+        const Eigen::Matrix3d rotation = g.getRotationPart().transpose();
+        equivs.emplace_back(best_hkl * rotation);
+
+        if (friedel)
+            equivs.emplace_back(-best_hkl * rotation);
+    }
+
+    auto compare_fn = [=](const Eigen::RowVector3d& a, const Eigen::RowVector3d& b) -> bool {
+        const double eps = 1e-5;
+        for (auto i = 0; i < 3; ++i) {
+            if (std::abs(a(i) - b(i)) > eps)
+                return a(i) > b(i);
+        }
+        return false;
+    };
+
+    best_hkl = *std::min_element(equivs.begin(), equivs.end(), compare_fn);
+
+    MillerIndex representative;
+    for (int i = 0; i < 3; ++i)
+        representative(i) = int(std::lround(best_hkl(i)));
+    return representative;
 }
 
 } // namespace ohkl

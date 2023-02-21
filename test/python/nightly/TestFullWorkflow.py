@@ -23,7 +23,16 @@ import os
 class TestFullWorkFlow(unittest.TestCase):
 
     def test(self):
-        print()
+        # correctness threshold for integers
+        eps = 5
+        # Reference values
+        expected_n_files = 60;
+        expected_found_peaks = 2629
+        expected_valid_found_peaks = 1911
+        expected_predicted_peaks = 2237
+        expected_shapes = 1725
+        expected_valid_predicted_peaks = 1587
+
         data_dir = '.' # Path to .raw data files
 
         # set up the experiment
@@ -46,7 +55,8 @@ class TestFullWorkFlow(unittest.TestCase):
         for filename in raw_data_files:
             dataset.addRawFrame(str(filename))
 
-        self.assertTrue(len(raw_data_files) == 60)
+        self.assertTrue(
+            len(raw_data_files) == expected_n_files, f"Found {len(raw_data_files)} files")
 
         dataset.finishRead()
         expt.addData(dataset)
@@ -62,7 +72,9 @@ class TestFullWorkFlow(unittest.TestCase):
         params.threshold = 80
         peak_finder.find(data)
         print(f'Found {peak_finder.numberFound()} peaks')
-        self.assertTrue(peak_finder.numberFound() == 2629)
+        self.assertTrue(
+            peak_finder.numberFound() == expected_found_peaks,
+            f"Found {peak_finder.numberFound()} peaks")
 
         print('Integrating found peaks...')
         integrator = expt.integrator()
@@ -74,9 +86,9 @@ class TestFullWorkFlow(unittest.TestCase):
         expt.acceptFoundPeaks('found') # Peak collection is now saved to experiment as "found"
         expt.saveToFile("test.ohkl");
         found_peaks = expt.getPeakCollection('found')
-        print(f'Integrated {found_peaks.numberOfValid()} valid peaks')
-        self.assertTrue(found_peaks.numberOfValid() > 1900 and
-                        found_peaks.numberOfValid() < 1920)
+        self.assertTrue(found_peaks.numberOfValid() > expected_valid_found_peaks - eps and
+                        found_peaks.numberOfValid() < expected_valid_found_peaks + eps,
+                        f'Integrated {found_peaks.numberOfValid()} valid peaks')
 
         print('Indexing found peaks...')
         expt.setReferenceCell(24.5, 28.7, 37.7, 90, 90, 90) # reference cell used to pick best solution
@@ -117,9 +129,10 @@ class TestFullWorkFlow(unittest.TestCase):
         predictor.predictPeaks(data, indexed_cell)
         expt.addPeakCollection('predicted', ohkl.PeakCollectionType_PREDICTED, predictor.peaks(), data)
         predicted_peaks = expt.getPeakCollection('predicted')
-        print(f'{predicted_peaks.numberOfPeaks()} peaks predicted')
-        self.assertTrue(predicted_peaks.numberOfPeaks() > 1940 and
-                        predicted_peaks.numberOfPeaks() < 1960)
+        print()
+        self.assertTrue(predicted_peaks.numberOfPeaks() > expected_predicted_peaks - eps and
+                        predicted_peaks.numberOfPeaks() < expected_predicted_peaks + eps,
+                        f'{predicted_peaks.numberOfPeaks()} peaks predicted')
 
         print('Building shape collection...')
         filtered_peaks.computeSigmas()
@@ -127,9 +140,9 @@ class TestFullWorkFlow(unittest.TestCase):
         params.sigma_d = filtered_peaks.sigmaD()
         params.sigma_m = filtered_peaks.sigmaM()
         filtered_peaks.buildShapeModel(data, params)
-        print(f'{filtered_peaks.shapeModel().numberOfPeaks()} shapes generated')
-        self.assertTrue(filtered_peaks.shapeModel().numberOfPeaks() > 1720 and
-                        filtered_peaks.shapeModel().numberOfPeaks() < 1740)
+        self.assertTrue(filtered_peaks.shapeModel().numberOfPeaks() > expected_shapes - eps and
+                        filtered_peaks.shapeModel().numberOfPeaks() < expected_shapes + eps,
+                        f'{filtered_peaks.shapeModel().numberOfPeaks()} shapes generated')
 
         print('Assigning shapes to predicted peaks...')
         filtered_peaks.shapeModel().setPredictedShapes(predicted_peaks)
@@ -174,9 +187,9 @@ class TestFullWorkFlow(unittest.TestCase):
         integrator_type = ohkl.IntegratorType_Profile3D
         integrator.getIntegrator(integrator_type)
         integrator.integratePeaks(data, predicted_peaks, params, filtered_peaks.shapeModel())
-        print(f'{integrator.numberOfValidPeaks()} / {integrator.numberOfPeaks()} peaks integrated')
-        self.assertTrue(integrator.numberOfValidPeaks() >  1570 and
-                        integrator.numberOfValidPeaks() < 1590)
+        self.assertTrue(integrator.numberOfValidPeaks() >  expected_valid_predicted_peaks - eps and
+                        integrator.numberOfValidPeaks() < expected_valid_predicted_peaks + eps,
+                        f'{integrator.numberOfValidPeaks()} / {integrator.numberOfPeaks()} peaks integrated')
 
         print('Merging predicted peaks...')
         merger = expt.peakMerger()

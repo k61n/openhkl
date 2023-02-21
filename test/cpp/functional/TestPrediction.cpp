@@ -44,7 +44,10 @@ TEST_CASE("test/data/TestPeakFinder.cpp", "")
     params->d_max = 50.0;
     predictor->predictPeaks(data, cell);
 
+    int expected_n_peaks = 6092;
+    int eps = 5;
+
     std::cout << predictor->numberOfPredictedPeaks() << " peaks predicted" << std::endl;
-    CHECK(predictor->numberOfPredictedPeaks() > 5020);
-    CHECK(predictor->numberOfPredictedPeaks() < 5040);
+    CHECK(predictor->numberOfPredictedPeaks() >= expected_n_peaks - eps);
+    CHECK(predictor->numberOfPredictedPeaks() <= expected_n_peaks + eps);
 }

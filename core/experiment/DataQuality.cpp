@@ -28,7 +28,7 @@ namespace ohkl {
 
 void DataQuality::computeQuality(MergedData& merged_peaks, bool sum_intensities)
 {
-    nobserved = merged_peaks.totalSize();
+    nobserved = merged_peaks.nUnique();
     int max_peaks = merged_peaks.maxPeaks();
     nunique = merged_peaks.mergedPeakSet().size();
     redundancy = merged_peaks.redundancy();

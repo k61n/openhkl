@@ -58,20 +58,26 @@ std::vector<Peak3D*> Predictor::buildPeaksFromMillerIndices(
         algo::qMap2Events(qs, data->instrumentStates(), data->detector(), data->nFrames(), handler);
 
     std::vector<Peak3D*> peaks;
+    int n_enabled = 0;
     for (const auto& [hkl, event] : events) {
         Peak3D* peak(new Peak3D(data, hkl));
         Eigen::Vector3d center = {event.px, event.py, event.frame};
 
         // setShape may disable the peak if the centre is out of bounds
         peak->setShape(Ellipsoid(center, 1.0));
-        if (peak->enabled()) {
-            peak->setUnitCell(unit_cell);
-            peaks.push_back(peak);
-        }
+        peak->setUnitCell(unit_cell);
+        peaks.push_back(peak);
+
+        // Check whether extinct from space group
+        if (unit_cell->spaceGroup().isExtinct(hkl))
+            peak->setRejectionFlag(RejectionFlag::Extinct);
+
+        if (peak->enabled())
+            ++n_enabled;
     }
     ohklLog(
-        Level::Info, "Predictor::buildPeaksFromMillerIndices: ", peaks.size(),
-        " peaks generated from ", hkls.size(), " Miller indices");
+        Level::Info, "Predictor::buildPeaksFromMillerIndices: ", n_enabled,
+        "/", peaks.size(), " within detector bounds from ", hkls.size(), " Miller indices");
     return peaks;
 }
 

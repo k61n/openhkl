@@ -113,6 +113,7 @@ class UnitCell {
     std::vector<MillerIndex> generateReflectionsInShell(
         double dmin, double dmax, double wavelength) const;
 
+
     //! Returns the angle in radians between two reflections hkl1 and hkl2
     double angle(const Eigen::RowVector3d& hkl1, const Eigen::RowVector3d& hkl2) const;
 
@@ -255,6 +256,9 @@ class UnitCell {
 
     //! Return true if similar to another unit cell
     bool isSimilar(const UnitCell* other, double length_tol, double angle_tol) const;
+
+    //! Theoretical maximum number of symmetry-unique peaks in given d-range
+    int maxPeaks(double dmin, double dmax, double wavelength);
 
     unsigned int id() const;
     void setId(const unsigned int id);

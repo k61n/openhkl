@@ -64,6 +64,7 @@ enum class RejectionFlag {
     ManuallyRejected,
     OutsideIndexingTol,
     Outlier, // from peak statistics
+    Extinct, // From space group
     Count
 };
 

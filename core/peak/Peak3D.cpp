@@ -32,8 +32,7 @@
 namespace ohkl {
 
 const std::map<RejectionFlag, std::string> Peak3D::_rejection_map{
-    {RejectionFlag::NotRejected, "Not rejected"},
-    {RejectionFlag::Masked, "Masked by user"},
+    {RejectionFlag::NotRejected, "Not rejected"}, {RejectionFlag::Masked, "Masked by user"},
     {RejectionFlag::OutsideThreshold, "Too many or few detector counts"},
     {RejectionFlag::OutsideFrames, "Peak centre outside frame range"},
     {RejectionFlag::OutsideDetector, "Peak centre outside detector image"},
@@ -60,7 +59,8 @@ const std::map<RejectionFlag, std::string> Peak3D::_rejection_map{
     {RejectionFlag::PredictionUpdateFailure, "Failure updating prediction post-refinement"},
     {RejectionFlag::ManuallyRejected, "Manually unselected by user"},
     {RejectionFlag::OutsideIndexingTol, "Outside indexing tolerance"},
-    {RejectionFlag::Outlier, "Rejected by outlier detection algorithm"}};
+    {RejectionFlag::Outlier, "Rejected by outlier detection algorithm"},
+    {RejectionFlag::Extinct, "Extinct from space group"}};
 
 Peak3D::Peak3D(sptrDataSet data)
     : _shape()
@@ -130,10 +130,10 @@ void Peak3D::setShape(const Ellipsoid& shape)
     // shape should be consistent with data
     if (_data) {
         Eigen::Vector3d c = shape.center();
-        if (c[2] < 0.0 || c[2] > _data->nFrames() - 1 || c[0] < 0.0 || c[0] > _data->nCols() - 1
-            || c[1] < 0.0 || c[1] > _data->nRows() - 1) {
+        if (c[2] < 0.0 || c[2] > _data->nFrames() - 1)
             setRejectionFlag(RejectionFlag::OutsideFrames);
-        }
+        else if (c[0] < 0.0 || c[0] > _data->nCols() - 1 || c[1] < 0.0 || c[1] > _data->nRows() - 1)
+            setRejectionFlag(RejectionFlag::OutsideDetector);
     }
     _shape = shape;
 }

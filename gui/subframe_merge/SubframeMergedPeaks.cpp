@@ -242,6 +242,7 @@ void SubframeMergedPeaks::setDShellUp()
         selection_stats.push_back(header_item->text());
     }
     _plottable_statistics->addItems(selection_stats);
+    _plottable_statistics->setCurrentIndex(7);
 
     d_shell_down_left->addWidget(_sum_radio, 0, 1, 1, 1);
     d_shell_down_left->addWidget(_profile_radio, 0, 2, 1, 1);
