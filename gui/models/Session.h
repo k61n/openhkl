@@ -70,7 +70,7 @@ class Session {
 
     void loadExperimentFromFile(QString filename);
 
-    Project* createProject(QString experimentName, QString instrumentName);
+    Project* createProject(QString experimentName, QString instrumentName, bool strategy = false);
     bool addProject(std::unique_ptr<Project> project_ptr);
 
     std::string generateExperimentName();

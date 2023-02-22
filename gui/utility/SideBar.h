@@ -30,6 +30,7 @@ class SideBar : public QWidget {
     QSize minimumSizeHint() const;
     void manualSelect(int index);
     void refreshAll();
+    void setStrategyMode(bool strategy) { _strategy = strategy; };
 
     void refreshCurrent();
 
@@ -65,6 +66,8 @@ class SideBar : public QWidget {
 
     QAction* mCheckedAction;
     QAction* mOverAction;
+
+    bool _strategy;
 
     const unsigned int _min_icon_height = 60;
 };

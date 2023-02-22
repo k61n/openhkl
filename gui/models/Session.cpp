@@ -43,6 +43,7 @@
 #include "gui/utility/PeakComboBox.h"
 #include "gui/utility/PredictedPeakComboBox.h"
 #include "gui/utility/ShapeComboBox.h"
+#include "gui/utility/SideBar.h"
 
 #include <QCollator>
 #include <QDir>
@@ -158,14 +159,14 @@ int Session::numExperiments() const
     return _projects.size();
 }
 
-Project* Session::createProject(QString experimentName, QString instrumentName)
+Project* Session::createProject(QString experimentName, QString instrumentName, bool strategy)
 {
     for (const QString& name : experimentNames()) { // check name
         if (name == experimentName) {
             return nullptr;
         }
     }
-    return new Project(experimentName, instrumentName);
+    return new Project(experimentName, instrumentName, strategy);
 }
 
 bool Session::addProject(std::unique_ptr<Project> project_ptr)
@@ -375,6 +376,7 @@ void Session::onExperimentChanged()
 {
     if (!gSession->hasProject())
         return;
+    gGui->sideBar()->setStrategyMode(gSession->currentProject()->strategyMode());
     /*if (currentProject()->experiment()->getDiffractometer()) {
         gGui->onExperimentChanged();
     }*/

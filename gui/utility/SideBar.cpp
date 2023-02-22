@@ -50,7 +50,11 @@
 // reject.svg: Reject by Alfredo @ IconsAlfredo.com
 // merger.svg: Merge by Muneer A.Safiah from the Noun Project
 
-SideBar::SideBar(QWidget* parent) : QWidget(parent), mCheckedAction(nullptr), mOverAction(nullptr)
+SideBar::SideBar(QWidget* parent)
+    : QWidget(parent)
+    , mCheckedAction(nullptr)
+    , mOverAction(nullptr)
+    , _strategy(false)
 {
     setMouseTracking(true);
 
@@ -104,9 +108,11 @@ void SideBar::paintEvent(QPaintEvent* event)
     painter.setFont(fontText);
 
     int action_y = 0;
-    // painter.fillRect(rect(), QColor(100, 100, 100));
-    for (auto action : mActions) {
+    for (std::size_t idx = 0; idx < mActions.size(); ++idx) {
+        auto action = mActions.at(idx);
         QRect actionRect(0, action_y, event->rect().width(), event->rect().width());
+        if (_strategy && idx != 0 && idx != 1)
+            painter.fillRect(actionRect, QColor(100, 100, 100));
 
         if (action->isChecked()) {
             QColor fill_color;
@@ -145,6 +151,8 @@ void SideBar::paintEvent(QPaintEvent* event)
     tips_pos.setY(global_pos.y() + spacing_y);
 
     int id = mouse_pos.y() / _min_icon_height; // find the mAction id
+    if (_strategy && id != 0 && id != 1)
+        return;
 
     if (id < mActions.size())
         QToolTip::showText(tips_pos, mActions.at(id)->text()); // display mActions text*/
@@ -225,10 +233,13 @@ void SideBar::leaveEvent(QEvent* event)
 QAction* SideBar::actionAt(const QPoint& at)
 {
     int action_y = 0;
-    for (auto action : mActions) {
+    for (std::size_t idx = 0; idx < mActions.size(); ++idx) {
         QRect actionRect(0, action_y, rect().width(), rect().width());
-        if (actionRect.contains(at))
-            return action;
+        if (actionRect.contains(at)) {
+            if (_strategy && idx != 0 && idx != 1) // only home/experiment enabled in strategy mode
+                return nullptr;
+            return mActions.at(idx);
+        }
         action_y += actionRect.height();
     }
     return nullptr;
@@ -244,12 +255,6 @@ void SideBar::onHome()
 void SideBar::onExperiment()
 {
     gGui->_layout_stack->setCurrentIndex(1);
-    if (gSession->hasProject()) {
-        /*gGui->experiment->getProperty()->unitCellChanged();
-        gGui->experiment->getProperty()->peaksChanged();
-        gGui->experiment->getProperty()->experimentChanged();
-        gGui->experiment->getProperty()->dataChanged();*/
-    }
     gGui->experiment->refreshAll();
     emit subframeChanged();
 }
@@ -319,12 +324,6 @@ void SideBar::onMerger()
 
 void SideBar::refreshAll()
 {
-    /*if (gSession->currentProjectNum() != -1) {
-        gGui->detector->getProperty()->unitCellChanged();
-        gGui->detector->getProperty()->peaksChanged();
-        gGui->detector->getProperty()->experimentChanged();
-        gGui->detector->getProperty()->dataChanged();
-    }*/
     gGui->finder->refreshAll();
     gGui->filter->refreshAll();
     gGui->indexer->refreshAll();

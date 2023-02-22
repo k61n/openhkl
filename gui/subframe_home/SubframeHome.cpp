@@ -225,7 +225,7 @@ void SubframeHome::_setRightLayout(QHBoxLayout* main_layout)
         &SubframeHome::setContextMenuUnitCellTable);
 }
 
-void SubframeHome::createNew()
+void SubframeHome::createNew(bool strategy)
 {
     std::unique_ptr<ExperimentDialog> exp_dialog( // new ExperimentDialog());
         new ExperimentDialog(QString::fromStdString(gSession->generateExperimentName())));
@@ -236,7 +236,7 @@ void SubframeHome::createNew()
         QString expr_nm = exp_dialog->experimentName();
         QString instr_nm = exp_dialog->instrumentName();
 
-        std::unique_ptr<Project> project_ptr{gSession->createProject(expr_nm, instr_nm)};
+        std::unique_ptr<Project> project_ptr{gSession->createProject(expr_nm, instr_nm, strategy)};
         if (project_ptr == nullptr) {
             return;
         }

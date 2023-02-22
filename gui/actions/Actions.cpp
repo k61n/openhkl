@@ -52,6 +52,7 @@ Actions::Actions()
 void Actions::setupExperiment()
 {
     new_experiment = new QAction("New experiment");
+    new_strategy = new QAction("New experiment (strategy mode)");
     load_experiment = new QAction("Load experiment");
     save_experiment = new QAction("Save");
     save_experiment_as = new QAction("Save as");
@@ -63,6 +64,8 @@ void Actions::setupExperiment()
 
     connect(new_experiment, &QAction::triggered, []() { gGui->home->createNew(); });
     connect(new_experiment, &QAction::triggered, []() { gGui->sideBar()->refreshCurrent(); });
+    connect(new_strategy, &QAction::triggered, []() { gGui->home->createNew(true); });
+    connect(new_strategy, &QAction::triggered, []() { gGui->sideBar()->refreshCurrent(); });
     connect(load_experiment, &QAction::triggered, []() { gGui->home->loadFromFile(); });
     connect(load_experiment, &QAction::triggered, []() { gGui->sideBar()->refreshCurrent(); });
     connect(save_experiment, &QAction::triggered, []() { gGui->home->saveCurrent(); });

@@ -41,6 +41,7 @@ Menus::Menus(QMenuBar* menu_bar) : _menu_bar{menu_bar}
     _help_menu = _menu_bar->addMenu("Help");
 
     _expt_menu->addAction(actions->new_experiment);
+    _expt_menu->addAction(actions->new_strategy);
     _expt_menu->addAction(actions->load_experiment);
     _expt_menu->addSeparator();
     _expt_menu->addAction(actions->save_experiment);

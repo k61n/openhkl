@@ -29,6 +29,7 @@ class Actions : public QObject {
 
     // Files:
     QAction* new_experiment;
+    QAction* new_strategy;
     QAction* load_experiment;
     QAction* save_experiment;
     QAction* save_experiment_as;

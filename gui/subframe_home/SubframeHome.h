@@ -58,7 +58,7 @@ class SubframeHome : public QWidget {
 
  public:
     //! Create a new experiment
-    void createNew();
+    void createNew(bool strategy = false);
     //! Load an experiment from file
     void loadFromFile();
 
