@@ -59,8 +59,7 @@ class Session {
     void removeExperiment(unsigned int id);
 
     void loadData(ohkl::DataFormat format);
-    bool loadRawData();
-    void loadSingleImage();
+    bool loadRawData(bool single_file = false);
     void removeData();
 
     void onDataChanged();

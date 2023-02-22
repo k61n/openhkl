@@ -166,6 +166,13 @@ void RawDataDialog::verify()
         this->accept();
 }
 
+void RawDataDialog::setSingleImageMode()
+{
+    _chi->setEnabled(false);
+    _phi->setEnabled(false);
+    _omega->setEnabled(false);
+}
+
 ohkl::RawDataReaderParameters RawDataDialog::parameters()
 {
     ohkl::RawDataReaderParameters parameters;
