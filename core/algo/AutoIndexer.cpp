@@ -64,11 +64,17 @@ IndexerParameters* AutoIndexer::parameters()
     return _params.get();
 }
 
-bool AutoIndexer::autoIndex(const std::vector<Peak3D*>& peaks, const InstrumentState* state)
+bool AutoIndexer::autoIndex(
+    const std::vector<Peak3D*>& peaks, const InstrumentState* state, bool filter)
 {
     _params->log(Level::Info);
     ohklLog(Level::Info, "AutoIndexer::autoindex: indexing using ", peaks.size(), " peaks");
-    filterPeaks(peaks, state);
+    _filtered_peaks.clear();
+    if (filter)
+        filterPeaks(peaks, state);
+    else
+        for (auto peak : peaks)
+            _filtered_peaks.push_back(peak);
     // Find the Q-space directions along which the projection of the the Q-vectors
     // shows the highest periodicity
     bool success = computeFFTSolutions(_filtered_peaks, state);
@@ -88,13 +94,13 @@ bool AutoIndexer::autoIndex(const std::vector<Peak3D*>& peaks, const InstrumentS
     return success;
 }
 
-bool AutoIndexer::autoIndex(PeakCollection* peaks)
+bool AutoIndexer::autoIndex(PeakCollection* peaks, const InstrumentState* state, bool filter)
 {
     ohklLog(Level::Info, "AutoIndexer::autoindex: indexing PeakCollection '", peaks->name(), "'");
     _params->peaks_integrated = peaks->isIntegrated();
     std::vector<Peak3D*> peak_list = peaks->getPeakList();
 
-    if (autoIndex(peak_list)) {
+    if (autoIndex(peak_list, state, filter)) {
         peaks->setIndexed(true);
         return true;
     }
@@ -119,7 +125,6 @@ const std::vector<std::pair<sptrUnitCell, double>>& AutoIndexer::solutions() con
 
 void AutoIndexer::filterPeaks(const std::vector<Peak3D*>& peaks, const InstrumentState* state)
 {
-    _filtered_peaks.clear();
     std::vector<Peak3D*> tmp_peaks;
     const std::vector<Peak3D*> frame_range_peaks =
         PeakFilter{}.filterFrameRange(peaks, _params->first_frame, _params->last_frame);

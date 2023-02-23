@@ -21,6 +21,8 @@
 #include <Eigen/Dense>
 #include <algorithm>
 #include <cassert>
+#include <iomanip>
+#include <sstream>
 
 namespace ohkl {
 
@@ -168,6 +170,18 @@ InstrumentState InstrumentState::state(
 bool InstrumentState::isValid() const
 {
     return _valid;
+}
+
+std::string InstrumentState::toString() const
+{
+    std::ostringstream oss;
+    oss << "Detector orientation: " << std::endl << detectorOrientationMatrix() << std::endl;
+    oss << "Sample orientation:   " << std::endl << sampleOrientationMatrix() << std::endl;
+    oss << "Sample position:      " << std::endl << samplePosition.transpose() << std::endl;
+    oss << "Detector position:    " << std::endl << detectorPositionOffset.transpose() << std::endl;
+    oss << "Wavevector:           " << std::endl << ni << std::endl;
+    oss << "Wavelength:           " << std::endl << wavelength << std::endl;
+    return oss.str();
 }
 
 } // namespace ohkl

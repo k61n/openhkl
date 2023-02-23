@@ -79,7 +79,6 @@ class InstrumentState {
     //! Returns whether the InstrumentState is valid
     bool isValid() const;
 
- public:
     //! compute the sample orientation from fixed orientation and offset
     Eigen::Matrix3d detectorOrientationMatrix() const;
 
@@ -112,6 +111,9 @@ class InstrumentState {
 
     //! Returns the instrument state as read from the metadata
     static InstrumentState state(Diffractometer* const diffractometer, const std::size_t frame_idx);
+
+    //! Return state as a string
+    std::string toString() const;
 
 
 #ifndef SWIG

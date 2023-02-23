@@ -14,6 +14,7 @@
 
 #include "gui/subframe_experiment/SubframeExperiment.h"
 
+#include "base/utils/Logger.h"
 #include "core/algo/AutoIndexer.h"
 #include "core/convolve/Convolver.h"
 #include "core/convolve/ConvolverFactory.h"
@@ -866,6 +867,7 @@ void SubframeExperiment::autoindex()
     ohkl::PeakFilter* filter = expt->peakFilter();
 
     ohkl::sptrDataSet data = _data_combo->currentData();
+    setInitialKi(data);
 
     std::size_t current_frame = _detector_widget->scene()->currentFrame();
     std::vector<ohkl::Peak3D*> peaks = finder->getPeakList(current_frame);
@@ -876,7 +878,7 @@ void SubframeExperiment::autoindex()
 
     auto* flags = filter->flags();
     auto* params = filter->parameters();
-    flags->enabled = true;
+    flags->masked = true;
     flags->d_range = false;
     params->d_min = _d_min->value();
     params->d_max = _d_max->value();
@@ -889,7 +891,7 @@ void SubframeExperiment::autoindex()
 
     const ohkl::InstrumentState& state =
         data->instrumentStates().at(_detector_widget->spin()->value() - 1);
-    indexer->autoIndex(&filtered, false);
+    indexer->autoIndex(&filtered, &state, false);
 
     _solutions.clear();
     _solutions = indexer->solutions();
@@ -1145,9 +1147,10 @@ void SubframeExperiment::setInitialKi(ohkl::sptrDataSet data)
     const auto* detector = data->diffractometer()->detector();
     const auto coords = _detector_widget->scene()->beamSetterCoords();
 
-    ohkl::DirectVector direct = detector->pixelPosition(coords.x(), coords.y());
-    for (ohkl::InstrumentState& state : data->instrumentStates())
-        state.adjustKi(direct);
+    // ohkl::DirectVector direct = detector->pixelPosition(coords.x(), coords.y());
+    data->adjustDirectBeam(_beam_offset_x->value(), _beam_offset_y->value());
+    // for (ohkl::InstrumentState& state : data->instrumentStates())
+    //     state.adjustKi(direct);
     emit gGui->sentinel->instrumentStatesChanged();
 }
 
