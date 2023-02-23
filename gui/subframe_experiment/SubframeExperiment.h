@@ -18,6 +18,9 @@
 #include "core/convolve/Convolver.h"
 #include "core/data/DataTypes.h"
 #include "core/detector/DetectorEvent.h"
+#include "core/shape/PeakCollection.h"
+#include "gui/items/PeakCollectionItem.h"
+#include "gui/models/PeakCollectionModel.h"
 #include "gui/utility/CellComboBox.h"
 #include "gui/utility/SafeSpinBox.h"
 #include "tables/crystal/UnitCell.h"
@@ -27,6 +30,7 @@
 class CellComboBox;
 class DataComboBox;
 class DetectorWidget;
+class PeakViewWidget;
 class PlotPanel;
 class PropertyPanel;
 class QGraphicsPixmapItem;
@@ -83,8 +87,8 @@ class SubframeExperiment : public QWidget {
     void grabIndexerParameters();
     void setIndexerParameters();
 
-    void grabPredictorParameters();
-    void setPredictorParameters();
+    void grabStrategyParameters();
+    void setStrategyParameters();
 
     //! Transmit crosshair changes to DetectorScene
     void changeCrosshair();
@@ -136,6 +140,8 @@ class SubframeExperiment : public QWidget {
     void crosshairChanged(int size, int linewidth);
 
  private:
+    void refreshPeaks();
+
     QTabWidget* _tab_widget;
     QTabWidget* _left_widget;
     DetectorWidget* _detector_widget;
@@ -222,6 +228,8 @@ class SubframeExperiment : public QWidget {
     QPushButton* _delete_masks;
     QPushButton* _toggle_selection;
 
+    PeakViewWidget* _peak_view_widget;
+
     bool _show_direct_beam;
 
     //! Saved direct beam positions
@@ -233,6 +241,11 @@ class SubframeExperiment : public QWidget {
     std::vector<std::pair<std::shared_ptr<ohkl::UnitCell>, double>> _solutions;
     //! Unit cell selected in solution table
     ohkl::sptrUnitCell _selected_unit_cell;
+
+    //! Strategy predicted peaks
+    ohkl::PeakCollection _peak_collection;
+    PeakCollectionItem _peak_collection_item;
+    PeakCollectionModel _peak_collection_model;
 };
 
 #endif // OHKL_GUI_SUBFRAME_EXPERIMENT_SUBFRAMEEXPERIMENT_H

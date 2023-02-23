@@ -81,6 +81,7 @@ class Project {
     bool hasInstrumentStateSet() const;
     bool hasUnitCell() const;
     bool hasShapeModel() const;
+    void setStrategyMode(bool flag) { _strategy = flag; };
     bool strategyMode() const { return _strategy; };
 
  private:

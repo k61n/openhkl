@@ -74,6 +74,17 @@ void ExperimentImporter::setFilePath(const std::string path, Experiment* const e
         }
         ohklLog(Level::Info, path, " generated using version ", version, " commit hash ", hash);
 
+        bool strategy = false;
+        if (file.attrExists(ohkl::at_strategy)) {
+            const H5::Attribute attr = file.openAttribute(ohkl::at_strategy);
+            const H5::DataType attr_type = attr.getDataType();
+            std::string value;
+            attr.read(attr_type, value);
+            if (value == std::string("true"))
+                strategy = true;
+            experiment->setStrategy(strategy);
+        }
+
         ohklLog(
             ohkl::Level::Info,
             "Finished importing info for Experiment '" + experiment->name() + "'",

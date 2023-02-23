@@ -77,6 +77,8 @@ Experiment::Experiment(const std::string& name, const std::string& diffractomete
     _refiner = std::make_unique<Refiner>(_cell_handler.get());
     _integrator = std::make_unique<Integrator>(_data_handler);
     _peak_merger = std::make_unique<PeakMerger>();
+
+    _strategy = false;
 }
 
 const std::string& Experiment::name() const
@@ -149,7 +151,7 @@ void Experiment::saveToFile(const std::string& path) const
         ohklLog(Level::Debug, "Saving experiment to temporary file '" + filepath + "'");
     }
 
-    exporter.createFile(name(), getDiffractometer()->name(), filepath);
+    exporter.createFile(name(), getDiffractometer()->name(), filepath, _strategy);
 
     std::map<std::string, DataSet*> data_sets;
     for (const auto& it : *_data_handler->getDataMap())

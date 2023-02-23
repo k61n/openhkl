@@ -724,6 +724,9 @@ void DetectorScene::loadCurrentImage()
 
 void DetectorScene::drawIntegrationRegion()
 {
+    if (!_params.integrationRegion)
+        return;
+
     if (_peak_graphics.empty())
         return;
 

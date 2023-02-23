@@ -17,13 +17,16 @@
 #include "base/geometry/ReciprocalVector.h"
 #include "base/utils/Logger.h"
 #include "base/utils/ProgressHandler.h"
+#include "base/utils/Units.h"
 #include "core/data/DataSet.h"
 #include "core/data/DataTypes.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/Monochromator.h"
+#include "core/integration/IIntegrator.h"
 #include "core/peak/Peak3D.h"
 #include "core/peak/Qs2Events.h"
 #include "tables/crystal/MillerIndex.h"
+#include <stdexcept>
 
 namespace ohkl {
 
@@ -35,9 +38,21 @@ void PredictionParameters::log(const Level& level) const
     ohklLog(level, "d_max     = ", d_max);
 }
 
+void StrategyParameters::log(const Level& level) const
+{
+    PredictionParameters::log(level);
+    ohklLog(level, "Strategy parameters: ");
+    ohklLog(level, "delta_chi = ", delta_chi);
+    ohklLog(level, "delta_omega = ", delta_omega);
+    ohklLog(level, "delta_phi = ", delta_phi);
+    ohklLog(level, "nframes = ", nframes);
+    ohklLog(level, "friedel = ", friedel);
+}
+
 Predictor::Predictor() : _handler(nullptr)
 {
     _params = std::make_unique<PredictionParameters>();
+    _strategy_params = std::make_unique<StrategyParameters>();
 }
 
 std::vector<Peak3D*> Predictor::buildPeaksFromMillerIndices(
@@ -97,9 +112,61 @@ void Predictor::predictPeaks(const sptrDataSet data, const sptrUnitCell unit_cel
     _predicted_peaks = buildPeaksFromMillerIndices(data, predicted_hkls, unit_cell, _handler);
 }
 
+void Predictor::strategyPredict(sptrDataSet data, const sptrUnitCell unit_cell)
+{
+    _strategy_params->log(Level::Info);
+
+    _strategy_states.reset();
+    _strategy_states = std::make_unique<InstrumentStateSet>(generateStates(data));
+    data->setInstrumentStates(_strategy_states.get());
+
+    predictPeaks(data, unit_cell);
+}
+
+InstrumentStateSet Predictor::generateStates(const sptrDataSet data)
+{
+    _strategy_diffractometer.reset(Diffractometer::create(data->diffractometer()->name()));
+    const auto& detector_gonio = _strategy_diffractometer->detector()->gonio();
+    const auto& sample_gonio = _strategy_diffractometer->sample().gonio();
+    std::size_t n_detector_axes = detector_gonio.nAxes();
+    std::size_t n_sample_axes = sample_gonio.nAxes();
+
+    int omega_idx = -1, phi_idx = -1, chi_idx = -1;
+    for (std::size_t idx = 1; idx < n_sample_axes; ++idx) {
+        const std::string axis_name = sample_gonio.axis(idx).name();
+        omega_idx = axis_name == ohkl::ax_omega ? int(idx) : omega_idx;
+        phi_idx = axis_name == ohkl::ax_phi ? int(idx) : phi_idx;
+        chi_idx = axis_name == ohkl::ax_chi ? int(idx) : chi_idx;
+    }
+
+    if (omega_idx == -1 || phi_idx == -1 || chi_idx == -1)
+        throw std::runtime_error("Predictor::generateStates: could not rotation axis indices");
+
+    for (std::size_t idx = 1; idx < _strategy_params->nframes; ++idx) {
+        std::vector<double> det_states(n_detector_axes);
+        std::fill(det_states.begin(), det_states.end(), 0.0);
+        _strategy_diffractometer->detectorStates.emplace_back(std::move(det_states));
+
+        std::vector<double> sample_states(n_sample_axes);
+        std::fill(sample_states.begin(), sample_states.end(), 0.0);
+        sample_states[omega_idx] = idx * _strategy_params->delta_omega * deg;
+        sample_states[phi_idx] = idx * _strategy_params->delta_phi * deg;
+        sample_states[chi_idx] = idx * _strategy_params->delta_chi * deg;
+        _strategy_diffractometer->sampleStates.emplace_back(std::move(sample_states));
+    }
+
+    std::string name = "strategy";
+    return {_strategy_diffractometer.get(), name, _strategy_params->nframes};
+}
+
 PredictionParameters* Predictor::parameters()
 {
-    return _params.get();
+        return _params.get();
+}
+
+StrategyParameters* Predictor::strategyParamters()
+{
+    return _strategy_params.get();
 }
 
 const std::vector<Peak3D*>& Predictor::peaks() const

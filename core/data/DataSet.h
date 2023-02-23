@@ -161,6 +161,8 @@ class DataSet {
     //! Clear the frame buffer
     void clearBuffer();
 
+    virtual void setNFrames(std::size_t nframes) { std::ignore = nframes; };
+
     //! Data shape (columns, rows, frames)
     std::size_t datashape[3]{0, 0, 0};
 

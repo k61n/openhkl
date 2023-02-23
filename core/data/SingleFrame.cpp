@@ -52,5 +52,9 @@ Eigen::MatrixXd SingleFrame::gradientFrame(
     return DataSet::gradientFrame(0, kernel, realspace);
 }
 
+void SingleFrame::setNFrames(std::size_t nframes)
+{
+    _metadata.add<int>(ohkl::at_frameCount, nframes);
+}
 
 } // namespace ohkl

@@ -32,6 +32,7 @@ Project::Project(QString name, QString instrument, bool strategy)
     , _strategy(strategy)
     , _id(++_last_id)
 {
+    _experiment->setStrategy(strategy);
 }
 
 const ohkl::Experiment* Project::experiment() const

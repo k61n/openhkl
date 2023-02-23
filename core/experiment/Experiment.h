@@ -259,11 +259,6 @@ class Experiment {
     //! Get a pointer to the integrator module
     Integrator* integrator();
 
-    //! Return data quality resolution
-    DataResolution* getResolution() { return &_data_resolution; };
-    // Return data quality structs for all merged data:
-    DataResolution* getQuality() { return &_data_quality; };
-
     //! Container for metadata for reading raw data files
     RawDataReaderParameters data_params;
 
@@ -272,6 +267,11 @@ class Experiment {
 
     //! Generate automatic name for UnitCell
     std::string generateUnitCellName();
+
+    //! Toggle strategy mode
+    void setStrategy(bool flag) { _strategy = flag; };
+    //! Get strategy mode flag
+    bool strategy() const { return _strategy; };
 
  private: // private variables
     std::string _name; //!< The name of this experiment
@@ -293,9 +293,7 @@ class Experiment {
     std::unique_ptr<Integrator> _integrator;
     std::unique_ptr<PeakMerger> _peak_merger;
 
-    // Objects containing quality metrics
-    DataResolution _data_quality; //!< Data quality for whole resolution range
-    DataResolution _data_resolution; //!< Data quality per resolution shell
+    bool _strategy;
 };
 
 /*! @}*/

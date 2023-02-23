@@ -234,7 +234,7 @@ void Session::loadData(ohkl::DataFormat format)
         }
         default: {
             throw std::runtime_error(
-                "Session::LoadData can only load NSX(HDF5) or Nexus data files");
+                "Session::LoadData can only load OHKL or Nexus data files");
             break;
         }
     }
@@ -443,6 +443,7 @@ void Session::loadExperimentFromFile(QString filename)
 
     try {
         project_ptr->experiment()->loadFromFile(filename.toStdString());
+        project_ptr->setStrategyMode(project_ptr->experiment()->strategy());
         ohkl::ohklLog(
             ohkl::Level::Debug, "Session: Loaded data for Project created from file '",
             filename.toStdString(), "'");

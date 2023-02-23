@@ -31,7 +31,8 @@ class UnitCell;
 class ExperimentExporter {
  public:
     //! Create the file
-    void createFile(std::string name, std::string diffractometer, std::string path);
+    void createFile(
+        std::string name, std::string diffractometer, std::string path, bool strategy = false);
     //! Write the data to the current file
     void writeData(const std::map<std::string, DataSet*> data);
     //! Write the peak data to the current file

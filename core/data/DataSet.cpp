@@ -136,8 +136,8 @@ void DataSet::setRawReaderParameters(const RawDataReaderParameters& params)
     rawreader.setParameters(params);
 
     ohklLog(
-        Level::Info,
-        "DataSet '" + _name + "': RawDataReader parameters set."); // TODO: log parameter details
+        Level::Info, "DataSet '" + _name + "': RawDataReader parameters set.");
+    params.log(Level::Info);
 }
 
 void DataSet::addRawFrame(const std::string& rawfilename)

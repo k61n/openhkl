@@ -24,6 +24,9 @@
 #include "core/experiment/MaskImporter.h"
 #include "core/experiment/PeakFinder2D.h"
 #include "core/peak/Qs2Events.h"
+#include "core/shape/PeakCollection.h"
+#include "core/shape/PeakFilter.h"
+#include "core/shape/Predictor.h"
 #include "gui/MainWin.h" // gGui
 #include "gui/connect/Sentinel.h"
 #include "gui/dialogs/UnitCellDialog.h"
@@ -41,6 +44,7 @@
 #include "gui/utility/SpoilerCheck.h"
 #include "gui/views/UnitCellTableView.h"
 #include "gui/widgets/DetectorWidget.h"
+#include "gui/widgets/PeakViewWidget.h"
 #include "gui/widgets/PlotPanel.h"
 
 #include <QBoxLayout>
@@ -67,7 +71,13 @@
 #include <gsl/gsl_histogram.h>
 #include <stdexcept>
 
-SubframeExperiment::SubframeExperiment() : QWidget(), _mask_table_rows(15), _show_direct_beam(true)
+SubframeExperiment::SubframeExperiment()
+    : QWidget()
+    , _mask_table_rows(15)
+    , _show_direct_beam(true)
+    , _peak_collection("temp", ohkl::PeakCollectionType::PREDICTED, nullptr)
+    , _peak_collection_item()
+    , _peak_collection_model()
 {
     _main_layout = new QHBoxLayout(this);
     _left_layout = new QVBoxLayout();
@@ -98,6 +108,7 @@ SubframeExperiment::SubframeExperiment() : QWidget(), _mask_table_rows(15), _sho
     QGroupBox* figure_group = new QGroupBox("Detector image");
     figure_group->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     _detector_widget = new DetectorWidget(1, true, true, figure_group);
+    _detector_widget->linkPeakModel(&_peak_collection_model, _peak_view_widget);
 
     QSplitter* right_splitter = new QSplitter();
     right_splitter->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -257,6 +268,16 @@ void SubframeExperiment::setStrategyUp()
     setPeakFinder2DUp();
     setIndexerUp();
     setPredictUp();
+
+    _peak_view_widget = nullptr;
+    // Spoiler* preview_box = new Spoiler("Show/hide peaks");
+    // _peak_view_widget = new PeakViewWidget("Valid peaks", "Invalid peaks");
+    // connect(
+    //     _peak_view_widget, &PeakViewWidget::settingsChanged, this,
+    //     &SubframeExperiment::refreshPeaks);
+    // preview_box->setContentLayout(*_peak_view_widget);
+    // _strategy_layout->addWidget(preview_box);
+
     _strategy_layout->addStretch();
 }
 
@@ -599,7 +620,7 @@ void SubframeExperiment::setPredictUp()
     connect(_predict_button, &QPushButton::clicked, this, &SubframeExperiment::predict);
     connect(
         gGui->sideBar(), &SideBar::subframeChanged, this,
-        &SubframeExperiment::setPredictorParameters);
+        &SubframeExperiment::setStrategyParameters);
 
     _strategy_layout->addWidget(predict_spoiler);
 }
@@ -807,6 +828,8 @@ void SubframeExperiment::toggleUnsafeWidgets()
     _export_masks->setEnabled(gSession->currentProject()->hasDataSet());
     _delete_masks->setEnabled(hasSelectedMasks);
     _toggle_selection->setEnabled(_data_combo->currentData()->hasMasks());
+
+    _n_increments->setEnabled(gSession->currentProject()->strategyMode());
 }
 
 void SubframeExperiment::find_2d()
@@ -840,6 +863,9 @@ void SubframeExperiment::autoindex()
     ohkl::Experiment* expt = gSession->currentProject()->experiment();
     ohkl::PeakFinder2D* finder = expt->peakFinder2D();
     ohkl::AutoIndexer* indexer = expt->autoIndexer();
+    ohkl::PeakFilter* filter = expt->peakFilter();
+
+    ohkl::sptrDataSet data = _data_combo->currentData();
 
     std::size_t current_frame = _detector_widget->scene()->currentFrame();
     std::vector<ohkl::Peak3D*> peaks = finder->getPeakList(current_frame);
@@ -848,7 +874,22 @@ void SubframeExperiment::autoindex()
 
     setIndexerParameters();
 
-    indexer->autoIndex(peaks);
+    auto* flags = filter->flags();
+    auto* params = filter->parameters();
+    flags->enabled = true;
+    flags->d_range = false;
+    params->d_min = _d_min->value();
+    params->d_max = _d_max->value();
+
+    ohkl::PeakCollection collection("strategy", ohkl::PeakCollectionType::FOUND, data);
+    collection.populate(peaks);
+    filter->filter(&collection);
+    ohkl::PeakCollection filtered("filtered", ohkl::PeakCollectionType::FOUND, data);
+    filtered.populateFromFiltered(&collection);
+
+    const ohkl::InstrumentState& state =
+        data->instrumentStates().at(_detector_widget->spin()->value() - 1);
+    indexer->autoIndex(&filtered, false);
 
     _solutions.clear();
     _solutions = indexer->solutions();
@@ -858,6 +899,43 @@ void SubframeExperiment::autoindex()
 
 void SubframeExperiment::predict()
 {
+    gGui->setReady(false);
+
+    try {
+        auto* expt = gSession->currentProject()->experiment();
+        auto* predictor = expt->predictor();
+        setStrategyParameters();
+
+        auto data = _data_combo->currentData();
+        auto cell = _predict_cell_combo->currentCell();
+
+        ohkl::sptrProgressHandler handler(new ohkl::ProgressHandler);
+        ProgressView progressView(nullptr);
+        progressView.watch(handler);
+
+        predictor->setHandler(handler);
+        predictor->strategyPredict(data, cell);
+
+        std::vector<ohkl::Peak3D*> predicted_peaks;
+        for (ohkl::Peak3D* peak : predictor->peaks())
+            predicted_peaks.push_back(peak);
+
+        _peak_collection.populate(predicted_peaks);
+        _peak_collection.setData(data);
+        for (ohkl::Peak3D* peak : predicted_peaks)
+            delete peak;
+        predicted_peaks.clear();
+
+        _peak_collection_item.setPeakCollection(&_peak_collection);
+        _peak_collection_model.setRoot(&_peak_collection_item);
+
+        toggleUnsafeWidgets();
+        refreshPeaks();
+
+    } catch (const std::exception& e) {
+        QMessageBox::critical(this, "Error", QString(e.what()));
+    }
+    gGui->setReady(true);
 }
 
 void SubframeExperiment::grabFinderParameters()
@@ -933,14 +1011,39 @@ void SubframeExperiment::setIndexerParameters()
     params->peaks_integrated = false;
 }
 
-void SubframeExperiment::grabPredictorParameters()
+void SubframeExperiment::grabStrategyParameters()
 {
-    
+    if (!gSession->hasProject())
+        return;
+
+    auto* predictor = gSession->currentProject()->experiment()->predictor();
+    auto* params = predictor->strategyParamters();
+
+    _predict_d_min->setValue(params->d_min);
+    _predict_d_max->setValue(params->d_max);
+    _delta_chi->setValue(params->delta_chi);
+    _delta_omega->setValue(params->delta_omega);
+    _delta_phi->setValue(params->delta_phi);
+    if (gSession->currentProject()->strategyMode())
+        _n_increments->setValue(params->nframes);
+    else
+        _n_increments->setValue(_data_combo->currentData()->nFrames());
 }
 
-void SubframeExperiment::setPredictorParameters()
+void SubframeExperiment::setStrategyParameters()
 {
-    
+    if (!gSession->hasProject())
+        return;
+
+    auto* predictor = gSession->currentProject()->experiment()->predictor();
+    auto* params = predictor->strategyParamters();
+
+    params->d_min = _predict_d_min->value();
+    params->d_max = _predict_d_max->value();
+    params->delta_chi = _delta_chi->value();
+    params->delta_omega = _delta_omega->value();
+    params->delta_phi = _delta_phi->value();
+    params->nframes = _n_increments->value();
 }
 
 void SubframeExperiment::onBeamPosChanged(QPointF pos)
@@ -1290,4 +1393,9 @@ void SubframeExperiment::selectAllMasks()
 
     refreshMaskTable();
     toggleUnsafeWidgets();
+}
+
+void SubframeExperiment::refreshPeaks()
+{
+    _detector_widget->refresh();
 }
