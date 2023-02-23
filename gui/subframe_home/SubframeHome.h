@@ -89,6 +89,7 @@ class SubframeHome : public QWidget {
 
  private:
     QPushButton* _new_exp;
+    QPushButton* _new_strategy;
     QPushButton* _old_exp;
     QPushButton* _save_current;
     QPushButton* _save_all;
