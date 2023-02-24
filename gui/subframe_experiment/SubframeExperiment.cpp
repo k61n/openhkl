@@ -20,6 +20,7 @@
 #include "core/convolve/ConvolverFactory.h"
 #include "core/data/DataSet.h"
 #include "core/data/DataTypes.h"
+#include "core/experiment/DataQuality.h"
 #include "core/experiment/Experiment.h"
 #include "core/experiment/MaskExporter.h"
 #include "core/experiment/MaskImporter.h"
@@ -917,6 +918,7 @@ void SubframeExperiment::predict()
         for (ohkl::Peak3D* peak : predictor->peaks())
             predicted_peaks.push_back(peak);
 
+        _peak_collection.setUnitCell(cell, false);
         _peak_collection.populate(predicted_peaks);
         _peak_collection.setData(data);
         for (ohkl::Peak3D* peak : predicted_peaks)
@@ -926,12 +928,44 @@ void SubframeExperiment::predict()
         _peak_collection_item.setPeakCollection(&_peak_collection);
         _peak_collection_model.setRoot(&_peak_collection_item);
 
+        merge();
+
         toggleUnsafeWidgets();
         refreshPeaks();
 
     } catch (const std::exception& e) {
         QMessageBox::critical(this, "Error", QString(e.what()));
     }
+    gGui->setReady(true);
+}
+
+void SubframeExperiment::merge()
+{
+    gGui->setReady(false);
+    auto* expt = gSession->currentProject()->experiment();
+    auto* merger = expt->peakMerger();
+    merger->reset();
+
+    auto* merge_params = merger->parameters();
+
+    merge_params->d_min = _d_min->value();
+    merge_params->d_max = _d_max->value();
+    merge_params->frame_min = 0;
+    merge_params->frame_max = _n_increments->value();
+    merge_params->n_shells = 10;
+    merge_params->friedel = true;
+
+    auto group = _cell_combo->currentCell()->spaceGroup();
+    merger->setSpaceGroup(group);
+
+    merger->addPeakCollection(&_peak_collection);
+    merger->mergePeaks();
+    merger->computeQuality();
+    auto* quality = merger->overallQuality();
+    gGui->statusBar()->showMessage(
+        "Projected completeness: " +
+        QString::number(quality->shells[0].Completeness * 100.0, 'f', 2) + "%");
+
     gGui->setReady(true);
 }
 

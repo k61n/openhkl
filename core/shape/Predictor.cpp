@@ -121,6 +121,9 @@ void Predictor::strategyPredict(sptrDataSet data, const sptrUnitCell unit_cell)
     _strategy_states = std::make_unique<InstrumentStateSet>(generateStates(data));
     data->setInstrumentStates(_strategy_states.get());
 
+    _params->d_min = _strategy_params->d_min;
+    _params->d_max = _strategy_params->d_max;
+
     predictPeaks(data, unit_cell);
 }
 

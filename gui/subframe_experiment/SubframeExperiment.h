@@ -73,6 +73,7 @@ class SubframeExperiment : public QWidget {
     void find_2d();
     void autoindex();
     void predict();
+    void merge();
     void savePeaks();
     void plotIntensities();
     void toggleUnsafeWidgets();
