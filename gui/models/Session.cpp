@@ -377,9 +377,6 @@ void Session::onExperimentChanged()
     if (!gSession->hasProject())
         return;
     gGui->sideBar()->setStrategyMode(gSession->currentProject()->strategyMode());
-    /*if (currentProject()->experiment()->getDiffractometer()) {
-        gGui->onExperimentChanged();
-    }*/
     gGui->finder->grabFinderParameters();
     gGui->finder->grabIntegrationParameters();
     gGui->filter->grabFilterParameters();

@@ -26,6 +26,7 @@
 #include "core/peak/Peak3D.h"
 #include "core/peak/Qs2Events.h"
 #include "tables/crystal/MillerIndex.h"
+
 #include <stdexcept>
 
 namespace ohkl {
@@ -132,17 +133,17 @@ InstrumentStateSet Predictor::generateStates(const sptrDataSet data)
     std::size_t n_sample_axes = sample_gonio.nAxes();
 
     int omega_idx = -1, phi_idx = -1, chi_idx = -1;
-    for (std::size_t idx = 1; idx < n_sample_axes; ++idx) {
+    for (std::size_t idx = 0; idx < n_sample_axes; ++idx) {
         const std::string axis_name = sample_gonio.axis(idx).name();
         omega_idx = axis_name == ohkl::ax_omega ? int(idx) : omega_idx;
-        phi_idx = axis_name == ohkl::ax_phi ? int(idx) : phi_idx;
         chi_idx = axis_name == ohkl::ax_chi ? int(idx) : chi_idx;
+        phi_idx = axis_name == ohkl::ax_phi ? int(idx) : phi_idx;
     }
 
     if (omega_idx == -1 || phi_idx == -1 || chi_idx == -1)
         throw std::runtime_error("Predictor::generateStates: could not parse rotation axis indices");
 
-    for (std::size_t idx = 1; idx < _strategy_params->nframes; ++idx) {
+    for (std::size_t idx = 0; idx < _strategy_params->nframes; ++idx) {
         std::vector<double> det_states(n_detector_axes);
         std::fill(det_states.begin(), det_states.end(), 0.0);
         _strategy_diffractometer->detectorStates.emplace_back(std::move(det_states));
