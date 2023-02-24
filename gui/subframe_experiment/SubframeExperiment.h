@@ -199,10 +199,9 @@ class SubframeExperiment : public QWidget {
     QCheckBox* _only_niggli;
     QPushButton* _index_button;
     QPushButton* _save_button;
-    CellComboBox* _cell_combo;
 
     // predict
-    CellComboBox* _predict_cell_combo;
+    CellComboBox* _cell_combo;
     SafeDoubleSpinBox* _delta_chi;
     SafeDoubleSpinBox* _delta_omega;
     SafeDoubleSpinBox* _delta_phi;

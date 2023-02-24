@@ -533,7 +533,6 @@ void SubframeExperiment::setIndexerUp()
     _index_button =
         gfiller.addButton("Autoindex", "Attempt to find a unit cell using spots in this image");
     _save_button = gfiller.addButton("Save unit cell", "Save the selected unit cell");
-    _cell_combo = gfiller.addCellCombo("Unit Cell", "Unit cell for Miller index tooltip");
 
     _d_min->setMinimum(0);
     _d_min->setMaximum(100);
@@ -579,7 +578,7 @@ void SubframeExperiment::setPredictUp()
     Spoiler* predict_spoiler = new Spoiler("Predict peaks");
     GridFiller gfiller(predict_spoiler, true);
 
-    _predict_cell_combo = gfiller.addCellCombo("Unit cell", "Unit cell to use for peak prediction");
+    _cell_combo = gfiller.addCellCombo("Unit cell", "Unit cell to use for peak prediction");
     _delta_chi = gfiller.addDoubleSpinBox(
         QString((QChar)0x0394) + " " + QString((QChar)0x03C7),
         "Angle increment about the chi instrument axis");
@@ -895,7 +894,7 @@ void SubframeExperiment::predict()
         setStrategyParameters();
 
         auto data = _data_combo->currentData();
-        auto cell = _predict_cell_combo->currentCell();
+        auto cell = _cell_combo->currentCell();
 
         ohkl::sptrProgressHandler handler(new ohkl::ProgressHandler);
         ProgressView progressView(nullptr);
@@ -1130,13 +1129,7 @@ void SubframeExperiment::resetMode(int index)
 
 void SubframeExperiment::setInitialKi(ohkl::sptrDataSet data)
 {
-    const auto* detector = data->diffractometer()->detector();
-    const auto coords = _detector_widget->scene()->beamSetterCoords();
-
-    // ohkl::DirectVector direct = detector->pixelPosition(coords.x(), coords.y());
     data->adjustDirectBeam(_beam_offset_x->value(), _beam_offset_y->value());
-    // for (ohkl::InstrumentState& state : data->instrumentStates())
-    //     state.adjustKi(direct);
     emit gGui->sentinel->instrumentStatesChanged();
 }
 
