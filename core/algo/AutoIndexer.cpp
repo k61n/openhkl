@@ -68,8 +68,12 @@ bool AutoIndexer::autoIndex(
     const std::vector<Peak3D*>& peaks, const InstrumentState* state, bool filter)
 {
     _params->log(Level::Info);
-    ohklLog(Level::Info, "AutoIndexer::autoindex: indexing using ", peaks.size(), " peaks");
+    ohklLog(Level::Info, "AutoIndexer::autoIndex: indexing using ", peaks.size(), " peaks");
     _filtered_peaks.clear();
+    if (state)
+        ohklLog(
+            Level::Info, "AutoIndexer::autoIndex: indexing using InstrumentState\n", state
+            ->toString());
     if (filter)
         filterPeaks(peaks, state);
     else
@@ -80,7 +84,7 @@ bool AutoIndexer::autoIndex(
     bool success = computeFFTSolutions(_filtered_peaks, state);
     if (!success)
         return success;
-    refineSolutions(peaks);
+    refineSolutions(_filtered_peaks, state);
     removeBad(_params->solutionCutoff);
 
     // refine the constrained unit cells in order to get the uncertainties
@@ -116,6 +120,7 @@ void AutoIndexer::removeBad(double quality)
             return s.second < quality;
         });
     _solutions.erase(remove, _solutions.end());
+    ohklLog(Level::Info, "AutoIndexer::removeBad: ", _solutions.size(), " solutions remaining");
 }
 
 const std::vector<std::pair<sptrUnitCell, double>>& AutoIndexer::solutions() const
@@ -176,6 +181,7 @@ bool AutoIndexer::computeFFTSolutions(
     std::vector<Eigen::RowVector3d> tvects = algo::findOnSphere(
         qvects, _params->nVertices, _params->nSolutions, _params->subdiv, _params->maxdim,
         _params->frequencyTolerance);
+    ohklLog(Level::Info, "AutoIndexer::computeFFTSolutions: ", tvects.size(), " t vectors");
 
     // Need at least 3 t-vectors to form a basis
     if (tvects.size() < 3) {
@@ -214,6 +220,9 @@ bool AutoIndexer::computeFFTSolutions(
             }
         }
     }
+    ohklLog(
+        Level::Info, "AutoIndexer::computeFFTSolutions: ", _solutions.size(),
+        " unrefined solutions");
     return true;
 }
 
@@ -230,7 +239,7 @@ void AutoIndexer::rankSolutions()
         });
 }
 
-void AutoIndexer::refineSolutions(const std::vector<Peak3D*>& peaks)
+void AutoIndexer::refineSolutions(const std::vector<Peak3D*>& peaks, const InstrumentState* state)
 {
     // TODO: candidate for easy parallelization
     for (auto&& soln : _solutions) {
@@ -242,15 +251,18 @@ void AutoIndexer::refineSolutions(const std::vector<Peak3D*>& peaks)
         std::vector<Eigen::Matrix3d> wt;
 
         PeakFilter peak_filter;
-        std::vector<Peak3D*> enabled_peaks = peak_filter.filterEnabled(peaks, true);
-
-        std::vector<Peak3D*> filtered_peaks = peak_filter.filterIndexed(enabled_peaks, cell);
+        std::vector<Peak3D*> filtered_peaks = peak_filter.filterIndexed(peaks, cell, state);
 
         int success = filtered_peaks.size();
         for (const auto* peak : filtered_peaks) {
-            MillerIndex hkld(peak->q(), *cell);
+            ReciprocalVector q;
+            if (state)
+                q = peak->q(*state);
+            else
+                q = peak->q();
+            MillerIndex hkld(q, *cell);
             hkls.emplace_back(hkld.rowVector().cast<double>());
-            qs.emplace_back(peak->q().rowVector());
+            qs.emplace_back(q.rowVector());
 
             Eigen::Vector3d c = peak->shape().center();
             Eigen::Matrix3d M = peak->shape().metric();
@@ -327,7 +339,8 @@ void AutoIndexer::refineSolutions(const std::vector<Peak3D*>& peaks)
         // Define the final score of this solution by computing the percentage of
         // the selected peaks which have been successfully indexed
 
-        std::vector<Peak3D*> refiltered_peaks = peak_filter.filterIndexed(filtered_peaks, cell);
+        std::vector<Peak3D*> refiltered_peaks =
+            peak_filter.filterIndexed(filtered_peaks, cell, state);
 
         double score = static_cast<double>(refiltered_peaks.size());
         double maxscore = static_cast<double>(filtered_peaks.size());

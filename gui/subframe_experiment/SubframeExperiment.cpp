@@ -864,7 +864,6 @@ void SubframeExperiment::autoindex()
     ohkl::Experiment* expt = gSession->currentProject()->experiment();
     ohkl::PeakFinder2D* finder = expt->peakFinder2D();
     ohkl::AutoIndexer* indexer = expt->autoIndexer();
-    ohkl::PeakFilter* filter = expt->peakFilter();
 
     ohkl::sptrDataSet data = _data_combo->currentData();
     setInitialKi(data);
@@ -876,22 +875,9 @@ void SubframeExperiment::autoindex()
 
     setIndexerParameters();
 
-    auto* flags = filter->flags();
-    auto* params = filter->parameters();
-    flags->masked = true;
-    flags->d_range = false;
-    params->d_min = _d_min->value();
-    params->d_max = _d_max->value();
-
-    ohkl::PeakCollection collection("strategy", ohkl::PeakCollectionType::FOUND, data);
-    collection.populate(peaks);
-    filter->filter(&collection);
-    ohkl::PeakCollection filtered("filtered", ohkl::PeakCollectionType::FOUND, data);
-    filtered.populateFromFiltered(&collection);
-
     const ohkl::InstrumentState& state =
-        data->instrumentStates().at(_detector_widget->spin()->value() - 1);
-    indexer->autoIndex(&filtered, &state, false);
+        data->instrumentStates().at(_detector_widget->scene()->currentFrame());
+    indexer->autoIndex(peaks, &state, true);
 
     _solutions.clear();
     _solutions = indexer->solutions();

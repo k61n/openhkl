@@ -131,7 +131,7 @@ class AutoIndexer {
     bool computeFFTSolutions(
         const std::vector<Peak3D*>& peaks, const InstrumentState* state = nullptr);
     //! Do least squares minimisation to refine candidate unit cells
-    void refineSolutions(const std::vector<Peak3D*>& peaks);
+    void refineSolutions(const std::vector<Peak3D*>& peaks, const InstrumentState* state = nullptr);
     //! Rand solutions by quality (percentage of peak indexed)
     void rankSolutions();
     // Unused - void refineConstraints();

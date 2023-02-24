@@ -271,7 +271,7 @@ ReciprocalVector Peak3D::q() const
 {
     auto state = InterpolatedState::interpolate(_data->instrumentStates(), _shape.center()[2]);
     if (!state.isValid()) // this is the source of many interpolation problems
-        return ReciprocalVector();
+        return {};
     return q(state);
 }
 

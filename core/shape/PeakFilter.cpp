@@ -246,7 +246,8 @@ void PeakFilter::filterIndexed(PeakCollection* peak_collection) const
 }
 
 std::vector<Peak3D*> PeakFilter::filterIndexed(
-    const std::vector<Peak3D*>& peaks, const UnitCell* cell /* = nullptr  */) const
+    const std::vector<Peak3D*>& peaks, const UnitCell* cell /* = nullptr  */,
+    const InstrumentState* state /* = nullptr */) const
 {
     // reset filters
     for (auto* peak : peaks) {
@@ -260,14 +261,20 @@ std::vector<Peak3D*> PeakFilter::filterIndexed(
     for (auto peak : peaks) {
         MillerIndex index;
         double tol = 0;
+        ReciprocalVector q;
+        if (state)
+            q = peak->q(*state);
+        else
+            q = peak->q();
+
         if (cell) {
-            index = MillerIndex(peak->q(), *cell);
+            index = MillerIndex(q, *cell);
             tol = cell->indexingTolerance();
         } else {
             const UnitCell* batch_cell = peak->unitCell();
             if (!batch_cell)
                 continue;
-            index = MillerIndex(peak->q(), *batch_cell);
+            index = MillerIndex(q, *batch_cell);
             tol = batch_cell->indexingTolerance();
         }
 

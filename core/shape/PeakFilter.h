@@ -149,7 +149,8 @@ class PeakFilter {
 
     //! Filter only enabled on a peak vector
     std::vector<Peak3D*> filterIndexed(
-        const std::vector<Peak3D*>& peaks, const UnitCell* cell = nullptr) const;
+        const std::vector<Peak3D*>& peaks, const UnitCell* cell = nullptr,
+        const InstrumentState* state = nullptr) const;
 
     //! Remove peaks from outside a frame range for a vector
     std::vector<Peak3D*> filterFrameRange(
