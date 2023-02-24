@@ -73,6 +73,7 @@ class SubframeExperiment : public QWidget {
     void find_2d();
     void autoindex();
     void predict();
+    void savePeaks();
     void plotIntensities();
     void toggleUnsafeWidgets();
     void updateRanges();
@@ -199,7 +200,7 @@ class SubframeExperiment : public QWidget {
     SafeSpinBox* _number_subdivisions;
     QCheckBox* _only_niggli;
     QPushButton* _index_button;
-    QPushButton* _save_button;
+    QPushButton* _save_cell;
 
     // predict
     CellComboBox* _cell_combo;
@@ -210,6 +211,7 @@ class SubframeExperiment : public QWidget {
     SafeDoubleSpinBox* _predict_d_min;
     SafeDoubleSpinBox* _predict_d_max;
     QPushButton* _predict_button;
+    QPushButton* _save_peaks;
 
 
     UnitCellTableView* _solution_table;

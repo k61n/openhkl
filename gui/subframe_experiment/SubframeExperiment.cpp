@@ -30,6 +30,7 @@
 #include "core/shape/Predictor.h"
 #include "gui/MainWin.h" // gGui
 #include "gui/connect/Sentinel.h"
+#include "gui/dialogs/ListNameDialog.h"
 #include "gui/dialogs/UnitCellDialog.h"
 #include "gui/frames/ProgressView.h"
 #include "gui/graphics/DetectorScene.h"
@@ -535,7 +536,7 @@ void SubframeExperiment::setIndexerUp()
 
     _index_button =
         gfiller.addButton("Autoindex", "Attempt to find a unit cell using spots in this image");
-    _save_button = gfiller.addButton("Save unit cell", "Save the selected unit cell");
+    _save_cell = gfiller.addButton("Save unit cell", "Save the selected unit cell");
 
     _d_min->setMinimum(0);
     _d_min->setMaximum(100);
@@ -568,7 +569,7 @@ void SubframeExperiment::setIndexerUp()
     _frequency_tolerance->setDecimals(3);
 
     connect(_index_button, &QPushButton::clicked, this, &SubframeExperiment::autoindex);
-    connect(_save_button, &QPushButton::clicked, this, &SubframeExperiment::saveCell);
+    connect(_save_cell, &QPushButton::clicked, this, &SubframeExperiment::saveCell);
     connect(
         gGui->sideBar(), &SideBar::subframeChanged, this,
         &SubframeExperiment::setIndexerParameters);
@@ -596,6 +597,7 @@ void SubframeExperiment::setPredictUp()
     std::tie(_predict_d_min, _predict_d_max) =
         gfiller.addDoubleSpinBoxPair("d range", "Resolution range for peaks used in indexing");
     _predict_button = gfiller.addButton("Predict", "Predict peaks using given strategy");
+    _save_peaks = gfiller.addButton("Create peak collection");
 
     _delta_chi->setSingleStep(0.1);
     _delta_chi->setValue(0);
@@ -624,6 +626,7 @@ void SubframeExperiment::setPredictUp()
     connect(
         gGui->sideBar(), &SideBar::subframeChanged, this,
         &SubframeExperiment::setStrategyParameters);
+    connect(_save_peaks, &QPushButton::clicked, this, &SubframeExperiment::savePeaks);
 
     _strategy_layout->addWidget(predict_spoiler);
 }
@@ -773,7 +776,8 @@ void SubframeExperiment::toggleUnsafeWidgets()
 {
     _find_peaks_2d->setEnabled(false);
     _index_button->setEnabled(false);
-    _save_button->setEnabled(false);
+    _save_cell->setEnabled(false);
+    _save_peaks->setEnabled(false);
 
     _calc_intensity->setEnabled(false);
     _yLog->setEnabled(false);
@@ -798,7 +802,9 @@ void SubframeExperiment::toggleUnsafeWidgets()
     _find_peaks_2d->setEnabled(gSession->currentProject()->hasDataSet());
     _index_button->setEnabled(gSession->currentProject()->hasDataSet());
     auto* indexer = gSession->currentProject()->experiment()->autoIndexer();
-    _save_button->setEnabled(!indexer->solutions().empty());
+    _save_cell->setEnabled(!indexer->solutions().empty());
+    auto* predictor = gSession->currentProject()->experiment()->predictor();
+    _save_peaks->setEnabled(!predictor->peaks().empty());
 
     _calc_intensity->setEnabled(gSession->currentProject()->hasDataSet());
 
@@ -898,6 +904,7 @@ void SubframeExperiment::predict()
 
         auto data = _data_combo->currentData();
         auto cell = _cell_combo->currentCell();
+        data->setNFrames(_n_increments->value());
 
         ohkl::sptrProgressHandler handler(new ohkl::ProgressHandler);
         ProgressView progressView(nullptr);
@@ -919,7 +926,6 @@ void SubframeExperiment::predict()
         _peak_collection_item.setPeakCollection(&_peak_collection);
         _peak_collection_model.setRoot(&_peak_collection_item);
 
-        data->setNFrames(_n_increments->value());
         toggleUnsafeWidgets();
         refreshPeaks();
 
@@ -927,6 +933,35 @@ void SubframeExperiment::predict()
         QMessageBox::critical(this, "Error", QString(e.what()));
     }
     gGui->setReady(true);
+}
+
+void SubframeExperiment::savePeaks()
+{
+    auto* project = gSession->currentProject();
+    auto* expt = project->experiment();
+    auto data = _detector_widget->currentData();
+    auto cell = _cell_combo->currentCell();
+    std::string suggestion = expt->generatePeakCollectionName();
+    std::unique_ptr<ListNameDialog> dlg(new ListNameDialog(QString::fromStdString(suggestion)));
+    dlg->exec();
+    if (dlg->listName().isEmpty())
+        return;
+    if (dlg->result() == QDialog::Rejected)
+        return;
+
+    if (!expt->addPeakCollection(
+            dlg->listName().toStdString(), ohkl::PeakCollectionType::PREDICTED,
+            _peak_collection.getPeakList(), data, cell)) {
+        QMessageBox::warning(
+            this, "Unable to add PeakCollection",
+            "Unable to add PeakCollection, please use a unique name");
+        return;
+    }
+
+    gSession->onPeaksChanged();
+    auto* collection = expt->getPeakCollection(dlg->listName().toStdString());
+    collection->setIndexed(true);
+    project->generatePeakModel(dlg->listName());
 }
 
 void SubframeExperiment::grabFinderParameters()
