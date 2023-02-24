@@ -149,6 +149,11 @@ void Menus::toggleEntries()
     bool no_datasets = !gSession->currentProject()->hasDataSet();
     bool no_pcollections = !gSession->currentProject()->hasPeakCollection();
     bool no_unitcell = !gSession->currentProject()->hasUnitCell();
+    bool strategy_mode = gSession->currentProject()->strategyMode();
+
+    actions->add_raw->setDisabled(strategy_mode);
+    actions->add_nexus->setDisabled(strategy_mode);
+    actions->add_hdf5->setDisabled(strategy_mode);
 
     actions->remove_data->setDisabled(no_datasets);
 
