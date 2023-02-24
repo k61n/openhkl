@@ -109,7 +109,6 @@ SubframeExperiment::SubframeExperiment()
     QGroupBox* figure_group = new QGroupBox("Detector image");
     figure_group->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     _detector_widget = new DetectorWidget(1, true, true, figure_group);
-    _detector_widget->linkPeakModel(&_peak_collection_model, _peak_view_widget);
 
     QSplitter* right_splitter = new QSplitter();
     right_splitter->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -263,21 +262,25 @@ void SubframeExperiment::setAdjustBeamUp()
     _strategy_layout->addWidget(_set_initial_ki);
 }
 
+void SubframeExperiment::setPreviewUp()
+{
+    Spoiler* preview_box = new Spoiler("Show/hide peaks");
+    _peak_view_widget = new PeakViewWidget("Valid peaks", "Invalid peaks");
+    connect(
+        _peak_view_widget, &PeakViewWidget::settingsChanged, this,
+        &SubframeExperiment::refreshPeaks);
+    preview_box->setContentLayout(*_peak_view_widget);
+    _detector_widget->linkPeakModel(&_peak_collection_model, _peak_view_widget);
+    _strategy_layout->addWidget(preview_box);
+}
+
 void SubframeExperiment::setStrategyUp()
 {
     setAdjustBeamUp();
     setPeakFinder2DUp();
     setIndexerUp();
     setPredictUp();
-
-    _peak_view_widget = nullptr;
-    // Spoiler* preview_box = new Spoiler("Show/hide peaks");
-    // _peak_view_widget = new PeakViewWidget("Valid peaks", "Invalid peaks");
-    // connect(
-    //     _peak_view_widget, &PeakViewWidget::settingsChanged, this,
-    //     &SubframeExperiment::refreshPeaks);
-    // preview_box->setContentLayout(*_peak_view_widget);
-    // _strategy_layout->addWidget(preview_box);
+    setPreviewUp();
 
     _strategy_layout->addStretch();
 }
@@ -419,7 +422,7 @@ void SubframeExperiment::importMasks()
     if (file_path.empty())
         return;
 
-    ohkl::MaskImporter importer(file_path, _data_combo->currentData()->nFrames());
+    ohkl::MaskImporter importer(file_path, _data_combo->currentData()->nFrames()); // TODO: update nframes
     for (auto* mask : importer.getMasks())
         _data_combo->currentData()->addMask(mask);
 
@@ -916,6 +919,7 @@ void SubframeExperiment::predict()
         _peak_collection_item.setPeakCollection(&_peak_collection);
         _peak_collection_model.setRoot(&_peak_collection_item);
 
+        data->setNFrames(_n_increments->value());
         toggleUnsafeWidgets();
         refreshPeaks();
 

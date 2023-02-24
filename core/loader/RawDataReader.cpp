@@ -185,7 +185,7 @@ void RawDataReader::setParameters(const RawDataReaderParameters& parameters)
         ohkl::at_diffractometer, _dataset_out->diffractometer()->name());
     _dataset_out->metadata().add<double>(ohkl::at_wavelength, _parameters.wavelength);
     _dataset_out->metadata().add<double>(ohkl::at_monitorSum, 0.0);
-    _dataset_out->metadata().add<int>(ohkl::at_numor, 0.0);
+    _dataset_out->metadata().add<int>(ohkl::at_numor, 0);
     _dataset_out->metadata().add<double>(ohkl::at_baseline, _parameters.baseline);
     _dataset_out->metadata().add<double>(ohkl::at_gain, _parameters.gain);
     switch (_parameters.bpp) {

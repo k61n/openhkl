@@ -60,6 +60,7 @@ class SubframeExperiment : public QWidget {
     void setPeakFinder2DUp();
     void setIndexerUp();
     void setPredictUp();
+    void setPreviewUp();
 
     DetectorWidget* detectorWidget();
 
