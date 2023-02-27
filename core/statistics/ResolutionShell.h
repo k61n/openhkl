@@ -15,6 +15,8 @@
 #ifndef OHKL_CORE_STATISTICS_RESOLUTIONSHELL_H
 #define OHKL_CORE_STATISTICS_RESOLUTIONSHELL_H
 
+#include <vector>
+
 namespace ohkl {
 
 class Peak3D;
@@ -34,14 +36,14 @@ struct DShell {
 class ResolutionShell {
  public:
     //! Construct the given number of cells with abolute minimum dmin and absolute maximum dmax.
-    ResolutionShell(double dmin, double dmax, size_t num_shells);
+    ResolutionShell(double dmin, double dmax, std::size_t num_shells);
     //! Add a peak to the list of shells.
     //! It will automatically be added to the appropriate shell.
     void addPeak(Peak3D* peak);
     //! Returns the given shell.
-    const DShell& shell(size_t i) const;
+    const DShell& shell(std::size_t i) const;
     //! Returns the number of shells.
-    size_t nShells() const;
+    std::size_t nShells() const;
 
  private:
     std::vector<DShell> _shells;

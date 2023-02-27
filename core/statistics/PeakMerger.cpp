@@ -17,10 +17,12 @@
 #include "base/utils/Logger.h"
 #include "core/data/DataSet.h"
 #include "core/shape/PeakCollection.h"
+#include "core/statistics/RotationSlice.h"
 #include "tables/crystal/SpaceGroup.h"
 
 #include <fstream>
 #include <iomanip>
+#include <iostream>
 
 namespace ohkl {
 
@@ -35,7 +37,7 @@ void MergeParameters::log(const Level& level) const
     ohklLog(level, "friedel                = ", friedel);
 }
 
-PeakMerger::PeakMerger(PeakCollection* peaks /* = nullptr */)
+PeakMerger::PeakMerger(PeakCollection* peaks /* = nullptr */) : _handler(nullptr)
 {
     _params = std::make_unique<MergeParameters>();
     if (peaks)
@@ -94,6 +96,47 @@ void PeakMerger::mergePeaks()
 
         _merged_data_per_shell.push_back(std::move(merged_data_per_shell));
     }
+}
+
+std::vector<double> PeakMerger::strategyMerge(double fmin, double fmax, std::size_t nslices)
+{
+    std::vector<double> completeness_per_slice;
+    RotationSlice slices(fmin, fmax, nslices);
+    for (auto* collection : _peak_collections) {
+        for (auto* peak : collection->getPeakList())
+            slices.addPeak(peak);
+    }
+    if (_handler) {
+        _handler->setStatus(
+            ("Merging peaks over " + std::to_string(nslices) + " angle increments").c_str());
+        _handler->setProgress(0);
+    }
+
+    for (std::size_t idx = 0; idx < slices.nslices(); ++idx) {
+        _merged_data.reset();
+        _merged_data = std::make_unique<MergedData>(_space_group, _params->friedel);
+        _merged_data->setDRange(
+            _params->d_min, _params->d_max, _peak_collections[0]->data(),
+            _peak_collections[0]->unitCell());
+
+        // Sort the peaks by resolution shell (concentric shells in d)
+        for (Peak3D* peak : slices.slice(idx).peaks)
+            _merged_data->addPeak(peak);
+
+        ShellQuality quality;
+        quality.computeQuality(*_merged_data, _params->d_min, _params->d_max);
+        completeness_per_slice.push_back(quality.Completeness);
+        if (_handler) {
+            double progress = 100.0 * static_cast<double>(idx) / static_cast<double>(nslices);
+            _handler->setProgress(progress);
+        }
+    }
+
+    if (_handler) {
+        _handler->setStatus("Merging complete");
+        _handler->setProgress(100);
+    }
+    return completeness_per_slice;
 }
 
 void PeakMerger::computeQuality()

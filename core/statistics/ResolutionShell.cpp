@@ -12,28 +12,24 @@
 //
 //  ***********************************************************************************************
 
-#include <cmath>
-#include <limits>
-
-#include <Eigen/Eigenvalues>
+#include "core/statistics/ResolutionShell.h"
 
 #include "base/geometry/ReciprocalVector.h"
 #include "core/peak/Peak3D.h"
-#include "core/statistics/ResolutionShell.h"
 
 namespace ohkl {
 
-ResolutionShell::ResolutionShell(double dmin, double dmax, size_t num_shells)
-    : _shells(std::max(num_shells, size_t(1)))
+ResolutionShell::ResolutionShell(double dmin, double dmax, std::size_t num_shells)
+    : _shells(std::max(num_shells, std::size_t(1)))
 {
-    size_t n_shells = _shells.size();
+    std::size_t n_shells = _shells.size();
 
     const double q3max = std::pow(dmin, -3);
     const double dq3 = (std::pow(dmin, -3) - std::pow(dmax, -3)) / double(n_shells);
 
     _shells[0].dmin = dmin;
 
-    for (size_t i = 0; i < n_shells - 1; ++i) {
+    for (std::size_t i = 0; i < n_shells - 1; ++i) {
         _shells[i].dmax = std::pow(q3max - (i + 1) * dq3, -1.0 / 3.0);
         _shells[i + 1].dmin = _shells[i].dmax;
     }
@@ -50,7 +46,7 @@ void ResolutionShell::addPeak(Peak3D* peak)
 
         double dmin;
         double dmax;
-        for (size_t i = 0; i < _shells.size(); ++i) {
+        for (std::size_t i = 0; i < _shells.size(); ++i) {
             dmin = _shells[i].dmin;
             dmax = _shells[i].dmax;
             if (dmin <= d && d <= dmax) {
@@ -63,14 +59,14 @@ void ResolutionShell::addPeak(Peak3D* peak)
     }
 }
 
-const DShell& ResolutionShell::shell(size_t i) const
+const DShell& ResolutionShell::shell(std::size_t i) const
 {
     if (i >= _shells.size())
         throw std::runtime_error("ResolutionShell::shell index out of bounds");
     return _shells[i];
 }
 
-size_t ResolutionShell::nShells() const
+std::size_t ResolutionShell::nShells() const
 {
     return _shells.size();
 }

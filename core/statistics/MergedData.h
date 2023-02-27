@@ -15,8 +15,10 @@
 #ifndef OHKL_CORE_STATISTICS_MERGEDDATA_H
 #define OHKL_CORE_STATISTICS_MERGEDDATA_H
 
+#include "core/data/DataTypes.h"
 #include "core/shape/PeakCollection.h"
 #include "core/statistics/MergedPeak.h"
+#include "tables/crystal/UnitCell.h"
 
 #include <set>
 
@@ -56,6 +58,8 @@ class MergedData {
     void clear();
     //! Set the d range
     void setDRange(double d_min, double d_max);
+    //! Set the d range
+    void setDRange(double d_min, double d_max, sptrDataSet data, sptrUnitCell cell);
     //! Get minimum d
     double dMin() const;
     //! Get maximum d

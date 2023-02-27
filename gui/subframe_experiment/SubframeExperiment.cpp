@@ -901,6 +901,7 @@ void SubframeExperiment::predict()
     try {
         auto* expt = gSession->currentProject()->experiment();
         auto* predictor = expt->predictor();
+        auto* merger = expt->peakMerger();
         setStrategyParameters();
 
         auto data = _data_combo->currentData();
@@ -928,6 +929,7 @@ void SubframeExperiment::predict()
         _peak_collection_item.setPeakCollection(&_peak_collection);
         _peak_collection_model.setRoot(&_peak_collection_item);
 
+        merger->setHandler(handler);
         merge();
 
         toggleUnsafeWidgets();
@@ -965,6 +967,17 @@ void SubframeExperiment::merge()
     gGui->statusBar()->showMessage(
         "Projected completeness: " +
         QString::number(quality->shells[0].Completeness * 100.0, 'f', 2) + "%");
+
+    std::vector<double> completeness =
+        merger->strategyMerge(0, _n_increments->value(), _n_increments->value());
+    QVector<double> comp, frame, error;
+    for (std::size_t idx = 0; idx < completeness.size(); ++idx) {
+        comp.push_back(completeness.at(idx));
+        frame.push_back(idx);
+    }
+
+    _tab_widget->setCurrentIndex(0);
+    _plot->plotData(frame, comp, error , QString("Image index"), QString("Completeness"));
 
     gGui->setReady(true);
 }
