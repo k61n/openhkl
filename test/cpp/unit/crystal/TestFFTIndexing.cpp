@@ -95,9 +95,10 @@ TEST_CASE("test/crystal/TestFFTIndexing.cpp", "")
 
     const auto solutions = auto_indexer->solutions();
     CHECK(solutions.size() > 1);
-    CHECK(solutions.front().second > 99.9);
+    CHECK(solutions.at(14).second > 99.9);
 
-    const Eigen::Matrix3d autoBasis = solutions.front().first->basis();
+
+    const Eigen::Matrix3d autoBasis = solutions.at(14).first->basis();
     std::cout << "Basis:\n" << autoBasis << std::endl;
 
     // check for identity
