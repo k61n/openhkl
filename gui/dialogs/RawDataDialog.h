@@ -35,6 +35,8 @@ class RawDataDialog : public QDialog {
     RawDataDialog(
         const ohkl::RawDataReaderParameters& parameters0,
         const QStringList& datanames_cur = QStringList());
+    //! Disable widgets that are relevant for multiple images only
+    void setSingleImageMode();
 
     //! Return a copy of the parameters acquired from the dialog
     ohkl::RawDataReaderParameters parameters();

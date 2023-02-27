@@ -17,6 +17,7 @@
 #include "base/utils/Logger.h"
 #include "core/data/DataSet.h"
 #include "core/data/DataTypes.h"
+#include "core/data/SingleFrame.h"
 #include "core/detector/Detector.h"
 #include "core/experiment/Experiment.h"
 #include "core/loader/IDataReader.h"
@@ -42,6 +43,7 @@
 #include "gui/utility/PeakComboBox.h"
 #include "gui/utility/PredictedPeakComboBox.h"
 #include "gui/utility/ShapeComboBox.h"
+#include "gui/utility/SideBar.h"
 
 #include <QCollator>
 #include <QDir>
@@ -49,6 +51,7 @@
 #include <QMessageBox>
 #include <QSettings>
 #include <QStringList>
+#include <stdexcept>
 
 Session* gSession;
 
@@ -156,14 +159,14 @@ int Session::numExperiments() const
     return _projects.size();
 }
 
-Project* Session::createProject(QString experimentName, QString instrumentName)
+Project* Session::createProject(QString experimentName, QString instrumentName, bool strategy)
 {
     for (const QString& name : experimentNames()) { // check name
         if (name == experimentName) {
             return nullptr;
         }
     }
-    return new Project(experimentName, instrumentName);
+    return new Project(experimentName, instrumentName, strategy);
 }
 
 bool Session::addProject(std::unique_ptr<Project> project_ptr)
@@ -231,7 +234,7 @@ void Session::loadData(ohkl::DataFormat format)
         }
         default: {
             throw std::runtime_error(
-                "Session::LoadData can only load NSX(HDF5) or Nexus data files");
+                "Session::LoadData can only load OHKL or Nexus data files");
             break;
         }
     }
@@ -300,7 +303,7 @@ void Session::removeData()
     onDataChanged();
 }
 
-bool Session::loadRawData()
+bool Session::loadRawData(bool single_file /* = false */)
 {
     if (_currentProject < 0)
         return false; // loading data requires an existing Experiment
@@ -310,6 +313,8 @@ bool Session::loadRawData()
         std::vector<std::string> filenames = askRawFileNames();
         if (filenames.empty())
             return false;
+        if (single_file && filenames.size() > 1)
+            throw std::runtime_error("Session::loadRawData expected exactly one file");
 
         // Get metadata from readme file, then edit them in dialog.
         const QStringList& extant_dataset_names = currentProject()->getDataNames();
@@ -317,6 +322,9 @@ bool Session::loadRawData()
         parameters.LoadDataFromFile(filenames.at(0));
         RawDataDialog dialog(parameters, extant_dataset_names);
         dialog.setWindowTitle("Raw data parameters");
+        if (single_file)
+            dialog.setSingleImageMode();
+
         if (!dialog.exec())
             return false;
         ohkl::Experiment* exp = currentProject()->experiment();
@@ -328,13 +336,23 @@ bool Session::loadRawData()
         detector->setGain(parameters.gain);
 
         // Transfer metadata to dataset, and load the raw data.
-        const std::shared_ptr<ohkl::DataSet> dataset{
-            std::make_shared<ohkl::DataSet>(parameters.dataset_name, exp->getDiffractometer())};
-        dataset->setRawReaderParameters(parameters);
-        for (const auto& filename : filenames)
-            dataset->addRawFrame(filename);
-        dataset->finishRead();
-        exp->addData(dataset);
+        if (single_file) {
+            const std::shared_ptr<ohkl::DataSet> dataset{
+                std::make_shared<ohkl::SingleFrame>(parameters.dataset_name, exp->getDiffractometer())};
+            dataset->setRawReaderParameters(parameters);
+            dataset->addRawFrame(filenames[0]);
+            dataset->finishRead();
+            exp->addData(dataset);
+
+        } else {
+            const std::shared_ptr<ohkl::DataSet> dataset{
+                std::make_shared<ohkl::DataSet>(parameters.dataset_name, exp->getDiffractometer())};
+            dataset->setRawReaderParameters(parameters);
+            for (const auto& filename : filenames)
+                dataset->addRawFrame(filename);
+            dataset->finishRead();
+            exp->addData(dataset);
+        }
 
         onDataChanged();
     } catch (std::exception& e) {
@@ -358,9 +376,7 @@ void Session::onExperimentChanged()
 {
     if (!gSession->hasProject())
         return;
-    /*if (currentProject()->experiment()->getDiffractometer()) {
-        gGui->onExperimentChanged();
-    }*/
+    gGui->sideBar()->setStrategyMode(gSession->currentProject()->strategyMode());
     gGui->finder->grabFinderParameters();
     gGui->finder->grabIntegrationParameters();
     gGui->filter->grabFilterParameters();
@@ -424,6 +440,7 @@ void Session::loadExperimentFromFile(QString filename)
 
     try {
         project_ptr->experiment()->loadFromFile(filename.toStdString());
+        project_ptr->setStrategyMode(project_ptr->experiment()->strategy());
         ohkl::ohklLog(
             ohkl::Level::Debug, "Session: Loaded data for Project created from file '",
             filename.toStdString(), "'");

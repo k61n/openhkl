@@ -14,18 +14,24 @@
 
 #include "gui/subframe_experiment/SubframeExperiment.h"
 
+#include "base/utils/Logger.h"
 #include "core/algo/AutoIndexer.h"
 #include "core/convolve/Convolver.h"
 #include "core/convolve/ConvolverFactory.h"
 #include "core/data/DataSet.h"
 #include "core/data/DataTypes.h"
+#include "core/experiment/DataQuality.h"
 #include "core/experiment/Experiment.h"
 #include "core/experiment/MaskExporter.h"
 #include "core/experiment/MaskImporter.h"
 #include "core/experiment/PeakFinder2D.h"
 #include "core/peak/Qs2Events.h"
+#include "core/shape/PeakCollection.h"
+#include "core/shape/PeakFilter.h"
+#include "core/shape/Predictor.h"
 #include "gui/MainWin.h" // gGui
 #include "gui/connect/Sentinel.h"
+#include "gui/dialogs/ListNameDialog.h"
 #include "gui/dialogs/UnitCellDialog.h"
 #include "gui/frames/ProgressView.h"
 #include "gui/graphics/DetectorScene.h"
@@ -41,6 +47,7 @@
 #include "gui/utility/SpoilerCheck.h"
 #include "gui/views/UnitCellTableView.h"
 #include "gui/widgets/DetectorWidget.h"
+#include "gui/widgets/PeakViewWidget.h"
 #include "gui/widgets/PlotPanel.h"
 
 #include <QBoxLayout>
@@ -67,7 +74,13 @@
 #include <gsl/gsl_histogram.h>
 #include <stdexcept>
 
-SubframeExperiment::SubframeExperiment() : QWidget(), _mask_table_rows(15), _show_direct_beam(true)
+SubframeExperiment::SubframeExperiment()
+    : QWidget()
+    , _mask_table_rows(15)
+    , _show_direct_beam(true)
+    , _peak_collection("temp", ohkl::PeakCollectionType::PREDICTED, nullptr)
+    , _peak_collection_item()
+    , _peak_collection_model()
 {
     _main_layout = new QHBoxLayout(this);
     _left_layout = new QVBoxLayout();
@@ -251,11 +264,26 @@ void SubframeExperiment::setAdjustBeamUp()
     _strategy_layout->addWidget(_set_initial_ki);
 }
 
+void SubframeExperiment::setPreviewUp()
+{
+    Spoiler* preview_box = new Spoiler("Show/hide peaks");
+    _peak_view_widget = new PeakViewWidget("Valid peaks", "Invalid peaks");
+    connect(
+        _peak_view_widget, &PeakViewWidget::settingsChanged, this,
+        &SubframeExperiment::refreshPeaks);
+    preview_box->setContentLayout(*_peak_view_widget);
+    _detector_widget->linkPeakModel(&_peak_collection_model, _peak_view_widget);
+    _strategy_layout->addWidget(preview_box);
+}
+
 void SubframeExperiment::setStrategyUp()
 {
     setAdjustBeamUp();
     setPeakFinder2DUp();
     setIndexerUp();
+    setPredictUp();
+    setPreviewUp();
+
     _strategy_layout->addStretch();
 }
 
@@ -396,7 +424,7 @@ void SubframeExperiment::importMasks()
     if (file_path.empty())
         return;
 
-    ohkl::MaskImporter importer(file_path, _data_combo->currentData()->nFrames());
+    ohkl::MaskImporter importer(file_path, _data_combo->currentData()->nFrames()); // TODO: update nframes
     for (auto* mask : importer.getMasks())
         _data_combo->currentData()->addMask(mask);
 
@@ -509,8 +537,7 @@ void SubframeExperiment::setIndexerUp()
 
     _index_button =
         gfiller.addButton("Autoindex", "Attempt to find a unit cell using spots in this image");
-    _save_button = gfiller.addButton("Save unit cell", "Save the selected unit cell");
-    _cell_combo = gfiller.addCellCombo("Unit Cell", "Unit cell for Miller index tooltip");
+    _save_cell = gfiller.addButton("Save unit cell", "Save the selected unit cell");
 
     _d_min->setMinimum(0);
     _d_min->setMaximum(100);
@@ -543,12 +570,66 @@ void SubframeExperiment::setIndexerUp()
     _frequency_tolerance->setDecimals(3);
 
     connect(_index_button, &QPushButton::clicked, this, &SubframeExperiment::autoindex);
-    connect(_save_button, &QPushButton::clicked, this, &SubframeExperiment::saveCell);
+    connect(_save_cell, &QPushButton::clicked, this, &SubframeExperiment::saveCell);
     connect(
         gGui->sideBar(), &SideBar::subframeChanged, this,
         &SubframeExperiment::setIndexerParameters);
 
     _strategy_layout->addWidget(index_spoiler);
+}
+
+void SubframeExperiment::setPredictUp()
+{
+    Spoiler* predict_spoiler = new Spoiler("Predict peaks");
+    GridFiller gfiller(predict_spoiler, true);
+
+    _cell_combo = gfiller.addCellCombo("Unit cell", "Unit cell to use for peak prediction");
+    _delta_chi = gfiller.addDoubleSpinBox(
+        QString((QChar)0x0394) + " " + QString((QChar)0x03C7),
+        "Angle increment about the chi instrument axis");
+    _delta_omega = gfiller.addDoubleSpinBox(
+        QString((QChar)0x0394) + " " + QString((QChar)0x03C9),
+        "Angle increment about the omega instrument axis");
+    _delta_phi = gfiller.addDoubleSpinBox(
+        QString((QChar)0x0394) + " " + QString((QChar)0x03C6),
+        "Angle incremet about the phi instrument axis");
+    _n_increments = gfiller.addSpinBox(
+        "Number of increments", "Number of angular steps to use in strategy prediction");
+    std::tie(_predict_d_min, _predict_d_max) =
+        gfiller.addDoubleSpinBoxPair("d range", "Resolution range for peaks used in indexing");
+    _predict_button = gfiller.addButton("Predict", "Predict peaks using given strategy");
+    _save_peaks = gfiller.addButton("Create peak collection");
+
+    _delta_chi->setSingleStep(0.1);
+    _delta_chi->setValue(0);
+    _delta_chi->setMaximum(5);
+
+    _delta_omega->setSingleStep(0.1);
+    _delta_omega->setValue(0.5);
+    _delta_omega->setMaximum(5);
+
+    _delta_phi->setSingleStep(0.1);
+    _delta_phi->setValue(0);
+    _delta_phi->setMaximum(5);
+
+    _n_increments->setMaximum(1000);
+    _n_increments->setValue(100);
+
+    _predict_d_min->setMinimum(0);
+    _predict_d_min->setMaximum(100);
+    _predict_d_min->setValue(1.5);
+
+    _predict_d_max->setMaximum(0);
+    _predict_d_max->setMaximum(100);
+    _predict_d_max->setValue(50);
+
+    connect(_predict_button, &QPushButton::clicked, this, &SubframeExperiment::predict);
+    connect(
+        gGui->sideBar(), &SideBar::subframeChanged, this,
+        &SubframeExperiment::setStrategyParameters);
+    connect(_save_peaks, &QPushButton::clicked, this, &SubframeExperiment::savePeaks);
+
+    _strategy_layout->addWidget(predict_spoiler);
 }
 
 void SubframeExperiment::setLogarithmicScale()
@@ -696,7 +777,8 @@ void SubframeExperiment::toggleUnsafeWidgets()
 {
     _find_peaks_2d->setEnabled(false);
     _index_button->setEnabled(false);
-    _save_button->setEnabled(false);
+    _save_cell->setEnabled(false);
+    _save_peaks->setEnabled(false);
 
     _calc_intensity->setEnabled(false);
     _yLog->setEnabled(false);
@@ -721,7 +803,9 @@ void SubframeExperiment::toggleUnsafeWidgets()
     _find_peaks_2d->setEnabled(gSession->currentProject()->hasDataSet());
     _index_button->setEnabled(gSession->currentProject()->hasDataSet());
     auto* indexer = gSession->currentProject()->experiment()->autoIndexer();
-    _save_button->setEnabled(!indexer->solutions().empty());
+    _save_cell->setEnabled(!indexer->solutions().empty());
+    auto* predictor = gSession->currentProject()->experiment()->predictor();
+    _save_peaks->setEnabled(!predictor->peaks().empty());
 
     _calc_intensity->setEnabled(gSession->currentProject()->hasDataSet());
 
@@ -754,6 +838,8 @@ void SubframeExperiment::toggleUnsafeWidgets()
     _export_masks->setEnabled(gSession->currentProject()->hasDataSet());
     _delete_masks->setEnabled(hasSelectedMasks);
     _toggle_selection->setEnabled(_data_combo->currentData()->hasMasks());
+
+    _n_increments->setEnabled(gSession->currentProject()->strategyMode());
 }
 
 void SubframeExperiment::find_2d()
@@ -788,6 +874,9 @@ void SubframeExperiment::autoindex()
     ohkl::PeakFinder2D* finder = expt->peakFinder2D();
     ohkl::AutoIndexer* indexer = expt->autoIndexer();
 
+    ohkl::sptrDataSet data = _data_combo->currentData();
+    setInitialKi(data);
+
     std::size_t current_frame = _detector_widget->scene()->currentFrame();
     std::vector<ohkl::Peak3D*> peaks = finder->getPeakList(current_frame);
     if (peaks.empty())
@@ -795,12 +884,131 @@ void SubframeExperiment::autoindex()
 
     setIndexerParameters();
 
-    indexer->autoIndex(peaks);
+    const ohkl::InstrumentState& state =
+        data->instrumentStates().at(_detector_widget->scene()->currentFrame());
+    indexer->autoIndex(peaks, &state, true);
 
     _solutions.clear();
     _solutions = indexer->solutions();
     buildSolutionTable();
     _tab_widget->setCurrentIndex(1);
+}
+
+void SubframeExperiment::predict()
+{
+    gGui->setReady(false);
+
+    try {
+        auto* expt = gSession->currentProject()->experiment();
+        auto* predictor = expt->predictor();
+        auto* merger = expt->peakMerger();
+        setStrategyParameters();
+
+        auto data = _data_combo->currentData();
+        auto cell = _cell_combo->currentCell();
+        data->setNFrames(_n_increments->value());
+
+        ohkl::sptrProgressHandler handler(new ohkl::ProgressHandler);
+        ProgressView progressView(nullptr);
+        progressView.watch(handler);
+
+        predictor->setHandler(handler);
+        predictor->strategyPredict(data, cell);
+
+        std::vector<ohkl::Peak3D*> predicted_peaks;
+        for (ohkl::Peak3D* peak : predictor->peaks())
+            predicted_peaks.push_back(peak);
+
+        _peak_collection.setUnitCell(cell, false);
+        _peak_collection.populate(predicted_peaks);
+        _peak_collection.setData(data);
+        for (ohkl::Peak3D* peak : predicted_peaks)
+            delete peak;
+        predicted_peaks.clear();
+
+        _peak_collection_item.setPeakCollection(&_peak_collection);
+        _peak_collection_model.setRoot(&_peak_collection_item);
+
+        merger->setHandler(handler);
+        merge();
+
+        toggleUnsafeWidgets();
+        refreshPeaks();
+
+    } catch (const std::exception& e) {
+        QMessageBox::critical(this, "Error", QString(e.what()));
+    }
+    gGui->setReady(true);
+}
+
+void SubframeExperiment::merge()
+{
+    gGui->setReady(false);
+    auto* expt = gSession->currentProject()->experiment();
+    auto* merger = expt->peakMerger();
+    merger->reset();
+
+    auto* merge_params = merger->parameters();
+
+    merge_params->d_min = _d_min->value();
+    merge_params->d_max = _d_max->value();
+    merge_params->frame_min = 0;
+    merge_params->frame_max = _n_increments->value();
+    merge_params->n_shells = 10;
+    merge_params->friedel = true;
+
+    auto group = _cell_combo->currentCell()->spaceGroup();
+    merger->setSpaceGroup(group);
+
+    merger->addPeakCollection(&_peak_collection);
+    merger->mergePeaks();
+    merger->computeQuality();
+    auto* quality = merger->overallQuality();
+    gGui->statusBar()->showMessage(
+        "Projected completeness: " +
+        QString::number(quality->shells[0].Completeness * 100.0, 'f', 2) + "%");
+
+    std::vector<double> completeness =
+        merger->strategyMerge(0, _n_increments->value(), _n_increments->value());
+    QVector<double> comp, frame, error;
+    for (std::size_t idx = 0; idx < completeness.size(); ++idx) {
+        comp.push_back(completeness.at(idx));
+        frame.push_back(idx);
+    }
+
+    _tab_widget->setCurrentIndex(0);
+    _plot->plotData(frame, comp, error , QString("Image index"), QString("Completeness"));
+
+    gGui->setReady(true);
+}
+
+void SubframeExperiment::savePeaks()
+{
+    auto* project = gSession->currentProject();
+    auto* expt = project->experiment();
+    auto data = _detector_widget->currentData();
+    auto cell = _cell_combo->currentCell();
+    std::string suggestion = expt->generatePeakCollectionName();
+    std::unique_ptr<ListNameDialog> dlg(new ListNameDialog(QString::fromStdString(suggestion)));
+    dlg->exec();
+    if (dlg->listName().isEmpty())
+        return;
+    if (dlg->result() == QDialog::Rejected)
+        return;
+
+    if (!expt->addPeakCollection(
+            dlg->listName().toStdString(), ohkl::PeakCollectionType::PREDICTED,
+            _peak_collection.getPeakList(), data, cell)) {
+        QMessageBox::warning(
+            this, "Unable to add PeakCollection",
+            "Unable to add PeakCollection, please use a unique name");
+        return;
+    }
+
+    gSession->onPeaksChanged();
+    auto* collection = expt->getPeakCollection(dlg->listName().toStdString());
+    collection->setIndexed(true);
+    project->generatePeakModel(dlg->listName());
 }
 
 void SubframeExperiment::grabFinderParameters()
@@ -874,6 +1082,41 @@ void SubframeExperiment::setIndexerParameters()
     params->frequencyTolerance = _frequency_tolerance->value();
     params->minUnitCellVolume = _min_cell_volume->value();
     params->peaks_integrated = false;
+}
+
+void SubframeExperiment::grabStrategyParameters()
+{
+    if (!gSession->hasProject())
+        return;
+
+    auto* predictor = gSession->currentProject()->experiment()->predictor();
+    auto* params = predictor->strategyParamters();
+
+    _predict_d_min->setValue(params->d_min);
+    _predict_d_max->setValue(params->d_max);
+    _delta_chi->setValue(params->delta_chi);
+    _delta_omega->setValue(params->delta_omega);
+    _delta_phi->setValue(params->delta_phi);
+    if (gSession->currentProject()->strategyMode())
+        _n_increments->setValue(params->nframes);
+    else
+        _n_increments->setValue(_data_combo->currentData()->nFrames());
+}
+
+void SubframeExperiment::setStrategyParameters()
+{
+    if (!gSession->hasProject())
+        return;
+
+    auto* predictor = gSession->currentProject()->experiment()->predictor();
+    auto* params = predictor->strategyParamters();
+
+    params->d_min = _predict_d_min->value();
+    params->d_max = _predict_d_max->value();
+    params->delta_chi = _delta_chi->value();
+    params->delta_omega = _delta_omega->value();
+    params->delta_phi = _delta_phi->value();
+    params->nframes = _n_increments->value();
 }
 
 void SubframeExperiment::onBeamPosChanged(QPointF pos)
@@ -972,12 +1215,7 @@ void SubframeExperiment::resetMode(int index)
 
 void SubframeExperiment::setInitialKi(ohkl::sptrDataSet data)
 {
-    const auto* detector = data->diffractometer()->detector();
-    const auto coords = _detector_widget->scene()->beamSetterCoords();
-
-    ohkl::DirectVector direct = detector->pixelPosition(coords.x(), coords.y());
-    for (ohkl::InstrumentState& state : data->instrumentStates())
-        state.adjustKi(direct);
+    data->adjustDirectBeam(_beam_offset_x->value(), _beam_offset_y->value());
     emit gGui->sentinel->instrumentStatesChanged();
 }
 
@@ -1223,4 +1461,9 @@ void SubframeExperiment::selectAllMasks()
 
     refreshMaskTable();
     toggleUnsafeWidgets();
+}
+
+void SubframeExperiment::refreshPeaks()
+{
+    _detector_widget->refresh();
 }

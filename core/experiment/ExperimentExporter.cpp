@@ -260,7 +260,8 @@ void writeFrames(
 
 namespace ohkl {
 
-void ExperimentExporter::createFile(std::string name, std::string diffractometer, std::string path)
+void ExperimentExporter::createFile(
+    std::string name, std::string diffractometer, std::string path, bool strategy)
 {
     try {
         H5::H5File file{path.c_str(), H5F_ACC_TRUNC};
@@ -271,10 +272,12 @@ void ExperimentExporter::createFile(std::string name, std::string diffractometer
             H5::PredType::C_S1, 80); // TODO: Make 80-chr restriction also in the GUI
         std::string hash = COMMIT_HASH;
         std::string version = VERSION;
+        std::string strat_str = strategy ? "true" : "false";
         writeAttribute(file, ohkl::at_experiment, name.data(), str80Type, metaSpace);
         writeAttribute(file, ohkl::at_diffractometer, diffractometer.data(), str80Type, metaSpace);
         writeAttribute(file, ohkl::at_ohklVersion, version.data(), str80Type, metaSpace);
         writeAttribute(file, ohkl::at_commitHash, hash.data(), str80Type, metaSpace);
+        writeAttribute(file, ohkl::at_strategy, strat_str.data(), str80Type, metaSpace);
     } catch (...) {
         ohklLog(
             ohkl::Level::Error, "ExperimentExporter: Failed to create the file '", path,

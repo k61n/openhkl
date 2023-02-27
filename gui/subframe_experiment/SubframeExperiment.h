@@ -18,14 +18,19 @@
 #include "core/convolve/Convolver.h"
 #include "core/data/DataTypes.h"
 #include "core/detector/DetectorEvent.h"
+#include "core/shape/PeakCollection.h"
+#include "gui/items/PeakCollectionItem.h"
+#include "gui/models/PeakCollectionModel.h"
 #include "gui/utility/CellComboBox.h"
 #include "gui/utility/SafeSpinBox.h"
 #include "tables/crystal/UnitCell.h"
 
 #include <QWidget>
 
+class CellComboBox;
 class DataComboBox;
 class DetectorWidget;
+class PeakViewWidget;
 class PlotPanel;
 class PropertyPanel;
 class QGraphicsPixmapItem;
@@ -54,6 +59,8 @@ class SubframeExperiment : public QWidget {
     void setAdjustBeamUp();
     void setPeakFinder2DUp();
     void setIndexerUp();
+    void setPredictUp();
+    void setPreviewUp();
 
     DetectorWidget* detectorWidget();
 
@@ -65,6 +72,9 @@ class SubframeExperiment : public QWidget {
 
     void find_2d();
     void autoindex();
+    void predict();
+    void merge();
+    void savePeaks();
     void plotIntensities();
     void toggleUnsafeWidgets();
     void updateRanges();
@@ -79,6 +89,9 @@ class SubframeExperiment : public QWidget {
 
     void grabIndexerParameters();
     void setIndexerParameters();
+
+    void grabStrategyParameters();
+    void setStrategyParameters();
 
     //! Transmit crosshair changes to DetectorScene
     void changeCrosshair();
@@ -130,6 +143,8 @@ class SubframeExperiment : public QWidget {
     void crosshairChanged(int size, int linewidth);
 
  private:
+    void refreshPeaks();
+
     QTabWidget* _tab_widget;
     QTabWidget* _left_widget;
     DetectorWidget* _detector_widget;
@@ -154,6 +169,7 @@ class SubframeExperiment : public QWidget {
     QSpinBox* _minY;
     QSpinBox* _maxY;
 
+    // direct beam adjustment
     SpoilerCheck* _set_initial_ki;
     QCheckBox* _direct_beam;
     SafeDoubleSpinBox* _beam_offset_x;
@@ -161,6 +177,7 @@ class SubframeExperiment : public QWidget {
     QSlider* _crosshair_size;
     SafeSpinBox* _crosshair_linewidth;
 
+    // 2D peak finder
     DataComboBox* _data_combo;
     QComboBox* _convolver_combo;
     SafeSpinBox* _threshold_spin;
@@ -170,6 +187,7 @@ class SubframeExperiment : public QWidget {
     QCheckBox* _threshold_check;
     QPushButton* _find_peaks_2d;
 
+    // index
     SafeDoubleSpinBox* _gruber;
     SafeDoubleSpinBox* _niggli;
     SafeDoubleSpinBox* _max_cell_dimension;
@@ -183,8 +201,19 @@ class SubframeExperiment : public QWidget {
     SafeSpinBox* _number_subdivisions;
     QCheckBox* _only_niggli;
     QPushButton* _index_button;
-    QPushButton* _save_button;
+    QPushButton* _save_cell;
+
+    // predict
     CellComboBox* _cell_combo;
+    SafeDoubleSpinBox* _delta_chi;
+    SafeDoubleSpinBox* _delta_omega;
+    SafeDoubleSpinBox* _delta_phi;
+    SafeSpinBox* _n_increments;
+    SafeDoubleSpinBox* _predict_d_min;
+    SafeDoubleSpinBox* _predict_d_max;
+    QPushButton* _predict_button;
+    QPushButton* _save_peaks;
+
 
     UnitCellTableView* _solution_table;
 
@@ -202,6 +231,8 @@ class SubframeExperiment : public QWidget {
     QPushButton* _delete_masks;
     QPushButton* _toggle_selection;
 
+    PeakViewWidget* _peak_view_widget;
+
     bool _show_direct_beam;
 
     //! Saved direct beam positions
@@ -213,6 +244,11 @@ class SubframeExperiment : public QWidget {
     std::vector<std::pair<std::shared_ptr<ohkl::UnitCell>, double>> _solutions;
     //! Unit cell selected in solution table
     ohkl::sptrUnitCell _selected_unit_cell;
+
+    //! Strategy predicted peaks
+    ohkl::PeakCollection _peak_collection;
+    PeakCollectionItem _peak_collection_item;
+    PeakCollectionModel _peak_collection_model;
 };
 
 #endif // OHKL_GUI_SUBFRAME_EXPERIMENT_SUBFRAMEEXPERIMENT_H

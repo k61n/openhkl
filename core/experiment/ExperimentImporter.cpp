@@ -17,6 +17,7 @@
 #include "base/utils/Logger.h"
 #include "core/data/DataSet.h"
 #include "core/data/DataTypes.h"
+#include "core/data/SingleFrame.h"
 #include "core/experiment/Experiment.h"
 #include "core/loader/HDF5DataReader.h"
 #include "core/peak/Intensity.h"
@@ -74,6 +75,17 @@ void ExperimentImporter::setFilePath(const std::string path, Experiment* const e
         }
         ohklLog(Level::Info, path, " generated using version ", version, " commit hash ", hash);
 
+        bool strategy = false;
+        if (file.attrExists(ohkl::at_strategy)) {
+            const H5::Attribute attr = file.openAttribute(ohkl::at_strategy);
+            const H5::DataType attr_type = attr.getDataType();
+            std::string value;
+            attr.read(attr_type, value);
+            if (value == std::string("true"))
+                strategy = true;
+            experiment->setStrategy(strategy);
+        }
+
         ohklLog(
             ohkl::Level::Info,
             "Finished importing info for Experiment '" + experiment->name() + "'",
@@ -97,11 +109,19 @@ void ExperimentImporter::loadData(Experiment* experiment)
         hsize_t object_num = data_collections.getNumObjs();
         for (int i = 0; i < object_num; ++i) {
             const std::string collection_name = data_collections.getObjnameByIdx(i);
-            const ohkl::sptrDataSet dataset_ptr{
-                std::make_shared<ohkl::DataSet>(collection_name, experiment->getDiffractometer())};
-            dataset_ptr->addDataFile(_file_name, "nsx");
-            dataset_ptr->finishRead();
-            experiment->addData(dataset_ptr, false);
+            if (experiment->strategy()) {
+                const ohkl::sptrDataSet dataset_ptr{std::make_shared<ohkl::SingleFrame>(
+                    collection_name, experiment->getDiffractometer())};
+                dataset_ptr->addDataFile(_file_name, "nsx");
+                dataset_ptr->finishRead();
+                experiment->addData(dataset_ptr, false);
+            } else {
+                const ohkl::sptrDataSet dataset_ptr{
+                    std::make_shared<ohkl::DataSet>(collection_name, experiment->getDiffractometer())};
+                dataset_ptr->addDataFile(_file_name, "nsx");
+                dataset_ptr->finishRead();
+                experiment->addData(dataset_ptr, false);
+            }
         }
     } catch (H5::Exception& e) {
         std::string what = e.getDetailMsg();

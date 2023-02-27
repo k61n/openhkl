@@ -97,9 +97,12 @@ class AutoIndexer {
     //! Return the autoindexing parameters
     IndexerParameters* parameters();
     //! Perform the autoindexing, possibly for a single frame only
-    bool autoIndex(const std::vector<Peak3D*>& peaks, const InstrumentState* state = nullptr);
+    bool autoIndex(
+        const std::vector<Peak3D*>& peaks, const InstrumentState* state = nullptr,
+        bool filter = true);
     //! Autoindex by passing a peak collection (avoid SWIG memory leak)
-    bool autoIndex(PeakCollection* peaks);
+    bool autoIndex(
+        PeakCollection* peaks, const InstrumentState* state = nullptr, bool filter = true);
     //! Return a list of the best solutions ordered by percentage of successfully indexed peaks
     const std::vector<RankedSolution>& solutions() const;
 
@@ -128,7 +131,7 @@ class AutoIndexer {
     bool computeFFTSolutions(
         const std::vector<Peak3D*>& peaks, const InstrumentState* state = nullptr);
     //! Do least squares minimisation to refine candidate unit cells
-    void refineSolutions(const std::vector<Peak3D*>& peaks);
+    void refineSolutions(const std::vector<Peak3D*>& peaks, const InstrumentState* state = nullptr);
     //! Rand solutions by quality (percentage of peak indexed)
     void rankSolutions();
     // Unused - void refineConstraints();

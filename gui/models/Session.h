@@ -59,7 +59,7 @@ class Session {
     void removeExperiment(unsigned int id);
 
     void loadData(ohkl::DataFormat format);
-    bool loadRawData();
+    bool loadRawData(bool single_file = false);
     void removeData();
 
     void onDataChanged();
@@ -70,7 +70,7 @@ class Session {
 
     void loadExperimentFromFile(QString filename);
 
-    Project* createProject(QString experimentName, QString instrumentName);
+    Project* createProject(QString experimentName, QString instrumentName, bool strategy = false);
     bool addProject(std::unique_ptr<Project> project_ptr);
 
     std::string generateExperimentName();

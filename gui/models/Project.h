@@ -35,7 +35,7 @@ class PeakCollectionModel;
 class Project {
  public:
     Project() = delete;
-    Project(QString name, QString instrument);
+    Project(QString name, QString instrument, bool strategy = false);
     Project(const Project&) = delete;
 
     const ohkl::Experiment* experiment() const;
@@ -81,12 +81,16 @@ class Project {
     bool hasInstrumentStateSet() const;
     bool hasUnitCell() const;
     bool hasShapeModel() const;
+    void setStrategyMode(bool flag) { _strategy = flag; };
+    bool strategyMode() const { return _strategy; };
 
  private:
     std::unique_ptr<ohkl::Experiment> _experiment;
 
     std::vector<PeakCollectionModel*> _peak_collection_models;
     std::vector<PeakCollectionItem*> _peak_collection_items;
+
+    bool _strategy;
 
     bool _saved = false;
     std::string _save_path;

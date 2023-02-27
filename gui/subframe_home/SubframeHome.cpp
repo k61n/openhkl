@@ -80,6 +80,12 @@ void SubframeHome::_setLeftLayout(QHBoxLayout* main_layout)
     _new_exp->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     connect(_new_exp, &QPushButton::clicked, this, &SubframeHome::createNew);
 
+    _new_strategy = new QPushButton();
+    _new_strategy->setIcon(QIcon(path + "plus.svg"));
+    _new_strategy->setText("New experiment (strategy mode)");
+    _new_strategy->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    connect(_new_strategy, &QPushButton::clicked, this, [=]() { createNew(true); });
+
     _old_exp = new QPushButton();
     _old_exp->setIcon(QIcon(path + "open.svg"));
     _old_exp->setText("Load experiment from file");
@@ -90,6 +96,7 @@ void SubframeHome::_setLeftLayout(QHBoxLayout* main_layout)
     connect(_old_exp, &QPushButton::clicked, this, &SubframeHome::loadFromFile);
 
     left_top->addWidget(_new_exp);
+    left_top->addWidget(_new_strategy);
     left_top->addWidget(_old_exp);
 
     left->addLayout(left_top);
@@ -225,7 +232,7 @@ void SubframeHome::_setRightLayout(QHBoxLayout* main_layout)
         &SubframeHome::setContextMenuUnitCellTable);
 }
 
-void SubframeHome::createNew()
+void SubframeHome::createNew(bool strategy)
 {
     std::unique_ptr<ExperimentDialog> exp_dialog( // new ExperimentDialog());
         new ExperimentDialog(QString::fromStdString(gSession->generateExperimentName())));
@@ -236,7 +243,7 @@ void SubframeHome::createNew()
         QString expr_nm = exp_dialog->experimentName();
         QString instr_nm = exp_dialog->instrumentName();
 
-        std::unique_ptr<Project> project_ptr{gSession->createProject(expr_nm, instr_nm)};
+        std::unique_ptr<Project> project_ptr{gSession->createProject(expr_nm, instr_nm, strategy)};
         if (project_ptr == nullptr) {
             return;
         }

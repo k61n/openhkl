@@ -17,6 +17,7 @@
 #include "core/data/DataSet.h"
 #include "core/data/DataTypes.h"
 #include "core/instrument/Diffractometer.h"
+#include "core/instrument/InstrumentState.h"
 
 namespace ohkl {
 
@@ -46,6 +47,14 @@ InstrumentStateSet::InstrumentStateSet(sptrDataSet data, const InstrumentStateLi
 {
     _name = data->name();
     _nframes = data->nFrames();
+}
+
+InstrumentStateSet::InstrumentStateSet(
+    Diffractometer* diffractometer, const std::string& name, const std::size_t nframes)
+    : _id(0), _name(name), _nframes(nframes)
+{
+    for (std::size_t idx = 0; idx < _nframes; ++idx)
+        _instrument_states.push_back(diffractometer->instrumentState(idx));
 }
 
 void InstrumentStateSet::setDiffractometer()

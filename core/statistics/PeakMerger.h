@@ -16,6 +16,7 @@
 #define OHKL_CORE_STATISTICS_PEAKMERGER_H
 
 #include "base/utils/Logger.h"
+#include "base/utils/ProgressHandler.h"
 #include "core/experiment/DataQuality.h"
 #include "core/statistics/MergedData.h"
 #include "core/statistics/ResolutionShell.h"
@@ -60,6 +61,8 @@ class PeakMerger {
 
     //! Perform the merge
     void mergePeaks();
+    //! Perform the merge on predictions for strategy tool
+    std::vector<double> strategyMerge(double fmin, double fmax, std::size_t nslices);
     //! Compute R-factors, CCs and completeness
     void computeQuality();
 
@@ -82,6 +85,9 @@ class PeakMerger {
     //! Saves the shell information to file.
     bool saveStatistics(std::string filename);
 
+    //! Set the progress handler
+    void setHandler(sptrProgressHandler handler) { _handler = handler; };
+
  private:
     std::unique_ptr<MergedData> _merged_data;
     std::vector<std::unique_ptr<MergedData>> _merged_data_per_shell;
@@ -93,6 +99,8 @@ class PeakMerger {
     std::unique_ptr<MergeParameters> _params;
 
     SpaceGroup _space_group;
+
+    sptrProgressHandler _handler;
 };
 
 /*! @}*/

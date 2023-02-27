@@ -72,11 +72,11 @@ class DataSet {
         double bkg_end = -1.0) const;
 
     //! Read a single frame
-    Eigen::MatrixXi frame(const std::size_t idx) const;
+    virtual Eigen::MatrixXi frame(const std::size_t idx) const;
     //! Returns frame after transforming to account for detector gain and baseline
-    Eigen::MatrixXd transformedFrame(std::size_t idx) const;
+    virtual Eigen::MatrixXd transformedFrame(std::size_t idx) const;
     //! Return per-pixel magnitude of gradient of a given frame
-    Eigen::MatrixXd gradientFrame(
+    virtual Eigen::MatrixXd gradientFrame(
         std::size_t idx, GradientKernel kernel, bool realspace = true) const;
 
     //! Gets the file handle.
@@ -161,10 +161,14 @@ class DataSet {
     //! Clear the frame buffer
     void clearBuffer();
 
- private:
+    virtual void setNFrames(std::size_t nframes) { std::ignore = nframes; };
+
+    //! Data shape (columns, rows, frames)
+    std::size_t datashape[3]{0, 0, 0};
+
+ protected:
     void setReader(const DataFormat dataformat, const std::string& filename = "");
 
- private:
     std::string _name = ohkl::kw_datasetDefaultName;
     std::vector<Eigen::MatrixXi> _data;
     std::vector<IMask*> _masks;
@@ -187,10 +191,6 @@ class DataSet {
     std::vector<std::unique_ptr<Eigen::MatrixXi>> _frame_buffer;
     //! Whether or not the buffer is active
     bool _buffered;
-
- public:
-    //! Data shape (columns, rows, frames)
-    std::size_t datashape[3]{0, 0, 0};
 };
 
 /*! @}*/

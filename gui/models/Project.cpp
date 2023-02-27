@@ -27,10 +27,12 @@
 
 unsigned int Project::_last_id = 0;
 
-Project::Project(QString name, QString instrument)
+Project::Project(QString name, QString instrument, bool strategy)
     : _experiment{new ohkl::Experiment{name.toStdString(), instrument.toStdString()}}
+    , _strategy(strategy)
     , _id(++_last_id)
 {
+    _experiment->setStrategy(strategy);
 }
 
 const ohkl::Experiment* Project::experiment() const

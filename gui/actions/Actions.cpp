@@ -52,6 +52,7 @@ Actions::Actions()
 void Actions::setupExperiment()
 {
     new_experiment = new QAction("New experiment");
+    new_strategy = new QAction("New experiment (strategy mode)");
     load_experiment = new QAction("Load experiment");
     save_experiment = new QAction("Save");
     save_experiment_as = new QAction("Save as");
@@ -63,6 +64,8 @@ void Actions::setupExperiment()
 
     connect(new_experiment, &QAction::triggered, []() { gGui->home->createNew(); });
     connect(new_experiment, &QAction::triggered, []() { gGui->sideBar()->refreshCurrent(); });
+    connect(new_strategy, &QAction::triggered, []() { gGui->home->createNew(true); });
+    connect(new_strategy, &QAction::triggered, []() { gGui->sideBar()->refreshCurrent(); });
     connect(load_experiment, &QAction::triggered, []() { gGui->home->loadFromFile(); });
     connect(load_experiment, &QAction::triggered, []() { gGui->sideBar()->refreshCurrent(); });
     connect(save_experiment, &QAction::triggered, []() { gGui->home->saveCurrent(); });
@@ -99,6 +102,7 @@ void Actions::setupView()
 void Actions::setupData()
 {
     add_data = new QAction("Add data set");
+    add_single_image = new QAction("Load single image (strategy)");
     show_input_files = new QAction("Show input files");
     remove_data = new QAction("Remove data set");
     add_raw = new QAction("Add raw/tiff data");
@@ -107,6 +111,10 @@ void Actions::setupData()
 
     connect(add_raw, &QAction::triggered, []() { // can cause a crash without checking
         if (gSession->loadRawData())
+            gGui->sideBar()->refreshCurrent();
+    });
+    connect(add_single_image, &QAction::triggered, []() { // can cause a crash without checking
+        if (gSession->loadRawData(true))
             gGui->sideBar()->refreshCurrent();
     });
     connect(add_hdf5, &QAction::triggered, []() { gSession->loadData(ohkl::DataFormat::OHKL); });

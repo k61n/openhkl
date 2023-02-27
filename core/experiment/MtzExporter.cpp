@@ -69,7 +69,7 @@ void MtzExporter::buildMtz()
     /* xtal ptr needs to be prepaired before calling lib method */
     //_mtz_data->nxtal = 1; // the system will keep this updated automatically
     _mtz_data->xtal = new CMtz::MTZXTAL*[1]; // but we need to crate this structure or we will
-                                             // encouter crashes along the waz
+                                             // encounter crashes along the way
     _mtz_data->xtal[0] = new CMtz::MTZXTAL();
 
     // Keep reflections in memory

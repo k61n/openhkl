@@ -88,11 +88,13 @@ const std::string at_datasetSources{"sources"}; // list of sources for the DataS
 const std::string at_frameCount{"number of frames"};
 const std::string at_wavelength{"wavelength"};
 const std::string at_monitorSum{"monitor"}; // TODO: explain
+const std::string at_strategy{"strategy"};
 // DataSet metadata
 const std::string at_baseline{"baseline"};
 const std::string at_gain{"gain"};
 const std::string at_nMasks{"number of masks"};
 const std::string at_bitDepth{"image bit depth"};
+
 // Nexus-specific metadata
 const std::string at_numor{"numor"}; // internal raw data labelling of ILL
 const std::string at_totalSteps{"total steps"};

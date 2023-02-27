@@ -16,6 +16,9 @@
 #define OHKL_CORE_SHAPE_PREDICTOR_H
 
 #include "base/utils/ProgressHandler.h"
+#include "core/data/DataTypes.h"
+#include "core/instrument/Diffractometer.h"
+#include "core/instrument/InstrumentStateSet.h"
 #include "core/integration/IIntegrator.h"
 #include "core/shape/ShapeModel.h"
 
@@ -32,6 +35,17 @@ namespace ohkl {
 struct PredictionParameters : public IntegrationParameters {
     double d_min = 1.5; //!< Minimum detector range (filter)
     double d_max = 50.0; //!< Maximum detector range (filter)
+
+    void log(const Level& level) const;
+};
+
+//! Parameters for strategy tool
+struct StrategyParameters : public PredictionParameters {
+    double delta_chi = 0.0;
+    double delta_omega = 0.5;
+    double delta_phi = 0.0;
+    std::size_t nframes = 200;
+    bool friedel = true;
 
     void log(const Level& level) const;
 };
@@ -54,8 +68,13 @@ class Predictor {
         sptrDataSet data, const std::vector<MillerIndex>& hkls, const sptrUnitCell unit_cell,
         sptrProgressHandler handler = nullptr);
 
+    //! Predict peaks in strategy mode
+    void strategyPredict(sptrDataSet data, const sptrUnitCell unit_cell);
+
     //! Get a pointer to the prediction parameters
     PredictionParameters* parameters();
+    //! Get a pointer to the strategy paramters
+    StrategyParameters* strategyParamters();
     //! Get the vector of predicted peaks
     const std::vector<Peak3D*>& peaks() const;
     //! Get the number of predicted peaks
@@ -64,7 +83,13 @@ class Predictor {
     void setHandler(sptrProgressHandler handler);
 
  private:
+    //! Generate instrument states for strategy tool
+    InstrumentStateSet generateStates(const sptrDataSet data);
+
     std::unique_ptr<PredictionParameters> _params;
+    std::unique_ptr<StrategyParameters> _strategy_params;
+    std::unique_ptr<Diffractometer> _strategy_diffractometer;
+    std::unique_ptr<InstrumentStateSet> _strategy_states;
     std::vector<Peak3D*> _predicted_peaks;
     sptrProgressHandler _handler;
 };

@@ -16,6 +16,8 @@
 
 #include "base/utils/Logger.h"
 #include "core/data/DataSet.h"
+#include "core/data/DataTypes.h"
+#include "tables/crystal/UnitCell.h"
 
 namespace ohkl {
 
@@ -115,6 +117,16 @@ void MergedData::setDRange(const double d_min, const double d_max)
     _d_max = d_max;
     double lambda = _peak_collections[0]->data()->wavelength();
     sptrUnitCell cell = _peak_collections[0]->unitCell();
+    _max_peaks = cell->maxPeaks(d_min, d_max, lambda);
+    ohklLog(Level::Info, "MergedData::setDRange: ", _max_peaks, " maximum possible peaks");
+}
+
+void MergedData::setDRange(
+    const double d_min, const double d_max, sptrDataSet data, sptrUnitCell cell)
+{
+    _d_min = d_min;
+    _d_max = d_max;
+    double lambda = data->wavelength();
     _max_peaks = cell->maxPeaks(d_min, d_max, lambda);
     ohklLog(Level::Info, "MergedData::setDRange: ", _max_peaks, " maximum possible peaks");
 }
