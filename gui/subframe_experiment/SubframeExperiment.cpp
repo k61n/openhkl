@@ -959,7 +959,6 @@ void SubframeExperiment::merge()
 
     auto group = _cell_combo->currentCell()->spaceGroup();
     merger->setSpaceGroup(group);
-
     merger->addPeakCollection(&_peak_collection);
     merger->mergePeaks();
     merger->computeQuality();
