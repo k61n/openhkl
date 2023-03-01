@@ -1413,7 +1413,8 @@ void SubframeExperiment::refreshMaskTable()
 void SubframeExperiment::onMaskChanged()
 {
     int row = sender()->property("row").toInt();
-    auto it = _detector_widget->scene()->maskItems().begin();
+    QVector<MaskItem*> mask_items = _detector_widget->scene()->maskItems();
+    auto it = mask_items.begin();
     std::advance(it, row);
     double x1 = dynamic_cast<QDoubleSpinBox*>(_mask_table->cellWidget(row, 0))->value();
     double y1 = dynamic_cast<QDoubleSpinBox*>(_mask_table->cellWidget(row, 1))->value();
