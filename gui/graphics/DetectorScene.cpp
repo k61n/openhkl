@@ -567,7 +567,7 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
                 PeakCollectionModel* model = graphic->peakModel();
                 std::vector<ohkl::Peak3D*> peaks;
                 std::map<ohkl::Peak3D*, ohkl::RejectionFlag> tmp_map;
-                if (model)
+                if (model->root())
                     peaks = model->root()->peakCollection()->getPeakList();
                 if (CutterItem* p = dynamic_cast<CutterItem*>(_lastClickedGI)) {
                     _lastClickedGI = nullptr;
