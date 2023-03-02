@@ -2,7 +2,7 @@ project(openhkltests)
 
 file(GLOB_RECURSE unit_test_sources "unit/*/*.cpp")
 file(GLOB_RECURSE func_test_sources "functional/*.cpp")
-file(GLOB_RECURSE func_test_sources "nightly/*.cpp")
+file(GLOB_RECURSE nightly_test_sources "nightly/*.cpp")
 
 add_library(catch2 catch2.cpp)
 target_include_directories(catch2 PRIVATE ${CMAKE_SOURCE_DIR})
