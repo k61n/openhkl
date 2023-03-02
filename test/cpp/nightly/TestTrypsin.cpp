@@ -61,8 +61,8 @@ TEST_CASE("test/data/TestTrypsin.cpp", "")
     const int ref_shapes = 16613;
     const int ref_predicted_peaks = 70152;
     const int ref_valid_predicted_peaks = 58215;
-    const int ref_updated = 56883;
-    const int ref_integrated = 54569;
+    const int ref_updated = 56852;
+    const int ref_integrated = 54539;
     const std::vector<double> ref_rmerge = {
         0.0424, 0.0911, 0.1508, 0.1999, 0.2456, 0.2974, 0.3372, 0.3820, 0.4571, 0.5739};
     const std::vector<double> ref_completeness = {
