@@ -18,10 +18,24 @@
 
 namespace ohkl {
 
-Monochromator::Monochromator() : _wavelength(1.0), _fwhm(0.1), _width(0.01), _height(0.01) { }
+Monochromator::Monochromator()
+    : _wavelength(1.0)
+    , _fwhm(0.1)
+    , _width(0.01)
+    , _height(0.01)
+    , _x_offset(0.0)
+    , _y_offset(0.0)
+{
+}
 
 Monochromator::Monochromator(const std::string& name)
-    : _name(name), _wavelength(1.0), _fwhm(0.1), _width(0.01), _height(0.01)
+    : _name(name)
+    , _wavelength(1.0)
+    , _fwhm(0.1)
+    , _width(0.01)
+    , _height(0.01)
+    , _x_offset(0.0)
+    , _y_offset(0.0)
 {
 }
 
@@ -46,57 +60,14 @@ Monochromator::Monochromator(const YAML::Node& node)
     auto&& fwhmNode = node[ohkl::ym_fwhm];
     _fwhm = fwhmNode[ohkl::ym_value].as<double>()
         * UnitsManager::get(fwhmNode[ohkl::ym_units].as<std::string>()) / ohkl::ang;
+
+    auto&& xoffsetNode = node[ohkl::ym_xoffset];
+    _x_offset = xoffsetNode[ohkl::ym_value].as<double>();
+
+    auto&& yoffsetNode = node[ohkl::ym_yoffset];
+    _y_offset = yoffsetNode[ohkl::ym_value].as<double>();
 }
 
-const std::string& Monochromator::name() const
-{
-    return _name;
-}
-
-void Monochromator::setName(const std::string& name)
-{
-    _name = name;
-}
-
-double Monochromator::wavelength() const
-{
-    return _wavelength;
-}
-
-void Monochromator::setWavelength(double wavelength)
-{
-    _wavelength = wavelength;
-}
-
-double Monochromator::fullWidthHalfMaximum() const
-{
-    return _fwhm;
-}
-
-void Monochromator::setFullWidthHalfMaximum(double fwhm)
-{
-    _fwhm = fwhm;
-}
-
-double Monochromator::width() const
-{
-    return _width;
-}
-
-void Monochromator::setWidth(double width)
-{
-    _width = width;
-}
-
-double Monochromator::height() const
-{
-    return _height;
-}
-
-void Monochromator::setHeight(double height)
-{
-    _height = height;
-}
 
 bool Monochromator::operator==(const Monochromator& other)
 {
