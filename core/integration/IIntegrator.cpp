@@ -102,7 +102,7 @@ void IIntegrator::integrate(
     }
 
     for (auto peak : peaks) {
-        if (!peak->enabled())
+        if (!peak->enabled() && (peak->rejectionFlag() != RejectionFlag::Extinct))
             continue;
 
         regions.emplace(std::make_pair(

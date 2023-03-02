@@ -90,7 +90,6 @@ void Integrator::integratePeaks(
         Level::Info,
         "Integrator::integratePeaks: integrating PeakCollection '" + peaks->name() + "'");
     peaks->resetIntegrationFlags();
-    params->log(Level::Info);
     IIntegrator* integrator = getIntegrator(_params->integrator_type);
     integrator->setParameters(*params);
     integrator->integrate(peaks->getPeakList(), shapes, data);
@@ -110,7 +109,6 @@ void Integrator::integratePeaks(
 void Integrator::integrateFoundPeaks(PeakFinder* peak_finder)
 {
     ohklLog(Level::Info, "Integrator::integrateFoundPeaks");
-    _params->log(Level::Info);
     IIntegrator* integrator = getIntegrator(IntegratorType::PixelSum);
     integrator->setParameters(*_params);
 

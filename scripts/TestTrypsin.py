@@ -27,7 +27,7 @@ class TestFullWorkFlow(unittest.TestCase):
         expected_n_files = 169;
         expected_found_peaks = 9913
         expected_valid_found_peaks = 8432
-        expected_predicted_peaks = 70835
+        expected_predicted_peaks = 70870
         expected_shapes = 8248
 
         print('OpenHKL TestTrypsin')
@@ -119,6 +119,7 @@ class TestFullWorkFlow(unittest.TestCase):
         expt.addUnitCell("accepted", indexed_cell)
         expt.assignUnitCell(found_peaks, 'accepted');
         found_peaks.setMillerIndices();
+        cell = expt.getUnitCell("accepted")
         print(f'Reference cell {reference_cell.toString()}')
         print(f'Using cell     {indexed_cell.toString()}')
 
@@ -146,7 +147,8 @@ class TestFullWorkFlow(unittest.TestCase):
         params.d_min = 1.5
         params.d_max = 50.0
         predictor.predictPeaks(data, indexed_cell)
-        expt.addPeakCollection('predicted', ohkl.PeakCollectionType_PREDICTED, predictor.peaks(), data)
+        expt.addPeakCollection(
+            'predicted', ohkl.PeakCollectionType_PREDICTED, predictor.peaks(), data, cell)
         predicted_peaks = expt.getPeakCollection('predicted')
         self.assertTrue(predicted_peaks.numberOfPeaks() > expected_predicted_peaks - eps and
                         predicted_peaks.numberOfPeaks() < expected_predicted_peaks + eps,
@@ -198,13 +200,14 @@ class TestFullWorkFlow(unittest.TestCase):
         self.assertTrue(integrator.numberOfValidPeaks() >  55730 and
                         integrator.numberOfValidPeaks() < 55750)
 
-
         print('Merging predicted peaks...')
         merger = expt.peakMerger()
         params = merger.parameters()
         merger.reset()
         params.d_min = 1.5
+        params.d_max = 50
         merger.addPeakCollection(predicted_peaks)
+        merger.setSpaceGroup(space_group)
         merger.mergePeaks()
         merger.computeQuality()
 
