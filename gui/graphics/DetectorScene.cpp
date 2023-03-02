@@ -43,6 +43,7 @@
 
 #include <exception>
 
+#include <QCheckBox>
 #include <QGraphicsItem>
 #include <QGraphicsSceneMouseEvent>
 #include <QKeyEvent>
@@ -724,9 +725,6 @@ void DetectorScene::loadCurrentImage()
 
 void DetectorScene::drawIntegrationRegion()
 {
-    if (!_params.integrationRegion)
-        return;
-
     if (_peak_graphics.empty())
         return;
 
@@ -734,6 +732,8 @@ void DetectorScene::drawIntegrationRegion()
     if (_params.singlePeakIntRegion)
         peak = _peak;
     for (const auto& graphic : _peak_graphics) {
+        if (!graphic->peakViewWidget()->set1.drawIntegrationRegion->isChecked())
+            return;
         graphic->initIntRegionFromPeakWidget();
         QImage* region_img = graphic->getIntegrationRegionImage(_currentFrameIndex, peak);
         if (region_img) {

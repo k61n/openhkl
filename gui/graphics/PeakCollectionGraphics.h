@@ -45,6 +45,8 @@ class PeakCollectionGraphics {
     void setPeakModel(PeakCollectionModel* model) { _peak_model = model; };
     //! Set the peak view widget, used to set colours etc
     void setPeakViewWidget(PeakViewWidget* widget) { _peak_view_widget = widget; };
+    //! Get the peak view widget
+    PeakViewWidget* peakViewWidget() const { return _peak_view_widget; };
     //! Get the peak model pointer
     PeakCollectionModel* peakModel() const { return _peak_model; };
     //! Get the DataSet pointer associated with the PeakCollection
