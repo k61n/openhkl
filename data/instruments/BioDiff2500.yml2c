@@ -74,7 +74,7 @@
 "                units: ang\n"
 "            offset_x:\n"
 "                value: -1.0\n"
-"            offset_x:\n"
+"            offset_y:\n"
 "                value: -2.0\n"
 "...\n"
 "\n"
