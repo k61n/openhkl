@@ -32,6 +32,7 @@
 #include <QStack>
 
 #include <opencv2/core/types.hpp>
+#include <qpoint.h>
 
 namespace ohkl {
 class KeyPointCollection;
@@ -101,7 +102,7 @@ class DetectorScene : public QGraphicsScene {
     //! Get the current intensity
     int intensity() { return _params.intensity; };
     //! Set up the direct beam crosshair
-    void addBeamSetter(int size, int linewidth);
+    void addBeamSetter(int size);
     //! Remove the beam crosshair from the scene
     void removeBeamSetter();
     //! Show/hide the beam setter crosshair
@@ -120,6 +121,8 @@ class DetectorScene : public QGraphicsScene {
     QVector<MaskItem*> maskItems() const;
     //! Remove text from scene (contour & peak labels)
     void clearText();
+    //! Send a signal when the direct beam position crosshair is changed
+    void sendBeamOffset(QPointF pos);
 
  protected:
     void mousePressEvent(QGraphicsSceneMouseEvent* event);
@@ -141,7 +144,7 @@ class DetectorScene : public QGraphicsScene {
     void drawIntegrationRegion();
     void updateMasks() { _lastClickedGI = nullptr; }
     void setBeamSetterPos(QPointF pos);
-    void onCrosshairChanged(int size, int linewidth);
+    void onCrosshairResized(int size);
 
  signals:
     void dataChanged();

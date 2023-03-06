@@ -52,6 +52,7 @@
 #include <QPixmap>
 #include <QToolTip>
 #include <opencv2/core/types.hpp>
+#include <qpoint.h>
 
 QPointF DetectorScene::_current_beam_position = {0, 0};
 
@@ -91,7 +92,7 @@ void DetectorScene::onGradientSetting(int kernel, bool fft)
     }
 }
 
-void DetectorScene::addBeamSetter(int size, int linewidth)
+void DetectorScene::addBeamSetter(int size)
 {
     if (_beam_pos_setter) {
         removeBeamSetter();
@@ -100,7 +101,7 @@ void DetectorScene::addBeamSetter(int size, int linewidth)
 
     _beam_pos_setter = new CrosshairGraphic(_current_beam_position);
     _beam_pos_setter->setSize(size);
-    _beam_pos_setter->setLinewidth(linewidth);
+    _beam_pos_setter->setLinewidth(2);
     addItem(_beam_pos_setter);
 }
 
@@ -559,10 +560,9 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
         } else if (_mode == DRAG_DROP) {
             _current_dragged_item->setPos(event->scenePos());
             int size = _current_dragged_item->size();
-            int linewidth = _current_dragged_item->linewidth();
-            emit beamPosChanged(event->scenePos());
+            sendBeamOffset(event->scenePos());
             _current_beam_position = event->scenePos();
-            addBeamSetter(size, linewidth);
+            addBeamSetter(size);
         } else {
             for (const auto& graphic : _peak_graphics) {
                 PeakCollectionModel* model = graphic->peakModel();
@@ -767,14 +767,15 @@ void DetectorScene::clearMasks()
 
 void DetectorScene::setBeamSetterPos(QPointF pos)
 {
-    _current_beam_position = pos;
-    _beam_pos_setter->setPos(pos);
+    double x = pos.x() + static_cast<double>(_currentData->nCols()) / 2.0;
+    double y = -pos.y() + static_cast<double>(_currentData->nRows()) / 2.0;
+    _current_beam_position = {x, y};
+    _beam_pos_setter->setPos({x, y});
 }
 
-void DetectorScene::onCrosshairChanged(int size, int linewidth)
+void DetectorScene::onCrosshairResized(int size)
 {
     _beam_pos_setter->setSize(size);
-    _beam_pos_setter->setLinewidth(linewidth);
 }
 
 void DetectorScene::setPeak(ohkl::Peak3D* peak)
@@ -845,4 +846,11 @@ void DetectorScene::clearText()
         if (dynamic_cast<ContourLabelItem*>(item) != nullptr)
             removeItem(item);
     }
+}
+
+void DetectorScene::sendBeamOffset(QPointF pos)
+{
+    double x_offset = pos.x() - static_cast<double>(_currentData->nCols()) / 2.0;
+    double y_offset = pos.y() - static_cast<double>(_currentData->nRows()) / 2.0;
+    emit beamPosChanged({x_offset, -y_offset});
 }

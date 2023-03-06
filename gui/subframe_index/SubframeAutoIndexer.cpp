@@ -36,10 +36,10 @@
 #include "gui/utility/SafeSpinBox.h"
 #include "gui/utility/SideBar.h"
 #include "gui/utility/Spoiler.h"
-#include "gui/utility/SpoilerCheck.h"
 #include "gui/views/PeakTableView.h"
 #include "gui/views/UnitCellTableView.h"
 #include "gui/widgets/DetectorWidget.h"
+#include "gui/widgets/DirectBeamWidget.h"
 
 #include <QBoxLayout>
 #include <QCheckBox>
@@ -76,6 +76,11 @@ SubframeAutoIndexer::SubframeAutoIndexer()
     _tab_widget->addTab(tables_tab, "Autoindexer solutions");
     _tab_widget->addTab(detector_tab, "Detector image");
 
+    _detector_widget = new DetectorWidget(1, false, true);
+    _beam_setter_widget = new DirectBeamWidget(_detector_widget->scene());
+    _peak_view_widget = new PeakViewWidget("Valid peaks", "Invalid Peaks");
+
+    setFigureUp();
     setInputUp();
     setAdjustBeamUp();
     setParametersUp();
@@ -83,18 +88,8 @@ SubframeAutoIndexer::SubframeAutoIndexer()
     setPeakViewWidgetUp();
     setPeakTableUp();
     setSolutionTableUp();
-    setFigureUp();
     toggleUnsafeWidgets();
 
-    connect(
-        _detector_widget->scene(), &DetectorScene::beamPosChanged, this,
-        &SubframeAutoIndexer::onBeamPosChanged);
-    connect(
-        this, &SubframeAutoIndexer::beamPosChanged, _detector_widget->scene(),
-        &DetectorScene::setBeamSetterPos);
-    connect(
-        this, &SubframeAutoIndexer::crosshairChanged, _detector_widget->scene(),
-        &DetectorScene::onCrosshairChanged);
     connect(
         _data_combo, QOverload<int>::of(&QComboBox::currentIndexChanged),
         _detector_widget->dataCombo(), &QComboBox::setCurrentIndex);
@@ -118,7 +113,6 @@ SubframeAutoIndexer::SubframeAutoIndexer()
     _right_element->addWidget(_tab_widget);
     _right_element->addWidget(_peak_group);
     _right_element->setSizePolicy(_size_policy_right);
-    _set_initial_ki->setChecked(false);
 
     _right_element->setStretchFactor(0, 2);
     _right_element->setStretchFactor(1, 1);
@@ -141,57 +135,15 @@ void SubframeAutoIndexer::setInputUp()
 
 void SubframeAutoIndexer::setAdjustBeamUp()
 {
-    _set_initial_ki = new SpoilerCheck("Set initial direct beam position");
-    GridFiller f(_set_initial_ki, true);
-
-    _beam_offset_x = f.addDoubleSpinBox("x offset", "Direct beam offset in x direction (pixels)");
-
-    _beam_offset_y = f.addDoubleSpinBox("y offset", "Direct beam offset in y direction (pixels)");
-
-    _crosshair_size = new QSlider(Qt::Horizontal);
-    QLabel* crosshair_label = new QLabel("Crosshair size");
-    crosshair_label->setToolTip("Radius of crosshair (pixels)");
-    crosshair_label->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-    _crosshair_size->setMinimum(5);
-    _crosshair_size->setMaximum(200);
-    _crosshair_size->setValue(15);
-    f.addLabel("Crosshair size", "Radius of crosshair (pixels)");
-    f.addWidget(_crosshair_size, 1);
-
-    _crosshair_linewidth = f.addSpinBox("Crosshair linewidth", "Line width of crosshair");
-
-    _beam_offset_x->setValue(0.0);
-    _beam_offset_x->setMaximum(1000.0);
-    _beam_offset_x->setMinimum(-1000.0);
-    _beam_offset_x->setDecimals(4);
-    _beam_offset_y->setValue(0.0);
-    _beam_offset_y->setMaximum(1000.0);
-    _beam_offset_y->setMinimum(-1000.0);
-    _beam_offset_y->setDecimals(4);
-    _crosshair_linewidth->setValue(2);
-    _crosshair_linewidth->setMinimum(1);
-    _crosshair_linewidth->setMaximum(10);
+    _set_initial_ki = new Spoiler("Set initial direct beam position");
+    _set_initial_ki->setContentLayout(*_beam_setter_widget, true);
 
     connect(
-        _set_initial_ki->checkBox(), &QCheckBox::stateChanged, this,
+        _beam_setter_widget->crosshairOn(), &QCheckBox::stateChanged, this,
         &SubframeAutoIndexer::refreshPeakVisual);
     connect(
-        _set_initial_ki->checkBox(), &QCheckBox::stateChanged, this,
+        _beam_setter_widget->crosshairOn(), &QCheckBox::stateChanged, this,
         &SubframeAutoIndexer::toggleCursorMode);
-    connect(
-        _beam_offset_x,
-        static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this,
-        &SubframeAutoIndexer::onBeamPosSpinChanged);
-    connect(
-        _beam_offset_y,
-        static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this,
-        &SubframeAutoIndexer::onBeamPosSpinChanged);
-    connect(
-        _crosshair_size, static_cast<void (QSlider::*)(int)>(&QSlider::valueChanged), this,
-        &SubframeAutoIndexer::changeCrosshair);
-    connect(
-        _crosshair_linewidth, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
-        &SubframeAutoIndexer::changeCrosshair);
 
     _left_layout->addWidget(_set_initial_ki);
 }
@@ -363,19 +315,13 @@ void SubframeAutoIndexer::refreshAll()
 
     auto dataset = _data_combo->currentData();
     _max_frame->setMaximum(dataset->nFrames() - 1);
-
-    _beam_offset_x->setMaximum(static_cast<double>(dataset->nCols()) / 2.0);
-    _beam_offset_x->setMinimum(-static_cast<double>(dataset->nCols()) / 2.0);
-    _beam_offset_y->setMaximum(static_cast<double>(dataset->nRows()) / 2.0);
-    _beam_offset_y->setMinimum(-static_cast<double>(dataset->nRows()) / 2.0);
+    _beam_setter_widget->setSpinLimits(dataset->nCols(), dataset->nRows());
 
     toggleUnsafeWidgets();
 }
 
 void SubframeAutoIndexer::setPeakViewWidgetUp()
 {
-    _peak_view_widget = new PeakViewWidget("Valid peaks", "Invalid Peaks");
-
     Spoiler* preview_spoiler = new Spoiler("Show/hide peaks");
     preview_spoiler->setContentLayout(*_peak_view_widget, true);
     _left_layout->addWidget(preview_spoiler);
@@ -388,7 +334,6 @@ void SubframeAutoIndexer::setPeakViewWidgetUp()
 
 void SubframeAutoIndexer::setFigureUp()
 {
-    _detector_widget = new DetectorWidget(1, false, true);
     _detector_widget->linkPeakModel(&_peak_collection_model, _peak_view_widget);
 
     connect(
@@ -425,14 +370,8 @@ void SubframeAutoIndexer::changeSelected(PeakItemGraphic* peak_graphic)
 void SubframeAutoIndexer::refreshPeakVisual()
 {
     auto data = _detector_widget->currentData();
-    auto scene = _detector_widget->scene();
 
-    if (_set_initial_ki->isChecked()) {
-        scene->addBeamSetter(_crosshair_size->value(), _crosshair_linewidth->value());
-        changeCrosshair();
-    }
     showDirectBeamEvents();
-
     _detector_widget->refresh();
 }
 
@@ -499,12 +438,13 @@ void SubframeAutoIndexer::runAutoIndexer()
     auto* autoindexer = expt->autoIndexer();
 
     // Manally adjust the direct beam position
-    if (_set_initial_ki->isChecked()) {
+    if (_beam_setter_widget->crosshairOn()->isChecked()) {
         auto data = _detector_widget->currentData();
+        emit gGui->sentinel->instrumentStatesChanged();
+        data->adjustDirectBeam(_beam_setter_widget->xOffset(), _beam_setter_widget->yOffset());
         auto* detector = data->diffractometer()->detector();
         auto& states = data->instrumentStates();
         _old_direct_beam_events = ohkl::algo::getDirectBeamEvents(states, *detector);
-        setInitialKi(data);
     }
 
     std::shared_ptr<ohkl::ProgressHandler> handler(new ohkl::ProgressHandler());
@@ -661,54 +601,24 @@ void SubframeAutoIndexer::toggleUnsafeWidgets()
 {
     _solve_button->setEnabled(false);
     _save_button->setEnabled(false);
+    _beam_setter_widget->setEnabled(false);
 
     if (!gSession->hasProject())
         return;
 
     _solve_button->setEnabled(gSession->currentProject()->hasPeakCollection());
     _save_button->setEnabled(!_solutions.empty());
-}
-
-void SubframeAutoIndexer::onBeamPosChanged(QPointF pos)
-{
-    const QSignalBlocker blocker(this);
-    auto data = _detector_widget->currentData();
-    _beam_offset_x->setValue(pos.x() - (static_cast<double>(data->nCols()) / 2.0));
-    _beam_offset_y->setValue(-pos.y() + (static_cast<double>(data->nRows()) / 2.0));
-}
-
-void SubframeAutoIndexer::onBeamPosSpinChanged()
-{
-    auto data = _detector_widget->currentData();
-    double x = _beam_offset_x->value() + static_cast<double>(data->nCols()) / 2.0;
-    double y = -_beam_offset_y->value() + static_cast<double>(data->nRows()) / 2.0;
-    emit beamPosChanged({x, y});
-}
-
-void SubframeAutoIndexer::changeCrosshair()
-{
-    emit crosshairChanged(_crosshair_size->value(), _crosshair_linewidth->value());
+    _beam_setter_widget->setEnabled(gSession->currentProject()->hasDataSet());
 }
 
 void SubframeAutoIndexer::toggleCursorMode()
 {
-    if (_set_initial_ki->isChecked()) {
+    if (_beam_setter_widget->crosshairOn()->isChecked()) {
         _stored_cursor_mode = _detector_widget->scene()->mode();
         _detector_widget->scene()->changeInteractionMode(7);
     } else {
         _detector_widget->scene()->changeInteractionMode(_stored_cursor_mode);
     }
-}
-
-void SubframeAutoIndexer::setInitialKi(ohkl::sptrDataSet data)
-{
-    const auto* detector = data->diffractometer()->detector();
-    const auto coords = _detector_widget->scene()->beamSetterCoords();
-
-    ohkl::DirectVector direct = detector->pixelPosition(coords.x(), coords.y());
-    for (ohkl::InstrumentState& state : data->instrumentStates())
-        state.adjustKi(direct);
-    emit gGui->sentinel->instrumentStatesChanged();
 }
 
 void SubframeAutoIndexer::showDirectBeamEvents()

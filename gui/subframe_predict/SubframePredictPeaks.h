@@ -33,15 +33,16 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
-class DetectorWidget;
 class CellComboBox;
+class DetectorWidget;
+class DirectBeamWidget;
 class PeakComboBox;
 class PeakItemGraphic;
 class PeakTableView;
 class PeakViewWidget;
 class SafeSpinBox;
 class SafeDoubleSpinBox;
-class SpoilerCheck;
+class Spoiler;
 class ShapeComboBox;
 
 namespace ohkl {
@@ -73,7 +74,7 @@ class SubframePredictPeaks : public QWidget {
 
  signals:
     void beamPosChanged(QPointF pos);
-    void crosshairChanged(int size, int linewidth);
+    void crosshairChanged(int size);
 
  private:
     //! Manually set the incident wavevector
@@ -147,17 +148,15 @@ class SubframePredictPeaks : public QWidget {
     QVBoxLayout* _left_layout;
     QSplitter* _right_element;
 
-    SpoilerCheck* _set_initial_ki;
-    SafeDoubleSpinBox* _beam_offset_x;
-    SafeDoubleSpinBox* _beam_offset_y;
-    QSlider* _crosshair_size;
-    SafeSpinBox* _crosshair_linewidth;
+    Spoiler* _set_initial_ki;
+    DirectBeamWidget* _beam_setter_widget;
+
+    PeakComboBox* _peak_combo;
     SafeSpinBox* _n_batches_spin;
     SafeSpinBox* _max_iter_spin;
     QComboBox* _residual_combo;
     QCheckBox* _direct_beam;
     QPushButton* _refine_ki_button;
-    PeakComboBox* _peak_combo;
 
     CellComboBox* _cell_combo;
     QComboBox* _integrator;

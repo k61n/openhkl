@@ -162,7 +162,7 @@ SubframeExperiment::SubframeExperiment()
         &DetectorScene::setBeamSetterPos);
     connect(
         this, &SubframeExperiment::crosshairChanged, _detector_widget->scene(),
-        &DetectorScene::onCrosshairChanged);
+        &DetectorScene::onCrosshairResized);
     connect(
         _data_combo, QOverload<int>::of(&QComboBox::currentIndexChanged),
         _detector_widget->dataCombo(), &QComboBox::setCurrentIndex);
@@ -742,7 +742,7 @@ void SubframeExperiment::refreshVisual()
     auto scene = _detector_widget->scene();
 
     if (_set_initial_ki->isChecked()) {
-        scene->addBeamSetter(_crosshair_size->value(), _crosshair_linewidth->value());
+        scene->addBeamSetter(_crosshair_size->value());
         changeCrosshair();
     }
     showDirectBeamEvents();
@@ -1136,7 +1136,7 @@ void SubframeExperiment::onBeamPosSpinChanged()
 
 void SubframeExperiment::changeCrosshair()
 {
-    emit crosshairChanged(_crosshair_size->value(), _crosshair_linewidth->value());
+    emit crosshairChanged(_crosshair_size->value(), 2);
 }
 
 void SubframeExperiment::toggleCursorMode()

@@ -51,6 +51,7 @@
 #include "gui/utility/SpoilerCheck.h"
 #include "gui/views/PeakTableView.h"
 #include "gui/widgets/DetectorWidget.h"
+#include "gui/widgets/DirectBeamWidget.h"
 #include "gui/widgets/PeakViewWidget.h"
 #include "tables/crystal/UnitCell.h"
 
@@ -95,7 +96,7 @@ SubframePredictPeaks::SubframePredictPeaks()
         &DetectorScene::setBeamSetterPos);
     connect(
         this, &SubframePredictPeaks::crosshairChanged, _detector_widget->scene(),
-        &DetectorScene::onCrosshairChanged);
+        &DetectorScene::onCrosshairResized);
 
     _detector_widget->scene()->linkDirectBeam(&_direct_beam_events, &_old_direct_beam_events);
 
@@ -668,8 +669,7 @@ void SubframePredictPeaks::refreshPeakVisual()
 {
     auto data = _detector_widget->currentData();
     if (_set_initial_ki->isChecked()) {
-        _detector_widget->scene()->addBeamSetter(
-            _crosshair_size->value(), _crosshair_linewidth->value());
+        _detector_widget->scene()->addBeamSetter(_crosshair_size->value());
         changeCrosshair();
     }
     _detector_widget->refresh();
@@ -727,5 +727,5 @@ void SubframePredictPeaks::onBeamPosSpinChanged()
 
 void SubframePredictPeaks::changeCrosshair()
 {
-    emit crosshairChanged(_crosshair_size->value(), _crosshair_linewidth->value());
+    emit crosshairChanged(_crosshair_size->value());
 }
