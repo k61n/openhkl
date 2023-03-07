@@ -44,6 +44,7 @@
 #include "gui/utility/PredictedPeakComboBox.h"
 #include "gui/utility/ShapeComboBox.h"
 #include "gui/utility/SideBar.h"
+#include "gui/widgets/DirectBeamWidget.h"
 
 #include <QCollator>
 #include <QDir>
@@ -115,6 +116,8 @@ Session::Session()
     _predicted_peak_combo = new PredictedPeakComboBox();
     _integrated_peak_combo = new IntegratedPeakComboBox();
     _shape_combo = new ShapeComboBox();
+
+    _beam_setter_widget = new DirectBeamWidget();
 }
 
 Project* Session::currentProject()
@@ -369,6 +372,12 @@ void Session::onDataChanged()
     _data_combo->clearAll();
     _data_combo->addDataSets(data);
     _data_combo->refreshAll();
+
+    double x_offset =
+        _data_combo->currentData()->diffractometer()->source().selectedMonochromator().xOffset();
+    double y_offset =
+        _data_combo->currentData()->diffractometer()->source().selectedMonochromator().yOffset();
+    _beam_setter_widget->onBeamPosChanged({x_offset, y_offset});
     onPeaksChanged();
 }
 

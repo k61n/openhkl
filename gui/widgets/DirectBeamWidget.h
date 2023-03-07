@@ -26,8 +26,11 @@ class DirectBeamWidget : public QGridLayout {
     Q_OBJECT
 
  public:
+    DirectBeamWidget();
     DirectBeamWidget(DetectorScene* scene);
 
+    //! Set the detector scene
+    void setDetectorScene(DetectorScene* scene);
     //! Return the position of the beam setter
     QPointF pos() const;
     //! Return the crosshair size

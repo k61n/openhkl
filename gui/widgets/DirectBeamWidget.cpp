@@ -22,19 +22,15 @@
 #include <QLabel>
 #include <QSignalBlocker>
 #include <QSlider>
-#include <qnamespace.h>
-#include <qobject.h>
-#include <qvector.h>
 
 QVector<DirectBeamWidget*> DirectBeamWidget::_beam_widgets;
 
-DirectBeamWidget::DirectBeamWidget(DetectorScene* scene)
+DirectBeamWidget::DirectBeamWidget()
     : QGridLayout()
     , _toggle_crosshair(new QCheckBox("Set initial direct beam position"))
     , _x_offset(new QDoubleSpinBox)
     , _y_offset(new QDoubleSpinBox)
     , _crosshair_size(new QSlider(Qt::Horizontal))
-    , _scene(scene)
 {
     _beam_widgets.push_back(this);
 
@@ -62,6 +58,16 @@ DirectBeamWidget::DirectBeamWidget(DetectorScene* scene)
     addWidget(_crosshair_size, row++, 1, 1, 1);
 
     toggleControlState();
+}
+
+DirectBeamWidget::DirectBeamWidget(DetectorScene* scene) : DirectBeamWidget()
+{
+    setDetectorScene(scene);
+}
+
+void DirectBeamWidget::setDetectorScene(DetectorScene* scene)
+{
+    _scene = scene;
 
     connect(
         _toggle_crosshair, &QCheckBox::stateChanged, this, &DirectBeamWidget::toggleControlState);
@@ -72,6 +78,7 @@ DirectBeamWidget::DirectBeamWidget(DetectorScene* scene)
     connect(
         _y_offset, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
         this, &DirectBeamWidget::onSpinChanged);
+
     connect(this, &DirectBeamWidget::beamPosChanged, scene, &DetectorScene::setBeamSetterPos);
     connect(scene, &DetectorScene::beamPosChanged, this, &DirectBeamWidget::onBeamPosChanged);
     connect(_crosshair_size, &QSlider::valueChanged, scene, &DetectorScene::onCrosshairResized);

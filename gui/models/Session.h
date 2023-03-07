@@ -24,6 +24,7 @@
 class Project;
 class CellComboBox;
 class DataComboBox;
+class DirectBeamWidget;
 class PeakComboBox;
 class FoundPeakComboBox;
 class PredictedPeakComboBox;
@@ -88,6 +89,9 @@ class Session {
     PredictedPeakComboBox* _predicted_peak_combo;
     IntegratedPeakComboBox* _integrated_peak_combo;
     ShapeComboBox* _shape_combo;
+
+    // For tracking the direct beam offset
+    DirectBeamWidget* _beam_setter_widget;
 };
 
 #endif // OHKL_GUI_MODELS_SESSION_H
