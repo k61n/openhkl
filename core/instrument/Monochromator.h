@@ -30,7 +30,7 @@ class Monochromator {
     Monochromator(const YAML::Node& node);
 
     //! Returns the name for this monochromator
-    const std::string& name() const;
+    const std::string& name() const { return _name; };
 
     //! Sets the name for this monochromator
     void setName(const std::string& name) { _name = name; };
