@@ -136,9 +136,10 @@ void DirectBeamWidget::addLabel(int row, const QString& text, const QString& too
 
 void DirectBeamWidget::toggleBeamSetter()
 {
-    if (_toggle_crosshair->isChecked())
-        _scene->addBeamSetter(_crosshair_size->value());
-    else
+    if (_toggle_crosshair->isChecked()) {
+        QPointF offset(_x_offset->value(), _y_offset->value());
+        _scene->addBeamSetter(offset, _crosshair_size->value());
+    } else
         _scene->removeBeamSetter();
 }
 

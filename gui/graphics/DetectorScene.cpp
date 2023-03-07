@@ -92,7 +92,7 @@ void DetectorScene::onGradientSetting(int kernel, bool fft)
     }
 }
 
-void DetectorScene::addBeamSetter(int size)
+void DetectorScene::addBeamSetter(const QPointF& pos, int size)
 {
     if (_beam_pos_setter) {
         removeBeamSetter();
@@ -102,6 +102,7 @@ void DetectorScene::addBeamSetter(int size)
     _beam_pos_setter = new CrosshairGraphic(_current_beam_position);
     _beam_pos_setter->setSize(size);
     _beam_pos_setter->setLinewidth(2);
+    setBeamSetterPos(pos);
     addItem(_beam_pos_setter);
 }
 
@@ -558,11 +559,11 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
                 emit dataChanged();
             }
         } else if (_mode == DRAG_DROP) {
-            _current_dragged_item->setPos(event->scenePos());
             int size = _current_dragged_item->size();
             sendBeamOffset(event->scenePos());
             _current_beam_position = event->scenePos();
-            addBeamSetter(size);
+            addBeamSetter(event->scenePos(), size);
+            _current_dragged_item->setPos(event->scenePos());
         } else {
             for (const auto& graphic : _peak_graphics) {
                 PeakCollectionModel* model = graphic->peakModel();

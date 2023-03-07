@@ -101,7 +101,7 @@ class DetectorScene : public QGraphicsScene {
     //! Get the current intensity
     int intensity() { return _params.intensity; };
     //! Set up the direct beam crosshair
-    void addBeamSetter(int size);
+    void addBeamSetter(const QPointF& pos, int size);
     //! Remove the beam crosshair from the scene
     void removeBeamSetter();
     //! Show/hide the beam setter crosshair
