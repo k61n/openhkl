@@ -63,6 +63,8 @@ class InstrumentStateSet {
     InstrumentStateList getInstrumentStateList() { return _instrument_states; };
     //! Return a single InstrumentState by frame index
     const InstrumentState* state(std::size_t frame);
+    //! Apply the direct beam offset specified by the instrument (yml2c) file
+    void applyBeamOffset();
 
 
  private:

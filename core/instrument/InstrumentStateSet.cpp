@@ -31,9 +31,8 @@ InstrumentStateSet::InstrumentStateSet(DataSet* data, const InstrumentStateList&
     _name = data->name();
     _nframes = data->nFrames();
     // _instrument_states.reserve(_nframes);
-    for (const auto& state : states) {
+    for (const auto& state : states)
         _instrument_states.push_back(state);
-    }
 }
 
 InstrumentStateSet::InstrumentStateSet(sptrDataSet data) : _id(0), _data(data.get())
@@ -44,17 +43,9 @@ InstrumentStateSet::InstrumentStateSet(sptrDataSet data) : _id(0), _data(data.ge
     _name = data->name();
     _nframes = data->nFrames();
     // _instrument_states.reserve(_nframes);
-    const auto& mono = _data->diffractometer()->source().selectedMonochromator();
-    double x_coord = mono.xOffset() + static_cast<double>(_data->nCols() / 2.0);
-    double y_coord = mono.yOffset() + static_cast<double>(_data->nRows() / 2.0);
-    DirectVector direct = _data->detector().pixelPosition(x_coord, y_coord);
-    ohklLog(
-        Level::Info, "Adjusting incident wavevector for direct beam at coordinates (",
-        x_coord, ", ", y_coord, ")");
 
     for (unsigned int i = 0; i < _nframes; ++i) {
         InstrumentState state = data->diffractometer()->instrumentState(i);
-        state.adjustKi(direct);
         _instrument_states.push_back(state);
     }
 }
@@ -86,6 +77,18 @@ const InstrumentState* InstrumentStateSet::state(std::size_t frame)
     if (frame > _instrument_states.size())
         throw std::runtime_error("InstrumentStateSet::state: frame index out of range");
     return &_instrument_states.at(frame);
+}
+
+void InstrumentStateSet::applyBeamOffset()
+{
+    ohklLog(Level::Info, "InstrumentStateSet::applyBeamOffset: Adjusting incident wavevector");
+    const auto& mono = _data->diffractometer()->source().selectedMonochromator();
+    double x_coord = mono.xOffset() + static_cast<double>(_data->nCols() / 2.0);
+    double y_coord = mono.yOffset() + static_cast<double>(_data->nRows() / 2.0);
+    ohklLog(Level::Info, "Setting direct beam position to (", x_coord, ", ", y_coord, ")");
+    DirectVector direct = _data->detector().pixelPosition(x_coord, y_coord);
+    for (auto& state : _instrument_states)
+        state.adjustKi(direct);
 }
 
 } // namespace ohkl
