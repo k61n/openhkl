@@ -373,11 +373,13 @@ void Session::onDataChanged()
     _data_combo->addDataSets(data);
     _data_combo->refreshAll();
 
-    double x_offset =
-        _data_combo->currentData()->diffractometer()->source().selectedMonochromator().xOffset();
-    double y_offset =
-        _data_combo->currentData()->diffractometer()->source().selectedMonochromator().yOffset();
-    _beam_setter_widget->onBeamPosChanged({x_offset, y_offset});
+    if (gSession->currentProject()->hasDataSet()) {
+        double x_offset =
+            _data_combo->currentData()->diffractometer()->source().selectedMonochromator().xOffset();
+        double y_offset =
+            _data_combo->currentData()->diffractometer()->source().selectedMonochromator().yOffset();
+        _beam_setter_widget->onBeamPosChanged({x_offset, y_offset});
+    }
     onPeaksChanged();
 }
 
