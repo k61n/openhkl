@@ -51,8 +51,8 @@
 #include <QPainterPath>
 #include <QPixmap>
 #include <QToolTip>
+
 #include <opencv2/core/types.hpp>
-#include <qpoint.h>
 
 QPointF DetectorScene::_current_beam_position = {0, 0};
 
@@ -569,7 +569,8 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
                 std::vector<ohkl::Peak3D*> peaks;
                 std::map<ohkl::Peak3D*, ohkl::RejectionFlag> tmp_map;
                 if (model->root())
-                    peaks = model->root()->peakCollection()->getPeakList();
+                    if (model->root()->childCount() > 0)
+                        peaks = model->root()->peakCollection()->getPeakList();
                 if (CutterItem* p = dynamic_cast<CutterItem*>(_lastClickedGI)) {
                     _lastClickedGI = nullptr;
                     removeItem(p);

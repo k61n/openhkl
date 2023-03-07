@@ -55,6 +55,7 @@
 #include <QSplitter>
 #include <QTabWidget>
 #include <QVBoxLayout>
+
 #include <stdexcept>
 
 
@@ -369,8 +370,6 @@ void SubframeAutoIndexer::changeSelected(PeakItemGraphic* peak_graphic)
 
 void SubframeAutoIndexer::refreshPeakVisual()
 {
-    auto data = _detector_widget->currentData();
-
     showDirectBeamEvents();
     _detector_widget->refresh();
 }

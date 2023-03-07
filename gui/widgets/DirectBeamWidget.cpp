@@ -23,6 +23,8 @@
 #include <QSignalBlocker>
 #include <QSlider>
 #include <qnamespace.h>
+#include <qobject.h>
+#include <qvector.h>
 
 QVector<DirectBeamWidget*> DirectBeamWidget::_beam_widgets;
 
@@ -115,9 +117,7 @@ void DirectBeamWidget::onBeamPosChanged(QPointF pos)
     QSignalBlocker blocker2(_y_offset);
     _x_offset->setValue(pos.x());
     _y_offset->setValue(pos.y());
-    for (auto* widget : _beam_widgets)
-        if (widget != this)
-            widget->onBeamPosChanged(pos);
+    updateAllWidgets(pos);
 }
 
 void DirectBeamWidget::onSpinChanged()
@@ -151,5 +151,21 @@ void DirectBeamWidget::toggleControlState()
         _x_offset->setEnabled(true);
         _y_offset->setEnabled(true);
         _crosshair_size->setEnabled(true);
+    }
+}
+
+void DirectBeamWidget::updateSpins(QPointF pos)
+{
+    QSignalBlocker blocker1(_x_offset);
+    QSignalBlocker blocker2(_y_offset);
+    _x_offset->setValue(pos.x());
+    _y_offset->setValue(pos.y());
+}
+
+void DirectBeamWidget::updateAllWidgets(QPointF pos)
+{
+    for (auto* widget : _beam_widgets) {
+        if (widget != this)
+            widget->updateSpins(pos);
     }
 }

@@ -59,6 +59,8 @@ class DirectBeamWidget : public QGridLayout {
 
  private:
     void addLabel(int row, const QString& text, const QString& tooltip);
+    void updateSpins(QPointF pos);
+    void updateAllWidgets(QPointF pos);
 
     QCheckBox* _toggle_crosshair;
     QDoubleSpinBox* _x_offset;

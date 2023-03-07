@@ -32,7 +32,6 @@
 #include <QStack>
 
 #include <opencv2/core/types.hpp>
-#include <qpoint.h>
 
 namespace ohkl {
 class KeyPointCollection;

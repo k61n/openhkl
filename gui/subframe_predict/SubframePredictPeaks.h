@@ -68,14 +68,6 @@ class SubframePredictPeaks : public QWidget {
     //! Get shape collection parameters
     void grabShapeModelParameters();
 
- public slots:
-    void onBeamPosChanged(QPointF pos);
-    void onBeamPosSpinChanged();
-
- signals:
-    void beamPosChanged(QPointF pos);
-    void crosshairChanged(int size);
-
  private:
     //! Manually set the incident wavevector
     void setAdjustBeamUp();
@@ -89,8 +81,6 @@ class SubframePredictPeaks : public QWidget {
     void setProceedUp();
     //! Set the peak table view up
     void setPeakTableUp();
-    //! Set up the detector figure up
-    void setFigureUp();
     //! Set the controls to show/hide peaks in detector scene
     void setPreviewUp();
     //! Set the save button up
@@ -102,10 +92,6 @@ class SubframePredictPeaks : public QWidget {
     void setPredictorParameters();
     //! Set shape collection parameters
     void setShapeModelParameters();
-    //! Adjust position of the visualised direct beam when spin box is changed
-    void adjustDirectBeam();
-    //! Allow the user to manual input the initial direct beam position
-    void setInitialKi(ohkl::sptrDataSet data);
     //! Refine the incident wavevector
     void refineKi();
     //! Refresh the found peaks list
