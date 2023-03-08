@@ -27,6 +27,7 @@
 
 class CellComboBox;
 class DataComboBox;
+class DirectBeamWidget;
 class FoundPeakComboBox;
 class PeakComboBox;
 class DetectorWidget;
@@ -55,14 +56,6 @@ class SubframeAutoIndexer : public QWidget {
     void refreshAll();
     //! Get the parameters of the indexer
     void grabIndexerParameters();
-
- public slots:
-    void onBeamPosChanged(QPointF pos);
-    void onBeamPosSpinChanged();
-
- signals:
-    void beamPosChanged(QPointF pos);
-    void crosshairChanged(int size, int linewidth);
 
  private:
     //! Build the input
@@ -104,8 +97,6 @@ class SubframeAutoIndexer : public QWidget {
     void changeCrosshair();
     //! Toggle cursor mode
     void toggleCursorMode();
-    //! Set the initial value of ki from the crosshair position
-    void setInitialKi(ohkl::sptrDataSet data);
     //! Show direct beam position computed from unit cell in DetectorScene
     void showDirectBeamEvents();
 
@@ -131,12 +122,8 @@ class SubframeAutoIndexer : public QWidget {
     DataComboBox* _data_combo;
     PeakComboBox* _peak_combo;
 
-    SpoilerCheck* _set_initial_ki;
-    QCheckBox* _direct_beam;
-    SafeDoubleSpinBox* _beam_offset_x;
-    SafeDoubleSpinBox* _beam_offset_y;
-    QSlider* _crosshair_size;
-    SafeSpinBox* _crosshair_linewidth;
+    Spoiler* _set_initial_ki;
+    DirectBeamWidget* _beam_setter_widget;
 
     SafeSpinBox* _min_frame;
     SafeSpinBox* _max_frame;

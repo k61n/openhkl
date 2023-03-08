@@ -30,6 +30,7 @@
 class CellComboBox;
 class DataComboBox;
 class DetectorWidget;
+class DirectBeamWidget;
 class PeakViewWidget;
 class PlotPanel;
 class PropertyPanel;
@@ -131,16 +132,10 @@ class SubframeExperiment : public QWidget {
     void selectAllMasks();
 
  public slots:
-    void onBeamPosChanged(QPointF pos);
-    void onBeamPosSpinChanged();
     void onMaskChanged();
     void onMaskSelected();
     //! Reset DetectorScene interaction mode
     void resetMode(int index);
-
- signals:
-    void beamPosChanged(QPointF pos);
-    void crosshairChanged(int size, int linewidth);
 
  private:
     void refreshPeaks();
@@ -170,12 +165,8 @@ class SubframeExperiment : public QWidget {
     QSpinBox* _maxY;
 
     // direct beam adjustment
-    SpoilerCheck* _set_initial_ki;
-    QCheckBox* _direct_beam;
-    SafeDoubleSpinBox* _beam_offset_x;
-    SafeDoubleSpinBox* _beam_offset_y;
-    QSlider* _crosshair_size;
-    SafeSpinBox* _crosshair_linewidth;
+    Spoiler* _set_initial_ki;
+    DirectBeamWidget* _beam_setter_widget;
 
     // 2D peak finder
     DataComboBox* _data_combo;

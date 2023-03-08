@@ -14,6 +14,8 @@
 
 #include "core/instrument/InstrumentStateSet.h"
 
+#include "base/geometry/DirectVector.h"
+#include "base/utils/Logger.h"
 #include "core/data/DataSet.h"
 #include "core/data/DataTypes.h"
 #include "core/instrument/Diffractometer.h"
@@ -24,27 +26,34 @@ namespace ohkl {
 InstrumentStateSet::InstrumentStateSet(DataSet* data, const InstrumentStateList& states)
     : _id(0), _data(data), _instrument_states(states)
 {
+    ohklLog(
+        Level::Info, "InstrumentStateSet::InstrumentStateSet: adding given state list to DataSet");
     _name = data->name();
     _nframes = data->nFrames();
     // _instrument_states.reserve(_nframes);
-    for (const auto& state : states) {
+    for (const auto& state : states)
         _instrument_states.push_back(state);
-    }
 }
 
 InstrumentStateSet::InstrumentStateSet(sptrDataSet data) : _id(0), _data(data.get())
 {
+    ohklLog(
+        Level::Info,
+        "InstrumentStateSet::InstrumentStateSet: generating default states for DataSet");
     _name = data->name();
     _nframes = data->nFrames();
     // _instrument_states.reserve(_nframes);
 
-    for (unsigned int i = 0; i < _nframes; ++i)
-        _instrument_states.push_back(data->diffractometer()->instrumentState(i));
+    for (unsigned int i = 0; i < _nframes; ++i) {
+        InstrumentState state = data->diffractometer()->instrumentState(i);
+        _instrument_states.push_back(state);
+    }
 }
 
 InstrumentStateSet::InstrumentStateSet(sptrDataSet data, const InstrumentStateList& states)
     : _id(0), _data(data.get()), _instrument_states(states)
 {
+    ohklLog(Level::Info, "InstrumentStateSet::InstrumentStateSet: adding given states to DataSet");
     _name = data->name();
     _nframes = data->nFrames();
 }
@@ -68,6 +77,18 @@ const InstrumentState* InstrumentStateSet::state(std::size_t frame)
     if (frame > _instrument_states.size())
         throw std::runtime_error("InstrumentStateSet::state: frame index out of range");
     return &_instrument_states.at(frame);
+}
+
+void InstrumentStateSet::applyBeamOffset()
+{
+    ohklLog(Level::Info, "InstrumentStateSet::applyBeamOffset: Adjusting incident wavevector");
+    const auto& mono = _data->diffractometer()->source().selectedMonochromator();
+    double x_coord = mono.xOffset() + static_cast<double>(_data->nCols() / 2.0);
+    double y_coord = mono.yOffset() + static_cast<double>(_data->nRows() / 2.0);
+    ohklLog(Level::Info, "Setting direct beam position to (", x_coord, ", ", y_coord, ")");
+    DirectVector direct = _data->detector().pixelPosition(x_coord, y_coord);
+    for (auto& state : _instrument_states)
+        state.adjustKi(direct);
 }
 
 } // namespace ohkl

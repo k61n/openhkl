@@ -161,6 +161,8 @@ const std::string ym_angularWidth{"angular_width"};
 const std::string ym_height{"height"};
 const std::string ym_fwhm{"fwhm"};
 const std::string ym_wavelength{"wavelength"};
+const std::string ym_xoffset{"offset_x"};
+const std::string ym_yoffset{"offset_y"};
 const std::string ym_goniometerName{"name"};
 const std::string ym_axis{"axis"};
 const std::string ym_axisType{"type"};
