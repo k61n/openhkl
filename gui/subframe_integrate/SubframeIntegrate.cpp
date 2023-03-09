@@ -203,6 +203,7 @@ void SubframeIntegrate::grabIntegrationParameters()
     _max_counts->setValue(params->max_counts);
     _radius_int->setValue(params->neighbour_range_pixels);
     _n_frames_int->setValue(params->neighbour_range_frames);
+    _max_strength->setValue(params->max_strength);
     _fit_center->setChecked(params->fit_center);
     _fit_covariance->setChecked(params->fit_cov);
     _min_neighbours->setValue(params->min_neighbors);
@@ -211,6 +212,7 @@ void SubframeIntegrate::grabIntegrationParameters()
     _gradient_kernel->setCurrentIndex(static_cast<int>(params->gradient_type));
     _remove_masked->setChecked(params->skip_masked);
     _remove_overlaps->setChecked(params->remove_overlaps);
+    _use_max_strength->setChecked(params->use_max_strength);
 
     _integrator_combo->setCurrentIndex(static_cast<int>(params->integrator_type));
 
@@ -233,6 +235,7 @@ void SubframeIntegrate::setIntegrationParameters()
     params->max_counts = _max_counts->value();
     params->neighbour_range_pixels = _radius_int->value();
     params->neighbour_range_frames = _n_frames_int->value();
+    params->max_strength = _max_strength->value();
     params->fit_center = _fit_center->isChecked();
     params->fit_cov = _fit_covariance->isChecked();
     params->min_neighbors = _min_neighbours->value();
@@ -252,6 +255,7 @@ void SubframeIntegrate::setIntegrationParameters()
     params->gradient_type = static_cast<ohkl::GradientKernel>(_gradient_kernel->currentIndex());
     params->skip_masked = _remove_masked->isChecked();
     params->remove_overlaps = _remove_overlaps->isChecked();
+    params->use_max_strength = _use_max_strength->isChecked();
 
     for (auto it = ohkl::regionTypeDescription.begin(); it != ohkl::regionTypeDescription.end();
          ++it)
@@ -319,6 +323,24 @@ void SubframeIntegrate::setIntegrateUp()
     grid->addWidget(label, 0, 0, 1, 1);
     grid->addWidget(_max_counts, 0, 1, 1, 1);
     f.addWidget(_discard_saturated);
+
+    _use_max_strength = new QGroupBox("Maximum strength for profile integration");
+    _use_max_strength->setAlignment(Qt::AlignLeft);
+    _use_max_strength->setCheckable(true);
+    _use_max_strength->setChecked(false);
+    _use_max_strength->setToolTip(
+        "Skip profile integration of peaks with sum intensity strength above maximum");
+
+    _max_strength = new SafeDoubleSpinBox();
+    _max_strength->setMaximum(1e9);
+
+    label = new QLabel("Maximum strength");
+    label->setToolTip("Maximum strength for peak to be profile integrated");
+    grid = new QGridLayout();
+    _use_max_strength->setLayout(grid);
+    grid->addWidget(label, 0, 0, 1, 1);
+    grid->addWidget(_max_strength, 0, 1, 1, 1);
+    f.addWidget(_use_max_strength);
 
     _compute_gradient = new QGroupBox("Compute gradient");
     _compute_gradient->setAlignment(Qt::AlignLeft);
@@ -480,6 +502,7 @@ void SubframeIntegrate::toggleUnsafeWidgets()
 {
     _integrate_button->setEnabled(false);
     _remove_overlaps->setEnabled(false);
+    _use_max_strength->setEnabled(false);
 
     if (!gSession->hasProject())
         return;
@@ -494,8 +517,10 @@ void SubframeIntegrate::toggleUnsafeWidgets()
 
     if (_integrator_combo->currentIndex() == 0)
         _integrate_button->setEnabled(true);
-    else
+    else {
         _integrate_button->setEnabled(gSession->currentProject()->hasShapeModel());
+        _use_max_strength->setEnabled(true);
+    }
 }
 
 
