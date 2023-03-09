@@ -45,7 +45,6 @@
 
 #include <memory>
 #include <regex>
-#include <regex>
 #include <stdexcept>
 
 namespace ohkl {
