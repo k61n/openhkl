@@ -28,18 +28,18 @@ class ShapeModel;
 class ShapeIntegrator : public PixelSumIntegrator {
  public:
     //! Construct the integrator with the given shape collection, bounding box, and box shape.
-    ShapeIntegrator(ShapeModel* lib, const AABB& aabb, int nx, int ny, int nz);
+    ShapeIntegrator(ShapeModel* lib, const AABB& aabb, int nx, int ny, int nz, int subdiv = 1);
 
  protected:
     //! Integrate a peak
     bool compute(Peak3D* peak, ShapeModel* shape_model, const IntegrationRegion& region) override;
     //! Returns the collection of cached peak shapes
-    const ShapeModel* collection() const;
+    const ShapeModel* shapeModel() const;
 
  private:
-    ShapeModel* _collection;
+    ShapeModel* _shape_model;
     AABB _aabb;
-    int _nx, _ny, _nz;
+    int _nx, _ny, _nz, _nsubdiv;
 };
 
 /*! @}*/

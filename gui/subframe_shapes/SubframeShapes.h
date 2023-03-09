@@ -118,6 +118,7 @@ class SubframeShapes : public QWidget {
     SafeSpinBox* _nx;
     SafeSpinBox* _ny;
     SafeSpinBox* _nz;
+    SafeSpinBox* _nsubdiv;
 
     QGroupBox* _kabsch;
 

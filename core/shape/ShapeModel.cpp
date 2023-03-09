@@ -47,6 +47,7 @@ void ShapeModelParameters::log(const Level& level) const
     ohklLog(level, "nbins_x                = ", nbins_x);
     ohklLog(level, "nbins_y                = ", nbins_y);
     ohklLog(level, "nbins_z                = ", nbins_z);
+    ohklLog(level, "n_subdiv               = ", n_subdiv);
     ohklLog(level, "min_n_neighbors        = ", min_n_neighbors);
     ohklLog(level, "sigma_m                = ", sigma_m);
     ohklLog(level, "sigma_d                = ", sigma_d);
@@ -143,6 +144,7 @@ ShapeModel::ShapeModel(std::shared_ptr<ShapeModelParameters> params)
     _choleskyD.fill(1e-6);
     _choleskyM.fill(1e-6);
     _choleskyS.fill(1e-6);
+    _params->log(Level::Info);
 }
 
 void ShapeModel::setId(unsigned int id)
@@ -247,6 +249,7 @@ void ShapeModel::setParameters(std::shared_ptr<ShapeModelParameters> params)
 {
     _params.reset();
     _params = params;
+    _params->log(Level::Info);
 }
 
 Eigen::Matrix3d ShapeModel::predictCovariance(Peak3D* peak) const
