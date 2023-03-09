@@ -178,26 +178,16 @@ class DataSet {
     //! check tiff file resolutions
     static std::string checkTiffResolution(std::vector<std::string> filenames);
 
-    //! get tiff file resolutions
-    static std::vector<std::string> getTiffResolutions(std::vector<std::string> filenames);
-
-    //! check tiff file resolutions
-    static std::string checkTiffResolution(std::vector<std::string> filenames);
-
     virtual void setNFrames(std::size_t nframes) { std::ignore = nframes; };
 
     //! Data shape (columns, rows, frames)
     std::size_t datashape[3]{0, 0, 0};
+    //! Reads the bit depth values from a given tiff files
+    int getTiffBitDepth(std::vector<std::string> filenames);
 
-    void setRebin(float nbins) {_rebin = nbins;}
 
-    //! get tiff file resolutions
-    static std::vector<std::string> getTiffResolutions(std::vector<std::string> filenames);
 
-    //! check tiff file resolutions
-    static std::string checkTiffResolution(std::vector<std::string> filenames);
-
- private:
+ protected:
     void setReader(const DataFormat dataformat, const std::string& filename = "");
 
     std::string _name = ohkl::kw_datasetDefaultName;
