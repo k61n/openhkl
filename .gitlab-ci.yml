@@ -41,12 +41,6 @@ test:archlinux:
 pages:
   stage: deploy:doc
   script:
-    - python3 -m pip install -U pip
-    - python3 -m pip install
-        sphinx
-        sphinxcontrib-bibtex
-        sphinx-press-theme
-        breathe
     - cd build
     - cmake ..
     - make docs
