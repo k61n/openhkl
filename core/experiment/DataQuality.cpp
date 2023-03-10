@@ -28,11 +28,11 @@ namespace ohkl {
 
 void DataQuality::computeQuality(MergedData& merged_peaks, bool sum_intensities)
 {
-    nobserved = merged_peaks.nUnique();
+    nobserved = merged_peaks.totalSize();
     int max_peaks = merged_peaks.maxPeaks();
-    nunique = merged_peaks.mergedPeakSet().size();
+    nunique = merged_peaks.nUnique();
     redundancy = merged_peaks.redundancy();
-    Completeness = static_cast<double>(nobserved) / static_cast<double>(max_peaks);
+    Completeness = static_cast<double>(nunique) / static_cast<double>(max_peaks);
 
     ohkl::RFactor rfactor(sum_intensities);
     rfactor.calculate(&merged_peaks);

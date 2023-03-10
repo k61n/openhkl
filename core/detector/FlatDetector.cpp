@@ -116,11 +116,8 @@ DetectorEvent FlatDetector::constructEvent(
     px = 0.5 * (_nCols * (2 * v[0] / _width + 1) - 1);
     py = 0.5 * (_nRows * (2 * v[2] / _height + 1) - 1);
 
-    // if (px < 0 || px > _nCols || py < 0 || py > _nRows)
-    //     return {}; // no event
-
-    // We used to discard events that fall outside the detector image, but this interferes
-    // with the completeness calculation, so I allow them at this stage - zamaan
+    if (px < 0 || px > _nCols || py < 0 || py > _nRows)
+        return {}; // no event
 
     return {px, py, frame, tof};
 }

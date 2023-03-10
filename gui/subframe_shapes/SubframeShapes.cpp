@@ -101,6 +101,7 @@ void SubframeShapes::setInputUp()
     _nx = f.addSpinBox("histogram bins x", "Number of histogram bins in x direction");
     _ny = f.addSpinBox("histogram bins y", "Number of histogram bins in y direction");
     _nz = f.addSpinBox("histogram bins frames", "Number of histogram bins about rotation axis");
+    _nsubdiv = f.addSpinBox("Subdivisions", "Number of subdivisions along each axis per pixel");
 
     _sigma_d = new SafeDoubleSpinBox();
     _sigma_m = new SafeDoubleSpinBox();
@@ -391,6 +392,7 @@ void SubframeShapes::grabShapeParameters()
         _nx->setValue(_params->nbins_x);
         _ny->setValue(_params->nbins_y);
         _nz->setValue(_params->nbins_z);
+        _nsubdiv->setValue(_params->n_subdiv);
         _pixel_radius->setValue(_params->neighbour_range_pixels);
         _frame_radius->setValue(_params->neighbour_range_frames);
         _sigma_m->setValue(_peak_combo->currentPeakCollection()->sigmaM());
@@ -414,6 +416,7 @@ void SubframeShapes::setShapeParameters()
     _params->nbins_x = _nx->value();
     _params->nbins_y = _ny->value();
     _params->nbins_z = _nz->value();
+    _params->n_subdiv = _nsubdiv->value();
     _params->neighbour_range_pixels = _pixel_radius->value();
     _params->neighbour_range_frames = _frame_radius->value();
     _params->sigma_m = _sigma_m->value();
@@ -482,7 +485,7 @@ void SubframeShapes::buildShapeModel()
         ohkl::sptrDataSet data = _data_combo->currentData();
         _shape_model->integrate(fit_peaks, data, handler);
 
-        _shape_model->updateFit(1000);
+        // _shape_model->updateFit(1000);
     } catch (std::exception& e) {
         QMessageBox::critical(this, "Error", QString(e.what()));
     }

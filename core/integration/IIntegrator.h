@@ -49,6 +49,8 @@ struct IntegrationParameters {
     double neighbour_range_pixels = 500.0;
     //! Search radius for neighbouring peaks (frames)
     double neighbour_range_frames = 10.0;
+    //! Maximum strength for profile integration
+    double max_strength = 100;
     //! Whether to update the peak centre after integration
     bool fit_center = true;
     //! Whether to update the peak covariance after integration
@@ -71,6 +73,8 @@ struct IntegrationParameters {
     bool skip_masked = true;
     //! Whether to remove peaks with overlapping peak integration regions
     bool remove_overlaps = false;
+    //! Whether to skip profile integration of with sum intensity above max_strenght
+    bool use_max_strength = false;
 
     void log(const Level& level) const;
 };

@@ -128,16 +128,13 @@ DetectorEvent CylindricalDetector::constructEvent(
 
     double phi = atan2(v[0], v[1]) + 0.5 * _angularWidth;
 
-    // if (phi < 0 || phi >= _angularWidth)
-    //     return {}; // no_event
+    if (phi < 0 || phi >= _angularWidth)
+        return {}; // no_event
 
     double d = v[2] / _height + 0.5;
 
-    // if (d < 0 || d > 1.0)
-    //     return {}; // no_event
-
-    // We used to discard events that fall outside the detector image, but this interferes
-    // with the completeness calculation, so I allow them at this stage - zamaan
+    if (d < 0 || d > 1.0)
+        return {}; // no_event
 
     px = phi / _angularWidth * (_nCols - 1);
     py = d * (_nRows - 1);

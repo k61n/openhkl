@@ -132,6 +132,8 @@ class SubframeIntegrate : public QWidget {
     ShapeComboBox* _shape_combo;
     QGroupBox* _discard_saturated;
     SafeDoubleSpinBox* _max_counts;
+    QGroupBox* _use_max_strength;
+    SafeDoubleSpinBox* _max_strength;
     QGroupBox* _compute_gradient;
     QComboBox* _gradient_kernel;
     QCheckBox* _fft_gradient;

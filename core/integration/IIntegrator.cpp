@@ -38,6 +38,7 @@ void IntegrationParameters::log(const Level& level) const
     ohklLog(level, "fixed_bkg_end          = ", fixed_bkg_end);
     ohklLog(level, "neighbour_range_pixels = ", neighbour_range_pixels);
     ohklLog(level, "neighbour_range_frames = ", neighbour_range_frames);
+    ohklLog(level, "max_strength           = ", max_strength);
     ohklLog(level, "fit_center             = ", fit_center);
     ohklLog(level, "fit_cov                = ", fit_cov);
     ohklLog(level, "integrator_type        = ", static_cast<int>(integrator_type));
@@ -47,6 +48,7 @@ void IntegrationParameters::log(const Level& level) const
     ohklLog(level, "gradient_type          = ", static_cast<int>(gradient_type));
     ohklLog(level, "skip_masked            = ", skip_masked);
     ohklLog(level, "remove_overlaps        = ", remove_overlaps);
+    ohklLog(level, "use_max_strength       = ", use_max_strength);
 }
 
 IIntegrator::IIntegrator()
@@ -83,6 +85,13 @@ void IIntegrator::integrate(
         _handler->setStatus(oss.str().c_str());
         _handler->setProgress(0);
     }
+
+    bool profile_integration = false;
+    if (_params.integrator_type == IntegratorType::Profile1D ||
+        _params.integrator_type == IntegratorType::Profile3D ||
+        _params.integrator_type == IntegratorType::Gaussian)
+        profile_integration = true;
+
 
     size_t idx = 0;
     int num_frames_done = 0;
@@ -179,6 +188,19 @@ void IIntegrator::integrate(
                 result = current_peak->advanceFrame(current_frame, mask, idx, gradient);
             else
                 result = current_peak->advanceFrame(current_frame, mask, idx);
+
+            // Skip strong peaks during profile integration
+            if (profile_integration && _params.use_max_strength) {
+                if (peak->sumIntensity().strength() > _params.max_strength) {
+                    peak->updateIntegration(
+                        _rockingCurve, peak->sumBackground(), peak->sumBackground(),
+                        peak->meanBkgGradient(), peak->sumIntensity(), peak->sumIntensity(),
+                         _params.peak_end, _params.bkg_begin, _params.bkg_end, _params.region_type);
+                    result = false;
+                    integrated[peak] = true;
+                }
+            }
+
             // this allows for partials at end of data
             result |= idx == data->nFrames() - 1;
 

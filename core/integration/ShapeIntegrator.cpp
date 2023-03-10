@@ -24,8 +24,15 @@
 
 namespace ohkl {
 
-ShapeIntegrator::ShapeIntegrator(ShapeModel* lib, const AABB& aabb, int nx, int ny, int nz)
-    : PixelSumIntegrator(false, false), _collection(lib), _aabb(aabb), _nx(nx), _ny(ny), _nz(nz)
+ShapeIntegrator::ShapeIntegrator(
+    ShapeModel* lib, const AABB& aabb, int nx, int ny, int nz, int subdiv)
+    : PixelSumIntegrator(false, false)
+    , _shape_model(lib)
+    , _aabb(aabb)
+    , _nx(nx)
+    , _ny(ny)
+    , _nz(nz)
+    , _nsubdiv(subdiv)
 {
 }
 
@@ -65,21 +72,27 @@ bool ShapeIntegrator::compute(
         // todo: variance here assumes Poisson (no gain or baseline)
         integrated_profile.addPoint(e.r2(x), counts[i]);
 
-        if (_collection->detectorCoords()) {
+        if (_shape_model->detectorCoords()) {
             x -= peak->shape().center();
-            profile.addValue(x, dI);
+            if (_nsubdiv == 1)
+                profile.addValue(x, dI);
+            else
+                profile.addSubdividedValue(x, dI, _nsubdiv);
         } else {
-            profile.addValue(frame.transform(ev), dI);
+            if (_nsubdiv == 1)
+                profile.addValue(frame.transform(ev), dI);
+            else
+                profile.addSubdividedValue(x, dI, _nsubdiv);
         }
     }
     if (profile.normalize())
-        _collection->addPeak(peak, std::move(profile), std::move(integrated_profile));
+        _shape_model->addPeak(peak, std::move(profile), std::move(integrated_profile));
     return true;
 }
 
-const ShapeModel* ShapeIntegrator::collection() const
+const ShapeModel* ShapeIntegrator::shapeModel() const
 {
-    return _collection;
+    return _shape_model;
 }
 
 } // namespace ohkl
