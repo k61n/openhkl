@@ -14,6 +14,7 @@ RUN pacman -Syu --noconfirm && \
 	python3 \
 	python-pip \
 	python-numpy \
+	python-setuptools \
 	swig \
 	blosc \
 	yaml-cpp \
@@ -25,6 +26,8 @@ RUN pacman -Syu --noconfirm && \
 	vtk \
 	glew \
 	fmt \
+	doxygen \
+	graphviz \
 	opencv && \
     yes | pacman -Scc && \
     python3 -m pip install \
