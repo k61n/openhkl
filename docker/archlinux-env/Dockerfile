@@ -12,6 +12,7 @@ RUN pacman -Syu --noconfirm && \
 	qt5-base \
 	hdf5 \
 	python3 \
+	python-pip \
 	python-numpy \
 	swig \
 	blosc \
@@ -25,4 +26,9 @@ RUN pacman -Syu --noconfirm && \
 	glew \
 	fmt \
 	opencv && \
-    yes | pacman -Scc
+    yes | pacman -Scc && \
+    python3 -m pip install \
+	sphinx \
+	sphinxcontrib-bibtex \
+	sphinx-press-theme \
+	breathe
