@@ -161,7 +161,6 @@ void IIntegrator::integrate(
             current_peak->updateMask(mask, idx);
         }
 
-        int n_strong_peaks = 0;
 #pragma omp parallel for
         for (auto peak : peaks) {
             auto* current_peak = regions.at(peak).get();
@@ -198,7 +197,7 @@ void IIntegrator::integrate(
                         peak->meanBkgGradient(), peak->sumIntensity(), peak->sumIntensity(),
                          _params.peak_end, _params.bkg_begin, _params.bkg_end, _params.region_type);
                     result = false;
-                    ++n_strong_peaks;
+                    integrated[peak] = true;
                 }
             }
 
@@ -226,10 +225,6 @@ void IIntegrator::integrate(
                 integrated[peak] = true;
             }
         }
-        if (profile_integration && _params.use_max_strength)
-            ohklLog(
-                Level::Info, "IIntegrator::integrate: ", n_strong_peaks,
-                " strong peaks skipped during profile integration");
 
         if (_handler) {
             ++num_frames_done;
