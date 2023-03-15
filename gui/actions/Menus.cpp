@@ -154,6 +154,7 @@ void Menus::toggleEntries()
     actions->add_raw->setDisabled(strategy_mode);
     actions->add_nexus->setDisabled(strategy_mode);
     actions->add_hdf5->setDisabled(strategy_mode);
+    actions->add_single_image->setDisabled(!strategy_mode);
 
     actions->remove_data->setDisabled(no_datasets);
 
