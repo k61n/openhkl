@@ -741,6 +741,8 @@ void SubframeExperiment::toggleUnsafeWidgets()
     _export_masks->setEnabled(false);
     _delete_masks->setEnabled(false);
     _toggle_selection->setEnabled(false);
+    _predict_button->setEnabled(false);
+    _save_peaks->setEnabled(false);
 
     if (!gSession->hasProject())
         return;
@@ -784,7 +786,11 @@ void SubframeExperiment::toggleUnsafeWidgets()
     _delete_masks->setEnabled(hasSelectedMasks);
     _toggle_selection->setEnabled(_data_combo->currentData()->hasMasks());
 
-    _n_increments->setEnabled(gSession->currentProject()->strategyMode());
+    if (gSession->currentProject()->strategyMode()) {
+        _n_increments->setEnabled(true);
+        _predict_button->setEnabled(gSession->currentProject()->hasUnitCell());
+        _save_peaks->setEnabled(_peak_collection.numberOfPeaks() > 0);
+    }
 }
 
 void SubframeExperiment::find_2d()
