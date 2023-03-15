@@ -613,14 +613,13 @@ void SubframeFindPeaks::onGradientSettingsChanged()
 
 void SubframeFindPeaks::showFilteredImage()
 {
-    if (!_threshold_check->isChecked())
-        return;
-
     _detector_widget->scene()->params()->filteredImage = _threshold_check->isChecked();
     _detector_widget->scene()->params()->threshold = _threshold_spin->value();
-    _detector_widget->scene()->params()->convolver =
-        static_cast<ohkl::ConvolutionKernelType>(_kernel_combo->currentIndex());
-    for (const auto& [key, value] : convolutionParameters())
-        _detector_widget->scene()->params()->convolver_params.insert_or_assign(key, value);
+    if (_threshold_check->isChecked()) {
+        _detector_widget->scene()->params()->convolver =
+            static_cast<ohkl::ConvolutionKernelType>(_kernel_combo->currentIndex());
+        for (const auto& [key, value] : convolutionParameters())
+            _detector_widget->scene()->params()->convolver_params.insert_or_assign(key, value);
+    }
     _detector_widget->scene()->loadCurrentImage();
 }
