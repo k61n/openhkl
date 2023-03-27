@@ -112,7 +112,7 @@ class Detector : public Component {
     void setBaseline(double baseline);
     //! Override the gain from the .yml2c file
     void setGain(double gain);
-   
+
     std::vector<int> getColRes() {return _nCols_options;}
     std::vector<int> getRowRes() {return _nRows_options;}
 
@@ -120,12 +120,11 @@ class Detector : public Component {
       return _nCols_options.size();
     }
 
-    bool selectDetectorResolution(int choice)
+    void selectDetectorResolution(int choice)
     {
-      if (choice < 0 || choice > _nCols_options.size()) return false;
+      if (choice < 0 || choice > _nCols_options.size()) return;
       setNCols(_nCols_options[choice]);
       setNRows(_nRows_options[choice]);
-      return true;
     }
 
 
