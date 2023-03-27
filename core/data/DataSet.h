@@ -183,7 +183,7 @@ class DataSet {
     //! Data shape (columns, rows, frames)
     std::size_t datashape[3]{0, 0, 0};
     //! Reads the bit depth values from a given tiff files
-    int getTiffBitDepth(std::vector<std::string> filenames);
+    static int getTiffBitDepth(std::vector<std::string> filenames);
 
 
 
