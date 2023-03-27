@@ -28,27 +28,8 @@
 namespace ohkl {
 struct TiffDataReaderParameters : DataReaderParameters
 {
-    /*std::string dataset_name = kw_datasetDefaultName;
-    double wavelength = 0.0;
-    double delta_omega = 0.0;
-    double delta_chi = 0.0;
-    double delta_phi = 0.0;
-    bool swap_endian = false;
-    double baseline = 0.0;
-    double gain = 1.0;*/
-    // we use this to store the number of pixel which are rebinned
-    // we always rebin symmetrically and thus just store the number of
-    // total rebinned pixels 2x2 -> 4, 4x4 -> 16
     int data_binnning = 1;
     int bits_per_pixel = 1;
-    //bool tif_data = true;
-
-    /**
-     * This loads .readme file with additional meta date from the folder in which the data is placed
-     * This files can be created by the instrumentalist who is providing these data files and are
-     * thought to help the user to load data files into projects without entering known parameters.
-     */
-    //void LoadDataFromFile(std::string file);
 };
 
 /*

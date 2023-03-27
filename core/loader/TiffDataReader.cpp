@@ -29,62 +29,18 @@
 #include "core/raw/DataKeys.h"
 
 namespace ohkl {
-/*void TiffDataReaderParameters::LoadDataFromFile(std::string file)
+
+void tiff_file_metadata::log(const Level& level) const
 {
-    dataset_name = fileBasename(file);
-
-    std::size_t pos1 = file.find_last_of("/");
-    std::size_t pos0 = (file.substr(0, pos1 - 1)).find_last_of("/");
-    std::size_t pos2 = file.find_last_of(".");
-
-    if (pos1 == std::string::npos || pos0 == std::string::npos || pos2 == std::string::npos)
-        return;
-
-    std::string dir = "data_" + file.substr(pos0 + 1, pos1 - pos0 - 1);
-    std::string readme = file.substr(0, pos1 + 1) + dir + ".readme";
-
-    std::ifstream fin(readme.c_str(), std::ios::in);
-
-    if (fin.is_open() || fin.good()) {
-        fin.seekg(0, std::ios::end);
-        auto fsize = fin.tellg();
-        fin.seekg(0, std::ios::beg);
-
-        if (fsize > 0) {
-            std::string buffer;
-            buffer.resize(fsize);
-            fin.read(buffer.data(), fsize);
-            fin.close();
-
-            std::remove_if(buffer.begin(), buffer.end(), isspace);
-
-            auto omega_pos = buffer.find("Omegarange:");
-            if (omega_pos != std::string::npos) {
-                auto nl_pos = buffer.find(";", omega_pos);
-                std::string a = buffer.substr(omega_pos + 11, nl_pos - 1);
-                delta_omega = std::stod(a);
-            }
-
-            auto lambda_pos = buffer.find("Lambda:");
-            if (lambda_pos != std::string::npos) {
-                auto nl_pos = buffer.find(";", lambda_pos);
-                std::string b = buffer.substr(lambda_pos + 7, nl_pos - 1);
-                wavelength = std::stod(b);
-            }
-        } else
-            return;
-    } else
-        return;
-
-    // make a note in the log that these folloing meta data have been read from the found readme
-    // file
-    std::string msg = "LoadDataFromFile() in TiffDataReader has read the following values from the "
-                      "found readme file "
-        + readme;
-    msg += std::string(", omega: ") + std::to_string(delta_omega);
-    msg += std::string(", lambda: ") + std::to_string(wavelength);
-    ohklLog(Level::Info, msg);
-}*/
+    ohklLog(level, "tiff_file_metadata::log:");
+    ohklLog(level, "image width     = ", _width);
+    ohklLog(level, "image length    = ", _image_length);
+    ohklLog(level, "bits per pixel  = ", _bits_per_pixel);
+    ohklLog(level, "compression     = ", _compression);
+    ohklLog(level, "photometric     = ", _photometric);
+    ohklLog(level, "planar config   = ",  _planar_config);
+    ohklLog(level, "npixels         = ", _npixels);
+}
 
 TiffDataReader::TiffDataReader() : IDataReader("::NO-FILENAME::"), _tiff(nullptr) { }
 
