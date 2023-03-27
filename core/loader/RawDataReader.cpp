@@ -39,7 +39,7 @@
 
 namespace ohkl {
 
-void RawDataReaderParameters::LoadDataFromFile(std::string file)
+void DataReaderParameters::LoadDataFromFile(std::string file)
 {
     dataset_name = fileBasename(file);
 

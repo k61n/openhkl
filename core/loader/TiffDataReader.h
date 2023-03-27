@@ -26,27 +26,29 @@
 #include <vector>
 
 namespace ohkl {
-struct TiffDataReaderParameters {
-    std::string dataset_name = kw_datasetDefaultName;
+struct TiffDataReaderParameters : DataReaderParameters
+{
+    /*std::string dataset_name = kw_datasetDefaultName;
     double wavelength = 0.0;
     double delta_omega = 0.0;
     double delta_chi = 0.0;
     double delta_phi = 0.0;
     bool swap_endian = false;
     double baseline = 0.0;
-    double gain = 1.0;
+    double gain = 1.0;*/
     // we use this to store the number of pixel which are rebinned
     // we always rebin symmetrically and thus just store the number of
     // total rebinned pixels 2x2 -> 4, 4x4 -> 16
     int data_binnning = 1;
     int bits_per_pixel = 1;
+    //bool tif_data = true;
 
     /**
      * This loads .readme file with additional meta date from the folder in which the data is placed
      * This files can be created by the instrumentalist who is providing these data files and are
      * thought to help the user to load data files into projects without entering known parameters.
      */
-    void LoadDataFromFile(std::string file);
+    //void LoadDataFromFile(std::string file);
 };
 
 /*
@@ -54,24 +56,15 @@ struct TiffDataReaderParameters {
     not all possible tiff tags are covered here only those which are used
  */
 struct tiff_file_metadata {
-    uint32 _width = -1; // image width in px
-    uint32 _image_length = -1; // image height in px
-    uint16 _bits_per_pixel = -1;
-    uint16 _compression = -1; // does tiff file uses a compression mechanism
-    uint16 _photometric = -1; // black white or colored tiff files
-    uint16 _planar_config = -1; // how are the pixels stored Chunky format or planar format
-    uint32 _npixels = -1; // number of pixels
+    unsigned int  _width = -1; // image width in px
+    unsigned int  _image_length = -1; // image height in px
+    unsigned short _bits_per_pixel = -1;
+    unsigned short _compression = -1; // does tiff file uses a compression mechanism
+    unsigned short _photometric = -1; // black white or colored tiff files
+    unsigned short _planar_config = -1; // how are the pixels stored Chunky format or planar format
+    unsigned int  _npixels = -1; // number of pixels
 
-    friend std::ostream& operator<<(std::ostream& oss, const tiff_file_metadata& o)
-    {
-        oss << " * * * TIF FILE META DATA * * *\n"
-            << std::setfill('.') << "\nimage width: " << std::setw(20) << o._width
-            << "\nimage height: " << std::setw(19) << o._image_length << "\nbpp: " << std::setw(22)
-            << o._bits_per_pixel << "\ncompression: " << std::setw(13) << o._compression
-            << "\nphotometric: " << std::setw(13) << o._photometric
-            << "\nplanar config: " << std::setw(11) << o._planar_config;
-        return oss;
-    }
+    void log(const Level& level) const;
 };
 
 class TiffDataReader : public IDataReader {
@@ -122,7 +115,7 @@ class TiffDataReader : public IDataReader {
     TiffDataReaderParameters _parameters;
     std::size_t _length = 0;
     std::vector<char> _data;
-    std::vector<uint16> _buffer;
+    std::vector<unsigned short> _buffer;
 
     tiff_file_metadata _tiff_meta_data;
     int _n_target_width;

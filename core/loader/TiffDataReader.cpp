@@ -29,7 +29,7 @@
 #include "core/raw/DataKeys.h"
 
 namespace ohkl {
-void TiffDataReaderParameters::LoadDataFromFile(std::string file)
+/*void TiffDataReaderParameters::LoadDataFromFile(std::string file)
 {
     dataset_name = fileBasename(file);
 
@@ -84,7 +84,7 @@ void TiffDataReaderParameters::LoadDataFromFile(std::string file)
     msg += std::string(", omega: ") + std::to_string(delta_omega);
     msg += std::string(", lambda: ") + std::to_string(wavelength);
     ohklLog(Level::Info, msg);
-}
+}*/
 
 TiffDataReader::TiffDataReader() : IDataReader("::NO-FILENAME::"), _tiff(nullptr) { }
 

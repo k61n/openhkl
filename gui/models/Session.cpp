@@ -28,8 +28,7 @@
 #include "gui/MainWin.h"
 #include "gui/connect/Sentinel.h"
 #include "gui/dialogs/DataNameDialog.h"
-#include "gui/dialogs/RawDataDialog.h"
-#include "gui/dialogs/TiffDataDialog.h"
+#include "gui/dialogs/DataDialog.h"
 #include "gui/models/Project.h"
 #include "gui/subframe_filter/SubframeFilterPeaks.h"
 #include "gui/subframe_find/SubframeFindPeaks.h"
@@ -357,7 +356,7 @@ bool Session::loadRawData(bool single_file /* = false */)
         const QStringList& extant_dataset_names = currentProject()->getDataNames();
         ohkl::RawDataReaderParameters parameters;
         parameters.LoadDataFromFile(filenames.at(0));
-        RawDataDialog dialog(parameters, extant_dataset_names);
+        DataDialog dialog(&parameters, extant_dataset_names);
         dialog.setWindowTitle("Raw data parameters");
         if (single_file)
             dialog.setSingleImageMode();
@@ -365,7 +364,7 @@ bool Session::loadRawData(bool single_file /* = false */)
         if (!dialog.exec())
             return false;
         ohkl::Experiment* exp = currentProject()->experiment();
-        parameters = dialog.parameters();
+        parameters = dialog.rawParameters();
 
         // Transfer metadata to diffractometer.
         ohkl::Detector* detector = exp->getDiffractometer()->detector();
@@ -434,18 +433,20 @@ bool Session::loadTiffData()
         const QStringList& extant_dataset_names = currentProject()->getDataNames();
 
         std::string npixels = ohkl::DataSet::checkTiffResolution(filenames);
+        params.bits_per_pixel = ohkl::DataSet::getTiffBitDepth(filenames);
 
         if (npixels.empty()) // is only empty if tiff file have different resolutions
             throw std::runtime_error(
-                "Differen TIFF file resolutions for one dataset are not supported!");
+                "Different TIFF file resolutions for one dataset are not supported!");
 
         // params.swap_endian = false; // ne default swap for tiff files
         params.LoadDataFromFile(filenames.at(0));
-        TiffDataDialog dialog(params, extant_dataset_names, QString::fromStdString(npixels));
+        //RawDataReaderPaa
+        DataDialog dialog(static_cast<ohkl::DataReaderParameters*>(&params), extant_dataset_names, true, QString::fromStdString(npixels));
         if (!dialog.exec())
             return false;
 
-        params = dialog.parameters();
+        params = dialog.tiffParameters();
 
         const std::shared_ptr<ohkl::DataSet> dataset{
             std::make_shared<ohkl::DataSet>(params.dataset_name, exp->getDiffractometer())};
@@ -462,10 +463,7 @@ bool Session::loadTiffData()
 
         dataset->finishRead();
 
-        if (!exp->addData(dataset)) {
-            // why does this always trigger
-            // throw std::runtime_error("Unable to add dataset");
-        }
+        exp->addData(dataset);
 
         onDataChanged();
         //gGui->sentinel->setLinkedComboList(ComboType::DataSet, currentProject()->getDataNames());
