@@ -160,8 +160,7 @@ void DetectorScene::link3rdPartyPeaks(ohkl::PeakCenterDataSet* pcd, std::size_t 
 void DetectorScene::linkKeyPoints(ohkl::KeyPointCollection* points, std::size_t idx)
 {
     if (idx >= _max_peak_collections)
-        throw std::range_error(
-            "DetectorScene::linkKeyPoints: _peak_graphics index out of range");
+        throw std::range_error("DetectorScene::linkKeyPoints: _peak_graphics index out of range");
 
     _peak_graphics.at(idx)->setKeyPoints(points);
     drawPeakItems();

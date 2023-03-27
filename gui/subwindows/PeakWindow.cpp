@@ -151,8 +151,8 @@ void PeakWindow::setControlWidgetUp()
     _control_layout->addWidget(_intensity_slider, row, col++, 1, 2);
 
     connect(
-        _region_type, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
-        this, &PeakWindow::refresh);
+        _region_type, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
+        &PeakWindow::refresh);
     connect(
         _peak_end, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
         this, &PeakWindow::refresh);
@@ -209,20 +209,20 @@ void PeakWindow::refresh()
         bkg_begin = _params.fixed_bkg_begin;
         bkg_end = _params.fixed_bkg_end;
     }
-        _integration_region.reset();
-        _integration_region = std::make_unique<ohkl::IntegrationRegion>(
-            _peak, peak_end, bkg_begin, bkg_end, _params.region_type);
-        _region_data = _integration_region->getRegion();
-        for (int i = 0; i < _index.size(); ++i) {
-            try {
-                int j = _region_data->getRegionDataIndex(_index[i]);
-                QGraphicsView* view = _views[i];
-                drawFrame(view, j);
-            } catch (std::range_error& e) {
-                continue;
-            }
+    _integration_region.reset();
+    _integration_region = std::make_unique<ohkl::IntegrationRegion>(
+        _peak, peak_end, bkg_begin, bkg_end, _params.region_type);
+    _region_data = _integration_region->getRegion();
+    for (int i = 0; i < _index.size(); ++i) {
+        try {
+            int j = _region_data->getRegionDataIndex(_index[i]);
+            QGraphicsView* view = _views[i];
+            drawFrame(view, j);
+        } catch (std::range_error& e) {
+            continue;
         }
     }
+}
 
 void PeakWindow::drawFrame(QGraphicsView* view, std::size_t frame_index)
 {

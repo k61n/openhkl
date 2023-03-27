@@ -37,11 +37,8 @@ class DataDialog : public QDialog {
  public:
     //! Constructor in case or processing Raw files
     DataDialog(
-        ohkl::DataReaderParameters* parameters0,
-        const QStringList& datanames_cur = QStringList(),
-        bool tif_data = false,
-        QString img_res = ""
-    );
+        ohkl::DataReaderParameters* parameters0, const QStringList& datanames_cur = QStringList(),
+        bool tif_data = false, QString img_res = "");
     //! Disable widgets that are relevant for multiple images only
     void setSingleImageMode();
     //! Return a copy of raw parameters

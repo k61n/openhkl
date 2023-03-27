@@ -27,8 +27,7 @@
 
 
 namespace ohkl {
-struct TiffDataReaderParameters : DataReaderParameters
-{
+struct TiffDataReaderParameters : DataReaderParameters {
     int data_binnning = 1;
     int bits_per_pixel = 1;
 };
@@ -38,13 +37,13 @@ struct TiffDataReaderParameters : DataReaderParameters
     not all possible tiff tags are covered here only those which are used
  */
 struct tiff_file_metadata {
-    unsigned int  _width = -1; // image width in px
-    unsigned int  _image_length = -1; // image height in px
+    unsigned int _width = -1; // image width in px
+    unsigned int _image_length = -1; // image height in px
     unsigned short _bits_per_pixel = -1;
     unsigned short _compression = -1; // does tiff file uses a compression mechanism
     unsigned short _photometric = -1; // black white or colored tiff files
     unsigned short _planar_config = -1; // how are the pixels stored Chunky format or planar format
-    unsigned int  _npixels = -1; // number of pixels
+    unsigned int _npixels = -1; // number of pixels
 
     void log(const Level& level) const;
 };
@@ -88,7 +87,7 @@ class TiffDataReader : public IDataReader {
     //! read image (file) resolutions of a given vector of tiff files an return them
     std::vector<std::string> readFileResolutions(std::vector<std::string> filenames);
     //! returns all bpp values from given filenames
-    std::vector<int>  readFileBitDepths(std::vector<std::string> filenames);
+    std::vector<int> readFileBitDepths(std::vector<std::string> filenames);
 
  private:
     template <typename T_> Eigen::Matrix<T_, Eigen::Dynamic, Eigen::Dynamic> matrixFromData() const;

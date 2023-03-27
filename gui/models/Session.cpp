@@ -27,8 +27,8 @@
 #include "core/raw/MetaData.h"
 #include "gui/MainWin.h"
 #include "gui/connect/Sentinel.h"
-#include "gui/dialogs/DataNameDialog.h"
 #include "gui/dialogs/DataDialog.h"
+#include "gui/dialogs/DataNameDialog.h"
 #include "gui/models/Project.h"
 #include "gui/subframe_filter/SubframeFilterPeaks.h"
 #include "gui/subframe_find/SubframeFindPeaks.h"
@@ -269,8 +269,7 @@ void Session::loadData(ohkl::DataFormat format)
             break;
         }
         default: {
-            throw std::runtime_error(
-                "Session::LoadData can only load OHKL or Nexus data files");
+            throw std::runtime_error("Session::LoadData can only load OHKL or Nexus data files");
             break;
         }
     }
@@ -373,8 +372,8 @@ bool Session::loadRawData(bool single_file /* = false */)
 
         // Transfer metadata to dataset, and load the raw data.
         if (single_file) {
-            const std::shared_ptr<ohkl::DataSet> dataset{
-                std::make_shared<ohkl::SingleFrame>(parameters.dataset_name, exp->getDiffractometer())};
+            const std::shared_ptr<ohkl::DataSet> dataset{std::make_shared<ohkl::SingleFrame>(
+                parameters.dataset_name, exp->getDiffractometer())};
             dataset->setRawReaderParameters(parameters);
             dataset->addRawFrame(filenames[0]);
             dataset->finishRead();
@@ -440,7 +439,9 @@ bool Session::loadTiffData()
                 "Different TIFF file resolutions for one dataset are not supported!");
 
         params.LoadDataFromFile(filenames.at(0));
-        DataDialog dialog(static_cast<ohkl::DataReaderParameters*>(&params), extant_dataset_names, true, QString::fromStdString(npixels));
+        DataDialog dialog(
+            static_cast<ohkl::DataReaderParameters*>(&params), extant_dataset_names, true,
+            QString::fromStdString(npixels));
         if (!dialog.exec())
             return false;
 
@@ -464,7 +465,7 @@ bool Session::loadTiffData()
         exp->addData(dataset);
 
         onDataChanged();
-        //gGui->sentinel->setLinkedComboList(ComboType::DataSet, currentProject()->getDataNames());
+        // gGui->sentinel->setLinkedComboList(ComboType::DataSet, currentProject()->getDataNames());
 
     } catch (std::exception& e) {
         QMessageBox::critical(nullptr, "Error", QString(e.what()));
@@ -482,10 +483,16 @@ void Session::onDataChanged()
     _data_combo->refreshAll();
 
     if (gSession->currentProject()->hasDataSet()) {
-        double x_offset =
-            _data_combo->currentData()->diffractometer()->source().selectedMonochromator().xOffset();
-        double y_offset =
-            _data_combo->currentData()->diffractometer()->source().selectedMonochromator().yOffset();
+        double x_offset = _data_combo->currentData()
+                              ->diffractometer()
+                              ->source()
+                              .selectedMonochromator()
+                              .xOffset();
+        double y_offset = _data_combo->currentData()
+                              ->diffractometer()
+                              ->source()
+                              .selectedMonochromator()
+                              .yOffset();
         _beam_setter_widget->onBeamPosChanged({x_offset, y_offset});
     }
     onPeaksChanged();

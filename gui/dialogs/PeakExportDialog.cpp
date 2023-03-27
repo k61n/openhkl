@@ -21,14 +21,12 @@
 #include "gui/utility/IntegratedPeakComboBox.h"
 #include "tables/crystal/SpaceGroup.h"
 
-#include <QSettings>
 #include <QFileDialog>
+#include <QSettings>
 
 #include <string>
 
-PeakExportDialog::PeakExportDialog()
-    : QDialog()
-    , _exporter()
+PeakExportDialog::PeakExportDialog() : QDialog(), _exporter()
 {
     setModal(true);
     setWindowTitle("Export to .mtz file");
@@ -215,12 +213,10 @@ void PeakExportDialog::processMerge()
     QSettings settings = gGui->qSettings();
     settings.beginGroup("RecentDirectories");
     QString loadDirectory = settings.value("experiment", QDir::homePath()).toString();
-    std::string filter =
-        _exporter.exportFormatStrings()->at(
-            static_cast<ohkl::ExportFormat>(_format_combo->currentIndex()));
-    QString filename =
-        QFileDialog::getSaveFileName(
-            this, "Export Experiment as MTZ file", loadDirectory, QString::fromStdString(filter));
+    std::string filter = _exporter.exportFormatStrings()->at(
+        static_cast<ohkl::ExportFormat>(_format_combo->currentIndex()));
+    QString filename = QFileDialog::getSaveFileName(
+        this, "Export Experiment as MTZ file", loadDirectory, QString::fromStdString(filter));
     std::string comment = _textbox->toPlainText().toStdString();
     if (filename.isEmpty())
         return;

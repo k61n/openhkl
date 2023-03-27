@@ -295,8 +295,8 @@ void SubframeReject::toggleUnsafeWidgets()
     if (!gSession->currentProject()->hasPeakCollection())
         return;
 
-    bool ready = _peak_combo->currentPeakCollection()->isIndexed() &&
-        _peak_combo->currentPeakCollection()->isIntegrated();
+    bool ready = _peak_combo->currentPeakCollection()->isIndexed()
+        && _peak_combo->currentPeakCollection()->isIntegrated();
 
     _find_h->setEnabled(ready);
     _find_k->setEnabled(ready);

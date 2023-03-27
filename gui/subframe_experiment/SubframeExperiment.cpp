@@ -375,7 +375,8 @@ void SubframeExperiment::importMasks()
     if (file_path.empty())
         return;
 
-    ohkl::MaskImporter importer(file_path, _data_combo->currentData()->nFrames()); // TODO: update nframes
+    ohkl::MaskImporter importer(
+        file_path, _data_combo->currentData()->nFrames()); // TODO: update nframes
     for (auto* mask : importer.getMasks())
         _data_combo->currentData()->addMask(mask);
 
@@ -387,7 +388,8 @@ void SubframeExperiment::exportMasks()
 {
     QSettings settings = gGui->qSettings();
     settings.beginGroup("RecentDirectories");
-    QString loadDirectory = settings.value("experiment", QDir::homePath()).toString() + "/masks.yml";
+    QString loadDirectory =
+        settings.value("experiment", QDir::homePath()).toString() + "/masks.yml";
 
     std::string file_path =
         QFileDialog::getSaveFileName(this, "Export maks to ", loadDirectory, "YAML (*.yml)")
@@ -452,8 +454,8 @@ void SubframeExperiment::setIndexerUp()
 {
     Spoiler* index_spoiler = new Spoiler("Autoindex using spots in this image");
     GridFiller gfiller(index_spoiler, true);
-    std::tie(_d_min, _d_max) = gfiller.addDoubleSpinBoxPair(
-        "d range", "Resolution range for peaks used in indexing");
+    std::tie(_d_min, _d_max) =
+        gfiller.addDoubleSpinBoxPair("d range", "Resolution range for peaks used in indexing");
     _gruber = gfiller.addDoubleSpinBox("Gruber tolerance:", "Tolerance for Gruber reduction");
 
     _niggli = gfiller.addDoubleSpinBox("Niggli tolerance:", "Tolerance for Niggli reduction");
@@ -915,8 +917,8 @@ void SubframeExperiment::merge()
     merger->computeQuality();
     auto* quality = merger->overallQuality();
     gGui->statusBar()->showMessage(
-        "Projected completeness: " +
-        QString::number(quality->shells[0].Completeness * 100.0, 'f', 2) + "%");
+        "Projected completeness: "
+        + QString::number(quality->shells[0].Completeness * 100.0, 'f', 2) + "%");
 
     std::vector<double> completeness =
         merger->strategyMerge(0, _n_increments->value(), _n_increments->value());
@@ -927,7 +929,7 @@ void SubframeExperiment::merge()
     }
 
     _tab_widget->setCurrentIndex(0);
-    _plot->plotData(frame, comp, error , QString("Image index"), QString("Completeness"));
+    _plot->plotData(frame, comp, error, QString("Image index"), QString("Completeness"));
 
     gGui->setReady(true);
 }
@@ -1121,22 +1123,22 @@ void SubframeExperiment::resetMode(int index)
     QSignalBlocker blocker2(_lineplot_box);
     QSignalBlocker blocker3(_mask_box);
     switch (index) {
-    case 0: {
-        _lineplot_box->setChecked(false);
-        _mask_box->setChecked(false);
-        break;
-    }
-    case 1: {
-        _mask_box->setChecked(false);
-        _beam_setter_widget->crosshairOn()->setChecked(false);
-        break;
-    }
-    case 2: {
-        _beam_setter_widget->crosshairOn()->setChecked(false);
-        _lineplot_box->setChecked(false);
-        break;
-    }
-    default: break;
+        case 0: {
+            _lineplot_box->setChecked(false);
+            _mask_box->setChecked(false);
+            break;
+        }
+        case 1: {
+            _mask_box->setChecked(false);
+            _beam_setter_widget->crosshairOn()->setChecked(false);
+            break;
+        }
+        case 2: {
+            _beam_setter_widget->crosshairOn()->setChecked(false);
+            _lineplot_box->setChecked(false);
+            break;
+        }
+        default: break;
     }
     _detector_widget->enableCursorMode(true);
     _detector_widget->scene()->changeInteractionMode(0);
