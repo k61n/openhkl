@@ -25,7 +25,6 @@
 #include <string>
 #include <vector>
 
-
 namespace ohkl {
 struct TiffDataReaderParameters : DataReaderParameters {
     int data_binnning = 1;

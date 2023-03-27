@@ -178,13 +178,13 @@ class DataSet {
     //! check tiff file resolutions
     static std::string checkTiffResolution(std::vector<std::string> filenames);
 
+    //! return bit depth of tiff files. returns -1 if different bpp values are found
+    static int getTiffBitDepth(std::vector<std::string> filenames);
+
     virtual void setNFrames(std::size_t nframes) { std::ignore = nframes; };
 
     //! Data shape (columns, rows, frames)
     std::size_t datashape[3]{0, 0, 0};
-    //! Reads the bit depth values from a given tiff files
-    static int getTiffBitDepth(std::vector<std::string> filenames);
-
 
 
  protected:
