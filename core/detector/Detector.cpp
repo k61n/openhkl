@@ -99,7 +99,7 @@ Detector::Detector(const YAML::Node& node) : Component(node)
         }
 
     if (_nCols_options.size() == 0) // if no non zero resolutions are found
-        throw std::runtime_error("E Detector::Detector Found no valid non zero resolution "
+        throw std::runtime_error("Detector::Detector Found no valid non zero resolution "
                                  "definition for detector in yaml file: ");
 
     // set first resolution as default - user can change this during file importing

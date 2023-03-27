@@ -418,14 +418,14 @@ bool Session::loadTiffData()
         for (auto& e : filenames) {
             auto pos = e.find_last_of(".");
             if (pos == std::string::npos)
-                throw std::runtime_error("E unknown file extension");
+                throw std::runtime_error("unknown file extension");
 
             std::string tmp_ext = e.substr(pos);
             transform(tmp_ext.begin(), tmp_ext.end(), tmp_ext.begin(), ::tolower);
 
             // check if we have only supported file extensions selected
             if (tmp_ext != ".tiff" && tmp_ext != ".tif")
-                throw std::runtime_error("E Session::loadRawData Only Tiff data are allowed here");
+                throw std::runtime_error("Session::loadRawData Only Tiff data are allowed here");
         }
 
         // Get metadata from readme file, then edit them in dialog.
