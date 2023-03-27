@@ -439,9 +439,7 @@ bool Session::loadTiffData()
             throw std::runtime_error(
                 "Different TIFF file resolutions for one dataset are not supported!");
 
-        // params.swap_endian = false; // ne default swap for tiff files
         params.LoadDataFromFile(filenames.at(0));
-        //RawDataReaderPaa
         DataDialog dialog(static_cast<ohkl::DataReaderParameters*>(&params), extant_dataset_names, true, QString::fromStdString(npixels));
         if (!dialog.exec())
             return false;
