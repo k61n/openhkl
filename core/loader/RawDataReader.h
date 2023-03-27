@@ -25,21 +25,25 @@
 namespace ohkl {
 
 //! Minimal meta data set, to supplement binary raw data in RawDataReader.
-
-struct RawDataReaderParameters {
+struct DataReaderParameters {
     std::string dataset_name = kw_datasetDefaultName;
     double wavelength = 0.0;
     double delta_omega = 0.0;
     double delta_chi = 0.0;
     double delta_phi = 0.0;
-    bool row_major = true;
     bool swap_endian = true;
-    std::size_t bpp = 2;
     double baseline = 0.0;
     double gain = 1.0;
-
+    //bool tif_data = false;
     void LoadDataFromFile(std::string file);
+};
+
+struct RawDataReaderParameters : public DataReaderParameters
+{
+    bool row_major = true;
+    std::size_t bpp = 2;
     void log(const Level& level) const;
+    //bool tif_data = false;
 };
 
 //! IDataReader for raw binary data.
