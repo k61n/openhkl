@@ -167,17 +167,17 @@ class Peak3D {
 
     //! Manually set the integration parameters for this peak
     void setManually(
-        const Intensity& sumInt, const Intensity& profInt,
-        double peakEnd, double bkgBegin, double bkgEnd, int region_type,
-        double scale, double transmission, const Intensity& sumBkg, const Intensity& profBkg,
-        int rejection_flag, int integration_flag, Intensity sumBkgGrad = {});
+        const Intensity& sumInt, const Intensity& profInt, double peakEnd, double bkgBegin,
+        double bkgEnd, int region_type, double scale, double transmission, const Intensity& sumBkg,
+        const Intensity& profBkg, int rejection_flag, int integration_flag,
+        Intensity sumBkgGrad = {});
 
     //! Update the integration parameters for this peak
     void updateIntegration(
-        const std::vector<Intensity>& rockingCurve,
-        const Intensity& sumBkg, const Intensity& profBkg, const Intensity& meanBkgGradient,
-        const Intensity& sumInt, const Intensity& profInt,
-        double peakEnd, double bkgBegin, double bkgEnd, RegionType regionType);
+        const std::vector<Intensity>& rockingCurve, const Intensity& sumBkg,
+        const Intensity& profBkg, const Intensity& meanBkgGradient, const Intensity& sumInt,
+        const Intensity& profInt, double peakEnd, double bkgBegin, double bkgEnd,
+        RegionType regionType);
     //! Return the q vector of the peak, transformed into sample coordinates.
     ReciprocalVector q() const;
     //! Return q vector in cases where we do *not* want to interpolate the InstrumentState

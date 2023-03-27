@@ -116,8 +116,8 @@ void ExperimentImporter::loadData(Experiment* experiment)
                 dataset_ptr->finishRead();
                 experiment->addData(dataset_ptr, false);
             } else {
-                const ohkl::sptrDataSet dataset_ptr{
-                    std::make_shared<ohkl::DataSet>(collection_name, experiment->getDiffractometer())};
+                const ohkl::sptrDataSet dataset_ptr{std::make_shared<ohkl::DataSet>(
+                    collection_name, experiment->getDiffractometer())};
                 dataset_ptr->addDataFile(_file_name, "nsx");
                 dataset_ptr->finishRead();
                 experiment->addData(dataset_ptr, false);
@@ -390,8 +390,8 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
 
                 peak->setManually(
                     sum_int, prof_int, peak_end[k], bkg_begin[k], bkg_end[k], region_type[k],
-                    scale[k], transmission[k], sum_bkg, prof_bkg,
-                    rejection_flag[k], integration_flag[k], peak_bkg_grad);
+                    scale[k], transmission[k], sum_bkg, prof_bkg, rejection_flag[k],
+                    integration_flag[k], peak_bkg_grad);
 
 
                 if (experiment->numUnitCells() > 0) {
@@ -416,8 +416,9 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
                 cell = experiment->getSptrUnitCell(cell_name);
             // converting data types. Ascii code of '0' is 48, of '1' is 49
             experiment->addPeakCollection(
-                collection_name, collection_type, peaks, data, cell, static_cast<bool>(indexed[0] - 48),
-                static_cast<bool>(integrated[0] - 48), static_cast<bool>(gradient[0] - 48));
+                collection_name, collection_type, peaks, data, cell,
+                static_cast<bool>(indexed[0] - 48), static_cast<bool>(integrated[0] - 48),
+                static_cast<bool>(gradient[0] - 48));
 
             ohklLog(Level::Debug, "Finished creating the peak collection");
         }

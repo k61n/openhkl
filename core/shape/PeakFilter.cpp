@@ -43,8 +43,8 @@ PeakFilter::PeakFilter()
 
 void PeakFilter::resetFilterFlags()
 {
-    *_filter_flags = {true, false, false, false, false, false, false, false, false, false,
-                      false, false, false, false, false, false, false};
+    *_filter_flags = {true,  false, false, false, false, false, false, false, false,
+                      false, false, false, false, false, false, false, false};
 }
 
 void PeakFilter::filterSignificance(PeakCollection* peak_collection) const
@@ -77,7 +77,8 @@ void PeakFilter::filterSignificance(PeakCollection* peak_collection) const
             merged.addPeak(peak);
 
         for (const auto& merged_peak : merged.mergedPeakSet()) {
-            if (merged_peak.pValue(true) > _filter_params->significance) { // TODO: modify for profile
+            if (merged_peak.pValue(true)
+                > _filter_params->significance) { // TODO: modify for profile
                 for (const auto& m : merged_peak.peaks())
                     m->rejectYou(true);
             }
@@ -221,7 +222,7 @@ void PeakFilter::filterMasked(PeakCollection* peak_collection) const
             peak_ptr->rejectYou(true);
             ++nrejected;
         } else {
-                peak_ptr->caughtYou(true);
+            peak_ptr->caughtYou(true);
         }
     }
     ohklLog(Level::Info, "PeakFilter::filterMasked: ", nrejected, " peaks rejected");

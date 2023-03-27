@@ -66,10 +66,7 @@ class PeakCollectionGraphics {
     //! Set data for peaks imported from external code
     void setExtPeakData(ohkl::PeakCenterDataSet* pcd) { _peak_center_data = pcd; };
     //! Set data for detector spots located using OpenCV
-    void setKeyPoints(ohkl::KeyPointCollection* points)
-    {
-        _keypoint_collection = points;
-    };
+    void setKeyPoints(ohkl::KeyPointCollection* points) { _keypoint_collection = points; };
 
     //! Set the integration region peak and background colours
     void setIntRegionColors(const QColor& peak, const QColor& bkg)

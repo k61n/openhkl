@@ -30,7 +30,7 @@
 
 #include <QPen>
 
-ContourLabelItem::ContourLabelItem(const QString& label) : QGraphicsTextItem(label) {};
+ContourLabelItem::ContourLabelItem(const QString& label) : QGraphicsTextItem(label){};
 
 DataSetGraphics::DataSetGraphics(DetectorSceneParams* params)
     : _data(nullptr)
@@ -277,7 +277,7 @@ std::optional<QImage> DataSetGraphics::resolutionContours(
     const double q3max = std::pow(d_min, -3);
     const double dq3 = (std::pow(d_min, -3) - std::pow(d_max, -3)) / double(n_contours);
     for (std::size_t i = 0; i < n_contours; ++i)
-        _resolution_labels[i] = std::pow(q3max - i  * dq3, -1.0 / 3.0);
+        _resolution_labels[i] = std::pow(q3max - i * dq3, -1.0 / 3.0);
 
     // Thresholds need to be set per-contour to ensure similar width
     std::vector<double> thresholds;
@@ -293,7 +293,7 @@ std::optional<QImage> DataSetGraphics::resolutionContours(
             double d = lambda / (2.0 * sin(0.5 * th2));
             for (std::size_t idx = 0; idx < _resolution_labels.size(); ++idx) {
                 if (std::fabs(_resolution_labels[idx] - d) < thresholds[idx]) {
-                    if (row == _data->nRows()/2 && _resolution_label_positions[idx].isNull())
+                    if (row == _data->nRows() / 2 && _resolution_label_positions[idx].isNull())
                         _resolution_label_positions[idx] = {col, row};
                     contour_image.setPixelColor(QPoint(col, row), QColor(0, 0, 0, 128));
                     break;
@@ -307,9 +307,10 @@ std::optional<QImage> DataSetGraphics::resolutionContours(
     // update the labels for the contours
     for (std::size_t idx = 0; idx < n_contours; ++idx) {
         _resolution_labels[idx + n_contours] = _resolution_labels[n_contours - idx - 1];
-        _resolution_label_positions[idx + n_contours] =
-            {static_cast<int>(_data->nCols()) - _resolution_label_positions[n_contours - idx - 1].x(),
-             _resolution_label_positions[n_contours - idx - 1].y()};
+        _resolution_label_positions[idx + n_contours] = {
+            static_cast<int>(_data->nCols())
+                - _resolution_label_positions[n_contours - idx - 1].x(),
+            _resolution_label_positions[n_contours - idx - 1].y()};
     }
     return contour_image;
 }

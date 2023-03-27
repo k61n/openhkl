@@ -92,8 +92,8 @@ std::vector<Peak3D*> Predictor::buildPeaksFromMillerIndices(
             ++n_enabled;
     }
     ohklLog(
-        Level::Info, "Predictor::buildPeaksFromMillerIndices: ", n_enabled,
-        "/", peaks.size(), " within detector bounds from ", hkls.size(), " Miller indices");
+        Level::Info, "Predictor::buildPeaksFromMillerIndices: ", n_enabled, "/", peaks.size(),
+        " within detector bounds from ", hkls.size(), " Miller indices");
     return peaks;
 }
 
@@ -144,7 +144,8 @@ InstrumentStateSet Predictor::generateStates(const sptrDataSet data)
     }
 
     if (omega_idx == -1 || phi_idx == -1 || chi_idx == -1)
-        throw std::runtime_error("Predictor::generateStates: could not parse rotation axis indices");
+        throw std::runtime_error(
+            "Predictor::generateStates: could not parse rotation axis indices");
 
     for (std::size_t idx = 0; idx < _strategy_params->nframes; ++idx) {
         std::vector<double> det_states(n_detector_axes);
@@ -165,7 +166,7 @@ InstrumentStateSet Predictor::generateStates(const sptrDataSet data)
 
 PredictionParameters* Predictor::parameters()
 {
-        return _params.get();
+    return _params.get();
 }
 
 StrategyParameters* Predictor::strategyParamters()

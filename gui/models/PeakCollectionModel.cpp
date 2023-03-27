@@ -191,11 +191,13 @@ bool PeakCollectionModel::setData(const QModelIndex& index, const QVariant& valu
         return false;
     if (role == Qt::CheckStateRole && index.column() == PeakColumn::Enabled) {
         if ((Qt::CheckState)value.toInt() == Qt::Checked) {
-            _root_item->peakItemAt(index.row())->peak()->setRejectionFlag(
-                ohkl::RejectionFlag::NotRejected, true);
+            _root_item->peakItemAt(index.row())
+                ->peak()
+                ->setRejectionFlag(ohkl::RejectionFlag::NotRejected, true);
         } else {
-            _root_item->peakItemAt(index.row()) ->peak() ->setRejectionFlag(
-                ohkl::RejectionFlag::ManuallyRejected, true);
+            _root_item->peakItemAt(index.row())
+                ->peak()
+                ->setRejectionFlag(ohkl::RejectionFlag::ManuallyRejected, true);
         }
         emit dataChanged(index, index);
         return true;

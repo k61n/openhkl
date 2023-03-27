@@ -38,7 +38,7 @@ void tiff_file_metadata::log(const Level& level) const
     ohklLog(level, "bits per pixel  = ", _bits_per_pixel);
     ohklLog(level, "compression     = ", _compression);
     ohklLog(level, "photometric     = ", _photometric);
-    ohklLog(level, "planar config   = ",  _planar_config);
+    ohklLog(level, "planar config   = ", _planar_config);
     ohklLog(level, "npixels         = ", _npixels);
 }
 
@@ -207,7 +207,8 @@ void TiffDataReader::registerFileDimension(std::string filename)
 {
     _tiff_meta_data = scanFile(filename);
     _file_resolutions.emplace_back(
-        std::to_string(_tiff_meta_data._width) + " x " + std::to_string(_tiff_meta_data._image_length));
+        std::to_string(_tiff_meta_data._width) + " x "
+        + std::to_string(_tiff_meta_data._image_length));
 }
 
 bool TiffDataReader::initRead()
@@ -238,8 +239,7 @@ void TiffDataReader::addFrame(const std::string& filename)
     _dataset_out->metadata().add<std::string>(
         ohkl::at_imageDimensions, ohkl::join(_file_resolutions, ","));
 
-    _dataset_out->metadata().add<int>(
-        ohkl::at_bitDepth, _tiff_meta_data._bits_per_pixel);
+    _dataset_out->metadata().add<int>(ohkl::at_bitDepth, _tiff_meta_data._bits_per_pixel);
 
     const std::size_t nframes = _filenames.size();
     _dataset_out->metadata().add<int>(ohkl::at_frameCount, nframes);

@@ -29,8 +29,12 @@
 #include <iostream>
 
 DataDialog::DataDialog(
-    ohkl::DataReaderParameters* parameters0, const QStringList& datanames_cur, bool tif_data, QString img_res)
-    : _dataset_names{datanames_cur}, _parameters0{parameters0}, _processing_tif_files(tif_data), _img_res(img_res)
+    ohkl::DataReaderParameters* parameters0, const QStringList& datanames_cur, bool tif_data,
+    QString img_res)
+    : _dataset_names{datanames_cur}
+    , _parameters0{parameters0}
+    , _processing_tif_files(tif_data)
+    , _img_res(img_res)
 {
     setModal(true);
 
@@ -47,49 +51,57 @@ DataDialog::DataDialog(
         _img_res_rows = std::stoi(_img_res.toStdString().substr(pos_x + 1, pos_end));
     }
 
-    _datasetName = gridfiller.addLineEdit("Name", QString::fromStdString(parameters0->dataset_name));
+    _datasetName =
+        gridfiller.addLineEdit("Name", QString::fromStdString(parameters0->dataset_name));
 
     if (!_processing_tif_files) {
         _dataArrangement = gridfiller.addCombo(
-        "Data arrangement", "Toggle data arrangement between row and column major");
+            "Data arrangement", "Toggle data arrangement between row and column major");
         _dataFormat = gridfiller.addCombo("Data format", "Number of bytes per pixel in images");
         _swapEndianness =
             gridfiller.addCheckBox("Swap endian", "Swap the endianness of the input data", 1);
     } else {
-        gridfiller.addLineEdit("Data format: ",
+        gridfiller
+            .addLineEdit(
+                "Data format: ",
 
-            QString(QString::number(static_cast<ohkl::TiffDataReaderParameters*>(_parameters0)->bits_per_pixel)) +
-            QString(" Bits per Pixel"))->setReadOnly(true);
+                QString(QString::number(
+                    static_cast<ohkl::TiffDataReaderParameters*>(_parameters0)->bits_per_pixel))
+                    + QString(" Bits per Pixel"))
+            ->setReadOnly(true);
 
         _img_res += QString(" Pixels");
-        gridfiller.addLineEdit(
-            "Image resolution: ", _img_res,
-            "Shows the resolution which was found in the selected files")->setReadOnly(true);
+        gridfiller
+            .addLineEdit(
+                "Image resolution: ", _img_res,
+                "Shows the resolution which was found in the selected files")
+            ->setReadOnly(true);
 
         _detector_resolutions = gridfiller.addCombo(
             "Target resolution:",
-            "Select the target resolution to which data from files will be mapped to. Necessary data "
+            "Select the target resolution to which data from files will be mapped to. Necessary "
+            "data "
             "rebinning is shown in bracket and will be automatically performed.");
 
-            // fill the detector resolution combo box with the available resolutions
-            auto cols = detector->getColRes();
-            auto rows = detector->getRowRes();
+        // fill the detector resolution combo box with the available resolutions
+        auto cols = detector->getColRes();
+        auto rows = detector->getRowRes();
 
-            QString det_res, data_bin;
+        QString det_res, data_bin;
 
-            for (int i = 0; i < cols.size(); ++i) { // building combo box entries
-                int ratio = _img_res_cols / int(cols[i]);
-                det_res = QString::fromStdString(std::to_string(int(cols[i]))) + " x "
-                    + QString::fromStdString(std::to_string(int(rows[i]))) + " Pixels";
+        for (int i = 0; i < cols.size(); ++i) { // building combo box entries
+            int ratio = _img_res_cols / int(cols[i]);
+            det_res = QString::fromStdString(std::to_string(int(cols[i]))) + " x "
+                + QString::fromStdString(std::to_string(int(rows[i]))) + " Pixels";
 
-                if (ratio > 0)
-                    data_bin = "  ( Binning: " + QString::number(ratio) + " x " + QString::number(ratio)
-                        + " -> 1 )";
-                else
-                    data_bin = "  [ NOT SUPPORTED ]";
+            if (ratio > 0)
+                data_bin = "  ( Binning: " + QString::number(ratio) + " x " + QString::number(ratio)
+                    + " -> 1 )";
+            else
+                data_bin = "  [ NOT SUPPORTED ]";
 
-                _detector_resolutions->addItem(det_res + data_bin);
-            }
+            _detector_resolutions->addItem(det_res + data_bin);
+        }
     }
 
     _chi = gridfiller.addDoubleSpinBox(
@@ -176,7 +188,7 @@ int DataDialog::bpp()
 {
     if (_processing_tif_files)
         // this values is saved in the tif files and has already been loaded
-        return ((ohkl::TiffDataReaderParameters*)_parameters0)->bits_per_pixel/8;
+        return ((ohkl::TiffDataReaderParameters*)_parameters0)->bits_per_pixel / 8;
     else
         // user setting from gui element
         switch (_dataFormat->currentIndex()) {

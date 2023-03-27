@@ -25,14 +25,15 @@ namespace ohkl {
 
 /*! \brief Special case of DataSet that contains only one image
  *
- * 
+ *
  */
 class SingleFrame : public DataSet {
 
  public:
     SingleFrame(const std::string& dataset_name, Diffractometer* diffractometer);
 
-    //! Add a raw file to be read as a single detector image frame. Only allow one frame to be added.
+    //! Add a raw file to be read as a single detector image frame. Only allow one frame to be
+    //! added.
     void addRawFrame(const std::string& rawfilename);
 
     //! Read a single frame

@@ -124,8 +124,7 @@ class AutoIndexer {
 
  private:
     //! Filter the peaks according to AutoIndexerParameters
-    void filterPeaks(
-        const std::vector<Peak3D*>& peaks, const InstrumentState* state = nullptr);
+    void filterPeaks(const std::vector<Peak3D*>& peaks, const InstrumentState* state = nullptr);
     //! Get a vector of candidate unit cells from a list of peaks using the
     //! Fourier transform method
     bool computeFFTSolutions(

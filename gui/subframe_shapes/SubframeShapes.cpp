@@ -50,10 +50,7 @@
 #include <QSpacerItem>
 #include <iostream>
 
-SubframeShapes::SubframeShapes()
-    : QWidget()
-    , _shape_model(nullptr)
-    , _preview_peak(nullptr)
+SubframeShapes::SubframeShapes() : QWidget(), _shape_model(nullptr), _preview_peak(nullptr)
 {
     _params = std::make_shared<ohkl::ShapeModelParameters>();
 
@@ -178,8 +175,8 @@ void SubframeShapes::setInputUp()
         _peak_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
         &SubframeShapes::grabShapeParameters);
     connect(
-        _peak_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
-        this, &SubframeShapes::refreshPeakTable);
+        _peak_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
+        &SubframeShapes::refreshPeakTable);
 
     _left_layout->addWidget(input_box);
 }
@@ -283,8 +280,8 @@ void SubframeShapes::setComputeShapesUp()
 
     connect(_assign_peak_shapes, &QPushButton::clicked, this, &SubframeShapes::assignPeakShapes);
     connect(
-        _shape_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
-        this, [=](){ _detector_widget->scene()->clearPixmapItems(); });
+        _shape_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
+        [=]() { _detector_widget->scene()->clearPixmapItems(); });
 }
 
 void SubframeShapes::setShapePreviewUp()
@@ -506,8 +503,8 @@ void SubframeShapes::computeProfile()
 
     const ohkl::DetectorEvent ev(_x->value(), _y->value(), _frame->value());
 
-    std::optional<ohkl::Profile3D> profile = model->meanProfile(
-        ev, _params->neighbour_range_pixels, _params->neighbour_range_frames);
+    std::optional<ohkl::Profile3D> profile =
+        model->meanProfile(ev, _params->neighbour_range_pixels, _params->neighbour_range_frames);
     if (!profile) {
         return;
     }
@@ -573,9 +570,8 @@ void SubframeShapes::saveShapes()
         return;
 
     std::string suggestion = gSession->currentProject()->experiment()->generateShapeModelName();
-    std::unique_ptr<ListNameDialog> dlg =
-        std::make_unique<ListNameDialog>(
-            QString::fromStdString(suggestion), QString("Shape model"), QString ("New shape model"));
+    std::unique_ptr<ListNameDialog> dlg = std::make_unique<ListNameDialog>(
+        QString::fromStdString(suggestion), QString("Shape model"), QString("New shape model"));
     dlg->exec();
     if (dlg->listName().isEmpty())
         return;
@@ -638,8 +634,8 @@ void SubframeShapes::toggleUnsafeWidgets()
     if (_shape_model)
         _save_shapes->setEnabled(true);
 
-    if (gSession->currentProject()->hasShapeModel() &&
-        gSession->currentProject()->hasPeakCollection()) {
+    if (gSession->currentProject()->hasShapeModel()
+        && gSession->currentProject()->hasPeakCollection()) {
         _calculate_mean_profile->setEnabled(true);
         _assign_peak_shapes->setEnabled(true);
     }

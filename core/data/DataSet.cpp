@@ -162,8 +162,7 @@ void DataSet::setRawReaderParameters(const RawDataReaderParameters& params)
     RawDataReader& rawreader = *static_cast<RawDataReader*>(_reader.get());
     rawreader.setParameters(params);
 
-    ohklLog(
-        Level::Info, "DataSet '" + _name + "': RawDataReader parameters set.");
+    ohklLog(Level::Info, "DataSet '" + _name + "': RawDataReader parameters set.");
     params.log(Level::Info);
 }
 void DataSet::addTiffFrame(const std::string& tiffilename)
@@ -512,7 +511,7 @@ int DataSet::getTiffBitDepth(std::vector<std::string> filenames)
     ohkl::TiffDataReader reader;
     auto bpps = reader.readFileBitDepths(filenames);
 
-   int bpp = bpps[0];
+    int bpp = bpps[0];
 
     for (auto& e : bpps)
         if (bpp != e)

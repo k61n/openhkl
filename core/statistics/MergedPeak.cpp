@@ -30,10 +30,7 @@
 namespace ohkl {
 
 MergedPeak::MergedPeak(const SpaceGroup& grp, bool friedel)
-    : _sumIntensity(0.0, 0.0)
-    , _profileIntensity(0.0, 0.0)
-    , _grp(grp)
-    , _friedel(friedel)
+    : _sumIntensity(0.0, 0.0), _profileIntensity(0.0, 0.0), _grp(grp), _friedel(friedel)
 {
 }
 

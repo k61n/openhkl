@@ -16,11 +16,11 @@
 
 #include "base/geometry/Ellipsoid.h"
 #include "base/utils/Logger.h"
-#include "core/shape/Octree.h"
 #include "core/data/DataSet.h"
 #include "core/peak/IntegrationRegion.h"
 #include "core/peak/Intensity.h"
 #include "core/peak/Peak3D.h"
+#include "core/shape/Octree.h"
 #include "tables/crystal/UnitCell.h"
 
 #include <algorithm>
@@ -188,8 +188,8 @@ void IIntegrator::integrate(
                 if (compute(peak, shape_model, *current_peak)) {
                     peak->updateIntegration(
                         _rockingCurve, _sumBackground, _profileBackground, _meanBkgGradient,
-                        _sumIntensity, _profileIntensity,
-                        _params.peak_end, _params.bkg_begin, _params.bkg_end, _params.region_type);
+                        _sumIntensity, _profileIntensity, _params.peak_end, _params.bkg_begin,
+                        _params.bkg_end, _params.region_type);
                     if (saturated)
                         peak->setIntegrationFlag(RejectionFlag::SaturatedPixel);
                 } else {
@@ -225,7 +225,8 @@ void IIntegrator::setParameters(const IntegrationParameters& params)
     _params.log(Level::Info);
 }
 
-void IIntegrator::removeOverlaps(const std::map<Peak3D*, std::unique_ptr<IntegrationRegion>>& regions)
+void IIntegrator::removeOverlaps(
+    const std::map<Peak3D*, std::unique_ptr<IntegrationRegion>>& regions)
 {
     ohklLog(Level::Info, "Integrator::removeOverlaps");
 

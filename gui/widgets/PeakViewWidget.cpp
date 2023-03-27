@@ -89,8 +89,8 @@ QComboBox* PeakViewWidget::addCombo(int row)
     auto* combo = new QComboBox;
     addWidget(combo, row, 1, 1, 1);
     connect(
-        combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
-        this, &PeakViewWidget::settingsChanged);
+        combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
+        &PeakViewWidget::settingsChanged);
 
     return combo;
 }

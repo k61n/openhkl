@@ -267,7 +267,8 @@ void Actions::removePeaks()
     if (peaks_list.empty())
         return;
 
-    std::unique_ptr<ComboDialog> dlg(new ComboDialog(peaks_list, description, "Remove peak collection"));
+    std::unique_ptr<ComboDialog> dlg(
+        new ComboDialog(peaks_list, description, "Remove peak collection"));
     dlg->exec();
     if (dlg->itemName().isEmpty())
         return;
