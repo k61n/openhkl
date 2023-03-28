@@ -2,8 +2,8 @@
 //
 //  OpenHKL: data reduction for single crystal diffraction
 //
-//! @file      gui/dialogs/DataDialog.cpp
-//! @brief     Implements class DataDialog
+//! @file      gui/dialogs/ImageReaderDialog.cpp
+//! @brief     Implements class ImageReaderDialog
 //!
 //! @homepage  https://openhkl.org
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "gui/dialogs/DataDialog.h"
+#include "gui/dialogs/ImageReaderDialog.h"
 
 #include "core/detector/Detector.h"
 #include "core/experiment/Experiment.h"
@@ -27,82 +27,56 @@
 #include <QLabel>
 #include <QMessageBox>
 #include <iostream>
+#include <stdexcept>
 
-DataDialog::DataDialog(
-    ohkl::DataReaderParameters* parameters0, const QStringList& datanames_cur, bool tif_data,
-    QString img_res)
-    : _dataset_names{datanames_cur}
-    , _parameters0{parameters0}
-    , _processing_tif_files(tif_data)
-    , _img_res(img_res)
+ImageReaderDialog::ImageReaderDialog(
+    const QStringList& filenames, ohkl::DataReaderParameters* parameters0, bool tiff_format)
+    : _parameters0{parameters0}
+    , _tiff_mode(tiff_format)
 {
     setModal(true);
 
-    auto detector = gSession->currentProject()->experiment()->getDiffractometer()->detector();
+    if (_tiff_mode) {
+        if (!checkTiffFiles(filenames)) {
+            QMessageBox::critical(
+                nullptr, "Error", "Mismatch between .tiff files (resolution or depth)");
+            this->reject();
+        }
+    }
+
     QGridLayout* main_grid = new QGridLayout();
     GridFiller gridfiller(main_grid);
     setLayout(main_grid);
 
-    if (_processing_tif_files) {
-
-        auto pos_x = _img_res.toStdString().find_first_of("x");
-        auto pos_end = _img_res.toStdString().find_first_of(" ");
-        _img_res_cols = std::stoi(_img_res.toStdString().substr(0, pos_x));
-        _img_res_rows = std::stoi(_img_res.toStdString().substr(pos_x + 1, pos_end));
-    }
-
     _datasetName =
         gridfiller.addLineEdit("Name", QString::fromStdString(parameters0->dataset_name));
 
-    if (!_processing_tif_files) {
-        _dataArrangement = gridfiller.addCombo(
-            "Data arrangement", "Toggle data arrangement between row and column major");
-        _dataFormat = gridfiller.addCombo("Data format", "Number of bytes per pixel in images");
-        _swapEndianness =
-            gridfiller.addCheckBox("Swap endian", "Swap the endianness of the input data", 1);
-    } else {
-        gridfiller
-            .addLineEdit(
-                "Data format: ",
+    _dataArrangement = gridfiller.addCombo(
+        "Data arrangement", "Toggle data arrangement between row and column major");
+    _dataFormat = gridfiller.addCombo("Data format", "Image bit depth and numerical format");
+    _swapEndianness =
+        gridfiller.addCheckBox("Swap endian", "Swap the endianness of the input data", 1);
+    _image_resolution =
+        gridfiller.addCombo("Image resolution: ", "Resolution of image (columns x rows)");
+    _rebin_size = gridfiller.addCombo(
+        "Rebinning:", "Reduce resolution by averaging over a square pixel grid");
 
-                QString(QString::number(
-                    static_cast<ohkl::TiffDataReaderParameters*>(_parameters0)->bits_per_pixel))
-                    + QString(" Bits per Pixel"))
-            ->setReadOnly(true);
+    // Poppulate the resolution combo boxes
+    auto detector = gSession->currentProject()->experiment()->getDiffractometer()->detector();
+    std::vector<std::pair<int, int>> resolutions = detector->getResolutions();
 
-        _img_res += QString(" Pixels");
-        gridfiller
-            .addLineEdit(
-                "Image resolution: ", _img_res,
-                "Shows the resolution which was found in the selected files")
-            ->setReadOnly(true);
+    QString det_res, data_bin;
 
-        _detector_resolutions = gridfiller.addCombo(
-            "Target resolution:",
-            "Select the target resolution to which data from files will be mapped to. Necessary "
-            "data "
-            "rebinning is shown in bracket and will be automatically performed.");
-
-        // fill the detector resolution combo box with the available resolutions
-        auto cols = detector->getColRes();
-        auto rows = detector->getRowRes();
-
-        QString det_res, data_bin;
-
-        for (int i = 0; i < cols.size(); ++i) { // building combo box entries
-            int ratio = _img_res_cols / int(cols[i]);
-            det_res = QString::fromStdString(std::to_string(int(cols[i]))) + " x "
-                + QString::fromStdString(std::to_string(int(rows[i]))) + " Pixels";
-
-            if (ratio > 0)
-                data_bin = "  ( Binning: " + QString::number(ratio) + " x " + QString::number(ratio)
-                    + " -> 1 )";
-            else
-                data_bin = "  [ NOT SUPPORTED ]";
-
-            _detector_resolutions->addItem(det_res + data_bin);
-        }
+    for (int i = 0; i < resolutions.size(); ++i) {
+        det_res = QString::fromStdString(std::to_string(resolutions[i].first)) + " x "
+            + QString::fromStdString(std::to_string(resolutions[i].second));
+        _image_resolution->addItem(det_res);
     }
+
+    _rebin_size->addItem(QString("1 x 1 ") + (QChar)0x2192 + QString(" 1"));
+    _rebin_size->addItem(QString("2 x 2 ") + (QChar)0x2192 + QString(" 1"));
+    _rebin_size->addItem(QString("4 x 4 ") + (QChar)0x2192 + QString(" 1"));
+
 
     _chi = gridfiller.addDoubleSpinBox(
         QString((QChar)0x0394) + " " + QString((QChar)0x03C7),
@@ -112,7 +86,7 @@ DataDialog::DataDialog(
         "Angle increment about the omega instrument axis");
     _phi = gridfiller.addDoubleSpinBox(
         QString((QChar)0x0394) + " " + QString((QChar)0x03C6),
-        "Angle incremet about the phi instrument axis");
+        "Angle increment about the phi instrument axis");
     _wavelength = gridfiller.addDoubleSpinBox("Wavelength", "Wavelength of the incident beam");
 
     _set_baseline_and_gain = new QGroupBox("Use baseline/gain");
@@ -142,10 +116,8 @@ DataDialog::DataDialog(
     gridfiller.addWidget(_set_baseline_and_gain);
     gridfiller.addWidget(_buttons);
 
-    if (!_processing_tif_files) {
-        _dataArrangement->addItems(QStringList{"Column major", "Row major"});
-        _dataFormat->addItems(QStringList{"8 bit integer", "16 bit integer", "32 bit integer"});
-    }
+    _dataArrangement->addItems(QStringList{"Column major", "Row major"});
+    _dataFormat->addItems(QStringList{"8 bit integer", "16 bit integer", "32 bit integer"});
 
     _chi->setDecimals(3);
     _phi->setDecimals(3);
@@ -156,12 +128,6 @@ DataDialog::DataDialog(
 
     _baseline->setMaximum(10000);
 
-    if (!_processing_tif_files) {
-        _dataArrangement->setCurrentIndex(1);
-        _dataFormat->setCurrentIndex(1);
-        _swapEndianness->setCheckState(Qt::Checked);
-    }
-
     _chi->setValue(_parameters0->delta_chi);
     _omega->setValue(_parameters0->delta_omega);
     _phi->setValue(_parameters0->delta_phi);
@@ -170,11 +136,37 @@ DataDialog::DataDialog(
     _baseline->setValue(detector->baseline());
     _gain->setValue(detector->gain());
 
-    connect(_buttons, &QDialogButtonBox::accepted, this, &DataDialog::verify);
+    _dataArrangement->setEnabled(false);
+    _dataFormat->setEnabled(false);
+    _image_resolution->setEnabled(false);
+    if (_tiff_mode) {
+        switch (_bpp) {
+        case 1: _dataFormat->setCurrentIndex(0); break;
+        case 2: _dataFormat->setCurrentIndex(1); break;
+        case 4: _dataFormat->setCurrentIndex(2); break;
+        default: throw std::runtime_error("ImageReaderDialog::ImageReaderDialog: invalid tiff bpp");
+        }
+        for (int idx = 0; idx < resolutions.size(); ++idx) {
+            if (_img_res.first == resolutions[idx].first) {
+                _image_resolution->setCurrentIndex(idx);
+                break;
+            }
+        }
+    } else {
+        _dataArrangement->setEnabled(true);
+        _dataFormat->setEnabled(true);
+        _image_resolution->setEnabled(true);
+        _rebin_size->setEnabled(false);
+        _dataArrangement->setCurrentIndex(1);
+        _dataFormat->setCurrentIndex(1);
+        _swapEndianness->setCheckState(Qt::Checked);
+    }
+
+    connect(_buttons, &QDialogButtonBox::accepted, this, &ImageReaderDialog::verify);
     connect(_buttons, &QDialogButtonBox::rejected, this, &QDialog::reject);
 }
 
-bool DataDialog::rowMajor()
+bool ImageReaderDialog::rowMajor()
 {
     QString selection = _dataArrangement->currentText();
     if (selection == "Row major")
@@ -184,38 +176,27 @@ bool DataDialog::rowMajor()
     return false;
 }
 
-int DataDialog::bpp()
+int ImageReaderDialog::bpp()
 {
-    if (_processing_tif_files)
+    if (_tiff_mode)
         // this values is saved in the tif files and has already been loaded
         return ((ohkl::TiffDataReaderParameters*)_parameters0)->bits_per_pixel / 8;
-    else
-        // user setting from gui element
-        switch (_dataFormat->currentIndex()) {
-            case 0: // 8 bit
-                return 1;
-            case 1: // 16 bit
-                return 2;
-            case 2: // 32 bit
-                return 4;
-            default: return -1;
-        }
+
+    // For raw files
+    switch (_dataFormat->currentIndex()) {
+        case 0: // 8 bit
+            return 1;
+        case 1: // 16 bit
+            return 2;
+        case 2: // 32 bit
+            return 4;
+        default: return -1;
+    }
 }
 
-void DataDialog::verify()
+void ImageReaderDialog::verify()
 {
-    // confirm overwrite if the name already exists
-    const QString& dname = _datasetName->text();
-    const bool name_exists = _dataset_names.contains(dname);
-    bool dialog_accepted = true;
-
-    if (name_exists) {
-        const QString msg("Name '" + dname + "' already exists");
-        QMessageBox::critical(nullptr, "Error", msg);
-        dialog_accepted = false;
-        return;
-    }
-
+    bool dialog_accepted = true;;
     // check wavelength
     const double eps = 1e-8;
     const double waveln = _wavelength->value();
@@ -231,17 +212,17 @@ void DataDialog::verify()
         this->accept();
 }
 
-void DataDialog::setSingleImageMode()
+void ImageReaderDialog::setSingleImageMode()
 {
     _chi->setEnabled(false);
     _phi->setEnabled(false);
     _omega->setEnabled(false);
 }
 
-ohkl::RawDataReaderParameters DataDialog::rawParameters()
+ohkl::RawDataReaderParameters ImageReaderDialog::rawParameters()
 {
-    if (_processing_tif_files) // check
-        throw std::runtime_error("Unable to return valid RawDataParameters");
+    if (_tiff_mode)
+        throw std::runtime_error("Unable to return valid RawDataReaderParameters");
 
     ohkl::RawDataReaderParameters parameters;
     parameters.dataset_name = _datasetName->text().toStdString();
@@ -263,10 +244,10 @@ ohkl::RawDataReaderParameters DataDialog::rawParameters()
     return parameters;
 }
 
-ohkl::TiffDataReaderParameters DataDialog::tiffParameters()
+ohkl::TiffDataReaderParameters ImageReaderDialog::tiffParameters()
 {
-    if (!_processing_tif_files)
-        throw std::runtime_error("Unable to return valid TifDataParameters");
+    if (!_tiff_mode)
+        throw std::runtime_error("Unable to return valid TiffDataReaderParameters");
 
     ohkl::TiffDataReaderParameters parameters;
     parameters.dataset_name = _datasetName->text().toStdString();
@@ -274,9 +255,16 @@ ohkl::TiffDataReaderParameters DataDialog::tiffParameters()
     parameters.delta_omega = _omega->value();
     parameters.delta_chi = _chi->value();
     parameters.delta_phi = _phi->value();
+    parameters.bits_per_pixel = bpp() * 8;
 
     // for processing tiff files this needs to be false!
     parameters.swap_endian = false;
+
+    switch(_rebin_size->currentIndex()) {
+    case 0: parameters.rebin_size = 1; break;
+    case 1: parameters.rebin_size = 2; break;
+    case 2: parameters.rebin_size = 4; break;
+    }
 
     if (_set_baseline_and_gain->isChecked()) {
         parameters.baseline = _baseline->value();
@@ -286,28 +274,42 @@ ohkl::TiffDataReaderParameters DataDialog::tiffParameters()
         parameters.gain = 1.0;
     }
 
+    auto detector = gSession->currentProject()->experiment()->getDiffractometer()->detector();
+    auto idx = _image_resolution->currentIndex();
+    detector->selectDetectorResolution(idx);
+
+    if (parameters.rebin_size != 1) {
+        detector->setNCols(detector->nCols() / parameters.rebin_size);
+        detector->setNRows(detector->nRows() / parameters.rebin_size);
+    }
+
     return parameters;
 }
 
-void DataDialog::selectDetectorResolution()
+void ImageReaderDialog::selectDetectorResolution()
 {
     // make sure only supported target resolution are accepted
-    auto detector = gSession->currentProject()->experiment()->getDiffractometer()->detector();
-    auto idx = _detector_resolutions->currentIndex();
+}
 
-    detector->selectDetectorResolution(idx);
+bool ImageReaderDialog::checkTiffFiles(const QStringList& filenames)
+{
+    std::vector<std::string> files;
+    for (const auto& name : filenames)
+        files.push_back(name.toStdString());
 
-    std::vector<int> _det_res_cols = detector->getColRes();
-
-    _buttons->buttons()[0]->setEnabled(_img_res_cols >= _det_res_cols[idx]);
-
-    if (_img_res_cols < _det_res_cols[idx])
-        QMessageBox::warning(
-            this, tr("Importing Tiff Data"),
-            "Target resolution cannot be greater than recorded resolution from data files. Make "
-            "sure that your selected target resolution is supported by your selected data files.",
-            QMessageBox::Ok);
-    else {
-        detector->selectDetectorResolution(idx);
+    ohkl::TiffDataReader reader;
+    auto bpps = reader.readFileBitDepths(files);
+    for (const auto& bpp : bpps) {
+        if (bpp != bpps[0])
+            return false;
     }
+
+    auto resolutions = reader.readFileResolutions(files);
+    for (const auto& res : resolutions)
+        if (resolutions[0].first != res.first && resolutions[0].second != res.second)
+            return false;
+
+    _bpp = bpps[0] / 8;
+    _img_res = resolutions[0];
+    return true;
 }

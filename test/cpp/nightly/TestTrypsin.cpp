@@ -49,7 +49,7 @@ TEST_CASE("test/data/TestTrypsin.cpp", "")
 
     // names
     const std::string expt_name = "Trypsin";
-    const std::string diff_name = "BioDiff2500";
+    const std::string diff_name = "BioDiff";
     const std::string data_name = "Scan I";
     const std::string found_peaks_name = "found";
     const std::string predicted_peaks_name = "predicted";

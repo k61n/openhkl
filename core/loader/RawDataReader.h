@@ -34,15 +34,14 @@ struct DataReaderParameters {
     bool swap_endian = true;
     double baseline = 0.0;
     double gain = 1.0;
-    // bool tif_data = false;
     void LoadDataFromFile(std::string file);
+    void log(const Level& level) const;
 };
 
 struct RawDataReaderParameters : public DataReaderParameters {
     bool row_major = true;
     std::size_t bpp = 2;
     void log(const Level& level) const;
-    // bool tif_data = false;
 };
 
 //! IDataReader for raw binary data.

@@ -92,6 +92,6 @@ void run_test(const char* filename, const char* instrument)
 
 TEST_CASE("test/instrument/TestInterpolatedState.cpp", "")
 {
-    run_test("gal3.hdf", "BioDiff2500");
+    run_test("gal3.hdf", "BioDiff");
     run_test("d19_test.hdf", "D19");
 }

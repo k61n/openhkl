@@ -158,7 +158,7 @@ int main(int argc, char* argv[])
     const char* group_name = "P 21 21 21";
     auto group = nsx::SpaceGroup(group_name);
 
-    auto expt = std::make_shared<nsx::Experiment>("Simulated", "BioDiff2500");
+    auto expt = std::make_shared<nsx::Experiment>("Simulated", "BioDiff");
     auto diff = expt->diffractometer();
     auto reader = std::make_shared<nsx::FakeDataReader>(infile, diff);
     auto data = std::make_shared<nsx::DataSet>(reader);

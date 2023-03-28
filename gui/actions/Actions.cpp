@@ -102,7 +102,8 @@ void Actions::setupView()
 void Actions::setupData()
 {
     add_data = new QAction("Add data set");
-    add_single_image = new QAction("Load single image (strategy)");
+    add_single_raw = new QAction("Load single .raw image (strategy)");
+    add_single_tiff = new QAction("Load single .tiff image (strategy)");
     show_input_files = new QAction("Show input files");
     remove_data = new QAction("Remove data set");
     add_raw = new QAction("Add raw data");
@@ -119,8 +120,13 @@ void Actions::setupData()
             gGui->sideBar()->refreshCurrent();
     });
 
-    connect(add_single_image, &QAction::triggered, []() { // can cause a crash without checking
+    connect(add_single_raw, &QAction::triggered, []() { // can cause a crash without checking
         if (gSession->loadRawData(true))
+            gGui->sideBar()->refreshCurrent();
+    });
+
+    connect(add_single_tiff, &QAction::triggered, []() { // can cause a crash without checking
+        if (gSession->loadTiffData(true))
             gGui->sideBar()->refreshCurrent();
     });
 

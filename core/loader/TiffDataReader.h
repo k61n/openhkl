@@ -27,8 +27,12 @@
 
 namespace ohkl {
 struct TiffDataReaderParameters : DataReaderParameters {
-    int data_binnning = 1;
+    //! Side of square grid over which to average during rebinning
+    int rebin_size = 1;
+    //! Bits per pixel (not to be confused with bpp, bytes per pixel)
     int bits_per_pixel = 1;
+
+    void log(const Level& level) const;
 };
 
 /*
@@ -36,13 +40,13 @@ struct TiffDataReaderParameters : DataReaderParameters {
     not all possible tiff tags are covered here only those which are used
  */
 struct tiff_file_metadata {
-    unsigned int _width = -1; // image width in px
-    unsigned int _image_length = -1; // image height in px
-    unsigned short _bits_per_pixel = -1;
-    unsigned short _compression = -1; // does tiff file uses a compression mechanism
-    unsigned short _photometric = -1; // black white or colored tiff files
-    unsigned short _planar_config = -1; // how are the pixels stored Chunky format or planar format
-    unsigned int _npixels = -1; // number of pixels
+    unsigned int image_width = -1; //!< Image width in px
+    unsigned int image_length = -1; //!< Image height in px
+    unsigned short bits_per_pixel = -1; //!< Number of bits per pixel
+    unsigned short compression = -1; //!< Whether tiff file uses a compression mechanism
+    unsigned short photometric = -1; //!< Greyscale or colored tiff
+    unsigned short planar_config = -1; //!< Whether pixels stored Chunky or planar format
+    unsigned int npixels = -1; //!< Number of pixels
 
     void log(const Level& level) const;
 };
@@ -84,7 +88,7 @@ class TiffDataReader : public IDataReader {
     //! will register file dimensions as meta data
     void registerFileDimension(std::string filename);
     //! read image (file) resolutions of a given vector of tiff files an return them
-    std::vector<std::string> readFileResolutions(std::vector<std::string> filenames);
+    std::vector<std::pair<int, int>> readFileResolutions(std::vector<std::string> filenames);
     //! returns all bpp values from given filenames
     std::vector<int> readFileBitDepths(std::vector<std::string> filenames);
 
@@ -93,7 +97,7 @@ class TiffDataReader : public IDataReader {
     std::vector<std::string> _filenames;
     std::vector<std::string> _file_resolutions;
     TiffDataReaderParameters _parameters;
-    std::size_t _length = 0;
+    std::size_t _length_after_rebin = 0;
     std::vector<char> _data;
     std::vector<unsigned short> _buffer;
 
@@ -109,13 +113,14 @@ Eigen::Matrix<T_, Eigen::Dynamic, Eigen::Dynamic> TiffDataReader::matrixFromData
 {
     const std::size_t nrows = _dataset_out->nRows(), ncols = _dataset_out->nCols();
 
-    assert(sizeof(T_) * nrows * ncols == _length);
+    assert(sizeof(T_) * nrows * ncols == _length_after_rebin);
 
     // as far as I can tell row major will always be the same for TIFF files
     Eigen::Matrix<T_, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> frame;
     frame.resize(nrows, ncols);
-    memcpy(&frame(0, 0), &_data[0], _length);
+    memcpy(&frame(0, 0), &_data[0], _length_after_rebin);
     return frame;
 }
-}
+
+} // namespace ohkl
 #endif

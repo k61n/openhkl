@@ -42,7 +42,7 @@ files = ("CrChiA_c01runab_28603.raw",
 
 # Initialise the experiment
 name = "CrChiA"
-detector = "BioDiff2500"
+detector = "BioDiff"
 expt = ohkl.Experiment(name, detector)
 
 dataset = ohkl.DataSet("testdata", expt.getDiffractometer())

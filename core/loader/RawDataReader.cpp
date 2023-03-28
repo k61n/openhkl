@@ -85,18 +85,24 @@ void DataReaderParameters::LoadDataFromFile(std::string file)
     }
 }
 
-void RawDataReaderParameters::log(const Level& level) const
+void DataReaderParameters::log(const Level& level) const
 {
-    ohklLog(level, "RawDataReaderParameters::log:");
+    ohklLog(level, "DataReaderParameters::log:");
     ohklLog(level, "wavelength     = ", wavelength);
     ohklLog(level, "delta_omega    = ", delta_omega);
     ohklLog(level, "delta_chi      = ", delta_chi);
     ohklLog(level, "delta_phi      = ", delta_phi);
-    ohklLog(level, "row_major      = ", row_major);
     ohklLog(level, "swap_endian    = ", swap_endian);
-    ohklLog(level, "bpp            = ", bpp);
     ohklLog(level, "baseline       = ", baseline);
     ohklLog(level, "gain           = ", gain);
+}
+
+void RawDataReaderParameters::log(const Level& level) const
+{
+    DataReaderParameters::log(level);
+    ohklLog(level, "RawDataReaderParameters::log:");
+    ohklLog(level, "row_major      = ", row_major);
+    ohklLog(level, "bpp            = ", bpp);
 }
 
 RawDataReader::RawDataReader()
@@ -250,7 +256,7 @@ Eigen::MatrixXi RawDataReader::data(size_t frame)
     switch (_parameters.bpp) {
         case 1: return matrixFromData<uint8_t>().cast<int>();
         case 2: return matrixFromData<uint16_t>().cast<int>();
-        case 3: return matrixFromData<uint32_t>().cast<int>();
+        case 4: return matrixFromData<uint32_t>().cast<int>();
         default: throw std::runtime_error("bpp unsupported: " + std::to_string(_parameters.bpp));
     }
 }

@@ -130,7 +130,7 @@ void DataSet::setTiffReaderParameters(const TiffDataReaderParameters& params)
 
     if (_dataformat != DataFormat::TIFF)
         throw std::runtime_error(
-            "DataSet '" + _name + "': Cannot set raw parameters since data format is not Tif.");
+            "DataSet '" + _name + "': Cannot set raw parameters since data format is not Tiff.");
 
     if (!_reader)
         setReader(DataFormat::TIFF);
@@ -143,7 +143,7 @@ void DataSet::setTiffReaderParameters(const TiffDataReaderParameters& params)
 
     ohklLog(
         Level::Info,
-        "DataSet '" + _name + "': TifDataReader parameters set."); // TODO: log parameter details
+        "DataSet '" + _name + "': TiffDataReaderParameters set."); // TODO: log parameter details
 }
 void DataSet::setRawReaderParameters(const RawDataReaderParameters& params)
 {
@@ -498,37 +498,6 @@ void DataSet::removeAllMasks()
 {
     if (_masks.size() > 0)
         _masks.clear();
-}
-
-std::vector<std::string> DataSet::getTiffResolutions(std::vector<std::string> filenames)
-{
-    ohkl::TiffDataReader reader;
-    return reader.readFileResolutions(filenames);
-}
-
-int DataSet::getTiffBitDepth(std::vector<std::string> filenames)
-{
-    ohkl::TiffDataReader reader;
-    auto bpps = reader.readFileBitDepths(filenames);
-
-    int bpp = bpps[0];
-
-    for (auto& e : bpps)
-        if (bpp != e)
-            bpp = -1;
-    return bpp;
-}
-
-std::string DataSet::checkTiffResolution(std::vector<std::string> filenames)
-{
-    auto resolutions = getTiffResolutions(filenames);
-    for (auto& r : resolutions)
-        if (resolutions[0] != r)
-            return "";
-
-    if (resolutions.size() >= 0)
-        return resolutions[0];
-    return "";
 }
 
 void DataSet::initBuffer(bool bufferAll)

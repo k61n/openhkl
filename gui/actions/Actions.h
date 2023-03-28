@@ -47,7 +47,8 @@ class Actions : public QObject {
     // Data
     QAction* show_input_files;
     QAction* add_data;
-    QAction* add_single_image;
+    QAction* add_single_raw;
+    QAction* add_single_tiff;
     QAction* remove_data;
     QAction* add_raw;
     QAction* add_tiff;

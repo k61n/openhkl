@@ -30,7 +30,7 @@ TEST_CASE("test/crystal/TestFFTIndexing.cpp", "")
             std::cout << log << std::endl;
     });
 
-    ohkl::Experiment experiment("test", "BioDiff2500");
+    ohkl::Experiment experiment("test", "BioDiff");
     const ohkl::sptrDataSet dataset_ptr { std::make_shared<ohkl::DataSet>
           (ohkl::kw_datasetDefaultName, experiment.getDiffractometer()) };
 

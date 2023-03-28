@@ -64,7 +64,8 @@ Menus::Menus(QMenuBar* menu_bar) : _menu_bar{menu_bar}
     _data_sub->addAction(actions->add_tiff);
     _data_sub->addAction(actions->add_hdf5);
     _data_sub->addAction(actions->add_nexus);
-    _data_menu->addAction(actions->add_single_image);
+    _data_menu->addAction(actions->add_single_raw);
+    _data_menu->addAction(actions->add_single_tiff);
     _data_menu->addAction(actions->show_input_files);
     _data_menu->addAction(actions->remove_data);
 
@@ -154,9 +155,11 @@ void Menus::toggleEntries()
     bool strategy_mode = gSession->currentProject()->strategyMode();
 
     actions->add_raw->setDisabled(strategy_mode);
+    actions->add_tiff->setDisabled(strategy_mode);
     actions->add_nexus->setDisabled(strategy_mode);
     actions->add_hdf5->setDisabled(strategy_mode);
-    actions->add_single_image->setDisabled(!strategy_mode);
+    actions->add_single_raw->setDisabled(!strategy_mode);
+    actions->add_single_tiff->setDisabled(!strategy_mode);
 
     actions->remove_data->setDisabled(no_datasets);
 

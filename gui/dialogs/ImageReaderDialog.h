@@ -2,8 +2,8 @@
 //
 //  OpenHKL: data reduction for single crystal diffraction
 //
-//! @file      gui/dialogs/DataDialog.h
-//! @brief     Defines class DataDialog
+//! @file      gui/dialogs/ImageReaderDialog.h
+//! @brief     Defines class ImageReaderDialog
 //!
 //! @homepage  https://openhkl.org
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -32,21 +32,17 @@
 #include <string>
 
 //! Dialog to either get *.raw or *.tif files
-// Name change from RawDataDialog to DataDialog
-class DataDialog : public QDialog {
+class ImageReaderDialog : public QDialog {
  public:
     //! Constructor in case or processing Raw files
-    DataDialog(
-        ohkl::DataReaderParameters* parameters0, const QStringList& datanames_cur = QStringList(),
-        bool tif_data = false, QString img_res = "");
+    ImageReaderDialog(
+        const QStringList& filenames, ohkl::DataReaderParameters* parameters0, bool tiff_format = false);
     //! Disable widgets that are relevant for multiple images only
     void setSingleImageMode();
     //! Return a copy of raw parameters
     ohkl::RawDataReaderParameters rawParameters();
     //! Return a copy of tif parameters
     ohkl::TiffDataReaderParameters tiffParameters();
-    //! Checks Settings
-    void checkSettings(uint16_t bpp, uint32_t cols_in_file, uint32_t rows_in_file);
     //! Allows to select Detector resolution
     void selectDetectorResolution();
 
@@ -55,11 +51,12 @@ class DataDialog : public QDialog {
     void verify();
     bool rowMajor();
     int bpp();
-
-    const QStringList& _dataset_names; // list of current dataset names
+    //! Check tiff files for resolution and bit depth
+    bool checkTiffFiles(const QStringList& filenames);
 
     QComboBox* _dataArrangement;
     QComboBox* _dataFormat;
+    QComboBox* _resolution;
     QCheckBox* _swapEndianness;
     SafeDoubleSpinBox* _chi;
     SafeDoubleSpinBox* _omega;
@@ -73,19 +70,13 @@ class DataDialog : public QDialog {
 
     ohkl::DataReaderParameters* _parameters0;
 
-    bool _allow_rebinning_data;
-    int _img_res_cols;
-    int _img_res_rows;
+    int _bpp;
+    std::pair<int, int> _img_res;
 
-    QSpinBox* _databits_in_img;
-    QSpinBox* _cols_in_img;
-    QSpinBox* _rows_in_img;
-    QLineEdit* _img_res_image_resolution;
-    QComboBox* _detector_resolutions;
+    QComboBox* _image_resolution;
+    QComboBox* _rebin_size;
 
-    // Do we process Tiff (true) or Raw Files(false)
-    bool _processing_tif_files;
-    QString _img_res;
+    bool _tiff_mode;
 };
 
 #endif // OHKL_GUI_DIALOGS_RAWDATADIALOG_H

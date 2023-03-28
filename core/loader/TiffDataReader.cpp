@@ -30,16 +30,24 @@
 
 namespace ohkl {
 
+void TiffDataReaderParameters::log(const Level& level) const
+{
+    DataReaderParameters::log(level);
+    ohklLog(level, "TiffDataReaderParameters::log:");
+    ohklLog(level, "rebin_size   = ", rebin_size);
+    ohklLog(level, "bits_per_pixel = ", bits_per_pixel);
+}
+
 void tiff_file_metadata::log(const Level& level) const
 {
     ohklLog(level, "tiff_file_metadata::log:");
-    ohklLog(level, "image width     = ", _width);
-    ohklLog(level, "image length    = ", _image_length);
-    ohklLog(level, "bits per pixel  = ", _bits_per_pixel);
-    ohklLog(level, "compression     = ", _compression);
-    ohklLog(level, "photometric     = ", _photometric);
-    ohklLog(level, "planar config   = ", _planar_config);
-    ohklLog(level, "npixels         = ", _npixels);
+    ohklLog(level, "image width     = ", image_width);
+    ohklLog(level, "image length    = ", image_length);
+    ohklLog(level, "bits per pixel  = ", bits_per_pixel);
+    ohklLog(level, "compression     = ", compression);
+    ohklLog(level, "photometric     = ", photometric);
+    ohklLog(level, "planar config   = ", planar_config);
+    ohklLog(level, "npixels         = ", npixels);
 }
 
 TiffDataReader::TiffDataReader() : IDataReader("::NO-FILENAME::"), _tiff(nullptr) { }
@@ -50,24 +58,24 @@ TiffDataReader::~TiffDataReader()
     _data.clear();
 }
 
-// only used when we need to read file resolutions of fiff files before creating DataSet
-std::vector<std::string> TiffDataReader::readFileResolutions(std::vector<std::string> filenames)
+// only used when we need to read file resolutions of files before creating DataSet
+std::vector<std::pair<int, int>> TiffDataReader::readFileResolutions(std::vector<std::string> filenames)
 {
-    std::vector<std::string> res;
+    std::vector<std::pair<int, int>> res;
     for (auto& fname : filenames) {
         auto tags = scanFile(fname);
-        res.emplace_back(std::to_string(tags._width) + "x" + std::to_string(tags._image_length));
+        res.push_back({tags.image_width, tags.image_length});
     }
     return res;
 }
 
-// only used when we need to read file resolutions of fiff files before creating DataSet
+// only used when we need to read file resolutions of files before creating DataSet
 std::vector<int> TiffDataReader::readFileBitDepths(std::vector<std::string> filenames)
 {
     std::vector<int> bpp;
     for (auto& fname : filenames) {
         auto tags = scanFile(fname);
-        bpp.emplace_back(tags._bits_per_pixel);
+        bpp.emplace_back(tags.bits_per_pixel);
     }
     return bpp;
 }
@@ -79,23 +87,23 @@ tiff_file_metadata TiffDataReader::scanFile(std::string filename)
 
     if (!filename.empty()) {
         auto tiff = TIFFOpen(filename.c_str(), "r");
-        if (TIFFGetField(tiff, TIFFTAG_IMAGEWIDTH, &tags._width) == 0)
+        if (TIFFGetField(tiff, TIFFTAG_IMAGEWIDTH, &tags.image_width) == 0)
             throw std::runtime_error(
                 "TiffDataReader::read\t TIFFTAG_IMAGEWIDTH is not defined in *.tiff file");
-        if (TIFFGetField(tiff, TIFFTAG_IMAGELENGTH, &tags._image_length) == 0)
+        if (TIFFGetField(tiff, TIFFTAG_IMAGELENGTH, &tags.image_length) == 0)
             throw std::runtime_error(
                 "TiffDataReader::read\t TIFFTAG_IMAGELENGTH is not defined in *.tiff file");
-        if (TIFFGetField(tiff, TIFFTAG_BITSPERSAMPLE, &tags._bits_per_pixel) == 0)
+        if (TIFFGetField(tiff, TIFFTAG_BITSPERSAMPLE, &tags.bits_per_pixel) == 0)
             throw std::runtime_error(
                 "TiffDataReader::read\t TIFFTAG_BITSPERSAMPLE is not defined in *.tiff file");
-        if (TIFFGetField(tiff, TIFFTAG_COMPRESSION, &tags._compression) == 0)
+        if (TIFFGetField(tiff, TIFFTAG_COMPRESSION, &tags.compression) == 0)
             throw std::runtime_error(
                 "TiffDataReader::read\t  TIFFTAG_COMPRESSION is not defined in *.tiff file");
-        if (TIFFGetField(tiff, TIFFTAG_PLANARCONFIG, &tags._planar_config)
+        if (TIFFGetField(tiff, TIFFTAG_PLANARCONFIG, &tags.planar_config)
             == 0) // how data is saved (1) means RGBRGBRGB...RGB
             throw std::runtime_error(
                 "TiffDataReader::read\t  TIFFTAG_PLANARCONFIG is not defined in *.tiff file");
-        if (TIFFGetField(tiff, TIFFTAG_PHOTOMETRIC, &tags._photometric) == 0)
+        if (TIFFGetField(tiff, TIFFTAG_PHOTOMETRIC, &tags.photometric) == 0)
             throw std::runtime_error(
                 "TiffDataReader::read\t  TIFFTAG_PHOTOMETRIC is not defined in *.tiff file");
         TIFFClose(tiff);
@@ -106,23 +114,23 @@ tiff_file_metadata TiffDataReader::scanFile(std::string filename)
 void TiffDataReader::readTags(TIFF* tif)
 {
     if (tif) {
-        if (TIFFGetField(tif, TIFFTAG_IMAGEWIDTH, &_tiff_meta_data._width) == 0)
+        if (TIFFGetField(tif, TIFFTAG_IMAGEWIDTH, &_tiff_meta_data.image_width) == 0)
             throw std::runtime_error(
                 "TiffDataReader::read\t TIFFTAG_IMAGEWIDTH is not defined in *.tiff file");
-        if (TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &_tiff_meta_data._image_length) == 0)
+        if (TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &_tiff_meta_data.image_length) == 0)
             throw std::runtime_error(
                 "TiffDataReader::read\t TIFFTAG_IMAGELENGTH is not defined in *.tiff file");
-        if (TIFFGetField(tif, TIFFTAG_BITSPERSAMPLE, &_tiff_meta_data._bits_per_pixel) == 0)
+        if (TIFFGetField(tif, TIFFTAG_BITSPERSAMPLE, &_tiff_meta_data.bits_per_pixel) == 0)
             throw std::runtime_error(
                 "TiffDataReader::read\t TIFFTAG_BITSPERSAMPLE is not defined in *.tiff file");
-        if (TIFFGetField(tif, TIFFTAG_COMPRESSION, &_tiff_meta_data._compression) == 0)
+        if (TIFFGetField(tif, TIFFTAG_COMPRESSION, &_tiff_meta_data.compression) == 0)
             throw std::runtime_error(
                 "TiffDataReader::read\t  TIFFTAG_COMPRESSION is not defined in *.tiff file");
-        if (TIFFGetField(tif, TIFFTAG_PLANARCONFIG, &_tiff_meta_data._planar_config)
+        if (TIFFGetField(tif, TIFFTAG_PLANARCONFIG, &_tiff_meta_data.planar_config)
             == 0) // how data is saved (1) means RGBRGBRGB...RGB
             throw std::runtime_error(
                 "TiffDataReader::read\t  TIFFTAG_PLANARCONFIG is not defined in *.tiff file");
-        if (TIFFGetField(tif, TIFFTAG_PHOTOMETRIC, &_tiff_meta_data._photometric) == 0)
+        if (TIFFGetField(tif, TIFFTAG_PHOTOMETRIC, &_tiff_meta_data.photometric) == 0)
             throw std::runtime_error(
                 "TiffDataReader::read\t  TIFFTAG_PHOTOMETRIC is not defined in *.tiff file");
     } else
@@ -132,33 +140,30 @@ void TiffDataReader::readTags(TIFF* tif)
 void TiffDataReader::readData()
 {
     if (_tiff) {
-        _tiff_meta_data._npixels = _tiff_meta_data._image_length * _tiff_meta_data._width;
+        _tiff_meta_data.npixels = _tiff_meta_data.image_length * _tiff_meta_data.image_width;
         auto size = TIFFScanlineSize(_tiff);
 
         // Explanation: data works as our buffer to hold all read scanlines from the tiff file
         // that is before rebinning. Then we are using this again for storing the rebinned data
-        // this is possible because indexes do not overlap with eahc other
-        int scale = _tiff_meta_data._image_length
-            / _n_target_height; // scale factor between image and target height/image length
-        _buffer.resize(_tiff_meta_data._npixels);
-        _data.resize(scale * scale * _tiff_meta_data._npixels);
+        // this is possible because indexes do not overlap with each other
+        _buffer.resize(_tiff_meta_data.npixels);
+        _data.resize(_parameters.rebin_size * _parameters.rebin_size * _tiff_meta_data.npixels);
 
         // read all single lines from tiff file and store them in data
-        for (uint32 row = 0; row < _tiff_meta_data._image_length; row++)
-            TIFFReadScanline(_tiff, (tdata_t*)(_buffer.data() + row * size / scale), row);
+        for (unsigned int row = 0; row < _tiff_meta_data.image_length; row++)
+            TIFFReadScanline(_tiff, (tdata_t*)(_buffer.data() + row * size /
+                                               _parameters.rebin_size), row);
 
         // rebinning
-        rebin(_parameters.data_binnning);
+        rebin(_parameters.rebin_size);
 
         // std::memcpy(_data.data(), _buffer.data(), _buffer.size()/16); // why does this already
         // work was 2 before
         std::memcpy(
-            _data.data(), _buffer.data(), scale * _buffer.size() / _parameters.data_binnning);
-
-        //_data.clear();
+            _data.data(), _buffer.data(), _buffer.size() / _parameters.rebin_size);
 
         // updating dimensions
-        _length = scale * _buffer.size() / _parameters.data_binnning;
+        _length_after_rebin = _buffer.size() / _parameters.rebin_size;
     } else
         throw std::runtime_error("TiffDataReader::readData No stream has been opened");
 }
@@ -168,38 +173,38 @@ void TiffDataReader::readData()
     Though parameters have been hold as generic as possible, this method is mayboe not applicable
     for every possible instrument which could be added to OpenHKL in the future.
  */
-void TiffDataReader::rebin(int rebins)
+void TiffDataReader::rebin(int rebin_size)
 {
-    if (rebins == 1)
+    if (rebin_size == 1)
         return;
 
-    int sqrt_rbins = sqrt(rebins);
+    int nbins = rebin_size * rebin_size;
     //
     // rebinning of data
     int nidx; // new index (after rebinning)
     std::vector<int>
         oidx; // old indices (before rebinning) -> we are rebinning oidx.size() to one new index
-    oidx.resize(rebins);
+    oidx.resize(nbins);
     double tmp;
 
-    for (int j = 0; j < _tiff_meta_data._image_length - (sqrt_rbins); j += sqrt_rbins)
-        for (int i = 0; i < _tiff_meta_data._width - (sqrt_rbins); i += sqrt_rbins) {
-            for (int k = 0; k < rebins; k++) {
-                oidx[k] = (k % sqrt_rbins) + i + (j + (k / sqrt_rbins)) * _tiff_meta_data._width;
+    for (int j = 0; j < (_tiff_meta_data.image_length - rebin_size); j += rebin_size)
+        for (int i = 0; i < (_tiff_meta_data.image_width - rebin_size); i += rebin_size) {
+            for (int k = 0; k < nbins; k++) {
+                oidx[k] = (k % rebin_size) + i + (j + (k / rebin_size)) * _tiff_meta_data.image_width;
             }
 
-            nidx = static_cast<int>(i / sqrt_rbins)
-                + static_cast<int>(j / sqrt_rbins) * (_tiff_meta_data._width / sqrt_rbins);
+            nidx = static_cast<int>(i / rebin_size)
+                + static_cast<int>(j / rebin_size) * (_tiff_meta_data.image_width / rebin_size);
 
             // simple averaging here;
             tmp = 0;
             for (auto& e : oidx)
-                tmp += 1.0 / rebins * static_cast<double>(_buffer.at(e));
+                tmp += 1.0 / nbins * static_cast<double>(_buffer.at(e));
 
             // We are storing the rebinned data in the same container as unbined
             // because the old and new indexes are not overlapping we can use one and the same
             // container to store data of both
-            _buffer[nidx] = (uint16)tmp;
+            _buffer[nidx] = static_cast<unsigned short>(tmp);
         }
 }
 
@@ -207,8 +212,8 @@ void TiffDataReader::registerFileDimension(std::string filename)
 {
     _tiff_meta_data = scanFile(filename);
     _file_resolutions.emplace_back(
-        std::to_string(_tiff_meta_data._width) + " x "
-        + std::to_string(_tiff_meta_data._image_length));
+        std::to_string(_tiff_meta_data.image_width) + " x "
+        + std::to_string(_tiff_meta_data.image_length));
 }
 
 bool TiffDataReader::initRead()
@@ -239,7 +244,7 @@ void TiffDataReader::addFrame(const std::string& filename)
     _dataset_out->metadata().add<std::string>(
         ohkl::at_imageDimensions, ohkl::join(_file_resolutions, ","));
 
-    _dataset_out->metadata().add<int>(ohkl::at_bitDepth, _tiff_meta_data._bits_per_pixel);
+    _dataset_out->metadata().add<int>(ohkl::at_bitDepth, _tiff_meta_data.bits_per_pixel);
 
     const std::size_t nframes = _filenames.size();
     _dataset_out->metadata().add<int>(ohkl::at_frameCount, nframes);
@@ -285,16 +290,13 @@ Eigen::MatrixXi TiffDataReader::data(size_t frame)
     readTags(_tiff);
 
     // Check if we can process this stream
-    if (_tiff_meta_data._compression != 1) // no compressed tiff files
+    if (_tiff_meta_data.compression != 1) // no compressed tiff files
         throw std::runtime_error("TiffDataReader::read\t  Compressed Tiff files are not supported");
-    if (_tiff_meta_data._planar_config != PLANARCONFIG_CONTIG) // need planar based tiff files
+    if (_tiff_meta_data.planar_config != PLANARCONFIG_CONTIG) // need planar based tiff files
         throw std::runtime_error(
             "TiffDataReader::read\t  Only PLANARCONFIG_CONTIG tiff files are supported");
-    if (_tiff_meta_data._photometric > 1) // tiff files can only have gray colors
+    if (_tiff_meta_data.photometric > 1) // tiff files can only have gray colors
         throw std::runtime_error("TiffDataReader::read\t  Colored Tiff files are not supported");
-
-    _parameters.data_binnning =
-        (_tiff_meta_data._width / _n_target_width) * (_tiff_meta_data._width / _n_target_width);
 
     readData();
 
@@ -302,11 +304,11 @@ Eigen::MatrixXi TiffDataReader::data(size_t frame)
 
     if (_parameters.swap_endian)
         swapEndian();
-    auto bpp = _tiff_meta_data._bits_per_pixel / 8;
+    auto bpp = _tiff_meta_data.bits_per_pixel / 8;
     switch (bpp) {
         case 1: return matrixFromData<uint8_t>().cast<int>();
         case 2: return matrixFromData<uint16_t>().cast<int>();
-        case 3: return matrixFromData<uint32_t>().cast<int>();
+        case 4: return matrixFromData<uint32_t>().cast<int>();
         default: throw std::runtime_error("bpp unsupported: " + std::to_string(bpp));
     }
     return Eigen::MatrixXi();
@@ -316,12 +318,13 @@ Eigen::MatrixXi TiffDataReader::data(size_t frame)
 void TiffDataReader::setParameters(const TiffDataReaderParameters& parameters)
 {
     _parameters = parameters;
+    _parameters.log(Level::Info);
 
     const std::size_t nrows = _dataset_out->nRows(), ncols = _dataset_out->nCols();
 
-    _tiff_meta_data._bits_per_pixel = parameters.bits_per_pixel;
+    _tiff_meta_data.bits_per_pixel = parameters.bits_per_pixel;
 
-    _length = _tiff_meta_data._bits_per_pixel / 8 * nrows * ncols;
+    // _length_after_rebin = _tiff_meta_data.bits_per_pixel / 8 * nrows * ncols;
     auto& mono = _dataset_out->diffractometer()->source().selectedMonochromator();
     mono.setWavelength(_parameters.wavelength);
 
@@ -332,18 +335,19 @@ void TiffDataReader::setParameters(const TiffDataReaderParameters& parameters)
     _dataset_out->metadata().add<int>(ohkl::at_numor, 0.0);
     _dataset_out->metadata().add<double>(ohkl::at_baseline, _parameters.baseline);
     _dataset_out->metadata().add<double>(ohkl::at_gain, _parameters.gain);
-    _data.resize(_tiff_meta_data._bits_per_pixel / 8 * nrows * ncols);
+    _data.resize(_tiff_meta_data.bits_per_pixel / 8 * nrows * ncols);
 }
 
 void TiffDataReader::swapEndian()
 {
     const std::size_t nrows = _dataset_out->nRows(), ncols = _dataset_out->nCols();
 
-    auto bpp = _tiff_meta_data._bits_per_pixel / 8;
+    auto bpp = _tiff_meta_data.bits_per_pixel / 8;
     for (std::size_t i = 0; i < nrows * ncols; ++i) {
         for (std::size_t byte = 0; byte < bpp / 2; ++byte) {
             std::swap(_data[bpp * i + byte], _data[bpp * i + (bpp - 1 - byte)]);
         }
     }
 }
-} // ohkl
+
+} // namespace ohkl

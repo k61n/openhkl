@@ -32,7 +32,7 @@
 TEST_CASE("test/data/TestPeakFinder.cpp", "")
 {
     const std::string filename = "CrChiA.ohkl";
-    ohkl::Experiment experiment("test", "BioDiff2500");
+    ohkl::Experiment experiment("test", "BioDiff");
     experiment.loadFromFile(filename);
 
     ohkl::sptrUnitCell cell = experiment.getSptrUnitCell("accepted");

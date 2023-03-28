@@ -113,17 +113,16 @@ class Detector : public Component {
     //! Override the gain from the .yml2c file
     void setGain(double gain);
 
-    std::vector<int> getColRes() { return _nCols_options; }
-    std::vector<int> getRowRes() { return _nRows_options; }
+    //! Get a list of valid resolutions as pairs (cols, rows)
+    std::vector<std::pair<int, int>> getResolutions() { return _resolutions; };
 
-    int getNresolutions() { return _nCols_options.size(); }
-
+    //! Set the resolution to the given index in the list
     void selectDetectorResolution(int choice)
     {
-        if (choice < 0 || choice > _nCols_options.size())
+        if (choice < 0 || choice > _resolutions.size())
             return;
-        setNCols(_nCols_options[choice]);
-        setNRows(_nRows_options[choice]);
+        setNCols(_resolutions[choice].first);
+        setNRows(_resolutions[choice].second);
     }
 
 
@@ -137,10 +136,7 @@ class Detector : public Component {
     //! Detector angular width
     double _angularWidth;
 
-    // Eigen::Vector3d _nCols_options;
-    // Eigen::Vector3d _nRows_options;
-    std::vector<int> _nCols_options;
-    std::vector<int> _nRows_options;
+    std::vector<std::pair<int, int>> _resolutions;
 
 
     //! Number of rows of pixels
