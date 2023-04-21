@@ -138,9 +138,6 @@ void DataSet::setTiffReaderParameters(const TiffDataReaderParameters& params)
     TiffDataReader& tiffreader = *static_cast<TiffDataReader*>(_reader.get());
     tiffreader.setParameters(params);
 
-    tiffreader.setTargetWidth(_diffractometer->detector()->nCols());
-    tiffreader.setTargetHeight(_diffractometer->detector()->nRows());
-
     ohklLog(
         Level::Info,
         "DataSet '" + _name + "': TiffDataReaderParameters set."); // TODO: log parameter details

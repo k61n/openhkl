@@ -38,9 +38,9 @@ void TiffDataReaderParameters::log(const Level& level) const
     ohklLog(level, "bits_per_pixel = ", bits_per_pixel);
 }
 
-void tiff_file_metadata::log(const Level& level) const
+void TiffMetadata::log(const Level& level) const
 {
-    ohklLog(level, "tiff_file_metadata::log:");
+    ohklLog(level, "TiffMetadata::log:");
     ohklLog(level, "image width     = ", image_width);
     ohklLog(level, "image length    = ", image_length);
     ohklLog(level, "bits per pixel  = ", bits_per_pixel);
@@ -81,9 +81,9 @@ std::vector<int> TiffDataReader::readFileBitDepths(std::vector<std::string> file
 }
 
 // to use with readFileResolutions before having a DataSet
-tiff_file_metadata TiffDataReader::scanFile(std::string filename)
+TiffMetadata TiffDataReader::scanFile(std::string filename)
 {
-    tiff_file_metadata tags;
+    TiffMetadata tags;
 
     if (!filename.empty()) {
         auto tiff = TIFFOpen(filename.c_str(), "r");
@@ -150,9 +150,10 @@ void TiffDataReader::readData()
         _data.resize(_parameters.rebin_size * _parameters.rebin_size * _tiff_meta_data.npixels);
 
         // read all single lines from tiff file and store them in data
-        for (unsigned int row = 0; row < _tiff_meta_data.image_length; row++)
+        for (unsigned int row = 0; row < _tiff_meta_data.image_length; row++) {
             TIFFReadScanline(_tiff, (tdata_t*)(_buffer.data() + row * size /
                                                _parameters.rebin_size), row);
+        }
 
         // rebinning
         rebin(_parameters.rebin_size);
@@ -182,8 +183,7 @@ void TiffDataReader::rebin(int rebin_size)
     //
     // rebinning of data
     int nidx; // new index (after rebinning)
-    std::vector<int>
-        oidx; // old indices (before rebinning) -> we are rebinning oidx.size() to one new index
+    std::vector<int> oidx; // old indices (before rebinning); rebinning oidx.size() to one new index
     oidx.resize(nbins);
     double tmp;
 

@@ -39,7 +39,7 @@ struct TiffDataReaderParameters : DataReaderParameters {
     struct to hold Tiff Tags with meta data for an opened Tiff file
     not all possible tiff tags are covered here only those which are used
  */
-struct tiff_file_metadata {
+struct TiffMetadata {
     unsigned int image_width = -1; //!< Image width in px
     unsigned int image_length = -1; //!< Image height in px
     unsigned short bits_per_pixel = -1; //!< Number of bits per pixel
@@ -79,12 +79,8 @@ class TiffDataReader : public IDataReader {
     void readData();
     //! Will rebin data to target dimensions
     void rebin(int rebins);
-    //! Set detector width in px. this is the target width which data is binned to
-    void setTargetWidth(int nwidth) { _n_target_width = nwidth; };
-    //! Set detector height in px. this is the target height which data is binned to
-    void setTargetHeight(int nheight) { _n_target_height = nheight; };
     //! this method is scanning a given tiff file for its meta data tags without loading data
-    tiff_file_metadata scanFile(std::string filename);
+    TiffMetadata scanFile(std::string filename);
     //! will register file dimensions as meta data
     void registerFileDimension(std::string filename);
     //! read image (file) resolutions of a given vector of tiff files an return them
@@ -101,9 +97,7 @@ class TiffDataReader : public IDataReader {
     std::vector<char> _data;
     std::vector<unsigned short> _buffer;
 
-    tiff_file_metadata _tiff_meta_data;
-    int _n_target_width;
-    int _n_target_height;
+    TiffMetadata _tiff_meta_data;
 
     TIFF* _tiff;
 };
