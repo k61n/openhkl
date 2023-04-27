@@ -50,7 +50,7 @@ class ImageReaderDialog : public QDialog {
     //! Verify user-provided parameters
     void verify();
     bool rowMajor();
-    int bpp();
+    int bytesPerPixel();
     //! Check tiff files for resolution and bit depth
     bool checkTiffFiles(const QStringList& filenames);
 
@@ -70,7 +70,7 @@ class ImageReaderDialog : public QDialog {
 
     ohkl::DataReaderParameters* _parameters0;
 
-    int _bpp;
+    int _bytes_per_pixel;
     std::pair<int, int> _img_res;
 
     QComboBox* _image_resolution;

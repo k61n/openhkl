@@ -18,6 +18,7 @@
 #include "core/instrument/InstrumentState.h"
 #include "core/instrument/InstrumentStateSet.h"
 #include "core/raw/MetaData.h"
+
 #include <Eigen/Dense>
 #include <string>
 #include <vector>
@@ -28,6 +29,24 @@ namespace ohkl {
 
 class InstrumentStateSet;
 class DataSet;
+
+//! Minimal meta data set
+struct DataReaderParameters {
+    int rows = -1;
+    int cols = -1;
+    std::string dataset_name = kw_datasetDefaultName;
+    double wavelength = 0.0;
+    double delta_omega = 0.0;
+    double delta_chi = 0.0;
+    double delta_phi = 0.0;
+    bool swap_endian = true;
+    double baseline = 0.0;
+    double gain = 1.0;
+    std::size_t bytes_per_pixel = 2;
+
+    void log(const Level& level) const;
+    void LoadDataFromFile(std::string file);
+};
 
 class IDataReader {
 

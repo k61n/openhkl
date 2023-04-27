@@ -140,18 +140,25 @@ ImageReaderDialog::ImageReaderDialog(
     _dataFormat->setEnabled(false);
     _image_resolution->setEnabled(false);
     if (_tiff_mode) {
-        switch (_bpp) {
+        switch (_bytes_per_pixel) {
         case 1: _dataFormat->setCurrentIndex(0); break;
         case 2: _dataFormat->setCurrentIndex(1); break;
         case 4: _dataFormat->setCurrentIndex(2); break;
-        default: throw std::runtime_error("ImageReaderDialog::ImageReaderDialog: invalid tiff bpp");
+        default: throw std::runtime_error(
+            "ImageReaderDialog::ImageReaderDialog: invalid tiff bytes_per_pixel");
         }
+        bool valid_resolution = false;
         for (int idx = 0; idx < resolutions.size(); ++idx) {
-            if (_img_res.first == resolutions[idx].first) {
+            if (_img_res.first == resolutions[idx].first &&
+                _img_res.second == resolutions[idx].second) {
                 _image_resolution->setCurrentIndex(idx);
+                valid_resolution = true;
                 break;
             }
         }
+        if (!valid_resolution)
+            throw std::runtime_error(
+                "ImageReaderDialog::ImageReaderDialog: tiff files are not an expected resolution");
     } else {
         _dataArrangement->setEnabled(true);
         _dataFormat->setEnabled(true);
@@ -176,11 +183,11 @@ bool ImageReaderDialog::rowMajor()
     return false;
 }
 
-int ImageReaderDialog::bpp()
+int ImageReaderDialog::bytesPerPixel()
 {
     if (_tiff_mode)
         // this values is saved in the tif files and has already been loaded
-        return ((ohkl::TiffDataReaderParameters*)_parameters0)->bits_per_pixel / 8;
+        return ((ohkl::TiffDataReaderParameters*)_parameters0)->bytes_per_pixel;
 
     // For raw files
     switch (_dataFormat->currentIndex()) {
@@ -232,7 +239,7 @@ ohkl::RawDataReaderParameters ImageReaderDialog::rawParameters()
     parameters.delta_phi = _phi->value();
     parameters.row_major = rowMajor();
     parameters.swap_endian = _swapEndianness->isChecked();
-    parameters.bpp = bpp();
+    parameters.bytes_per_pixel = bytesPerPixel();
     if (_set_baseline_and_gain->isChecked()) {
         parameters.baseline = _baseline->value();
         parameters.gain = _gain->value();
@@ -255,7 +262,9 @@ ohkl::TiffDataReaderParameters ImageReaderDialog::tiffParameters()
     parameters.delta_omega = _omega->value();
     parameters.delta_chi = _chi->value();
     parameters.delta_phi = _phi->value();
-    parameters.bits_per_pixel = bpp() * 8;
+    parameters.bytes_per_pixel= bytesPerPixel();
+    parameters.cols = _img_res.first;
+    parameters.rows = _img_res.second;
 
     // for processing tiff files this needs to be false!
     parameters.swap_endian = false;
@@ -309,7 +318,7 @@ bool ImageReaderDialog::checkTiffFiles(const QStringList& filenames)
         if (resolutions[0].first != res.first && resolutions[0].second != res.second)
             return false;
 
-    _bpp = bpps[0] / 8;
+    _bytes_per_pixel = bpps[0] / 8;
     _img_res = resolutions[0];
     return true;
 }

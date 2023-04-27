@@ -52,7 +52,7 @@ data_params.wavelength = 2.669
 data_params.delta_omega = 0.3
 data_params.row_major = True
 data_params.swap_endian = True
-data_params.bpp = 2
+data_params.bytes_per_pixel = 2
 dataset.setRawReaderParameters(data_params)
 for filename in files:
     shutil.copyfile(data_dir + filename, filename)
@@ -127,7 +127,8 @@ prediction_params = predictor.parameters()
 prediction_params.d_min = 1.5
 prediction_params.d_max = 50.0
 predictor.predictPeaks(data, indexed_cell)
-expt.addPeakCollection("predicted", ohkl.PeakCollectionType_PREDICTED, predictor.peaks(), data)
+expt.addPeakCollection(
+    "predicted", ohkl.PeakCollectionType_PREDICTED, predictor.peaks(), data, indexed_cell)
 predicted_peaks = expt.getPeakCollection("predicted")
 npeaks = predicted_peaks.numberOfPeaks()
 print(f'{npeaks} predicted')

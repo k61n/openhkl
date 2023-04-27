@@ -12,15 +12,6 @@
 //
 //  ***********************************************************************************************
 
-#include <cmath>
-#include <cstring>
-#include <filesystem>
-#include <fstream>
-#include <map>
-#include <set>
-#include <stdexcept>
-#include <string>
-
 #include "core/loader/RawDataReader.h"
 
 #include "base/parser/EigenToVector.h"
@@ -37,72 +28,22 @@
 #include "core/instrument/Source.h"
 #include "core/raw/DataKeys.h"
 
+#include <cmath>
+#include <cstring>
+#include <filesystem>
+#include <fstream>
+#include <map>
+#include <set>
+#include <stdexcept>
+#include <string>
+
 namespace ohkl {
-
-void DataReaderParameters::LoadDataFromFile(std::string file)
-{
-    dataset_name = fileBasename(file);
-
-    std::size_t pos1 = file.find_last_of("/");
-    std::size_t pos0 = (file.substr(0, pos1 - 1)).find_last_of("/");
-    std::size_t pos2 = file.find_last_of(".");
-
-    if (pos1 == std::string::npos || pos0 == std::string::npos || pos2 == std::string::npos)
-        return;
-
-    std::string dir = "data_" + file.substr(pos0 + 1, pos1 - pos0 - 1);
-    std::string readme = file.substr(0, pos1 + 1) + dir + ".readme";
-
-    std::ifstream fin(readme.c_str(), std::ios::in);
-
-    if (fin.is_open() || fin.good()) {
-        fin.seekg(0, std::ios::end);
-        auto fsize = fin.tellg();
-        fin.seekg(0, std::ios::beg);
-
-        if (fsize > 0) {
-            std::string buffer;
-            buffer.resize(fsize);
-            fin.read(buffer.data(), fsize);
-            fin.close();
-
-            std::remove_if(buffer.begin(), buffer.end(), isspace);
-
-            auto omega_pos = buffer.find("Omegarange:");
-            if (omega_pos != std::string::npos) {
-                auto nl_pos = buffer.find(";", omega_pos);
-                std::string a = buffer.substr(omega_pos + 11, nl_pos - 1);
-                delta_omega = std::stod(a);
-            }
-
-            auto lambda_pos = buffer.find("Lambda:");
-            if (lambda_pos != std::string::npos) {
-                auto nl_pos = buffer.find(";", lambda_pos);
-                std::string b = buffer.substr(lambda_pos + 7, nl_pos - 1);
-                wavelength = std::stod(b);
-            }
-        }
-    }
-}
-
-void DataReaderParameters::log(const Level& level) const
-{
-    ohklLog(level, "DataReaderParameters::log:");
-    ohklLog(level, "wavelength     = ", wavelength);
-    ohklLog(level, "delta_omega    = ", delta_omega);
-    ohklLog(level, "delta_chi      = ", delta_chi);
-    ohklLog(level, "delta_phi      = ", delta_phi);
-    ohklLog(level, "swap_endian    = ", swap_endian);
-    ohklLog(level, "baseline       = ", baseline);
-    ohklLog(level, "gain           = ", gain);
-}
 
 void RawDataReaderParameters::log(const Level& level) const
 {
     DataReaderParameters::log(level);
     ohklLog(level, "RawDataReaderParameters::log:");
-    ohklLog(level, "row_major      = ", row_major);
-    ohklLog(level, "bpp            = ", bpp);
+    ohklLog(level, "row_major       = ", row_major);
 }
 
 RawDataReader::RawDataReader()
@@ -183,7 +124,7 @@ void RawDataReader::setParameters(const RawDataReaderParameters& parameters)
 
     const std::size_t nrows = _dataset_out->nRows(), ncols = _dataset_out->nCols();
 
-    _length = _parameters.bpp * nrows * ncols;
+    _length = _parameters.bytes_per_pixel * nrows * ncols;
     auto& mono = _dataset_out->diffractometer()->source().selectedMonochromator();
     mono.setWavelength(_parameters.wavelength);
 
@@ -194,7 +135,7 @@ void RawDataReader::setParameters(const RawDataReaderParameters& parameters)
     _dataset_out->metadata().add<int>(ohkl::at_numor, 0);
     _dataset_out->metadata().add<double>(ohkl::at_baseline, _parameters.baseline);
     _dataset_out->metadata().add<double>(ohkl::at_gain, _parameters.gain);
-    switch (_parameters.bpp) {
+    switch (_parameters.bytes_per_pixel) {
         case 1: {
             _dataset_out->metadata().add<int>(ohkl::at_bitDepth, 8);
             break;
@@ -207,10 +148,11 @@ void RawDataReader::setParameters(const RawDataReaderParameters& parameters)
             _dataset_out->metadata().add<int>(ohkl::at_bitDepth, 32);
             break;
         }
-        default: throw std::runtime_error("bpp unsupported: " + std::to_string(_parameters.bpp));
+        default: throw std::runtime_error(
+            "bytes_per_pixel unsupported: " + std::to_string(_parameters.bytes_per_pixel));
     }
 
-    _data.resize(_parameters.bpp * nrows * ncols);
+    _data.resize(_parameters.bytes_per_pixel * nrows * ncols);
 }
 
 void RawDataReader::swapEndian()
@@ -218,10 +160,10 @@ void RawDataReader::swapEndian()
     const std::size_t nrows = _dataset_out->nRows(), ncols = _dataset_out->nCols();
 
     for (std::size_t i = 0; i < nrows * ncols; ++i) {
-        for (std::size_t byte = 0; byte < _parameters.bpp / 2; ++byte) {
+        for (std::size_t byte = 0; byte < _parameters.bytes_per_pixel / 2; ++byte) {
             std::swap(
-                _data[_parameters.bpp * i + byte],
-                _data[_parameters.bpp * i + (_parameters.bpp - 1 - byte)]);
+                _data[_parameters.bytes_per_pixel * i + byte],
+                _data[_parameters.bytes_per_pixel * i + (_parameters.bytes_per_pixel - 1 - byte)]);
         }
     }
 }
@@ -253,11 +195,12 @@ Eigen::MatrixXi RawDataReader::data(size_t frame)
     if (_parameters.swap_endian)
         swapEndian();
 
-    switch (_parameters.bpp) {
+    switch (_parameters.bytes_per_pixel) {
         case 1: return matrixFromData<uint8_t>().cast<int>();
         case 2: return matrixFromData<uint16_t>().cast<int>();
         case 4: return matrixFromData<uint32_t>().cast<int>();
-        default: throw std::runtime_error("bpp unsupported: " + std::to_string(_parameters.bpp));
+        default: throw std::runtime_error(
+            "bytes_per_pixel unsupported: " + std::to_string(_parameters.bytes_per_pixel));
     }
 }
 

@@ -29,7 +29,7 @@
 #include <string>
 #include <vector>
 
-TEST_CASE("test/data/TestPeakFinder.cpp", "")
+TEST_CASE("test/data/TestAutoIndexer.cpp", "")
 {
     const std::string filename = "CrChiA.ohkl";
     ohkl::Experiment experiment("test", "BioDiff");

@@ -15,6 +15,7 @@
 #include "gui/models/Session.h"
 
 #include "base/utils/Logger.h"
+#include "base/utils/Path.h" // fileBasename
 #include "core/data/DataSet.h"
 #include "core/data/DataTypes.h"
 #include "core/data/SingleFrame.h"
@@ -27,8 +28,8 @@
 #include "core/raw/MetaData.h"
 #include "gui/MainWin.h"
 #include "gui/connect/Sentinel.h"
-#include "gui/dialogs/ImageReaderDialog.h"
 #include "gui/dialogs/DataNameDialog.h"
+#include "gui/dialogs/ImageReaderDialog.h"
 #include "gui/models/Project.h"
 #include "gui/subframe_filter/SubframeFilterPeaks.h"
 #include "gui/subframe_find/SubframeFindPeaks.h"
@@ -75,18 +76,20 @@ QStringList askFileNames(ohkl::DataFormat fmt)
 {
     QSettings qset = gGui->qSettings();
     qset.beginGroup("RecentDirectories");
-    QString loadDirectory = qset.value("data_raw", QDir::homePath()).toString();
 
     QStringList qfilenames;
+    QString loadDirectory;
     switch(fmt) {
     case ohkl::DataFormat::RAW: {
-        QStringList qfilenames = QFileDialog::getOpenFileNames(
-            gGui, "import raw data", loadDirectory, "Image files (*.raw);; All files (*.* *)");
+        loadDirectory = qset.value("data_raw", QDir::homePath()).toString();
+        qfilenames = QFileDialog::getOpenFileNames(
+            gGui, "Import raw data", loadDirectory, "Image files (*.raw);; All files (*.* *)");
         break;
     }
     case ohkl::DataFormat::TIFF: {
+        loadDirectory = qset.value("data_tiff", QDir::homePath()).toString();
         qfilenames = QFileDialog::getOpenFileNames(
-            gGui, "import tiff data", loadDirectory, "Image files (*.tif *.tiff);; All files (*.* *)");
+            gGui, "Import tiff data", loadDirectory, "Image files (*.tif *.tiff);; All files (*.* *)");
         break;
     }
     default:
@@ -108,8 +111,19 @@ QStringList askFileNames(ohkl::DataFormat fmt)
 
     QFileInfo info(qfilenames.at(0));
     loadDirectory = info.absolutePath();
-    qset.setValue("data_raw", loadDirectory);
+    switch (fmt) {
+    case ohkl::DataFormat::RAW: {
+        qset.setValue("data_raw", loadDirectory);
+        break;
+    }
+    case ohkl::DataFormat::TIFF: {
+        qset.setValue("data_tiff", loadDirectory);
+        break;
+    }
+    default:
+        throw std::runtime_error("askFileNames: Invalid DataFormat");
 
+    }
     return qfilenames;
 }
 
@@ -319,7 +333,7 @@ void Session::removeData()
 bool Session::loadRawData(bool single_file /* = false */)
 {
     if (_currentProject < 0)
-        return false; // loading data requires an existing Experiment
+        return false;
 
     try {
         // Get input filenames from dialog.
