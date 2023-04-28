@@ -161,11 +161,13 @@ void SubframeFindPeaks::setBlobUp()
     _end_frame_spin =
         f.addSpinBox("Last detector image", "(detector image number) - end image for peak finding");
 
-    _threshold_check = f.addCheckBox("Apply threshold to preview", "Only show pixels above threshold");
+    _threshold_check =
+        f.addCheckBox("Apply threshold to preview", "Only show pixels above threshold");
 
     _find_button = f.addButton("Find peaks");
 
-    _kernel_para_table->setMaximumHeight(_kernel_para_table->verticalHeader()->defaultSectionSize() * 4);
+    _kernel_para_table->setMaximumHeight(
+        _kernel_para_table->verticalHeader()->defaultSectionSize() * 4);
     _kernel_para_table->verticalHeader()->setVisible(false);
     _kernel_para_table->setHorizontalHeaderLabels(QStringList{"Parameter", "Value"});
     _threshold_spin->setMaximum(1000);
@@ -175,7 +177,8 @@ void SubframeFindPeaks::setBlobUp()
     _max_width_spin->setMaximum(20);
 
     connect(_find_button, &QPushButton::clicked, this, &SubframeFindPeaks::find);
-    connect(_threshold_check, &QCheckBox::stateChanged, this, &SubframeFindPeaks::showFilteredImage);
+    connect(
+        _threshold_check, &QCheckBox::stateChanged, this, &SubframeFindPeaks::showFilteredImage);
     connect(
         gGui->sideBar(), &SideBar::subframeChanged, this,
         &SubframeFindPeaks::setIntegrationParameters);

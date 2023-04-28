@@ -18,9 +18,7 @@
 
 namespace ohkl {
 
-KeyPointCollection::KeyPointCollection() : _data(nullptr)
-{
-}
+KeyPointCollection::KeyPointCollection() : _data(nullptr) { }
 
 void KeyPointCollection::setData(sptrDataSet data)
 {

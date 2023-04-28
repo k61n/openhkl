@@ -29,7 +29,7 @@ class ResolutionShell;
 class SpaceGroup;
 struct DataResolution;
 
-enum class ExportFormat {Mtz = 0, Phenix, ShelX, FullProf, Count};
+enum class ExportFormat { Mtz = 0, Phenix, ShelX, FullProf, Count };
 
 //! Manages the export of peak information to file.
 class PeakExporter {
@@ -41,16 +41,14 @@ class PeakExporter {
     bool saveToFullProfMerged(const std::string& filename, MergedData* mergedData);
     //! Saves the peak information to FullProf file format given a peak list.
     bool saveToSCAMerged(
-        const std::string& filename, MergedData* mergedData, sptrUnitCell cell,
-        double scale = 1.0);
+        const std::string& filename, MergedData* mergedData, sptrUnitCell cell, double scale = 1.0);
     //! Saves the peak information to FullProf file format given a merged peak list.
     bool saveToShelXUnmerged(const std::string& filename, MergedData* mergedData);
     //! Saves the peak information to .sca file format given a peak list.
     bool saveToFullProfUnmerged(const std::string& filename, MergedData* mergedData);
     //! Saves the peak information to .sca file format given a merged peak list.
     bool saveToSCAUnmerged(
-        const std::string& filename, MergedData* mergedData, sptrUnitCell cell,
-        double scale = 1.0);
+        const std::string& filename, MergedData* mergedData, sptrUnitCell cell, double scale = 1.0);
 
     bool saveToShellX(const std::string filename, MergedData* merged_data, bool merged);
     bool saveToFullProf(const std::string filename, MergedData* merged_data, bool merged);

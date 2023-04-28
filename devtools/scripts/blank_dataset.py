@@ -30,7 +30,7 @@ with h5py.File("blank.hdf", "w") as f:
     expr.attrs.create("wavelength", 2.67)
     expr.attrs.create("Numor", 0, dtype="i4")
   
-    info.attrs.create("Instrument", b"BioDiff2500")
+    info.attrs.create("Instrument", b"BioDiff")
     
        
     for i in range(N):

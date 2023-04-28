@@ -64,9 +64,9 @@ IntegrationRegion::IntegrationRegion(
         }
     }
 
-    if (peak->rejectionFlag() == RejectionFlag::InvalidRegion ||
-        peak->rejectionFlag() == RejectionFlag::InterpolationFailure ||
-        peak->rejectionFlag() == RejectionFlag::Masked) {
+    if (peak->rejectionFlag() == RejectionFlag::InvalidRegion
+        || peak->rejectionFlag() == RejectionFlag::InterpolationFailure
+        || peak->rejectionFlag() == RejectionFlag::Masked) {
         _valid = false;
     } else {
         Ellipsoid bkg(_shape);

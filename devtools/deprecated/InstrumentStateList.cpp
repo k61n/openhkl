@@ -21,8 +21,7 @@ InterpolatedState interpolate(InstrumentStateList& states, const double frame_id
 {
     if (frame_idx > (size() - 2) || frame_idx < 0)
         throw std::range_error(
-            "Error when interpolating state: invalid frame index: "
-            + std::to_string(frame_idx));
+            "Error when interpolating state: invalid frame index: " + std::to_string(frame_idx));
 
     const std::size_t idx = std::size_t(std::lround(std::floor(frame_idx)));
     const std::size_t next = std::min(idx + 1, size() - 1);

@@ -51,10 +51,7 @@
 // merger.svg: Merge by Muneer A.Safiah from the Noun Project
 
 SideBar::SideBar(QWidget* parent)
-    : QWidget(parent)
-    , mCheckedAction(nullptr)
-    , mOverAction(nullptr)
-    , _strategy(false)
+    : QWidget(parent), mCheckedAction(nullptr), mOverAction(nullptr), _strategy(false)
 {
     setMouseTracking(true);
 

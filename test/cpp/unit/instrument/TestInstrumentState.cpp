@@ -33,7 +33,7 @@ class UnitTest_DataSet {
 
 int ohkl::UnitTest_DataSet::run()
 {
-    ohkl::Experiment experiment("test", "BioDiff2500");
+    ohkl::Experiment experiment("test", "BioDiff");
 
     const ohkl::sptrDataSet dataset_ptr { std::make_shared<ohkl::DataSet>
           (ohkl::kw_datasetDefaultName, experiment.getDiffractometer()) };

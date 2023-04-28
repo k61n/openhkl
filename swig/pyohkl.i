@@ -35,13 +35,17 @@
 %template(vector_2i) std::vector<std::vector<int>>;
 %template(vector_string) std::vector<std::string>;
 
+
+%shared_ptr(ohkl::IMask)
 %shared_ptr(ohkl::DataSet)
 %shared_ptr(ohkl::Diffractometer)
+%shared_ptr(ohkl::MaskImporter)
 %shared_ptr(ohkl::Experiment)
 %shared_ptr(ohkl::HDF5DataReader)
 %shared_ptr(ohkl::BaseHDF5DataReader)
 %shared_ptr(ohkl::IDataReader)
 %shared_ptr(ohkl::ProgressHandler)
+%shared_ptr(ohkl::TiffDataReader)
 %shared_ptr(ohkl::RawDataReader)
 %shared_ptr(ohkl::NexusDataReader)
 %shared_ptr(ohkl::BaseNexusDataReader)
@@ -125,6 +129,7 @@ using Eigen::Quaterniond;
 #include "core/detector/FlatDetector.h"
 #include "core/data/DataSet.h"
 #include "core/data/ImageGradient.h"
+#include "core/experiment/MaskImporter.h"
 #include "core/experiment/Integrator.h"
 #include "core/experiment/Experiment.h"
 #include "core/gonio/Axis.h"
@@ -145,7 +150,9 @@ using Eigen::Quaterniond;
 #include "core/integration/ShapeIntegrator.h"
 #include "core/loader/HDF5DataReader.h"
 #include "core/loader/BaseHDF5DataReader.h"
+#include "core/loader/TiffDataReader.h"
 #include "core/loader/RawDataReader.h"
+
 #include "core/loader/NexusDataReader.h"
 #include "core/loader/BaseNexusDataReader.h"
 #include "core/peak/IntegrationRegion.h"
@@ -284,6 +291,9 @@ ArrayExtendCRef(MillerIndex, int);
 %template(indexer_solutions) std::vector<std::pair<std::shared_ptr<ohkl::UnitCell>,double>>;
 %include "tables/crystal/GruberReduction.h"
 %include "tables/crystal/BrillouinZone.h"
+%include "base/mask/IMask.h"
+%include "core/experiment/MaskImporter.h"
+%template(VectorIMasks) std::vector<ohkl::IMask*>;
 
 %include "core/gonio/Axis.h"
 %include "core/gonio/Gonio.h"
@@ -311,7 +321,9 @@ ArrayExtendCRef(MillerIndex, int);
 
 %include "core/loader/BaseHDF5DataReader.h"
 %include "core/loader/HDF5DataReader.h"
+%include "core/loader/TiffDataReader.h"
 %include "core/loader/RawDataReader.h"
+
 %include "core/loader/NexusDataReader.h"
 %include "core/loader/BaseNexusDataReader.h"
 
@@ -331,6 +343,7 @@ ArrayExtendCRef(MillerIndex, int);
 %include "core/integration/IIntegrator.h"
 %include "core/shape/ShapeModel.h"
 %include "core/shape/Predictor.h"
+%include "core/experiment/MaskImporter.h"
 %include "core/experiment/Integrator.h"
 
 %template(ConvolverParameters) std::map<std::string,double>;
@@ -361,6 +374,7 @@ ArrayExtendCRef(MillerIndex, int);
 %include "core/algo/RefinementBatch.h"
 %include "core/algo/Refiner.h"
 %include "core/statistics/PeakMerger.h"
+%include "core/experiment/MaskImporter.h"
 %include "core/experiment/Experiment.h"
 %include "core/algo/FFTIndexing.h"
 

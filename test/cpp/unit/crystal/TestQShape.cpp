@@ -55,7 +55,7 @@ ohkl::Ellipsoid toDetectorSpace(const ohkl::Ellipsoid e, const ohkl::sptrDataSet
 
 TEST_CASE("test/crystal/TestQShape.cpp", "")
 {
-    ohkl::Experiment experiment("test", "BioDiff2500");
+    ohkl::Experiment experiment("test", "BioDiff");
     const ohkl::sptrDataSet dataset_ptr { std::make_shared<ohkl::DataSet>
           (ohkl::kw_datasetDefaultName, experiment.getDiffractometer()) };
 

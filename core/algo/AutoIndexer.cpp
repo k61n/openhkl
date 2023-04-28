@@ -72,8 +72,8 @@ bool AutoIndexer::autoIndex(
     _filtered_peaks.clear();
     if (state)
         ohklLog(
-            Level::Info, "AutoIndexer::autoIndex: indexing using InstrumentState\n", state
-            ->toString());
+            Level::Info, "AutoIndexer::autoIndex: indexing using InstrumentState\n",
+            state->toString());
     if (filter)
         filterPeaks(peaks, state);
     else

@@ -34,6 +34,7 @@
 #include "core/loader/HDF5DataReader.h"
 #include "core/loader/NexusDataReader.h"
 #include "core/loader/RawDataReader.h"
+#include "core/loader/TiffDataReader.h"
 #include "core/peak/Peak3D.h"
 #include "core/raw/DataKeys.h"
 
@@ -43,6 +44,7 @@
 #include <gsl/gsl_histogram.h>
 
 #include <memory>
+#include <regex>
 #include <stdexcept>
 
 namespace ohkl {
@@ -73,6 +75,7 @@ void DataSet::setReader(const DataFormat dataformat, const std::string& filename
             // NOTE: RawDataReader needs a list of frame files which should be given later
             _reader.reset(new RawDataReader);
             break;
+        case DataFormat::TIFF: _reader.reset(new TiffDataReader); break;
         default: throw std::invalid_argument("Data format is not recognized.");
     }
 
@@ -108,7 +111,10 @@ void DataSet::addDataFile(const std::string& filename, const std::string& extens
         else if (ext == "raw")
             throw std::runtime_error(
                 "DataSet '" + _name + "': Use 'addRawFrame(<filename>)' for reading raw files.");
-        else
+        else if (ext == "tif" || ext == "tiff") {
+
+            datafmt = DataFormat::TIFF;
+        } else
             throw std::runtime_error("DataSet '" + _name + "': Extension unknown.");
 
     } else {
@@ -117,7 +123,25 @@ void DataSet::addDataFile(const std::string& filename, const std::string& extens
 
     setReader(datafmt, filename);
 }
+void DataSet::setTiffReaderParameters(const TiffDataReaderParameters& params)
+{
+    if (_dataformat == DataFormat::Unknown)
+        _dataformat = DataFormat::TIFF;
 
+    if (_dataformat != DataFormat::TIFF)
+        throw std::runtime_error(
+            "DataSet '" + _name + "': Cannot set raw parameters since data format is not Tiff.");
+
+    if (!_reader)
+        setReader(DataFormat::TIFF);
+
+    TiffDataReader& tiffreader = *static_cast<TiffDataReader*>(_reader.get());
+    tiffreader.setParameters(params);
+
+    ohklLog(
+        Level::Info,
+        "DataSet '" + _name + "': TiffDataReaderParameters set."); // TODO: log parameter details
+}
 void DataSet::setRawReaderParameters(const RawDataReaderParameters& params)
 {
     // if data-format is not set, then set it to raw.
@@ -135,9 +159,22 @@ void DataSet::setRawReaderParameters(const RawDataReaderParameters& params)
     RawDataReader& rawreader = *static_cast<RawDataReader*>(_reader.get());
     rawreader.setParameters(params);
 
-    ohklLog(
-        Level::Info, "DataSet '" + _name + "': RawDataReader parameters set.");
+    ohklLog(Level::Info, "DataSet '" + _name + "': RawDataReader parameters set.");
     params.log(Level::Info);
+}
+void DataSet::addTiffFrame(const std::string& tiffilename)
+{
+    if (!_reader)
+        setReader(DataFormat::TIFF);
+
+    // no mixing of different data format
+    if (_dataformat != DataFormat::TIFF)
+        throw std::runtime_error(
+            "DataSet '" + _name + "': To read a tif frame, data format must be tif.");
+
+    TiffDataReader& tiffreader = *static_cast<TiffDataReader*>(_reader.get());
+
+    tiffreader.addFrame(tiffilename);
 }
 
 void DataSet::addRawFrame(const std::string& rawfilename)

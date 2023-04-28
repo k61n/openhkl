@@ -731,27 +731,31 @@ void SubframeMergedPeaks::savePeaks(bool merged)
         fmt = static_cast<ohkl::ExportFormat>(_unmerged_save_type->currentIndex());
 
     switch (fmt) {
-    case ohkl::ExportFormat::Mtz: {
-        filename = QFileDialog::getSaveFileName(
-            this, "Save peaks to CCP4 mtz", loadDirectory, QString::fromStdString(formats->at(fmt)));
-        break;
-    }
-    case ohkl::ExportFormat::Phenix: {
-        filename = QFileDialog::getSaveFileName(
-            this, "Save peaks to Phenix sca", loadDirectory, QString::fromStdString(formats->at(fmt)));
-        break;
-    }
-    case ohkl::ExportFormat::ShelX: {
-        filename = QFileDialog::getSaveFileName(
-            this, "Save peaks to ShelX", loadDirectory, QString::fromStdString(formats->at(fmt)));
-        break;
-    }
-    case ohkl::ExportFormat::FullProf: {
-        filename = QFileDialog::getSaveFileName(
-            this, "Save peaks to FullProf", loadDirectory, QString::fromStdString(formats->at(fmt)));
-        break;
-    }
-    default: return;
+        case ohkl::ExportFormat::Mtz: {
+            filename = QFileDialog::getSaveFileName(
+                this, "Save peaks to CCP4 mtz", loadDirectory,
+                QString::fromStdString(formats->at(fmt)));
+            break;
+        }
+        case ohkl::ExportFormat::Phenix: {
+            filename = QFileDialog::getSaveFileName(
+                this, "Save peaks to Phenix sca", loadDirectory,
+                QString::fromStdString(formats->at(fmt)));
+            break;
+        }
+        case ohkl::ExportFormat::ShelX: {
+            filename = QFileDialog::getSaveFileName(
+                this, "Save peaks to ShelX", loadDirectory,
+                QString::fromStdString(formats->at(fmt)));
+            break;
+        }
+        case ohkl::ExportFormat::FullProf: {
+            filename = QFileDialog::getSaveFileName(
+                this, "Save peaks to FullProf", loadDirectory,
+                QString::fromStdString(formats->at(fmt)));
+            break;
+        }
+        default: return;
     }
     if (filename.isEmpty())
         return;

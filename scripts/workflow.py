@@ -26,7 +26,7 @@ import pynsx as nsx
 # Modifiy these according to your data set
 name = 'CrChiA'
 data_dir = '/home/zamaan/projects/datasets/CrChiA'  # Path to .raw data files
-diffractometer = 'BioDiff2500'
+diffractometer = 'BioDiff'
 wl = 2.67
 d_omega = 0.3
 a = 57.96

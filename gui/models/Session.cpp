@@ -15,6 +15,7 @@
 #include "gui/models/Session.h"
 
 #include "base/utils/Logger.h"
+#include "base/utils/Path.h" // fileBasename
 #include "core/data/DataSet.h"
 #include "core/data/DataTypes.h"
 #include "core/data/SingleFrame.h"
@@ -22,12 +23,13 @@
 #include "core/experiment/Experiment.h"
 #include "core/loader/IDataReader.h"
 #include "core/loader/RawDataReader.h"
+#include "core/loader/TiffDataReader.h"
 #include "core/raw/DataKeys.h"
 #include "core/raw/MetaData.h"
 #include "gui/MainWin.h"
 #include "gui/connect/Sentinel.h"
 #include "gui/dialogs/DataNameDialog.h"
-#include "gui/dialogs/RawDataDialog.h"
+#include "gui/dialogs/ImageReaderDialog.h"
 #include "gui/models/Project.h"
 #include "gui/subframe_filter/SubframeFilterPeaks.h"
 #include "gui/subframe_find/SubframeFindPeaks.h"
@@ -70,14 +72,30 @@ std::string askDataName(const std::string dataname0, const QStringList* const da
 }
 
 //! Opens a dialog to choose a list of raw files
-std::vector<std::string> askRawFileNames()
+QStringList askFileNames(ohkl::DataFormat fmt)
 {
     QSettings qset = gGui->qSettings();
     qset.beginGroup("RecentDirectories");
-    QString loadDirectory = qset.value("data_raw", QDir::homePath()).toString();
 
-    QStringList qfilenames = QFileDialog::getOpenFileNames(
-        gGui, "import raw data", loadDirectory, "Image files (*.raw *.tiff);; All files (*.* *)");
+    QStringList qfilenames;
+    QString loadDirectory;
+    switch(fmt) {
+    case ohkl::DataFormat::RAW: {
+        loadDirectory = qset.value("data_raw", QDir::homePath()).toString();
+        qfilenames = QFileDialog::getOpenFileNames(
+            gGui, "Import raw data", loadDirectory, "Image files (*.raw);; All files (*.* *)");
+        break;
+    }
+    case ohkl::DataFormat::TIFF: {
+        loadDirectory = qset.value("data_tiff", QDir::homePath()).toString();
+        qfilenames = QFileDialog::getOpenFileNames(
+            gGui, "Import tiff data", loadDirectory, "Image files (*.tif *.tiff);; All files (*.* *)");
+        break;
+    }
+    default:
+        throw std::runtime_error("askFileNames: Invalid DataFormat");
+    }
+
     if (qfilenames.empty())
         return {};
 
@@ -93,13 +111,20 @@ std::vector<std::string> askRawFileNames()
 
     QFileInfo info(qfilenames.at(0));
     loadDirectory = info.absolutePath();
-    qset.setValue("data_raw", loadDirectory);
+    switch (fmt) {
+    case ohkl::DataFormat::RAW: {
+        qset.setValue("data_raw", loadDirectory);
+        break;
+    }
+    case ohkl::DataFormat::TIFF: {
+        qset.setValue("data_tiff", loadDirectory);
+        break;
+    }
+    default:
+        throw std::runtime_error("askFileNames: Invalid DataFormat");
 
-    std::vector<std::string> result;
-    for (const QString& filename : qfilenames)
-        result.push_back(filename.toStdString());
-
-    return result;
+    }
+    return qfilenames;
 }
 
 } // namespace
@@ -236,8 +261,7 @@ void Session::loadData(ohkl::DataFormat format)
             break;
         }
         default: {
-            throw std::runtime_error(
-                "Session::LoadData can only load OHKL or Nexus data files");
+            throw std::runtime_error("Session::LoadData can only load OHKL or Nexus data files");
             break;
         }
     }
@@ -309,11 +333,11 @@ void Session::removeData()
 bool Session::loadRawData(bool single_file /* = false */)
 {
     if (_currentProject < 0)
-        return false; // loading data requires an existing Experiment
+        return false;
 
     try {
         // Get input filenames from dialog.
-        std::vector<std::string> filenames = askRawFileNames();
+        QStringList filenames = askFileNames(ohkl::DataFormat::RAW);
         if (filenames.empty())
             return false;
         if (single_file && filenames.size() > 1)
@@ -322,16 +346,17 @@ bool Session::loadRawData(bool single_file /* = false */)
         // Get metadata from readme file, then edit them in dialog.
         const QStringList& extant_dataset_names = currentProject()->getDataNames();
         ohkl::RawDataReaderParameters parameters;
-        parameters.LoadDataFromFile(filenames.at(0));
-        RawDataDialog dialog(parameters, extant_dataset_names);
+        parameters.LoadDataFromFile(filenames.at(0).toStdString());
+        ImageReaderDialog dialog(filenames, &parameters, false);
         dialog.setWindowTitle("Raw data parameters");
         if (single_file)
             dialog.setSingleImageMode();
 
         if (!dialog.exec())
             return false;
+
         ohkl::Experiment* exp = currentProject()->experiment();
-        parameters = dialog.parameters();
+        parameters = dialog.rawParameters();
 
         // Transfer metadata to diffractometer.
         ohkl::Detector* detector = exp->getDiffractometer()->detector();
@@ -340,10 +365,10 @@ bool Session::loadRawData(bool single_file /* = false */)
 
         // Transfer metadata to dataset, and load the raw data.
         if (single_file) {
-            const std::shared_ptr<ohkl::DataSet> dataset{
-                std::make_shared<ohkl::SingleFrame>(parameters.dataset_name, exp->getDiffractometer())};
+            const std::shared_ptr<ohkl::DataSet> dataset{std::make_shared<ohkl::SingleFrame>(
+                parameters.dataset_name, exp->getDiffractometer())};
             dataset->setRawReaderParameters(parameters);
-            dataset->addRawFrame(filenames[0]);
+            dataset->addRawFrame(filenames[0].toStdString());
             dataset->finishRead();
             exp->addData(dataset);
 
@@ -352,7 +377,70 @@ bool Session::loadRawData(bool single_file /* = false */)
                 std::make_shared<ohkl::DataSet>(parameters.dataset_name, exp->getDiffractometer())};
             dataset->setRawReaderParameters(parameters);
             for (const auto& filename : filenames)
-                dataset->addRawFrame(filename);
+                dataset->addRawFrame(filename.toStdString());
+            dataset->finishRead();
+            exp->addData(dataset);
+        }
+
+        onDataChanged();
+    } catch (std::exception& e) {
+        QMessageBox::critical(nullptr, "Error", QString(e.what()));
+    } catch (...) {
+        return false;
+    }
+    return true;
+}
+
+bool Session::loadTiffData(bool single_file /* = false */)
+{
+    if (_currentProject < 0)
+        return false;
+
+    ohkl::Experiment* exp = currentProject()->experiment();
+    ohkl::Detector* detector = exp->getDiffractometer()->detector();
+    ohkl::TiffDataReaderParameters params;
+
+    try {
+        // Get input filenames from dialog.
+        QStringList filenames = askFileNames(ohkl::DataFormat::TIFF);
+        if (filenames.empty())
+            return false;
+        if (single_file && filenames.size() > 1)
+            throw std::runtime_error("Session::loadTiffData expected exactly one file");
+
+        std::string ext = ""; // let's store the used file extension for later
+
+        // Get metadata from readme file, then edit them in dialog.
+        const QStringList& extant_dataset_names = currentProject()->getDataNames();
+
+        params.LoadDataFromFile(filenames.at(0).toStdString());
+        ImageReaderDialog dialog(
+            filenames, static_cast<ohkl::DataReaderParameters*>(&params),  true);
+
+        dialog.setWindowTitle("Tiff data parameters");
+        if (single_file)
+            dialog.setSingleImageMode();
+
+        if (!dialog.exec())
+            return false;
+
+        params = dialog.tiffParameters();
+        detector->setBaseline(params.baseline);
+        detector->setGain(params.gain);
+
+        if (single_file) {
+            const std::shared_ptr<ohkl::DataSet> dataset{std::make_shared<ohkl::SingleFrame>(
+                params.dataset_name, exp->getDiffractometer())};
+            dataset->setTiffReaderParameters(params);
+            dataset->addTiffFrame(filenames[0].toStdString());
+            dataset->finishRead();
+            exp->addData(dataset);
+        } else {
+            const std::shared_ptr<ohkl::DataSet> dataset{
+                std::make_shared<ohkl::DataSet>(params.dataset_name, exp->getDiffractometer())};
+            dataset->setTiffReaderParameters(params);
+            for (const auto& filename : filenames)
+                dataset->addTiffFrame(filename.toStdString());
             dataset->finishRead();
             exp->addData(dataset);
         }
@@ -374,10 +462,16 @@ void Session::onDataChanged()
     _data_combo->refreshAll();
 
     if (gSession->currentProject()->hasDataSet()) {
-        double x_offset =
-            _data_combo->currentData()->diffractometer()->source().selectedMonochromator().xOffset();
-        double y_offset =
-            _data_combo->currentData()->diffractometer()->source().selectedMonochromator().yOffset();
+        double x_offset = _data_combo->currentData()
+                              ->diffractometer()
+                              ->source()
+                              .selectedMonochromator()
+                              .xOffset();
+        double y_offset = _data_combo->currentData()
+                              ->diffractometer()
+                              ->source()
+                              .selectedMonochromator()
+                              .yOffset();
         _beam_setter_widget->onBeamPosChanged({x_offset, y_offset});
     }
     onPeaksChanged();

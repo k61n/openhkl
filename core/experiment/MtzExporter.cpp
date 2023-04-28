@@ -29,8 +29,8 @@
 
 namespace ohkl {
 MtzExporter::MtzExporter(
-    MergedData* merged_data, sptrDataSet data, sptrUnitCell cell, bool merged,
-    bool sum_intensities, std::string comment)
+    MergedData* merged_data, sptrDataSet data, sptrUnitCell cell, bool merged, bool sum_intensities,
+    std::string comment)
     : _merged_data(merged_data)
     , _ohkl_data(data)
     , _ohkl_cell(cell.get())

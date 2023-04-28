@@ -24,7 +24,7 @@ import pynsx as nsx
 
 file = Path('/home/zamaan/projects/datasets/120522b_after_integrate_pxsum336.nsx')
 experiment = '120522b'
-diffractometer = 'BioDiff2500'
+diffractometer = 'BioDiff'
 data_name = 'soak_9_d2_I_scanI_9483.raw'
 space_group = "P 21 21 21"
 found_peaks_name = 'findint'

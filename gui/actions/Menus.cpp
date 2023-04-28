@@ -61,9 +61,11 @@ Menus::Menus(QMenuBar* menu_bar) : _menu_bar{menu_bar}
 
     QMenu* _data_sub = _data_menu->addMenu("Add data set");
     _data_sub->addAction(actions->add_raw);
+    _data_sub->addAction(actions->add_tiff);
     _data_sub->addAction(actions->add_hdf5);
     _data_sub->addAction(actions->add_nexus);
-    _data_menu->addAction(actions->add_single_image);
+    _data_menu->addAction(actions->add_single_raw);
+    _data_menu->addAction(actions->add_single_tiff);
     _data_menu->addAction(actions->show_input_files);
     _data_menu->addAction(actions->remove_data);
 
@@ -99,6 +101,7 @@ Menus::Menus(QMenuBar* menu_bar) : _menu_bar{menu_bar}
     actions->remove_cell->setShortcut(QKeySequence("Ctrl+U+X"));
 
     actions->add_raw->setShortcut(QKeySequence("Ctrl+R"));
+    actions->add_tiff->setShortcut(QKeySequence("Ctrl+T"));
     actions->add_hdf5->setShortcut(QKeySequence("Ctrl+H"));
     actions->add_nexus->setShortcut(QKeySequence("Ctrl+X"));
 
@@ -152,9 +155,11 @@ void Menus::toggleEntries()
     bool strategy_mode = gSession->currentProject()->strategyMode();
 
     actions->add_raw->setDisabled(strategy_mode);
+    actions->add_tiff->setDisabled(strategy_mode);
     actions->add_nexus->setDisabled(strategy_mode);
     actions->add_hdf5->setDisabled(strategy_mode);
-    actions->add_single_image->setDisabled(!strategy_mode);
+    actions->add_single_raw->setDisabled(!strategy_mode);
+    actions->add_single_tiff->setDisabled(!strategy_mode);
 
     actions->remove_data->setDisabled(no_datasets);
 

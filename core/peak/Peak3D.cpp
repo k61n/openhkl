@@ -32,7 +32,8 @@
 namespace ohkl {
 
 const std::map<RejectionFlag, std::string> Peak3D::_rejection_map{
-    {RejectionFlag::NotRejected, "Not rejected"}, {RejectionFlag::Masked, "Masked by user"},
+    {RejectionFlag::NotRejected, "Not rejected"},
+    {RejectionFlag::Masked, "Masked by user"},
     {RejectionFlag::OutsideThreshold, "Too many or few detector counts"},
     {RejectionFlag::OutsideFrames, "Peak centre outside frame range"},
     {RejectionFlag::OutsideDetector, "Peak centre outside detector image"},
@@ -215,8 +216,9 @@ void Peak3D::setTransmission(double transmission)
 
 bool Peak3D::enabled() const
 {
-    return (_rejection_flag == RejectionFlag::NotRejected &&
-            _integration_flag == RejectionFlag::NotRejected);
+    return (
+        _rejection_flag == RejectionFlag::NotRejected
+        && _integration_flag == RejectionFlag::NotRejected);
 }
 
 void Peak3D::reject(RejectionFlag flag)
@@ -226,9 +228,8 @@ void Peak3D::reject(RejectionFlag flag)
 }
 
 void Peak3D::updateIntegration(
-    const std::vector<Intensity>& rockingCurve,
-    const Intensity& sumBkg, const Intensity& profBkg, const Intensity& meanBkgGradient,
-    const Intensity& sumInt, const Intensity& profInt,
+    const std::vector<Intensity>& rockingCurve, const Intensity& sumBkg, const Intensity& profBkg,
+    const Intensity& meanBkgGradient, const Intensity& sumInt, const Intensity& profInt,
     double peakEnd, double bkgBegin, double bkgEnd, RegionType regionType)
 {
     _rockingCurve = rockingCurve;
@@ -338,10 +339,10 @@ void Peak3D::rejectYou(bool reject)
 }
 
 void Peak3D::setManually(
-    const Intensity& sumInt, const Intensity& profInt,
-    double peakEnd, double bkgBegin, double bkgEnd, int region_type,
-    double scale, double transmission, const Intensity& sumBkg, const Intensity& profBkg,
-    int rejection_flag, int integration_flag, Intensity sumBkgGrad /* = {} */)
+    const Intensity& sumInt, const Intensity& profInt, double peakEnd, double bkgBegin,
+    double bkgEnd, int region_type, double scale, double transmission, const Intensity& sumBkg,
+    const Intensity& profBkg, int rejection_flag, int integration_flag,
+    Intensity sumBkgGrad /* = {} */)
 {
     _peakEnd = peakEnd;
     _bkgBegin = bkgBegin;

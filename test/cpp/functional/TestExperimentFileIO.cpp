@@ -26,7 +26,7 @@
 TEST_CASE("test/data/TestPeakFinder.cpp", "")
 {
     const std::string filename = "CrChiA.ohkl";
-    ohkl::Experiment expt_ref("test", "BioDiff2500");
+    ohkl::Experiment expt_ref("test", "BioDiff");
     expt_ref.loadFromFile(filename);
     expt_ref.saveToFile("test.ohkl");
 
@@ -35,7 +35,7 @@ TEST_CASE("test/data/TestPeakFinder.cpp", "")
     auto* unit_cell_ref = expt_ref.getUnitCell("accepted");
     auto data_ref = expt_ref.getAllData()[0];
 
-    ohkl::Experiment expt_test("test", "BioDiff2500");
+    ohkl::Experiment expt_test("test", "BioDiff");
     expt_test.loadFromFile("test.ohkl");
     auto* found_peaks_test = expt_test.getPeakCollection("found");
     auto* predicted_peaks_test = expt_test.getPeakCollection("predicted");

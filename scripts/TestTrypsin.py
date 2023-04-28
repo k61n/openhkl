@@ -34,7 +34,7 @@ class TestFullWorkFlow(unittest.TestCase):
         data_dir = '.' # Path to .raw data files
 
         # set up the experiment
-        expt = ohkl.Experiment('trypsin', 'BioDiff2500')
+        expt = ohkl.Experiment('trypsin', 'BioDiff')
         diffractometer = expt.getDiffractometer()
         dataset = ohkl.DataSet('trypsin', diffractometer)
 

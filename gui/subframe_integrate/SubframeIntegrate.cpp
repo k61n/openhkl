@@ -75,13 +75,12 @@ SubframeIntegrate::SubframeIntegrate() : QWidget()
         _peak_view_widget, &PeakViewWidget::settingsChanged, _detector_widget,
         &DetectorWidget::refresh);
     connect(
-        _integrator_combo,
-        static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+        _integrator_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
         this, &SubframeIntegrate::toggleUnsafeWidgets);
     connect(
         _integration_region_type,
-        static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
-        _detector_widget, &DetectorWidget::refresh);
+        static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), _detector_widget,
+        &DetectorWidget::refresh);
     connect(
         _gradient_kernel, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
         this, &SubframeIntegrate::onGradientSettingsChanged);
@@ -396,7 +395,8 @@ void SubframeIntegrate::setIntegrateUp()
 
     // -- Initialize controls
     for (std::size_t idx = 0; idx < static_cast<int>(ohkl::IntegratorType::Count); ++idx) {
-        const std::string integrator_type = _integrator_strings.at(static_cast<ohkl::IntegratorType>(idx));
+        const std::string integrator_type =
+            _integrator_strings.at(static_cast<ohkl::IntegratorType>(idx));
         _integrator_combo->addItem(QString::fromStdString(integrator_type));
     }
 

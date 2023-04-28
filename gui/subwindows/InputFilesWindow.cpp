@@ -129,7 +129,7 @@ void InputFilesWindow::refreshAll()
     }
     _files_table->resizeColumnsToContents();
     resize(
-        _files_table->horizontalHeader()->length(), _files_table->verticalHeader()->height()*3);
+        _files_table->horizontalHeader()->length(), _files_table->verticalHeader()->height() * 3);
 }
 
 void InputFilesWindow::on_combobox_select()

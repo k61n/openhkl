@@ -15,35 +15,22 @@
 #ifndef OHKL_CORE_LOADER_RAWDATAREADER_H
 #define OHKL_CORE_LOADER_RAWDATAREADER_H
 
-#include "base/utils/Path.h" // fileBasename
 #include "core/data/DataSet.h"
 #include "core/loader/IDataReader.h" // inherits from
 #include "core/raw/DataKeys.h"
+
 #include <fstream>
 #include <stdexcept>
 
 namespace ohkl {
 
-//! Minimal meta data set, to supplement binary raw data in RawDataReader.
-
-struct RawDataReaderParameters {
-    std::string dataset_name = kw_datasetDefaultName;
-    double wavelength = 0.0;
-    double delta_omega = 0.0;
-    double delta_chi = 0.0;
-    double delta_phi = 0.0;
+struct RawDataReaderParameters : public DataReaderParameters {
     bool row_major = true;
-    bool swap_endian = true;
-    std::size_t bpp = 2;
-    double baseline = 0.0;
-    double gain = 1.0;
 
-    void LoadDataFromFile(std::string file);
     void log(const Level& level) const;
 };
 
-//! IDataReader for raw binary data.
-
+//! Class for reading binary raw image files
 class RawDataReader : public IDataReader {
  public:
     RawDataReader(const RawDataReader& other) = delete;
@@ -54,7 +41,7 @@ class RawDataReader : public IDataReader {
     //! @param delta_phi per-frame change in phi axis of sample goniometer
     //! @param rowMajor determines if data is stored in row-major format (column //! major otherwise)
     //! @param swapEndian determines whether to swap the endianness of the input data
-    //! @param bpp number of bytes per pixel
+    //! @param bytes_per_pixel number of bytes per pixel
     RawDataReader();
 
     ~RawDataReader() = default;

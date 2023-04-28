@@ -38,8 +38,7 @@ PeakCollection::PeakCollection()
 {
 }
 
-PeakCollection::PeakCollection(
-    const std::string& name, PeakCollectionType type, sptrDataSet data)
+PeakCollection::PeakCollection(const std::string& name, PeakCollectionType type, sptrDataSet data)
     : _id(0)
     , _name{std::string(name)}
     , _data(data)

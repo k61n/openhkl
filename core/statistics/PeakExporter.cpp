@@ -300,20 +300,20 @@ bool PeakExporter::exportPeaks(
     sptrUnitCell cell, bool merged, double scale, std::string comment)
 {
     switch (fmt) {
-    case ExportFormat::Mtz: {
-        MtzExporter exporter(merged_data, data, cell, merged, _sum_intensities, comment);
-        return exporter.exportToFile(filename);
-    }
-    case ExportFormat::Phenix: {
-        return saveToSCA(filename, merged_data, cell, merged, scale);
-    }
-    case ExportFormat::ShelX: {
-        return saveToShellX(filename, merged_data, merged);
-    }
-    case ExportFormat::FullProf: {
-        return saveToFullProf(filename, merged_data, merged);
-    }
-    default: return false;
+        case ExportFormat::Mtz: {
+            MtzExporter exporter(merged_data, data, cell, merged, _sum_intensities, comment);
+            return exporter.exportToFile(filename);
+        }
+        case ExportFormat::Phenix: {
+            return saveToSCA(filename, merged_data, cell, merged, scale);
+        }
+        case ExportFormat::ShelX: {
+            return saveToShellX(filename, merged_data, merged);
+        }
+        case ExportFormat::FullProf: {
+            return saveToFullProf(filename, merged_data, merged);
+        }
+        default: return false;
     }
 }
 

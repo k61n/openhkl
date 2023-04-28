@@ -38,6 +38,7 @@ class KeyPointCollection {
     std::vector<cv::KeyPoint>* frame(std::size_t idx);
     void clearFrame(std::size_t idx);
     bool hasPeaks(std::size_t idx);
+
  private:
     sptrDataSet _data;
     std::vector<std::unique_ptr<std::vector<cv::KeyPoint>>> _keypoint_frames;

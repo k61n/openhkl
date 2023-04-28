@@ -37,7 +37,7 @@
 TEST_CASE("test/data/TestPeakFinder2D.cpp", "")
 {
     const std::string filename = "CrChiA_c01runab_28603.raw";
-    ohkl::Experiment experiment("test", "BioDiff2500");
+    ohkl::Experiment experiment("test", "BioDiff");
 
     const ohkl::sptrDataSet data =
         std::make_shared<ohkl::DataSet>(ohkl::kw_datasetDefaultName, experiment.getDiffractometer());

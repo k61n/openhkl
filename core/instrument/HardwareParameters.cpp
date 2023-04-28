@@ -20,12 +20,8 @@ namespace {
 
 std::map<std::string, const char*> database = {
     {
-        "BioDiff2500",
-#include "data/instruments/BioDiff2500.yml2c"
-    },
-    {
-        "BioDiff5000",
-#include "data/instruments/BioDiff5000.yml2c"
+        "BioDiff",
+#include "data/instruments/BioDiff.yml2c"
     },
     {
         "D9",

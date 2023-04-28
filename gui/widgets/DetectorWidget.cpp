@@ -319,7 +319,7 @@ void DetectorWidget::setToolbarUp()
     _contours->setToolTip("Toggle resolution contours");
     _hide_masks->setToolTip("Show/hide detector masks");
     _peak_labels->setToolTip("Show/hide Miller index labels");
-        _copy_to_clipboard->setToolTip("Copy visible detector image to clipboard");
+    _copy_to_clipboard->setToolTip("Copy visible detector image to clipboard");
     _save_to_file->setToolTip("Save visible detector image to file");
     _zoom->setToolTip("Enable zoom cursor on detector image");
     _select->setToolTip("Enable rectangle select cursor on detector image");

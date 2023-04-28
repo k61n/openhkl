@@ -22,6 +22,7 @@
 #include "core/loader/IDataReader.h"
 #include "core/peak/Peak3D.h"
 #include "core/raw/DataKeys.h"
+//#include "core/loader/TiffDataReader.h"
 
 #include <gsl/gsl_histogram.h>
 
@@ -34,6 +35,8 @@ class DetectorEvent;
 class Diffractometer;
 class InstrumentStateSet;
 struct RawDataReaderParameters;
+struct tif_file_metadata;
+struct TiffDataReaderParameters;
 
 enum class BitDepth { u8b = 8, u16b = 16, u32b = 32 };
 
@@ -111,9 +114,17 @@ class DataSet {
     void addDataFile(const std::string& filename, const std::string& extension);
     //! Set the parameters for the raw-data reader.
     void setRawReaderParameters(const RawDataReaderParameters& params);
+
+    //! Set the parameters for a tif data reader
+    void setTiffReaderParameters(const TiffDataReaderParameters& params);
+
     //! Add a raw file to be read as a single detector image frame. Reading frames will be done only
     //! upon request.
     void addRawFrame(const std::string& rawfilename);
+
+    //! Add a tif file
+    void addTiffFrame(const std::string& filename);
+
     //! Finish reading procedure (must be called before using the data stored in the DataSet).
     void finishRead();
 
@@ -165,6 +176,7 @@ class DataSet {
 
     //! Data shape (columns, rows, frames)
     std::size_t datashape[3]{0, 0, 0};
+
 
  protected:
     void setReader(const DataFormat dataformat, const std::string& filename = "");

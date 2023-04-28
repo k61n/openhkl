@@ -16,6 +16,7 @@
 #include <stdexcept>
 
 #include "base/utils/Units.h"
+#include "base/utils/YAMLType.h"
 #include "core/detector/Detector.h"
 #include "core/detector/DetectorFactory.h"
 #include "core/raw/DataKeys.h"
@@ -82,12 +83,20 @@ Detector::Detector(const YAML::Node& node) : Component(node)
     distance *= units;
     setDistance(distance);
 
-    // Sets the detector number of pixels from the property tree node
-    unsigned int nCols = node[ohkl::ym_colCount].as<unsigned int>();
-    setNCols(nCols);
+    // supporting multiple resolution for one detector (up to three). 0 is invalid.
+    auto cols = node[ohkl::ym_colCount].as<Eigen::Vector3d>();
+    auto rows = node[ohkl::ym_rowCount].as<Eigen::Vector3d>();
 
-    unsigned int nRows = node[ohkl::ym_rowCount].as<unsigned int>();
-    setNRows(nRows);
+    for (int i = 0; i < 3; i++)
+        if (cols[i] > 0 && rows[i] > 0)
+            _resolutions.push_back({cols[i], rows[i]});
+
+    if (_resolutions.empty()) // if no non zero resolutions are found
+        throw std::runtime_error("Detector::Detector: no valid resolution found in .yaml2c file");
+
+    // set first resolution in .yml file as default
+    setNCols(_resolutions[0].first);
+    setNRows(_resolutions[0].second);
 
     _minCol = node[ohkl::ym_originX] ? node[ohkl::ym_originX].as<double>() : 0.0;
     _minRow = node[ohkl::ym_originY] ? node[ohkl::ym_originY].as<double>() : 0.0;

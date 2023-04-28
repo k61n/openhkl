@@ -102,10 +102,12 @@ void Actions::setupView()
 void Actions::setupData()
 {
     add_data = new QAction("Add data set");
-    add_single_image = new QAction("Load single image (strategy)");
+    add_single_raw = new QAction("Load single .raw image (strategy)");
+    add_single_tiff = new QAction("Load single .tiff image (strategy)");
     show_input_files = new QAction("Show input files");
     remove_data = new QAction("Remove data set");
-    add_raw = new QAction("Add raw/tiff data");
+    add_raw = new QAction("Add raw data");
+    add_tiff = new QAction("Add tiff data");
     add_hdf5 = new QAction("Add NSX(HDF5) data");
     add_nexus = new QAction("Add Nexus data");
 
@@ -113,10 +115,21 @@ void Actions::setupData()
         if (gSession->loadRawData())
             gGui->sideBar()->refreshCurrent();
     });
-    connect(add_single_image, &QAction::triggered, []() { // can cause a crash without checking
+    connect(add_tiff, &QAction::triggered, []() { // can cause a crash without checking
+        if (gSession->loadTiffData())
+            gGui->sideBar()->refreshCurrent();
+    });
+
+    connect(add_single_raw, &QAction::triggered, []() { // can cause a crash without checking
         if (gSession->loadRawData(true))
             gGui->sideBar()->refreshCurrent();
     });
+
+    connect(add_single_tiff, &QAction::triggered, []() { // can cause a crash without checking
+        if (gSession->loadTiffData(true))
+            gGui->sideBar()->refreshCurrent();
+    });
+
     connect(add_hdf5, &QAction::triggered, []() { gSession->loadData(ohkl::DataFormat::OHKL); });
     connect(add_hdf5, &QAction::triggered, []() { gSession->loadData(ohkl::DataFormat::NEXUS); });
     connect(add_hdf5, &QAction::triggered, []() { gGui->sideBar()->refreshCurrent(); });
@@ -260,7 +273,8 @@ void Actions::removePeaks()
     if (peaks_list.empty())
         return;
 
-    std::unique_ptr<ComboDialog> dlg(new ComboDialog(peaks_list, description, "Remove peak collection"));
+    std::unique_ptr<ComboDialog> dlg(
+        new ComboDialog(peaks_list, description, "Remove peak collection"));
     dlg->exec();
     if (dlg->itemName().isEmpty())
         return;

@@ -30,7 +30,7 @@ def correct_image(image):
 def poisson_noise(image):
     return np.sqrt(image)*np.random.normal(0, 1, image.shape)
 
-exp = nsx.Experiment("Simulated", "BioDiff2500")
+exp = nsx.Experiment("Simulated", "BioDiff")
 diff = exp.getDiffractometer()
 reader = nsx.HDF5DataReader(infile, diff)
 data = nsx.DataSet(reader, diff)
