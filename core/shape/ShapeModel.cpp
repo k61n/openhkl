@@ -492,9 +492,13 @@ void ShapeModel::integrate(
     ShapeIntegrator integrator(
         this, getAABB(), _params->nbins_x, _params->nbins_y, _params->nbins_z);
     ohkl::IntegrationParameters int_params{};
+    int_params.region_type = _params->region_type;
     int_params.peak_end = _params->peak_end;
     int_params.bkg_begin = _params->bkg_begin;
     int_params.bkg_end = _params->bkg_end;
+    int_params.fixed_peak_end = _params->fixed_peak_end;
+    int_params.fixed_bkg_begin = _params->fixed_bkg_begin;
+    int_params.fixed_bkg_end = _params->fixed_bkg_end;
     integrator.setHandler(handler);
     integrator.setParameters(int_params);
 

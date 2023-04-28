@@ -63,6 +63,7 @@ class SubframeShapes : public QWidget {
  public slots:
     void onPeakSelected(ohkl::Peak3D* peak);
     void onShapeChanged();
+    void onRegionModeChanged();
 
  private:
     //! Select dataset, peak collection, set parameters
@@ -129,6 +130,8 @@ class SubframeShapes : public QWidget {
     SafeDoubleSpinBox* _min_d;
     SafeDoubleSpinBox* _max_d;
 
+    QCheckBox* _show_single_region;
+    QComboBox* _integration_region_type;
     SafeDoubleSpinBox* _peak_end;
     SafeDoubleSpinBox* _bkg_begin;
     SafeDoubleSpinBox* _bkg_end;

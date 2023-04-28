@@ -50,7 +50,10 @@
 #include <QSpacerItem>
 #include <iostream>
 
-SubframeShapes::SubframeShapes() : QWidget(), _shape_model(nullptr), _preview_peak(nullptr)
+SubframeShapes::SubframeShapes()
+    : QWidget()
+    , _shape_model(nullptr)
+    , _preview_peak(nullptr)
 {
     _params = std::make_shared<ohkl::ShapeModelParameters>();
 
@@ -78,6 +81,10 @@ SubframeShapes::SubframeShapes() : QWidget(), _shape_model(nullptr), _preview_pe
         _data_combo, &QComboBox::setCurrentIndex);
     connect(
         _peak_view_widget, &PeakViewWidget::settingsChanged, _detector_widget,
+        &DetectorWidget::refresh);
+    connect(
+        _integration_region_type,
+        static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), _detector_widget,
         &DetectorWidget::refresh);
 
     auto propertyScrollArea = new PropertyScrollArea(this);
@@ -130,6 +137,17 @@ void SubframeShapes::setInputUp()
         "Maximum resolution (min. d)", "Minimum d (\u212B) of peak to include in average");
     _max_d = f.addDoubleSpinBox(
         "Minimum resolution (max. d)", "Maximum d (\u212B) of peak to include in average");
+
+
+    _integration_region_type = f.addCombo("Integration region type");
+    for (int i = 0; i < static_cast<int>(ohkl::RegionType::Count); ++i)
+        for (const auto& [key, val] : ohkl::regionTypeDescription)
+            if (i == static_cast<int>(key))
+                _integration_region_type->addItem(QString::fromStdString(val));
+
+    _show_single_region = f.addCheckBox(
+        "Show single integration region",
+        "When checked, only show single integration region of clicked peak", 1);
     _peak_end = f.addDoubleSpinBox(
         "Peak end", "(" + QString(QChar(0x03C3)) + ") - scaling factor for peak region");
     _bkg_begin = f.addDoubleSpinBox(
@@ -176,8 +194,10 @@ void SubframeShapes::setInputUp()
         _peak_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
         &SubframeShapes::grabShapeParameters);
     connect(
-        _peak_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
-        &SubframeShapes::refreshPeakTable);
+        _peak_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+        this, &SubframeShapes::refreshPeakTable);
+    connect(
+        _show_single_region, &QCheckBox::stateChanged, this, &SubframeShapes::onRegionModeChanged);
 
     _left_layout->addWidget(input_box);
 }
@@ -281,8 +301,8 @@ void SubframeShapes::setComputeShapesUp()
 
     connect(_assign_peak_shapes, &QPushButton::clicked, this, &SubframeShapes::assignPeakShapes);
     connect(
-        _shape_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
-        [=]() { _detector_widget->scene()->clearPixmapItems(); });
+        _shape_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+        this, [=](){ _detector_widget->scene()->clearPixmapItems(); });
 }
 
 void SubframeShapes::setShapePreviewUp()
@@ -304,7 +324,6 @@ void SubframeShapes::setFigureUp()
     figure_group->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     _detector_widget = new DetectorWidget(1, false, true, figure_group);
     _detector_widget->linkPeakModel(&_peak_collection_model, _peak_view_widget);
-    _detector_widget->scene()->params()->singlePeakIntRegion = true;
 
     connect(
         _detector_widget->scene(), &DetectorScene::signalSelectedPeakItemChanged, this,
@@ -317,6 +336,7 @@ void SubframeShapes::setFigureUp()
         &SubframeShapes::onPeakSelected);
 
     _right_element->addWidget(figure_group);
+    onRegionModeChanged();
 }
 
 void SubframeShapes::setPeakTableUp()
@@ -376,26 +396,38 @@ void SubframeShapes::refreshAll()
 
 void SubframeShapes::grabShapeParameters()
 {
-    if (gSession->currentProject()->hasPeakCollection()) {
-        _peak_combo->currentPeakCollection()->computeSigmas();
+    if (!gSession->currentProject()->hasPeakCollection())
+        return;
 
-        _min_d->setValue(_params->d_min);
-        _max_d->setValue(_params->d_max);
+    _peak_combo->currentPeakCollection()->computeSigmas();
+
+    _min_d->setValue(_params->d_min);
+    _max_d->setValue(_params->d_max);
+    if (_params->region_type == ohkl::RegionType::VariableEllipsoid) {
         _peak_end->setValue(_params->peak_end);
         _bkg_begin->setValue(_params->bkg_begin);
         _bkg_end->setValue(_params->bkg_end);
-        _min_strength->setValue(_params->strength_min);
-        _kabsch->setChecked(_params->kabsch_coords);
-        _nx->setValue(_params->nbins_x);
-        _ny->setValue(_params->nbins_y);
-        _nz->setValue(_params->nbins_z);
-        _nsubdiv->setValue(_params->n_subdiv);
-        _pixel_radius->setValue(_params->neighbour_range_pixels);
-        _frame_radius->setValue(_params->neighbour_range_frames);
-        _sigma_m->setValue(_peak_combo->currentPeakCollection()->sigmaM());
-        _sigma_d->setValue(_peak_combo->currentPeakCollection()->sigmaD());
-        _interpolation_combo->setCurrentIndex(static_cast<int>(_params->interpolation));
+    } else {
+        _peak_end->setValue(_params->fixed_peak_end);
+        _bkg_begin->setValue(_params->fixed_bkg_begin);
+        _bkg_end->setValue(_params->fixed_bkg_end);
     }
+    _min_strength->setValue(_params->strength_min);
+    _kabsch->setChecked(_params->kabsch_coords);
+    _nx->setValue(_params->nbins_x);
+    _ny->setValue(_params->nbins_y);
+    _nz->setValue(_params->nbins_z);
+    _nsubdiv->setValue(_params->n_subdiv);
+    _pixel_radius->setValue(_params->neighbour_range_pixels);
+    _frame_radius->setValue(_params->neighbour_range_frames);
+    _sigma_m->setValue(_peak_combo->currentPeakCollection()->sigmaM());
+    _sigma_d->setValue(_peak_combo->currentPeakCollection()->sigmaD());
+    _interpolation_combo->setCurrentIndex(static_cast<int>(_params->interpolation));
+
+    for (auto it = ohkl::regionTypeDescription.begin(); it != ohkl::regionTypeDescription.end();
+         ++it)
+        if (it->first == _params->region_type)
+            _integration_region_type->setCurrentText(QString::fromStdString(it->second));
 }
 
 void SubframeShapes::setShapeParameters()
@@ -405,9 +437,18 @@ void SubframeShapes::setShapeParameters()
 
     _params->d_min = _min_d->value();
     _params->d_max = _max_d->value();
-    _params->peak_end = _peak_end->value();
-    _params->bkg_begin = _bkg_begin->value();
-    _params->bkg_end = _bkg_end->value();
+
+    _params->region_type = static_cast<ohkl::RegionType>(_integration_region_type->currentIndex());
+    if (_params->region_type == ohkl::RegionType::VariableEllipsoid) {
+        _params->peak_end = _peak_end->value();
+        _params->bkg_begin = _bkg_begin->value();
+        _params->bkg_end = _bkg_end->value();
+    } else {
+        _params->fixed_peak_end = _peak_end->value();
+        _params->fixed_bkg_begin = _bkg_begin->value();
+        _params->fixed_bkg_end = _bkg_end->value();
+    }
+
     _params->strength_min = _min_strength->value();
     _params->kabsch_coords = _kabsch->isChecked();
     _params->nbins_x = _nx->value();
@@ -426,7 +467,6 @@ void SubframeShapes::setPreviewUp()
 {
     Spoiler* preview_spoiler = new Spoiler("Show/hide peaks");
     _peak_view_widget = new PeakViewWidget("Valid peaks", "Invalid Peaks");
-    _peak_view_widget->set1.drawIntegrationRegion->setChecked(true);
 
     preview_spoiler->setContentLayout(*_peak_view_widget);
 
@@ -440,6 +480,9 @@ void SubframeShapes::setPreviewUp()
         _peak_view_widget->set1.bkgEnd, qOverload<double>(&QDoubleSpinBox::valueChanged), _bkg_end,
         &QDoubleSpinBox::setValue);
     connect(
+        _peak_view_widget->set1.regionType, &QComboBox::currentTextChanged,
+        _integration_region_type, &QComboBox::setCurrentText);
+    connect(
         _peak_end, qOverload<double>(&QDoubleSpinBox::valueChanged),
         _peak_view_widget->set1.peakEnd, &QDoubleSpinBox::setValue);
     connect(
@@ -448,6 +491,9 @@ void SubframeShapes::setPreviewUp()
     connect(
         _bkg_end, qOverload<double>(&QDoubleSpinBox::valueChanged), _peak_view_widget->set1.bkgEnd,
         &QDoubleSpinBox::setValue);
+    connect(
+        _integration_region_type, &QComboBox::currentTextChanged,
+        _peak_view_widget->set1.regionType, &QComboBox::setCurrentText);
 
     _left_layout->addWidget(preview_spoiler);
 }
@@ -506,8 +552,8 @@ void SubframeShapes::computeProfile()
 
     const ohkl::DetectorEvent ev(_x->value(), _y->value(), _frame->value());
 
-    std::optional<ohkl::Profile3D> profile =
-        model->meanProfile(ev, _params->neighbour_range_pixels, _params->neighbour_range_frames);
+    std::optional<ohkl::Profile3D> profile = model->meanProfile(
+        ev, _params->neighbour_range_pixels, _params->neighbour_range_frames);
     if (!profile) {
         return;
     }
@@ -573,8 +619,9 @@ void SubframeShapes::saveShapes()
         return;
 
     std::string suggestion = gSession->currentProject()->experiment()->generateShapeModelName();
-    std::unique_ptr<ListNameDialog> dlg = std::make_unique<ListNameDialog>(
-        QString::fromStdString(suggestion), QString("Shape model"), QString("New shape model"));
+    std::unique_ptr<ListNameDialog> dlg =
+        std::make_unique<ListNameDialog>(
+            QString::fromStdString(suggestion), QString("Shape model"), QString ("New shape model"));
     dlg->exec();
     if (dlg->listName().isEmpty())
         return;
@@ -637,8 +684,8 @@ void SubframeShapes::toggleUnsafeWidgets()
     if (_shape_model)
         _save_shapes->setEnabled(true);
 
-    if (gSession->currentProject()->hasShapeModel()
-        && gSession->currentProject()->hasPeakCollection()) {
+    if (gSession->currentProject()->hasShapeModel() &&
+        gSession->currentProject()->hasPeakCollection()) {
         _calculate_mean_profile->setEnabled(true);
         _assign_peak_shapes->setEnabled(true);
     }
@@ -680,6 +727,13 @@ void SubframeShapes::onShapeChanged()
     _preview_peak->setShape(new_shape);
     getPreviewPeak(_preview_peak.get());
     _detector_widget->scene()->setPeak(_preview_peak.get());
+}
+
+void SubframeShapes::onRegionModeChanged()
+{
+    _detector_widget->scene()->clearPixmapItems();
+    _detector_widget->scene()->params()->singlePeakIntRegion = _show_single_region->isChecked();
+    _detector_widget->refresh();
 }
 
 ohkl::ShapeModel* SubframeShapes::shapeModel()
