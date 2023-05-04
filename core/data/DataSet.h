@@ -66,6 +66,10 @@ class DataSet {
     std::size_t nCols() const; //!< The number of columns in each detector image
 
     void addMask(IMask* mask);
+    //! Add a rectangular mask (swig-compatible)
+    void addBoxMask(const AABB& aabb);
+    //! Add an elliptical mask (swig-compatible)
+    void addEllipseMask(const AABB& aabb);
     void removeMask(IMask* mask);
     bool removeMaskByIndex(std::vector<size_t> idx);
     const std::vector<IMask*>& masks() const;

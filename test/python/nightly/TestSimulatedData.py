@@ -4,8 +4,8 @@
 ##
 ##  OpenHKL: data reduction for single crystal diffraction
 ##
-##! @file      test/python/TestFullWorkFlow.py
-##! @brief     Test ...
+##! @file      test/python/TestSimulatedData.py
+##! @brief     Test the full workflow using simulated data
 ##!
 ##! @homepage  ###HOMEPAGE###
 ##! @license   GNU General Public License v3 or higher (see COPYING)
@@ -14,24 +14,27 @@
 ##
 ##  ***********************************************************************************************
 
-import numpy as np
 import unittest
+import numpy as np
+from math import isclose
 from pathlib import Path
 import pyohkl as ohkl
 import os
 
-class TestFullWorkFlow(unittest.TestCase):
+class TestSimulatedData(unittest.TestCase):
 
     def test(self):
-        # correctness threshold for integers
-        eps = 5
         # Reference values
-        expected_n_files = 60;
-        expected_found_peaks = 2629
-        expected_valid_found_peaks = 1911
-        expected_predicted_peaks = 2237
-        expected_shapes = 1725
-        expected_valid_predicted_peaks = 1587
+        n_files = 60;
+        ref_found_peaks = 2629
+        ref_valid_found_peaks = 1911
+        ref_predicted_peaks = 1955
+        ref_shapes = 1725
+        ref_valid_predicted_peaks = 1587
+
+        # Numerical check thresholds
+        eps_peaks = 5;
+        eps_stat = 0.01;
 
         data_dir = '.' # Path to .raw data files
 
@@ -55,8 +58,7 @@ class TestFullWorkFlow(unittest.TestCase):
         for filename in raw_data_files:
             dataset.addRawFrame(str(filename))
 
-        self.assertTrue(
-            len(raw_data_files) == expected_n_files, f"Found {len(raw_data_files)} files")
+        self.assertEqual(len(raw_data_files), n_files, f"Found {len(raw_data_files)} files")
 
         dataset.finishRead()
         expt.addData(dataset)
@@ -72,9 +74,8 @@ class TestFullWorkFlow(unittest.TestCase):
         params.threshold = 80
         peak_finder.find(data)
         print(f'Found {peak_finder.numberFound()} peaks')
-        self.assertTrue(
-            peak_finder.numberFound() == expected_found_peaks,
-            f"Found {peak_finder.numberFound()} peaks")
+        self.assertEqual(
+            peak_finder.numberFound(), ref_found_peaks, f"Found {peak_finder.numberFound()} peaks")
 
         print('Integrating found peaks...')
         integrator = expt.integrator()
@@ -86,9 +87,9 @@ class TestFullWorkFlow(unittest.TestCase):
         expt.acceptFoundPeaks('found') # Peak collection is now saved to experiment as "found"
         expt.saveToFile("test.ohkl");
         found_peaks = expt.getPeakCollection('found')
-        self.assertTrue(found_peaks.numberOfValid() > expected_valid_found_peaks - eps and
-                        found_peaks.numberOfValid() < expected_valid_found_peaks + eps,
-                        f'Integrated {found_peaks.numberOfValid()} valid peaks')
+        self.assertTrue(
+            isclose(found_peaks.numberOfValid(), ref_valid_found_peaks, abs_tol=eps_peaks),
+            f'Integrated {found_peaks.numberOfValid()} valid peaks')
 
         print('Indexing found peaks...')
         expt.setReferenceCell(24.5, 28.7, 37.7, 90, 90, 90) # reference cell used to pick best solution
@@ -127,12 +128,13 @@ class TestFullWorkFlow(unittest.TestCase):
         params = predictor.parameters()
         params.d_min = 1.5
         predictor.predictPeaks(data, indexed_cell)
-        expt.addPeakCollection('predicted', ohkl.PeakCollectionType_PREDICTED, predictor.peaks(), data)
+        expt.addPeakCollection(
+            'predicted', ohkl.PeakCollectionType_PREDICTED, predictor.peaks(), data, indexed_cell)
         predicted_peaks = expt.getPeakCollection('predicted')
         print()
-        self.assertTrue(predicted_peaks.numberOfPeaks() > expected_predicted_peaks - eps and
-                        predicted_peaks.numberOfPeaks() < expected_predicted_peaks + eps,
-                        f'{predicted_peaks.numberOfPeaks()} peaks predicted')
+        self.assertTrue(
+            isclose(predicted_peaks.numberOfPeaks(), ref_predicted_peaks, abs_tol=eps_peaks),
+            f'{predicted_peaks.numberOfPeaks()} peaks predicted')
 
         print('Building shape collection...')
         filtered_peaks.computeSigmas()
@@ -140,9 +142,9 @@ class TestFullWorkFlow(unittest.TestCase):
         params.sigma_d = filtered_peaks.sigmaD()
         params.sigma_m = filtered_peaks.sigmaM()
         filtered_peaks.buildShapeModel(data, params)
-        self.assertTrue(filtered_peaks.shapeModel().numberOfPeaks() > expected_shapes - eps and
-                        filtered_peaks.shapeModel().numberOfPeaks() < expected_shapes + eps,
-                        f'{filtered_peaks.shapeModel().numberOfPeaks()} shapes generated')
+        self.assertTrue(
+            isclose(filtered_peaks.shapeModel().numberOfPeaks(), ref_shapes, abs_tol=eps_peaks),
+            f'{filtered_peaks.shapeModel().numberOfPeaks()} shapes generated')
 
         print('Assigning shapes to predicted peaks...')
         filtered_peaks.shapeModel().setPredictedShapes(predicted_peaks)
@@ -184,25 +186,30 @@ class TestFullWorkFlow(unittest.TestCase):
         print('Integrating predicted peaks...')
         integrator = expt.integrator()
         params = integrator.parameters()
-        integrator_type = ohkl.IntegratorType_Profile3D
+        integrator_type = ohkl.IntegratorType_PixelSum
         integrator.getIntegrator(integrator_type)
         integrator.integratePeaks(data, predicted_peaks, params, filtered_peaks.shapeModel())
-        self.assertTrue(integrator.numberOfValidPeaks() >  expected_valid_predicted_peaks - eps and
-                        integrator.numberOfValidPeaks() < expected_valid_predicted_peaks + eps,
-                        f'{integrator.numberOfValidPeaks()} / {integrator.numberOfPeaks()} peaks integrated')
+        self.assertTrue(
+            isclose(integrator.numberOfValidPeaks(), ref_valid_predicted_peaks, abs_tol=eps_peaks),
+            f'{integrator.numberOfValidPeaks()} / {integrator.numberOfPeaks()} peaks integrated')
 
         print('Merging predicted peaks...')
+        predicted_peaks.setUnitCell(indexed_cell, False)
         merger = expt.peakMerger()
         params = merger.parameters()
         merger.reset()
         params.d_min = 1.5
-        params.frame_min = 3
-        params.frame_max = 58
+        params.d_max = 50.0
         merger.addPeakCollection(predicted_peaks)
+        merger.setSpaceGroup(space_group)
         merger.mergePeaks()
         merger.computeQuality()
-        print(merger.overallQuality().shells[0].Rpim)
-        self.assertTrue(merger.overallQuality().shells[0].Rpim < 0.11)
+        self.assertTrue(
+            isclose(merger.overallQuality().shells[0].Rpim, 0.0039, abs_tol=eps_stat),
+            f'Overall Rpim = {merger.overallQuality().shells[0].Rpim}')
+        self.assertTrue(
+            isclose(merger.overallQuality().shells[0].Completeness, 0.185, abs_tol=eps_stat),
+            f'Overall completeness = {merger.overallQuality().shells[0].Completeness}')
 
         print("Workflow complete")
 
