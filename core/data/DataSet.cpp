@@ -13,6 +13,8 @@
 //  ***********************************************************************************************
 
 #include "core/data/DataSet.h"
+#include "base/mask/BoxMask.h"
+#include "base/mask/EllipseMask.h"
 #include "base/parser/BloscFilter.h"
 #include "base/utils/Logger.h"
 #include "base/utils/Path.h" // splitFileExtension
@@ -241,6 +243,16 @@ void DataSet::addMask(IMask* mask)
 {
     _masks.emplace_back(mask);
     _metadata.add<int>(ohkl::at_nMasks, _masks.size());
+}
+
+void DataSet::addBoxMask(const AABB &aabb)
+{
+    addMask(new BoxMask(aabb));
+}
+
+void DataSet::addEllipseMask(const AABB& aabb)
+{
+    addMask(new EllipseMask(aabb));
 }
 
 void DataSet::removeMask(IMask* mask)
