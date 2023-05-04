@@ -32,10 +32,10 @@ class TestFullWorkFlow(unittest.TestCase):
         ref_valid_predicted_peaks = 58215;
         ref_updated = 56750;
         ref_integrated = 52060;
-        ref_rmerge = [
-            0.0424, 0.0911, 0.1508, 0.1999, 0.2456, 0.2974, 0.3372, 0.3820, 0.4571, 0.5739];
+        ref_rpim = [
+            0.0264, 0.0584, 0.0954, 0.1350, 0.1705, 0.2159, 0.2527, 0.3024, 0.3714, 0.5312];
         ref_completeness = [
-            0.9529, 0.8976, 0.7310, 0.7268, 0.7084, 0.6830, 0.6675, 0.6572, 0.6400, 0.5395];
+            0.9532, 0.8948, 0.6436, 0.6286, 0.7015, 0.6854, 0.6621, 0.6551, 0.6276, 0.5159];
 
         # Numerical check thresholds
         eps_peaks = 10;
@@ -235,14 +235,12 @@ class TestFullWorkFlow(unittest.TestCase):
         merger.mergePeaks()
         merger.computeQuality()
 
-        # Target values for statistics in 3 lowest resolution shells
-        rpim_ref = [0.0266, 0.0536, 0.1635]
-        compl_ref = [0.9704, 0.9611, 0.9587]
-        eps = 0.01
-
-        for i in range(3):
-            self.assertTrue(rpim_ref[i] + eps - merger.shellQuality().shells[i].Rpim > 0)
-            self.assertTrue(compl_ref[i] + eps - merger.shellQuality().shells[i].Completeness > 0)
+        # Check Rpim and completeness against reference values
+        for i in range(len(ref_rpim)):
+            self.assertTrue(isclose(
+                ref_rpim[i], merger.shellQuality().shells[i].Rpim, abs_tol=eps_stat))
+            self.assertTrue(isclose(
+                ref_completeness[i], merger.shellQuality().shells[i].Completeness, abs_tol=eps_stat))
 
         print("Workflow complete")
 
