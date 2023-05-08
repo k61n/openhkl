@@ -536,6 +536,10 @@ void ShapeModel::build(PeakCollection* peaks, sptrDataSet data)
     int_params.peak_end = _params->peak_end;
     int_params.bkg_begin = _params->bkg_begin;
     int_params.bkg_end = _params->bkg_end;
+    int_params.fixed_peak_end = _params->fixed_peak_end;
+    int_params.fixed_bkg_begin = _params->fixed_bkg_begin;
+    int_params.fixed_bkg_end = _params->fixed_bkg_end;
+    int_params.region_type = _params->region_type;
     integrator.setParameters(int_params);
     integrator.integrate(fit_peaks, this, data);
     ohklLog(Level::Info, "ShapeModel::build: finished integrating shapes");

@@ -109,10 +109,8 @@ bool Profile3DIntegrator::compute(
 
         const double predict = model_profile.value().predict(x);
 
-        // if (predict > 0.0001) {
         profile.push_back(predict);
         obs_counts.push_back(counts[i]);
-        //}
     }
 
     // todo: stopping criterion

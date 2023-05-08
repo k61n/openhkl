@@ -261,7 +261,14 @@ void PeakCollection::buildShapeModel(sptrDataSet data, const ShapeModelParameter
     ohklLog(Level::Info, "PeakCollection::buildShapeModel finished");
 }
 
-void PeakCollection::setUnitCell(const sptrUnitCell& cell, bool setPeaks)
+void PeakCollection::buildShapeModel(const ShapeModelParameters& params)
+{
+    ohklLog(Level::Info, "PeakCollection::buildShapeModel");
+    _shape_model = std::make_unique<ShapeModel>(std::make_shared<ShapeModelParameters>(params));
+    _shape_model->build(this, _data);
+}
+
+    void PeakCollection::setUnitCell(const sptrUnitCell& cell, bool setPeaks)
 {
     _cell = cell;
     if (!setPeaks)

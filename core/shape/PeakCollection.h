@@ -123,6 +123,8 @@ class PeakCollection {
 
     //! Build shape collection from strong peaks in this peak collection
     void buildShapeModel(sptrDataSet data, const ShapeModelParameters& params);
+    //! Build shape collection from strong peaks in this peak collection
+    void buildShapeModel(const ShapeModelParameters& params);
 
     //! Whether PeakCollection has been indexed or not
     bool isIndexed() const { return _indexed; }
