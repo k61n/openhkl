@@ -19,6 +19,8 @@
 #include "core/data/DataTypes.h"
 #include "core/detector/DetectorEvent.h"
 #include "core/experiment/Experiment.h"
+#include "core/peak/IntegrationRegion.h"
+#include "core/peak/RegionData.h"
 #include "core/shape/Profile3D.h"
 #include "core/shape/ShapeModel.h"
 #include "gui/MainWin.h" // gGui
@@ -48,6 +50,7 @@
 #include <QMessageBox>
 #include <QScrollBar>
 #include <QSpacerItem>
+#include <cmath>
 #include <iostream>
 
 SubframeShapes::SubframeShapes()
@@ -550,45 +553,74 @@ void SubframeShapes::computeProfile()
 
     setShapeParameters();
 
-    const ohkl::DetectorEvent ev(_x->value(), _y->value(), _frame->value());
+    // const ohkl::DetectorEvent ev(_x->value(), _y->value(), _frame->value());
+    std::cout << 1 << std::endl;
 
-    std::optional<ohkl::Profile3D> profile = model->meanProfile(
-        ev, _params->neighbour_range_pixels, _params->neighbour_range_frames);
-    if (!profile) {
+    if (!_current_peak)
         return;
+
+    std::cout << 2 << std::endl;
+    double peak_end, bkg_begin, bkg_end;
+    if (_params->region_type == ohkl::RegionType::VariableEllipsoid) {
+        peak_end = _params->peak_end;
+        bkg_begin = _params->bkg_begin;
+        bkg_end = _params->bkg_end;
+    } else {
+        peak_end = _params->fixed_peak_end;
+        bkg_begin = _params->fixed_bkg_begin;
+        bkg_end = _params->fixed_bkg_end;
     }
+    // construct the integration region
+    std::cout << 3 << std::endl;
+    ohkl::IntegrationRegion region(_current_peak, peak_end, bkg_begin, bkg_end, _params->region_type);
 
-    _profile = profile.value();
+    std::cout << 4 << std::endl;
+    ohkl::RegionData* region_data = region.getRegion();
+    region_data->buildProfile(model, _params->neighbour_range_pixels, _params->neighbour_range_frames);
+    std::cout << 5 << std::endl;
 
-    int xmax = _profile.shape()[0];
-    int ymax = _profile.shape()[1];
-    int nframes = _profile.shape()[2];
-    // update maximum value, used for drawing
-    double intensity_maximum = 0;
-    for (int i = 0; i < xmax; ++i) {
-        for (int j = 0; j < ymax; ++j) {
-            for (int k = 0; k < nframes; ++k)
-                intensity_maximum = std::max(intensity_maximum, _profile.at(i, j, k));
-        }
-    }
+    regionData2Image(region_data);
+}
 
-    QImage img(xmax * nframes, ymax, QImage::Format_ARGB32);
+void SubframeShapes::regionData2Image(ohkl::RegionData* region_data)
+{
+    int nframes = region_data->nFrames();
+    int ncols = region_data->cols();
+    int nrows = region_data->rows();
+
+    double image_max = region_data->dataMax();
+    double profile_max = region_data->profileMax();
+
+    QImage img(ncols * nframes, nrows * 2, QImage::Format_ARGB32);
     if (!_graphics_view->scene())
         _graphics_view->setScene(new QGraphicsScene());
 
-    _graphics_view->scene()->setSceneRect(QRectF(0, 0, xmax * nframes, ymax));
+    _graphics_view->scene()->setSceneRect(QRectF(0, 0, ncols * nframes, nrows * 2));
 
     ColorMap cmap;
     for (int frame = 0; frame < nframes; ++frame) {
-        int xmin = frame * xmax;
-        for (int i = 0; i < xmax; ++i) {
-            for (int j = 0; j < ymax; ++j) {
-                const double value = _profile.at(i, j, frame);
-                QRgb color = cmap.color(value, intensity_maximum);
-                img.setPixel(i + xmin, j, color);
+        auto image_mat = region_data->frame(frame);
+        auto profile_mat = region_data->profileData(frame);
+        int xmin = frame * ncols;
+        for (int i = 0; i < ncols; ++i) {
+            for (int j = 0; j < nrows; ++j) {
+                const double image_value = image_mat(i, j);
+                const double profile_value = profile_mat(i, j);
+                QRgb image_color = cmap.color(image_value, image_max);
+                QRgb profile_color = cmap.color(profile_value, profile_max);
+
+                img.setPixel(i + xmin, j, image_color);
+                img.setPixel(i + xmin, j + nrows, profile_color);
             }
         }
     }
+
+    QPen pen(QColor(0, 0, 0), 1);
+    pen.setCosmetic(true);
+    for (int idx = 1; idx < nframes; ++idx) {
+        _graphics_view->scene()->addLine(ncols * idx, 0, ncols * idx, nrows, pen);
+    }
+
     _graphics_view->scene()->addPixmap(QPixmap::fromImage(img));
     _graphics_view->fitInView(_graphics_view->scene()->sceneRect(), Qt::KeepAspectRatio);
 }

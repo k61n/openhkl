@@ -18,6 +18,7 @@
 #include "core/data/DataSet.h"
 #include "core/integration/IIntegrator.h"
 #include "core/peak/Peak3D.h"
+#include "core/peak/RegionData.h"
 #include "core/shape/PeakCollection.h"
 #include "core/shape/Profile3D.h"
 #include "core/shape/ShapeModel.h"
@@ -94,6 +95,8 @@ class SubframeShapes : public QWidget {
     void buildShapeModel();
     //! Compute the mean profile at the given coordinates
     void computeProfile();
+    //! Convert profile matrices to image
+    void regionData2Image(ohkl::RegionData* region_data);
     //! Generate a peak for preview in in DetectorScene
     void getPreviewPeak(ohkl::Peak3D* selected_peak);
     //! Save the shape collection

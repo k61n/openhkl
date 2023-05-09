@@ -13,6 +13,7 @@
 //  ***********************************************************************************************
 
 #include "core/shape/Profile3D.h"
+
 #include "base/geometry/Ellipsoid.h"
 
 namespace ohkl {
