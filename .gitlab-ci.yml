@@ -1,14 +1,14 @@
 variables:
   DEBIAN_FRONTEND: noninteractive
 
-image: iffregistry.fz-juelich.de/neutron-simlab/openhkl/archlinux-env
+image: iffregistry.fz-juelich.de/neutron-simlab/openhkl/ubuntu2204-env
 
 stages:
   - build
   - test
   - deploy:doc
 
-build:archlinux:
+build:ubuntu:
   stage: build
   script:
     - mkdir build
@@ -26,7 +26,7 @@ build:archlinux:
       - build
     expire_in: 1 day
 
-test:archlinux:
+test:ubuntu:
   stage: test
   script:
     - cd build
