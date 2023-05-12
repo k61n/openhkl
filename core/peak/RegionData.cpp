@@ -20,7 +20,6 @@
 #include "core/shape/ShapeModel.h"
 
 #include <algorithm>
-#include <iostream>
 
 namespace ohkl {
 
@@ -40,11 +39,10 @@ void RegionData::addFrame(unsigned int frame_index, Eigen::MatrixXi& frame, Eige
 
 int RegionData::index(std::size_t i)
 {
-    if (i < _index.size()) {
-        auto it = std::find(_index.begin(), _index.end(), i);
-        if (it != _index.end())
-            return it - _index.begin();
-    } else
+    auto it = std::find(_index.begin(), _index.end(), i);
+    if (it != _index.end())
+        return it - _index.begin();
+    else
         throw std::range_error("Frame index out of bounds");
 }
 
@@ -108,7 +106,7 @@ void RegionData::buildProfile(ShapeModel* shapes, double radius, double nframes)
     std::vector<double> profile_counts;
 
     for (const auto& mat : _data)
-        _profile_data.emplace_back(Eigen::MatrixXd::Zero(mat.rows(), mat.cols()));
+        _profile_data.emplace_back(Eigen::MatrixXd::Zero(mat.cols(), mat.rows()));
 
     Eigen::MatrixXi mask;
     mask.resize(peak->dataSet()->nRows(), peak->dataSet()->nCols());
@@ -133,7 +131,6 @@ void RegionData::buildProfile(ShapeModel* shapes, double radius, double nframes)
 
         const double predict = _profile.predict(coords);
         profile_counts.push_back(profile.value().predict(coords));
-        std::cout << idx << " " << events[idx].px << " " << events[idx].py << " " << events[idx].frame << " " << predict << std::endl;
     }
 
     for (std::size_t idx = 0; idx < events.size(); ++idx) {

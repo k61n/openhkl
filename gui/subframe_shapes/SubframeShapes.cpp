@@ -51,7 +51,6 @@
 #include <QScrollBar>
 #include <QSpacerItem>
 #include <cmath>
-#include <iostream>
 
 SubframeShapes::SubframeShapes()
     : QWidget()
@@ -554,12 +553,10 @@ void SubframeShapes::computeProfile()
     setShapeParameters();
 
     // const ohkl::DetectorEvent ev(_x->value(), _y->value(), _frame->value());
-    std::cout << 1 << std::endl;
 
     if (!_current_peak)
         return;
 
-    std::cout << 2 << std::endl;
     double peak_end, bkg_begin, bkg_end;
     if (_params->region_type == ohkl::RegionType::VariableEllipsoid) {
         peak_end = _params->peak_end;
@@ -571,13 +568,10 @@ void SubframeShapes::computeProfile()
         bkg_end = _params->fixed_bkg_end;
     }
     // construct the integration region
-    std::cout << 3 << std::endl;
     ohkl::IntegrationRegion region(_current_peak, peak_end, bkg_begin, bkg_end, _params->region_type);
 
-    std::cout << 4 << std::endl;
     ohkl::RegionData* region_data = region.getRegion();
     region_data->buildProfile(model, _params->neighbour_range_pixels, _params->neighbour_range_frames);
-    std::cout << 5 << std::endl;
 
     regionData2Image(region_data);
 }
@@ -621,6 +615,7 @@ void SubframeShapes::regionData2Image(ohkl::RegionData* region_data)
         _graphics_view->scene()->addLine(ncols * idx, 0, ncols * idx, nrows, pen);
     }
 
+    _graphics_view->scale(1, -1);
     _graphics_view->scene()->addPixmap(QPixmap::fromImage(img));
     _graphics_view->fitInView(_graphics_view->scene()->sceneRect(), Qt::KeepAspectRatio);
 }

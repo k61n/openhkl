@@ -173,7 +173,7 @@ RegionData* IntegrationRegion::getRegion()
         Eigen::MatrixXi region;
         Eigen::MatrixXi mask;
 
-        region = data->frame(z).block(ymin, xmin, ymax - ymin + 1, xmax - xmin + 1);
+        region = data->frame(z).block(ymin, xmin, ymax - ymin + 1, xmax - xmin + 1).transpose();
         // region = data->frame(z)(Eigen::seq(ymin, ymax), Eigen::seq(xmin, xmax)); // Eigen 3.4
         mask = Eigen::MatrixXi::Zero(ymax - ymin + 1, xmax - xmin + 1);
 
