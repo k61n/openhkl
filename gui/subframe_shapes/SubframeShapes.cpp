@@ -555,16 +555,6 @@ void SubframeShapes::computeProfile()
     if (!model)
         return;
 
-    if (_peak_pixmap) {
-        _image_view->scene()->removeItem(_peak_pixmap);
-        delete _peak_pixmap;
-    }
-
-    if (_profile_pixmap) {
-        _image_view->scene()->removeItem(_profile_pixmap);
-        delete _profile_pixmap;
-    }
-
     setShapeParameters();
 
     // const ohkl::DetectorEvent ev(_x->value(), _y->value(), _frame->value());
@@ -602,10 +592,20 @@ void SubframeShapes::regionData2Image(ohkl::RegionData* region_data)
 
     QImage peak_img(ncols * nframes, nrows, QImage::Format_ARGB32);
     QImage profile_img(ncols * nframes, nrows, QImage::Format_ARGB32);
-    if (!_image_view->scene())
+
+    if (!_image_view->scene()) {
         _image_view->setScene(new QGraphicsScene());
-    if (!_profile_view->scene())
+    } else {
+        _image_view->scene()->clear();
+        _image_view->viewport()->update();
+    }
+
+    if (!_profile_view->scene()) {
         _profile_view->setScene(new QGraphicsScene());
+    } else {
+        _profile_view->scene()->clear();
+        _profile_view->viewport()->update();
+    }
 
     _image_view->scene()->setSceneRect(QRectF(0, 0, ncols * nframes, nrows));
     _profile_view->scene()->setSceneRect(QRectF(0, 0, ncols * nframes, nrows));
@@ -631,7 +631,10 @@ void SubframeShapes::regionData2Image(ohkl::RegionData* region_data)
     QPen pen(QColor(0, 0, 0), 1);
     pen.setCosmetic(true);
     for (int idx = 1; idx < nframes; ++idx) {
-        _image_view->scene()->addLine(ncols * idx, 0, ncols * idx, nrows, pen);
+        QGraphicsLineItem* line = _image_view->scene()->addLine(ncols * idx, 0, ncols * idx, nrows, pen);
+        line->setZValue(20);
+        line = _profile_view->scene()->addLine(ncols * idx, 0, ncols * idx, nrows, pen);
+        line->setZValue(20);
     }
 
     _peak_pixmap = _image_view->scene()->addPixmap(QPixmap::fromImage(peak_img));
