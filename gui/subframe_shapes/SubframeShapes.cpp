@@ -54,6 +54,8 @@
 
 SubframeShapes::SubframeShapes()
     : QWidget()
+    , _peak_pixmap(nullptr)
+    , _profile_pixmap(nullptr)
     , _shape_model(nullptr)
     , _preview_peak(nullptr)
 {
@@ -313,9 +315,12 @@ void SubframeShapes::setShapePreviewUp()
     QHBoxLayout* layout = new QHBoxLayout;
     shape_group->setLayout(layout);
     shape_group->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    _graphics_view = new QGraphicsView();
-    _graphics_view->scale(1, -1);
-    layout->addWidget(_graphics_view);
+    _image_view = new QGraphicsView();
+    _profile_view = new QGraphicsView();
+    // _image_view->scale(1, -1);
+    // _profile_view->scale(1, -1);
+    layout->addWidget(_image_view);
+    layout->addWidget(_profile_view);
 
     _right_element->addWidget(shape_group);
 }
@@ -550,6 +555,16 @@ void SubframeShapes::computeProfile()
     if (!model)
         return;
 
+    if (_peak_pixmap) {
+        _image_view->scene()->removeItem(_peak_pixmap);
+        delete _peak_pixmap;
+    }
+
+    if (_profile_pixmap) {
+        _image_view->scene()->removeItem(_profile_pixmap);
+        delete _profile_pixmap;
+    }
+
     setShapeParameters();
 
     // const ohkl::DetectorEvent ev(_x->value(), _y->value(), _frame->value());
@@ -560,12 +575,12 @@ void SubframeShapes::computeProfile()
     double peak_end, bkg_begin, bkg_end;
     if (_params->region_type == ohkl::RegionType::VariableEllipsoid) {
         peak_end = _params->peak_end;
-        bkg_begin = _params->bkg_begin;
-        bkg_end = _params->bkg_end;
+        bkg_begin = _params->peak_end;
+        bkg_end = _params->peak_end;
     } else {
         peak_end = _params->fixed_peak_end;
-        bkg_begin = _params->fixed_bkg_begin;
-        bkg_end = _params->fixed_bkg_end;
+        bkg_begin = _params->fixed_peak_end;
+        bkg_end = _params->fixed_peak_end;
     }
     // construct the integration region
     ohkl::IntegrationRegion region(_current_peak, peak_end, bkg_begin, bkg_end, _params->region_type);
@@ -585,11 +600,15 @@ void SubframeShapes::regionData2Image(ohkl::RegionData* region_data)
     double image_max = region_data->dataMax();
     double profile_max = region_data->profileMax();
 
-    QImage img(ncols * nframes, nrows * 2, QImage::Format_ARGB32);
-    if (!_graphics_view->scene())
-        _graphics_view->setScene(new QGraphicsScene());
+    QImage peak_img(ncols * nframes, nrows, QImage::Format_ARGB32);
+    QImage profile_img(ncols * nframes, nrows, QImage::Format_ARGB32);
+    if (!_image_view->scene())
+        _image_view->setScene(new QGraphicsScene());
+    if (!_profile_view->scene())
+        _profile_view->setScene(new QGraphicsScene());
 
-    _graphics_view->scene()->setSceneRect(QRectF(0, 0, ncols * nframes, nrows * 2));
+    _image_view->scene()->setSceneRect(QRectF(0, 0, ncols * nframes, nrows));
+    _profile_view->scene()->setSceneRect(QRectF(0, 0, ncols * nframes, nrows));
 
     ColorMap cmap;
     for (int frame = 0; frame < nframes; ++frame) {
@@ -603,8 +622,8 @@ void SubframeShapes::regionData2Image(ohkl::RegionData* region_data)
                 QRgb image_color = cmap.color(image_value, image_max);
                 QRgb profile_color = cmap.color(profile_value, profile_max);
 
-                img.setPixel(i + xmin, j, image_color);
-                img.setPixel(i + xmin, j + nrows, profile_color);
+                peak_img.setPixel(i + xmin, j, image_color);
+                profile_img.setPixel(i + xmin, j, profile_color);
             }
         }
     }
@@ -612,12 +631,13 @@ void SubframeShapes::regionData2Image(ohkl::RegionData* region_data)
     QPen pen(QColor(0, 0, 0), 1);
     pen.setCosmetic(true);
     for (int idx = 1; idx < nframes; ++idx) {
-        _graphics_view->scene()->addLine(ncols * idx, 0, ncols * idx, nrows, pen);
+        _image_view->scene()->addLine(ncols * idx, 0, ncols * idx, nrows, pen);
     }
 
-    _graphics_view->scale(1, -1);
-    _graphics_view->scene()->addPixmap(QPixmap::fromImage(img));
-    _graphics_view->fitInView(_graphics_view->scene()->sceneRect(), Qt::KeepAspectRatio);
+    _peak_pixmap = _image_view->scene()->addPixmap(QPixmap::fromImage(peak_img));
+    _profile_pixmap = _profile_view->scene()->addPixmap(QPixmap::fromImage(profile_img));
+    _image_view->fitInView(_image_view->scene()->sceneRect(), Qt::KeepAspectRatio);
+    _profile_view->fitInView(_profile_view->scene()->sceneRect(), Qt::KeepAspectRatio);
 }
 
 void SubframeShapes::getPreviewPeak(ohkl::Peak3D* selected_peak)

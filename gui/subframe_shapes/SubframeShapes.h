@@ -161,7 +161,10 @@ class SubframeShapes : public QWidget {
 
     //! Shape preview box
     QGridLayout* _shape_grid;
-    QGraphicsView* _graphics_view;
+    QGraphicsView* _image_view;
+    QGraphicsView* _profile_view;
+    QGraphicsPixmapItem* _peak_pixmap;
+    QGraphicsPixmapItem* _profile_pixmap;
 
     PeakViewWidget* _peak_view_widget;
     DetectorWidget* _detector_widget;
