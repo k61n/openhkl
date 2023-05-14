@@ -106,7 +106,7 @@ void RegionData::buildProfile(ShapeModel* shapes, double radius, double nframes)
     std::vector<double> profile_counts;
 
     for (const auto& mat : _data)
-        _profile_data.emplace_back(Eigen::MatrixXd::Zero(mat.cols(), mat.rows()));
+        _profile_data.emplace_back(Eigen::MatrixXd::Zero(mat.rows(), mat.cols()));
 
     Eigen::MatrixXi mask;
     mask.resize(peak->dataSet()->nRows(), peak->dataSet()->nCols());
