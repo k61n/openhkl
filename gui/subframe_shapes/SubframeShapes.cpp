@@ -311,18 +311,27 @@ void SubframeShapes::setComputeShapesUp()
 
 void SubframeShapes::setShapePreviewUp()
 {
-    QGroupBox* shape_group = new QGroupBox("Shape preview");
+    // QGroupBox* shape_group = new QGroupBox("Shape preview");
+    QWidget* shape_widget = new QWidget();
     QHBoxLayout* layout = new QHBoxLayout;
-    shape_group->setLayout(layout);
-    shape_group->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    shape_widget->setLayout(layout);
+    shape_widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
+    QGroupBox* image_group = new QGroupBox("Peak");
+    QGroupBox* profile_group = new QGroupBox("Profile preview");
     _image_view = new QGraphicsView();
     _profile_view = new QGraphicsView();
-    // _image_view->scale(1, -1);
-    // _profile_view->scale(1, -1);
-    layout->addWidget(_image_view);
-    layout->addWidget(_profile_view);
+    QVBoxLayout* image_layout = new QVBoxLayout();
+    QVBoxLayout* profile_layout = new QVBoxLayout();
+    image_group->setLayout(image_layout);
+    profile_group->setLayout(profile_layout);
+    image_layout->addWidget(_image_view);
+    profile_layout->addWidget(_profile_view);
 
-    _right_element->addWidget(shape_group);
+    layout->addWidget(image_group);
+    layout->addWidget(profile_group);
+
+    _right_element->addWidget(shape_widget);
 }
 
 void SubframeShapes::setFigureUp()
@@ -628,14 +637,23 @@ void SubframeShapes::regionData2Image(ohkl::RegionData* region_data)
         }
     }
 
+    // black line borders around peak/profile bounding box
     QPen pen(QColor(0, 0, 0), 1);
     pen.setCosmetic(true);
-    for (int idx = 1; idx < nframes; ++idx) {
+    for (int idx = 0; idx <= nframes; ++idx) {
         QGraphicsLineItem* line = _image_view->scene()->addLine(ncols * idx, 0, ncols * idx, nrows, pen);
         line->setZValue(20);
         line = _profile_view->scene()->addLine(ncols * idx, 0, ncols * idx, nrows, pen);
         line->setZValue(20);
     }
+    QGraphicsLineItem* line = _image_view->scene()->addLine(0, 0, ncols * nframes, 0, pen);
+    line->setZValue(20);
+    line = _profile_view->scene()->addLine(0, 0, ncols * nframes, 0, pen);
+    line->setZValue(20);
+    line = _image_view->scene()->addLine(0, nrows, ncols * nframes, nrows, pen);
+    line->setZValue(20);
+    line = _profile_view->scene()->addLine(0, nrows, ncols * nframes, nrows, pen);
+    line->setZValue(20);
 
     _peak_pixmap = _image_view->scene()->addPixmap(QPixmap::fromImage(peak_img));
     _profile_pixmap = _profile_view->scene()->addPixmap(QPixmap::fromImage(profile_img));
