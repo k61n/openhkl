@@ -569,8 +569,8 @@ void SubframeShapes::computeProfile()
         bkg_end = _params->peak_end;
     } else {
         peak_end = _params->fixed_peak_end;
-        bkg_begin = _params->fixed_peak_end;
-        bkg_end = _params->fixed_peak_end;
+        bkg_begin = 1.0;
+        bkg_end = 1.0;
     }
     // construct the integration region
     ohkl::IntegrationRegion region(_current_peak, peak_end, bkg_begin, bkg_end, _params->region_type);

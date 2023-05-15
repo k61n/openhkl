@@ -125,8 +125,8 @@ class DetectorScene : public QGraphicsScene {
 
  protected:
     void mousePressEvent(QGraphicsSceneMouseEvent* event);
-    void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
     void mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event);
+    void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent* event);
     void keyPressEvent(QKeyEvent* event);
     void wheelEvent(QGraphicsSceneWheelEvent* event);
@@ -168,6 +168,8 @@ class DetectorScene : public QGraphicsScene {
     void deleteGraphicsItem(QGraphicsItem* item);
     //! Draw the resolution contours
     void drawResolutionContours();
+    //! Check whether current event was a drag
+    bool isDrag(const QPointF& current);
 
     //! Visual parameters of the scene
     DetectorSceneParams _params;
@@ -189,6 +191,12 @@ class DetectorScene : public QGraphicsScene {
     QStack<QRect> _zoomStack;
     //! item being dragged
     CrosshairGraphic* _current_dragged_item;
+    //! Click position to determine whether dragging occured
+    QPointF _clickPos;
+    //! Determines whether a mousePressEvent happened
+    bool _clicked;
+    //! determines whether a mouseMoveEvent happened
+    bool _dragged;
 
     QGraphicsPixmapItem* _image;
     SXGraphicsItem* _lastClickedGI;

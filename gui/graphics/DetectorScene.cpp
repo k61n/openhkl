@@ -67,6 +67,8 @@ DetectorScene::DetectorScene(std::size_t npeakcollections, QObject* parent)
     , _zoomrect(nullptr)
     , _selectionRect(nullptr)
     , _zoomStack()
+    , _clicked(false)
+    , _dragged(false)
     , _image(nullptr)
     , _lastClickedGI(nullptr)
     , _selected_peak_gi(nullptr)
@@ -271,65 +273,6 @@ void DetectorScene::setMaxIntensity(int intensity)
     loadCurrentImage();
 }
 
-void DetectorScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
-{
-    // If no data is loaded, do nothing
-    if (!_currentData)
-        return;
-    createToolTipText(event);
-
-    // The left button was pressed
-    if (event->buttons() & Qt::LeftButton) {
-        if (event->modifiers() == Qt::ControlModifier)
-            return;
-
-        // Case of the Zoom mode, update the scene
-        if (_mode == ZOOM) {
-            if (!_zoomrect)
-                return;
-            QRectF zoom = _zoomrect->rect();
-            zoom.setBottomRight(event->lastScenePos());
-            _zoomrect->setRect(zoom);
-            return;
-        } else if (_mode == SELECT) {
-            if (!_selectionRect)
-                return;
-            QRectF select = _selectionRect->rect();
-            select.setBottomRight(event->lastScenePos());
-            _selectionRect->setRect(select);
-            return;
-        } else if (_mode == DRAG_DROP) {
-            _current_dragged_item->setPos(event->scenePos());
-        }
-
-        if (!_lastClickedGI)
-            return;
-
-        _lastClickedGI->mouseMoveEvent(event);
-
-        PlottableItem* p = dynamic_cast<PlottableItem*>(_lastClickedGI);
-        if (p != nullptr)
-            gGui->updatePlot(p);
-    }
-    // No button was pressed, just a mouse move
-    else if (event->button() == Qt::NoButton) {
-        QPointF lastPos = event->lastScenePos();
-        QPoint point = lastPos.toPoint();
-        QTransform trans;
-
-        QList<QGraphicsItem*> gItemList =
-            items(point, Qt::IntersectsItemShape, Qt::DescendingOrder, trans);
-        for (auto gItem : gItemList) {
-            if (!gItem)
-                continue;
-
-            PeakItemGraphic* p = dynamic_cast<PeakItemGraphic*>(gItem);
-            if (p)
-                emit signalSelectedPeakItemChanged(p);
-        }
-    }
-}
-
 void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
     deleteGraphicsItem(_selectionRect);
@@ -341,6 +284,8 @@ void DetectorScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
         return;
     // The left button was pressed
     if (event->buttons() & Qt::LeftButton) {
+        _clicked = true;
+        _clickPos = event->lastScenePos();
         // Get the graphics item on which the user has clicked
         QGraphicsItem* item = itemAt(event->lastScenePos(), QTransform());
 
@@ -468,8 +413,73 @@ void DetectorScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event)
     }
 }
 
+void DetectorScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
+{
+    // If no data is loaded, do nothing
+    if (!_currentData)
+        return;
+    createToolTipText(event);
+
+    // The left button was pressed
+    if (event->buttons() & Qt::LeftButton) {
+        if (_clicked)
+            _dragged = true;
+
+        if (event->modifiers() == Qt::ControlModifier)
+            return;
+
+        // Case of the Zoom mode, update the scene
+        if (_mode == ZOOM) {
+            if (!_zoomrect)
+                return;
+            QRectF zoom = _zoomrect->rect();
+            zoom.setBottomRight(event->lastScenePos());
+            _zoomrect->setRect(zoom);
+            return;
+        } else if (_mode == SELECT) {
+            if (!_selectionRect)
+                return;
+            QRectF select = _selectionRect->rect();
+            select.setBottomRight(event->lastScenePos());
+            _selectionRect->setRect(select);
+            return;
+        } else if (_mode == DRAG_DROP) {
+            _current_dragged_item->setPos(event->scenePos());
+        }
+
+        if (!_lastClickedGI)
+            return;
+
+        _lastClickedGI->mouseMoveEvent(event);
+
+        PlottableItem* p = dynamic_cast<PlottableItem*>(_lastClickedGI);
+        if (p != nullptr)
+            gGui->updatePlot(p);
+    }
+    // No button was pressed, just a mouse move
+    else if (event->button() == Qt::NoButton) {
+        QPointF lastPos = event->lastScenePos();
+        QPoint point = lastPos.toPoint();
+        QTransform trans;
+
+        QList<QGraphicsItem*> gItemList =
+            items(point, Qt::IntersectsItemShape, Qt::DescendingOrder, trans);
+        for (auto gItem : gItemList) {
+            if (!gItem)
+                continue;
+
+            PeakItemGraphic* p = dynamic_cast<PeakItemGraphic*>(gItem);
+            if (p)
+                emit signalSelectedPeakItemChanged(p);
+        }
+    }
+}
+
 bool DetectorScene::setBoxBounds(QGraphicsRectItem* box)
 {
+    if (!box)
+        return false;
+
     qreal top = box->rect().top();
     qreal bot = box->rect().bottom();
     qreal left = box->rect().left();
@@ -533,7 +543,8 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 
         if (_selected_peak) {
             _peak = _selected_peak->peak();
-            emit signalPeakSelected(_selected_peak->peak());
+            if (!isDrag(event->lastScenePos()))
+                emit signalPeakSelected(_selected_peak->peak());
         }
 
         if (_mode == SELECT) {
@@ -607,6 +618,8 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
             }
         }
     }
+    _clicked = false;
+    _dragged = false;
 }
 
 void DetectorScene::wheelEvent(QGraphicsSceneWheelEvent* event)
@@ -854,4 +867,16 @@ void DetectorScene::sendBeamOffset(QPointF pos)
     double x_offset = pos.x() - static_cast<double>(_currentData->nCols()) / 2.0;
     double y_offset = pos.y() - static_cast<double>(_currentData->nRows()) / 2.0;
     emit beamPosChanged({x_offset, -y_offset});
+}
+
+bool DetectorScene::isDrag(const QPointF& current)
+{
+    if (_clicked && !_dragged)
+        return false;
+    if (_clicked && _dragged) { // Check if dragged a tiny amount
+        QPointF diff = _clickPos - current; 
+        if (diff.manhattanLength() <= 2)
+            return false;
+    }
+    return true;
 }
