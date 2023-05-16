@@ -157,9 +157,6 @@ class SubframePredictPeaks : public QWidget {
     PeakTableView* _peak_table;
 
     ShapeComboBox* _shape_combo;
-    SafeDoubleSpinBox* _peak_end;
-    SafeDoubleSpinBox* _bkg_begin;
-    SafeDoubleSpinBox* _bkg_end;
     SafeDoubleSpinBox* _radius_pix;
     SafeDoubleSpinBox* _radius_frames;
     SafeSpinBox* _min_neighbours;
