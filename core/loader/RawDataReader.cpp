@@ -136,15 +136,11 @@ void RawDataReader::setParameters(const RawDataReaderParameters& parameters)
     _dataset_out->metadata().add<double>(ohkl::at_baseline, _parameters.baseline);
     _dataset_out->metadata().add<double>(ohkl::at_gain, _parameters.gain);
     switch (_parameters.bytes_per_pixel) {
-        case 1: {
-            _dataset_out->metadata().add<int>(ohkl::at_bitDepth, 8);
-            break;
-        }
         case 2: {
             _dataset_out->metadata().add<int>(ohkl::at_bitDepth, 16);
             break;
         }
-        case 3: {
+        case 4: {
             _dataset_out->metadata().add<int>(ohkl::at_bitDepth, 32);
             break;
         }
