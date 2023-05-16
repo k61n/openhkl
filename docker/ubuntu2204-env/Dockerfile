@@ -24,6 +24,7 @@ RUN apt-get update && \
       qtchooser \
       swig \
       python3-pip \
+      python3-sphinx \
       doxygen \
       graphviz && \
       rm -rf /var/lib/apt/lists/*
