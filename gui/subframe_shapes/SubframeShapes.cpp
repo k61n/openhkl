@@ -57,6 +57,7 @@ SubframeShapes::SubframeShapes()
     , _peak_pixmap(nullptr)
     , _profile_pixmap(nullptr)
     , _shape_model(nullptr)
+    , _current_peak(nullptr)
     , _preview_peak(nullptr)
 {
     _params = std::make_shared<ohkl::ShapeModelParameters>();
@@ -562,6 +563,9 @@ void SubframeShapes::computeProfile()
 
     auto* model = shapeModel();
     if (!model)
+        return;
+
+    if (!_current_peak)
         return;
 
     setShapeParameters();
