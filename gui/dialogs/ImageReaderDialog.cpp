@@ -117,7 +117,7 @@ ImageReaderDialog::ImageReaderDialog(
     gridfiller.addWidget(_buttons);
 
     _dataArrangement->addItems(QStringList{"Column major", "Row major"});
-    _dataFormat->addItems(QStringList{"8 bit integer", "16 bit integer", "32 bit integer"});
+    _dataFormat->addItems(QStringList{"16 bit integer", "32 bit integer"});
 
     _chi->setDecimals(3);
     _phi->setDecimals(3);
@@ -141,9 +141,8 @@ ImageReaderDialog::ImageReaderDialog(
     _image_resolution->setEnabled(false);
     if (_tiff_mode) {
         switch (_bytes_per_pixel) {
-        case 1: _dataFormat->setCurrentIndex(0); break;
-        case 2: _dataFormat->setCurrentIndex(1); break;
-        case 4: _dataFormat->setCurrentIndex(2); break;
+        case 2: _dataFormat->setCurrentIndex(0); break;
+        case 4: _dataFormat->setCurrentIndex(1); break;
         default: throw std::runtime_error(
             "ImageReaderDialog::ImageReaderDialog: invalid tiff bytes_per_pixel");
         }
@@ -165,7 +164,7 @@ ImageReaderDialog::ImageReaderDialog(
         _image_resolution->setEnabled(true);
         _rebin_size->setEnabled(false);
         _dataArrangement->setCurrentIndex(1);
-        _dataFormat->setCurrentIndex(1);
+        _dataFormat->setCurrentIndex(0);
         _swapEndianness->setCheckState(Qt::Checked);
     }
 
@@ -191,11 +190,9 @@ int ImageReaderDialog::bytesPerPixel()
 
     // For raw files
     switch (_dataFormat->currentIndex()) {
-        case 0: // 8 bit
-            return 1;
-        case 1: // 16 bit
+        case 0: // 16 bit
             return 2;
-        case 2: // 32 bit
+        case 1: // 32 bit
             return 4;
         default: return -1;
     }

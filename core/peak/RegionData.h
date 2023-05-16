@@ -15,20 +15,24 @@
 #ifndef OHKL_CORE_PEAK_REGIONDATA_H
 #define OHKL_CORE_PEAK_REGIONDATA_H
 
+#include "core/shape/Profile3D.h"
+
 #include <Eigen/Dense>
 #include <vector>
 
 namespace ohkl {
 
 class IntegrationRegion;
+class Peak3D;
+class ShapeModel;
 
 //! A small container class for visualising individual peaks mainly via Python interface
 class RegionData {
  public:
     RegionData() = default;
     RegionData(
-        IntegrationRegion* region, double xmin, double xmax, double ymin, double ymax,
-        unsigned int zmin, unsigned int zmax);
+        IntegrationRegion* region, unsigned int xmin, unsigned int xmax, unsigned int ymin,
+        unsigned int ymax, unsigned int zmin, unsigned int zmax);
 
     //! Add data from a single frame
     void addFrame(unsigned int frame_index, Eigen::MatrixXi& frame, Eigen::MatrixXi& mask);
@@ -37,6 +41,10 @@ class RegionData {
     int index(std::size_t i);
     //! Return the frame data
     Eigen::MatrixXi frame(std::size_t i);
+    //! Return the profile data
+    Eigen::MatrixXd profileData(std::size_t i);
+    //! Return the profile
+    Profile3D* profile();
     //! Return the integration mask
     Eigen::MatrixXi mask(std::size_t i);
     //! Return the number of frames
@@ -45,12 +53,20 @@ class RegionData {
     unsigned int centreFrame() const;
     //! Get the index for the given frame in the RegionData containers
     unsigned int getRegionDataIndex(unsigned int frame_index);
+    //! Compute a profile given a peak and shape model
+    void buildProfile(ShapeModel* shapes, double radius, double nframes);
+    //! Scale the profile by the intensity
+    void scaleProfile();
+    //! Return the maximum value of the peak data
+    double dataMax() const;
+    //! Return the maximum value of the profile data
+    double profileMax() const;
 
     IntegrationRegion* integrationRegion() const;
-    double xmin() const;
-    double xmax() const;
-    double ymin() const;
-    double ymax() const;
+    unsigned int xmin() const;
+    unsigned int xmax() const;
+    unsigned int ymin() const;
+    unsigned int ymax() const;
     unsigned int zmin() const;
     unsigned int zmax() const;
     unsigned int cols() const;
@@ -60,12 +76,14 @@ class RegionData {
     IntegrationRegion* _integration_region;
     std::vector<Eigen::MatrixXi> _data;
     std::vector<Eigen::MatrixXi> _mask;
+    std::vector<Eigen::MatrixXd> _profile_data;
+    Profile3D _profile;
     std::vector<int> _index;
 
-    double _xmin;
-    double _xmax;
-    double _ymin;
-    double _ymax;
+    unsigned int _xmin;
+    unsigned int _xmax;
+    unsigned int _ymin;
+    unsigned int _ymax;
     unsigned int _zmin;
     unsigned int _zmax;
 };

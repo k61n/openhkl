@@ -18,6 +18,7 @@
 #include "core/data/DataSet.h"
 #include "core/integration/IIntegrator.h"
 #include "core/peak/Peak3D.h"
+#include "core/peak/RegionData.h"
 #include "core/shape/PeakCollection.h"
 #include "core/shape/Profile3D.h"
 #include "core/shape/ShapeModel.h"
@@ -63,6 +64,7 @@ class SubframeShapes : public QWidget {
  public slots:
     void onPeakSelected(ohkl::Peak3D* peak);
     void onShapeChanged();
+    void onRegionModeChanged();
 
  private:
     //! Select dataset, peak collection, set parameters
@@ -93,6 +95,8 @@ class SubframeShapes : public QWidget {
     void buildShapeModel();
     //! Compute the mean profile at the given coordinates
     void computeProfile();
+    //! Convert profile matrices to image
+    void regionData2Image(ohkl::RegionData* region_data);
     //! Generate a peak for preview in in DetectorScene
     void getPreviewPeak(ohkl::Peak3D* selected_peak);
     //! Save the shape collection
@@ -129,6 +133,8 @@ class SubframeShapes : public QWidget {
     SafeDoubleSpinBox* _min_d;
     SafeDoubleSpinBox* _max_d;
 
+    QCheckBox* _show_single_region;
+    QComboBox* _integration_region_type;
     SafeDoubleSpinBox* _peak_end;
     SafeDoubleSpinBox* _bkg_begin;
     SafeDoubleSpinBox* _bkg_end;
@@ -155,7 +161,10 @@ class SubframeShapes : public QWidget {
 
     //! Shape preview box
     QGridLayout* _shape_grid;
-    QGraphicsView* _graphics_view;
+    QGraphicsView* _image_view;
+    QGraphicsView* _profile_view;
+    QGraphicsPixmapItem* _peak_pixmap;
+    QGraphicsPixmapItem* _profile_pixmap;
 
     PeakViewWidget* _peak_view_widget;
     DetectorWidget* _detector_widget;

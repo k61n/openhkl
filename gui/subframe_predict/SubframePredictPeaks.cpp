@@ -213,11 +213,6 @@ void SubframePredictPeaks::setShapeModelUp()
 
     _shape_combo =
         f.addShapeCombo("Shape model", "Shape model to predict shapes of predicted peaks");
-    _peak_end = f.addDoubleSpinBox("Peak end", "(sigmas) - scaling factor for peak region");
-    _bkg_begin = f.addDoubleSpinBox(
-        "Background begin:", "(sigmas) - scaling factor for lower limit of background");
-    _bkg_end = f.addDoubleSpinBox(
-        "Background end:", "(sigmas) - scaling factor for upper limit of background");
     _radius_pix = f.addDoubleSpinBox(
         "Search radius (pixels):",
         "(pixels) - neighbour search radius in pixels for generating mean covariance");
@@ -230,16 +225,6 @@ void SubframePredictPeaks::setShapeModelUp()
         f.addCombo("Interpolation type", "Interpolation strategy for determining mean covariance");
     _apply_shape_model =
         f.addButton("Apply shape model", "Apply shape model to a predicted peak collection");
-
-
-    _peak_end->setMaximum(100);
-    _peak_end->setDecimals(2);
-
-    _bkg_begin->setMaximum(100);
-    _bkg_begin->setDecimals(2);
-
-    _bkg_end->setMaximum(100);
-    _bkg_end->setDecimals(2);
 
     _radius_pix->setMaximum(1000);
     _radius_pix->setDecimals(2);
@@ -378,9 +363,6 @@ void SubframePredictPeaks::grabShapeModelParameters()
     if (!gSession->hasProject())
         return;
 
-    _peak_end->setValue(_shape_params->peak_end);
-    _bkg_begin->setValue(_shape_params->bkg_begin);
-    _bkg_end->setValue(_shape_params->bkg_end);
     _radius_pix->setValue(_shape_params->neighbour_range_pixels);
     _radius_frames->setValue(_shape_params->neighbour_range_frames);
     _min_neighbours->setValue(_shape_params->min_neighbors);
@@ -392,9 +374,6 @@ void SubframePredictPeaks::setShapeModelParameters()
     if (!gSession->hasProject())
         return;
 
-    _shape_params->peak_end = _peak_end->value();
-    _shape_params->bkg_begin = _bkg_begin->value();
-    _shape_params->bkg_end = _bkg_end->value();
     _shape_params->neighbour_range_pixels = _radius_pix->value();
     _shape_params->neighbour_range_frames = _radius_frames->value();
     _shape_params->min_neighbors = _min_neighbours->value();
