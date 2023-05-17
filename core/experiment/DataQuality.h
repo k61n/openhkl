@@ -42,6 +42,7 @@ struct DataQuality {
     double CChalf; //!< CC_{1/2} correlation coefficient
     double CCstar; //!< estimate of CC_{true} derived from CC_{1/2}
     double Completeness; //!< # valid predicted peaks / # predicted peaks
+    bool sum_statistics; //!< Use sum (true) or profile (false) integrated intensities
 
     void computeQuality(MergedData& merged_peaks, bool sum_intensities = true);
     std::string toString() const;

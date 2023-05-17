@@ -58,8 +58,10 @@ void PeakMerger::reset()
     _peak_collections.clear();
     _merged_data.reset();
     _merged_data_per_shell.clear();
-    _shell_qualities.clear();
-    _overall_quality.clear();
+    _sum_shell_qualities.clear();
+    _sum_overall_quality.clear();
+    _profile_shell_qualities.clear();
+    _profile_overall_quality.clear();
 }
 
 void PeakMerger::mergePeaks()
@@ -141,20 +143,30 @@ std::vector<double> PeakMerger::strategyMerge(double fmin, double fmax, std::siz
 void PeakMerger::computeQuality()
 {
     ShellQuality quality;
-    _overall_quality.shells.clear();
-    _shell_qualities.shells.clear();
+    _sum_overall_quality.shells.clear();
+    _sum_shell_qualities.shells.clear();
+    _profile_overall_quality.shells.clear();
+    _profile_shell_qualities.shells.clear();
     // R-factors, CC, completeness per shell
     for (auto&& merged_data : _merged_data_per_shell) {
         quality.computeQuality(
-            *merged_data, merged_data->dMin(), merged_data->dMax(), _params->sum_intensity);
-        _shell_qualities.addShell(quality);
+            *merged_data, merged_data->dMin(), merged_data->dMax(), true);
+        _sum_shell_qualities.addShell(quality);
+        quality.computeQuality(
+            *merged_data, merged_data->dMin(), merged_data->dMax(), false);
+        _profile_shell_qualities.addShell(quality);
     }
     // Overall R-factors, CC, completeness
-    quality.computeQuality(*_merged_data, _params->d_min, _params->d_max, _params->sum_intensity);
-    _overall_quality.addShell(quality);
+    quality.computeQuality(*_merged_data, _params->d_min, _params->d_max, true);
+    _sum_overall_quality.addShell(quality);
+    quality.computeQuality(
+        *_merged_data, _params->d_min, _params->d_max, false);
+    _profile_overall_quality.addShell(quality);
 
-    _overall_quality.log();
-    _shell_qualities.log();
+    _sum_overall_quality.log();
+    _sum_shell_qualities.log();
+    _profile_overall_quality.log();
+    _profile_shell_qualities.log();
 }
 
 MergeParameters* PeakMerger::parameters() const
@@ -175,20 +187,30 @@ std::vector<MergedData*> PeakMerger::getMergedDataPerShell() const
     return merged_data;
 }
 
-const DataResolution* PeakMerger::shellQuality()
+DataResolution* PeakMerger::sumShellQuality()
 {
-    return &_shell_qualities;
+    return &_sum_shell_qualities;
 }
 
-const DataResolution* PeakMerger::overallQuality()
+DataResolution* PeakMerger::sumOverallQuality()
 {
-    return &_overall_quality;
+    return &_sum_overall_quality;
+}
+
+DataResolution* PeakMerger::profileShellQuality()
+{
+    return &_profile_shell_qualities;
+}
+
+DataResolution* PeakMerger::profileOverallQuality()
+{
+    return &_profile_overall_quality;
 }
 
 std::string PeakMerger::summary()
 {
     std::ostringstream oss;
-    for (const auto& shell : _shell_qualities.shells)
+    for (const auto& shell : _sum_shell_qualities.shells)
         oss << shell.toString() << std::endl;
     return oss.str();
 }
@@ -208,7 +230,7 @@ bool PeakMerger::saveStatistics(std::string filename)
          << std::setw(10) << "CC half" << std::fixed << std::setw(10) << "CC star" << std::fixed
          << std::setw(10) << "compl." << std::endl;
 
-    for (const auto& shell : _shell_qualities.shells) {
+    for (const auto& shell : _sum_shell_qualities.shells) {
         file << std::fixed << std::setw(10) << std::setprecision(2) << shell.dmin << std::fixed
              << std::setw(10) << std::setprecision(2) << shell.dmax << std::fixed << std::setw(10)
              << shell.nobserved << std::fixed << std::setw(10) << shell.nunique << std::fixed
@@ -224,7 +246,7 @@ bool PeakMerger::saveStatistics(std::string filename)
              << std::setprecision(3) << shell.Completeness << std::endl;
     }
 
-    for (const auto& shell : _overall_quality.shells) {
+    for (const auto& shell : _sum_overall_quality.shells) {
         file << std::fixed << std::setw(10) << std::setprecision(2) << shell.dmin << std::fixed
              << std::setw(10) << std::setprecision(2) << shell.dmax << std::fixed << std::setw(10)
              << shell.nobserved << std::fixed << std::setw(10) << shell.nunique << std::fixed

@@ -16,6 +16,7 @@
 #define OHKL_GUI_SUBFRAME_MERGE_SUBFRAMEMERGEDPEAKS_H
 
 #include "core/data/DataTypes.h"
+#include "core/experiment/DataQuality.h"
 #include "core/statistics/PeakExporter.h"
 #include "tables/crystal/UnitCell.h"
 
@@ -24,21 +25,19 @@
 #include <QDoubleSpinBox>
 #include <QHBoxLayout>
 #include <QPushButton>
-#include <QRadioButton>
 #include <QSizePolicy>
 #include <QSpinBox>
 #include <QSplitter>
-#include <QStandardItemModel>
 #include <QTabWidget>
 #include <QTableView>
 #include <QTableWidget>
 #include <QVBoxLayout>
 #include <QWidget>
-#include <qradiobutton.h>
 
 class IntegratedPeakComboBox;
 class PeakComboBox;
 class MergedData;
+class QStandardItemModel;
 class SXPlot;
 
 //! Frame containing interface to merge peak collections and compute quality staticstics
@@ -84,13 +83,16 @@ class SubframeMergedPeaks : public QWidget {
     //! Refresh the unmerged representation table
     void refreshUnmergedTable();
     //! Refresh the graph
-    void refreshGraphTable(int column);
+    void refreshGraph(int column);
     //! Save the resolution shell statistics
     void saveStatistics();
     //! Save the merged peaks
     void saveMergedPeaks();
     //! Save the unmerged peaks
     void saveUnmergedPeaks();
+    //! Update the shell models
+    void updateShellModel(
+        QStandardItemModel* model, ohkl::DataResolution* resolution, ohkl::DataResolution* overall);
 
 
     //! Do a single batch refinement to get one unit cell
@@ -112,13 +114,17 @@ class SubframeMergedPeaks : public QWidget {
     QWidget* _shell_tab;
     QWidget* _merged_tab;
     QWidget* _unmerged_tab;
+    QTabWidget* _sum_profile_tab_widget;
+    QWidget* _sum_tab;
+    QWidget* _profile_tab;
 
     IntegratedPeakComboBox* _peak_combo_1;
     IntegratedPeakComboBox* _peak_combo_2;
 
-    QRadioButton* _sum_radio;
-    QRadioButton* _profile_radio;
-    QTableView* _d_shell_view;
+    QTableView* _sum_shell_view;
+    QTableView* _profile_shell_view;
+    QStandardItemModel* _sum_model;
+    QStandardItemModel* _profile_model;
     QDoubleSpinBox* _d_min;
     QDoubleSpinBox* _d_max;
     QSpinBox* _frame_min;
@@ -128,7 +134,6 @@ class SubframeMergedPeaks : public QWidget {
     QComboBox* _space_group;
     QComboBox* _plottable_statistics;
     SXPlot* _statistics_plot;
-    QStandardItemModel* _shell_model;
     QDoubleSpinBox* _intensity_rescale_merged;
     QDoubleSpinBox* _intensity_rescale_unmerged;
     QPushButton* _save_shell;

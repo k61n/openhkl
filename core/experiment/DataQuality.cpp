@@ -46,6 +46,8 @@ void DataQuality::computeQuality(MergedData& merged_peaks, bool sum_intensities)
     expectedRpim = rfactor.expectedRpim();
     CChalf = cc.CChalf();
     CCstar = cc.CCstar();
+
+    sum_statistics = sum_intensities;
 }
 
 
@@ -102,7 +104,11 @@ std::string DataResolution::summary() const
 void DataQuality::log() const
 {
     std::ostringstream oss;
-    oss << "Data quality metrics (overall):" << std::endl;
+    if (sum_statistics)
+        oss << "Sum integrated";
+    else
+        oss << "Profile integrated";
+    oss << "metrics (overall):" << std::endl;
     oss << std::setw(8) << "Rmea" << std::setw(8) << "eRmea" << std::setw(8) << "Rmer"
         << std::setw(8) << "eRmer" << std::setw(8) << "Rpim" << std::setw(8) << "eRpim"
         << std::setw(8) << "CChalf" << std::setw(8) << "CCstar" << std::setw(8) << "Compl.";
@@ -113,7 +119,11 @@ void DataQuality::log() const
 void DataResolution::log() const
 {
     std::ostringstream oss;
-    oss << "Data quality metrics (per resolution shell):" << std::endl;
+    if (shells[0].sum_statistics)
+        oss << "Sum integrated";
+    else
+        oss << "Profile integrated";
+    oss << "metrics (per resolution shell):" << std::endl;
     oss << std::setw(8) << "dmin" << std::setw(8) << "dmax" << std::setw(8) << "Rmea"
         << std::setw(8) << "eRmea" << std::setw(8) << "Rmer" << std::setw(8) << "eRmer"
         << std::setw(8) << "Rpim" << std::setw(8) << "eRpim" << std::setw(8) << "CChalf"
