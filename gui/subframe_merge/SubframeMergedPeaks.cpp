@@ -711,9 +711,12 @@ void SubframeMergedPeaks::refreshGraph(int column)
     _statistics_plot->addGraph();
     _statistics_plot->graph(0)->setPen(pen1);
     _statistics_plot->graph(0)->addData(xvals, sum_yvals);
+    _statistics_plot->graph(0)->setName("Sum");
     _statistics_plot->addGraph();
     _statistics_plot->graph(1)->setPen(pen2);
     _statistics_plot->graph(1)->addData(xvals, profile_yvals);
+    _statistics_plot->graph(1)->setName("Profile");
+    _statistics_plot->legend->setVisible(true);
 
     _statistics_plot->xAxis->setLabel("shell");
     _statistics_plot->yAxis->setLabel(_plottable_statistics->itemText(column));
