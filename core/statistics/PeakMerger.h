@@ -74,10 +74,14 @@ class PeakMerger {
     //! Get a pointer to the merged data per resolution shell
     std::vector<MergedData*> getMergedDataPerShell() const;
 
-    //! Get the quality statistics per resolution shell
-    const DataResolution* shellQuality();
-    //! Get the overall quality statistics
-    const DataResolution* overallQuality();
+    //! Get the quality sum integrated statistics per resolution shell
+    DataResolution* sumShellQuality();
+    //! Get the overall sum integrated quality statistics
+    DataResolution* sumOverallQuality();
+    //! Get the quality profile integrated statistics per resolution shell
+    DataResolution* profileShellQuality();
+    //! Get the overall profile integrated quality statistics
+    DataResolution* profileOverallQuality();
 
     //! Return a string containing a summary of statistics
     std::string summary();
@@ -93,8 +97,10 @@ class PeakMerger {
     std::vector<std::unique_ptr<MergedData>> _merged_data_per_shell;
     std::vector<PeakCollection*> _peak_collections;
 
-    DataResolution _shell_qualities;
-    DataResolution _overall_quality;
+    DataResolution _sum_shell_qualities;
+    DataResolution _sum_overall_quality;
+    DataResolution _profile_shell_qualities;
+    DataResolution _profile_overall_quality;
 
     std::unique_ptr<MergeParameters> _params;
 

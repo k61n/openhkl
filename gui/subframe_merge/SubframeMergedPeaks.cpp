@@ -42,11 +42,14 @@
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QSettings>
+#include <QStandardItemModel>
 #include <QVBoxLayout>
 
 #include <fstream>
 #include <iomanip>
-#include <qradiobutton.h>
+#include <iostream>
+#include <qtabwidget.h>
+#include <qwidget.h>
 
 #include "gui/dialogs/PeakExportDialog.h"
 
@@ -112,7 +115,6 @@ void SubframeMergedPeaks::grabMergeParameters()
     _friedel->setChecked(params->friedel);
     _intensity_rescale_merged->setValue(params->scale);
     _intensity_rescale_unmerged->setValue(params->scale);
-    _sum_radio->setChecked(params->sum_intensity);
 }
 
 void SubframeMergedPeaks::setMergeParameters()
@@ -129,7 +131,6 @@ void SubframeMergedPeaks::setMergeParameters()
     params->n_shells = _d_shells->value();
     params->friedel = _friedel->isChecked();
     params->scale = _intensity_rescale_merged->value();
-    params->sum_intensity = _sum_radio->isChecked();
 }
 
 void SubframeMergedPeaks::setSizePolicies()
@@ -153,17 +154,39 @@ void SubframeMergedPeaks::setSizePolicies()
 
 void SubframeMergedPeaks::setDShellUp()
 {
-    QVBoxLayout* shell_layout = new QVBoxLayout(_shell_tab);
+    QVBoxLayout* shell_layout = new QVBoxLayout();
+    _shell_tab->setLayout(shell_layout);
+    _sum_profile_tab_widget = new QTabWidget();
 
-    _d_shell_view = new QTableView;
-    _shell_model = new QStandardItemModel(0, 13, this);
-    _d_shell_view->setModel(_shell_model);
-    _shell_model->setHorizontalHeaderLabels(
+    QWidget* sum_tab = new QWidget();
+    QWidget* profile_tab = new QWidget();
+    QVBoxLayout* sum_layout = new QVBoxLayout();
+    QVBoxLayout* profile_layout = new QVBoxLayout();
+    sum_tab->setLayout(sum_layout);
+    profile_tab->setLayout(profile_layout);
+    _sum_profile_tab_widget->addTab(sum_tab, "Sum intensities");
+    _sum_profile_tab_widget->addTab(profile_tab, "Profile intensities");
+
+
+    _sum_shell_view = new QTableView;
+    _sum_model = new QStandardItemModel(0, 13, this);
+    _sum_shell_view->setModel(_sum_model);
+    _sum_model->setHorizontalHeaderLabels(
         {"Max. d", "Min. d", "Num. peaks observed", "Num. merged peaks", "Redundancy", "Rmeas",
          "Rmeas(est.)", "Rmerge/Rsym", "Rmerge(est.)", "Rpim", "Rpim(est.)", "CChalf", "CC*",
          "Completeness"});
-    shell_layout->addWidget(_d_shell_view);
-    _d_shell_view->resizeColumnsToContents();
+    _profile_shell_view = new QTableView;
+    _profile_model = new QStandardItemModel(0, 13, this);
+    _profile_shell_view->setModel(_profile_model);
+    _profile_model->setHorizontalHeaderLabels(
+        {"Max. d", "Min. d", "Num. peaks observed", "Num. merged peaks", "Redundancy", "Rmeas",
+         "Rmeas(est.)", "Rmerge/Rsym", "Rmerge(est.)", "Rpim", "Rpim(est.)", "CChalf", "CC*",
+         "Completeness"});
+
+    sum_layout->addWidget(_sum_shell_view);
+    profile_layout->addWidget(_profile_shell_view);
+    _sum_shell_view->resizeColumnsToContents();
+    _profile_shell_view->resizeColumnsToContents();
 
     QHBoxLayout* d_shell_down = new QHBoxLayout;
     QGridLayout* d_shell_down_left = new QGridLayout;
@@ -200,8 +223,6 @@ void SubframeMergedPeaks::setDShellUp()
     d_shell_down_left->addWidget(label_ptr, 6, 0, 1, 1);
     label_ptr->setSizePolicy(*_size_policy_widgets);
 
-    _sum_radio = new QRadioButton("Sum", this);
-    _profile_radio = new QRadioButton("Profile", this);
     _d_min = new QDoubleSpinBox();
     _d_max = new QDoubleSpinBox();
     _frame_min = new QSpinBox();
@@ -212,7 +233,6 @@ void SubframeMergedPeaks::setDShellUp()
     _plottable_statistics = new QComboBox();
     _save_shell = new QPushButton("Save statistics");
 
-    _sum_radio->setChecked(true);
     _d_min->setValue(1.5);
     _d_min->setSingleStep(0.1);
     _d_min->setMaximum(100);
@@ -237,15 +257,13 @@ void SubframeMergedPeaks::setDShellUp()
     _save_shell->setSizePolicy(*_size_policy_widgets);
 
     QStringList selection_stats;
-    for (int i = 0; i < _shell_model->columnCount(); ++i) {
-        QStandardItem* header_item = _shell_model->horizontalHeaderItem(i);
+    for (int i = 0; i < _sum_model->columnCount(); ++i) {
+        QStandardItem* header_item = _sum_model->horizontalHeaderItem(i);
         selection_stats.push_back(header_item->text());
     }
     _plottable_statistics->addItems(selection_stats);
     _plottable_statistics->setCurrentIndex(7);
 
-    d_shell_down_left->addWidget(_sum_radio, 0, 1, 1, 1);
-    d_shell_down_left->addWidget(_profile_radio, 0, 2, 1, 1);
     d_shell_down_left->addWidget(_d_min, 1, 1, 1, 1);
     d_shell_down_left->addWidget(_d_max, 1, 2, 1, 1);
     d_shell_down_left->addWidget(_frame_min, 2, 1, 1, 1);
@@ -284,19 +302,20 @@ void SubframeMergedPeaks::setDShellUp()
     connect(_friedel, &QCheckBox::clicked, this, &SubframeMergedPeaks::processMerge);
 
     connect(
-        _sum_radio, static_cast<void (QRadioButton::*)(bool)>(&QRadioButton::toggled), this,
-        &SubframeMergedPeaks::processMerge);
-
-    connect(
         _plottable_statistics,
         static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
-        &SubframeMergedPeaks::refreshGraphTable);
+        &SubframeMergedPeaks::refreshGraph);
 
     connect(_save_shell, &QPushButton::clicked, this, &SubframeMergedPeaks::saveStatistics);
 
     connect(
         gGui->sideBar(), &SideBar::subframeChanged, this, &SubframeMergedPeaks::setMergeParameters);
-    shell_layout->addLayout(d_shell_down);
+
+    QWidget* down_widget = new QWidget();
+    down_widget->setLayout(d_shell_down);
+
+    shell_layout->addWidget(_sum_profile_tab_widget);
+    shell_layout->addWidget(down_widget);
 }
 
 void SubframeMergedPeaks::setMergedUp()
@@ -401,7 +420,8 @@ void SubframeMergedPeaks::refreshPeakLists()
         return;
     refreshPeakCombos();
     processMerge();
-    _d_shell_view->resizeColumnsToContents();
+    _sum_shell_view->resizeColumnsToContents();
+    _profile_shell_view->resizeColumnsToContents();
     _merged_view->resizeColumnsToContents();
     _unmerged_view->resizeColumnsToContents();
 }
@@ -500,16 +520,13 @@ void SubframeMergedPeaks::refreshTables()
     refreshDShellTable();
     refreshMergedTable();
     refreshUnmergedTable();
-    refreshGraphTable(_plottable_statistics->currentIndex());
+    refreshGraph(_plottable_statistics->currentIndex());
 }
 
 void SubframeMergedPeaks::refreshDShellTable()
 {
     auto* expt = gSession->currentProject()->experiment();
     auto* merger = expt->peakMerger();
-
-    QStandardItemModel* model = dynamic_cast<QStandardItemModel*>(_d_shell_view->model());
-    model->removeRows(0, model->rowCount());
     auto* merged_data = merger->getMergedData();
 
     if (merged_data == nullptr)
@@ -519,9 +536,14 @@ void SubframeMergedPeaks::refreshDShellTable()
         return;
 
     merger->computeQuality();
-    const ohkl::DataResolution* quality = merger->overallQuality();
-    const ohkl::DataResolution* resolution = merger->shellQuality();
+    updateShellModel(_sum_model, merger->sumShellQuality(), merger->sumOverallQuality());
+    updateShellModel(_profile_model, merger->profileShellQuality(), merger->profileOverallQuality());
+}
 
+void SubframeMergedPeaks::updateShellModel(
+    QStandardItemModel* model, ohkl::DataResolution* resolution, ohkl::DataResolution* overall)
+{
+    model->removeRows(0, model->rowCount());
     for (auto shell : resolution->shells) {
         QList<QStandardItem*> row;
         row.push_back(new QStandardItem(QString::number(shell.dmax)));
@@ -543,7 +565,7 @@ void SubframeMergedPeaks::refreshDShellTable()
     }
 
     QList<QStandardItem*> row;
-    for (auto shell : quality->shells) {
+    for (auto shell : overall->shells) {
         row.push_back(new QStandardItem(QString::number(shell.dmax)));
         row.push_back(new QStandardItem(QString::number(shell.dmin)));
         row.push_back(new QStandardItem(QString::number(shell.nobserved)));
@@ -565,6 +587,8 @@ void SubframeMergedPeaks::refreshDShellTable()
         v->setFont(font);
     }
     model->appendRow(row);
+    _sum_shell_view->resizeColumnsToContents();
+    _profile_shell_view->resizeColumnsToContents();
 }
 
 void SubframeMergedPeaks::refreshMergedTable()
@@ -582,13 +606,15 @@ void SubframeMergedPeaks::refreshMergedTable()
         const int l = hkl[2];
 
         ohkl::Intensity I;
-        if (_sum_radio->isChecked()) {
+        bool sum_intensity = true;
+        if (_sum_profile_tab_widget->currentIndex() == 0) {
             I = peak.sumIntensity();
         } else {
             I = peak.profileIntensity();
+            sum_intensity = false;
         }
-        const double chi2 = peak.chi2(_sum_radio->isChecked());
-        const double p = peak.chi2(_sum_radio->isChecked());
+        const double chi2 = peak.chi2(sum_intensity);
+        const double p = peak.chi2(sum_intensity);
 
         const double intensity = I.value();
         const double sigma = I.sigma();
@@ -628,7 +654,7 @@ void SubframeMergedPeaks::refreshUnmergedTable()
 
             const Eigen::Vector3d& c = unmerged_peak->shape().center();
             ohkl::Intensity I;
-            if (_sum_radio->isChecked())
+            if (_sum_profile_tab_widget->currentIndex() == 0)
                 I = unmerged_peak->correctedSumIntensity();
             else
                 I = unmerged_peak->correctedProfileIntensity();
@@ -651,7 +677,7 @@ void SubframeMergedPeaks::refreshUnmergedTable()
     }
 }
 
-void SubframeMergedPeaks::refreshGraphTable(int column)
+void SubframeMergedPeaks::refreshGraph(int column)
 {
     _statistics_plot->clearGraphs();
 
@@ -661,24 +687,37 @@ void SubframeMergedPeaks::refreshGraphTable(int column)
     if (_merged_data->totalSize() == 0)
         return;
 
-    QStandardItemModel* _shell_model = dynamic_cast<QStandardItemModel*>(_d_shell_view->model());
-    int nshells = _shell_model->rowCount() - 1;
+    int nshells = _sum_model->rowCount() - 1;
 
     QVector<double> xvals;
-    QVector<double> yvals;
+    QVector<double> sum_yvals;
+    QVector<double> profile_yvals;
     for (int i = 0; i < nshells; ++i) {
         xvals.push_back(double(i));
-        double val = _shell_model->item(i, column)->data(Qt::DisplayRole).value<double>();
-        yvals.push_back(val);
+        double sum_val =
+            _sum_model->item(i, column)->data(Qt::DisplayRole).value<double>();
+        double profile_val =
+            _profile_model->item(i, column)->data(Qt::DisplayRole).value<double>();
+        sum_yvals.push_back(sum_val);
+        profile_yvals.push_back(profile_val);
     }
 
-    QPen pen;
-    pen.setColor(QColor("black"));
-    pen.setWidth(2.0);
+    QPen pen1, pen2;
+    pen1.setColor(QColor("black"));
+    pen1.setWidth(2.0);
+    pen2.setColor(QColor("red"));
+    pen2.setWidth(2.0);
 
     _statistics_plot->addGraph();
-    _statistics_plot->graph(0)->setPen(pen);
-    _statistics_plot->graph(0)->addData(xvals, yvals);
+    _statistics_plot->graph(0)->setPen(pen1);
+    _statistics_plot->graph(0)->addData(xvals, sum_yvals);
+    _statistics_plot->graph(0)->setName("Sum");
+    _statistics_plot->addGraph();
+    _statistics_plot->graph(1)->setPen(pen2);
+    _statistics_plot->graph(1)->addData(xvals, profile_yvals);
+    _statistics_plot->graph(1)->setName("Profile");
+    _statistics_plot->legend->setVisible(true);
+
     _statistics_plot->xAxis->setLabel("shell");
     _statistics_plot->yAxis->setLabel(_plottable_statistics->itemText(column));
     _statistics_plot->setNotAntialiasedElements(QCP::aeAll);

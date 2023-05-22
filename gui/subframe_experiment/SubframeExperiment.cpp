@@ -913,7 +913,7 @@ void SubframeExperiment::merge()
     merger->addPeakCollection(&_peak_collection);
     merger->mergePeaks();
     merger->computeQuality();
-    auto* quality = merger->overallQuality();
+    auto* quality = merger->sumOverallQuality();
     gGui->statusBar()->showMessage(
         "Projected completeness: " +
         QString::number(quality->shells[0].Completeness * 100.0, 'f', 2) + "%");
