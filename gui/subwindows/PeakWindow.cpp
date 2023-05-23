@@ -176,7 +176,6 @@ void PeakWindow::initView()
         _peak, _params.peak_end, _params.bkg_begin, _params.bkg_end);
     _region_data = _integration_region->getRegion();
     for (std::size_t i = 0; i < _region_data->nFrames(); ++i) {
-        _index.push_back(_region_data->index(i));
         QGraphicsView* view = new QGraphicsView;
         drawFrame(view, i);
         if (view) {
@@ -213,11 +212,10 @@ void PeakWindow::refresh()
     _integration_region = std::make_unique<ohkl::IntegrationRegion>(
         _peak, peak_end, bkg_begin, bkg_end, _params.region_type);
     _region_data = _integration_region->getRegion();
-    for (int i = 0; i < _index.size(); ++i) {
+    for (int i = 0; i < _region_data->nFrames(); ++i) {
         try {
-            int j = _region_data->getRegionDataIndex(_index[i]);
             QGraphicsView* view = _views[i];
-            drawFrame(view, j);
+            drawFrame(view, i);
         } catch (std::range_error& e) {
             continue;
         }
@@ -236,7 +234,7 @@ void PeakWindow::drawFrame(QGraphicsView* view, std::size_t frame_index)
     try {
         QGraphicsPixmapItem* image =
             view->scene()->addPixmap(QPixmap::fromImage(_colormap->matToImage(
-                _region_data->frame(frame_index).cast<double>(), rect, _params.max_intensity,
+                _region_data->frame(frame_index).transpose().cast<double>(), rect, _params.max_intensity,
                 _logarithmic)));
         image->setZValue(-2);
     } catch (std::range_error& e) {

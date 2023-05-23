@@ -89,7 +89,6 @@ class PeakWindow : public QDialog {
     ohkl::RegionData* _region_data;
 
     bool _logarithmic;
-    std::vector<int> _index;
 
     ColorMap* _colormap;
     QVector<QGraphicsView*> _views;
