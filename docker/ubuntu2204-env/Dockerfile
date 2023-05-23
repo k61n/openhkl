@@ -25,6 +25,9 @@ RUN apt-get update && \
       swig \
       python3-pip \
       python3-sphinx \
+      python3-sphinxcontrib.bibtex \
+      python3-breathe \
+      python-sphinx-press-theme \
       doxygen \
       graphviz && \
       rm -rf /var/lib/apt/lists/*
