@@ -192,11 +192,11 @@ well as possible.
 
 .. _indexed:
 .. figure:: images/tutorial/indexed.png
-   :alt: Masking the detector images
+   :alt: Autoindexing screen
    :name: fig:indexed
    :width: 100.0%
 
-   Masking the detector images
+   Autoindexing screen
 
 Here, the direct beam position has been moved by about one and a half pixels in
 the *x* and *y* directions, but even this tiny change has made a precipitous
