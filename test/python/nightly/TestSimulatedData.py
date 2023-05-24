@@ -205,11 +205,11 @@ class TestSimulatedData(unittest.TestCase):
         merger.mergePeaks()
         merger.computeQuality()
         self.assertTrue(
-            isclose(merger.overallQuality().shells[0].Rpim, 0.0039, abs_tol=eps_stat),
-            f'Overall Rpim = {merger.overallQuality().shells[0].Rpim}')
+            isclose(merger.sumOverallQuality().shells[0].Rpim, 0.0039, abs_tol=eps_stat),
+            f'Overall Rpim = {merger.sumOverallQuality().shells[0].Rpim}')
         self.assertTrue(
-            isclose(merger.overallQuality().shells[0].Completeness, 0.185, abs_tol=eps_stat),
-            f'Overall completeness = {merger.overallQuality().shells[0].Completeness}')
+            isclose(merger.sumOverallQuality().shells[0].Completeness, 0.185, abs_tol=eps_stat),
+            f'Overall completeness = {merger.sumOverallQuality().shells[0].Completeness}')
 
         print("Workflow complete")
 
