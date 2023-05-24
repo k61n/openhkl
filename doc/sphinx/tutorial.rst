@@ -522,10 +522,20 @@ reflection, but may be indicative of a systematic problem with affects peaks in
 high resolution areas of the detector image. For now, however, we will proceed
 with the integration.
 
+.. _integration_params:
+.. figure:: images/tutorial/integrate_params.png
+   :alt: Integration parameters
+   :name: fig:integration_params
+   :width: 30.0%
+
 The crucial parameters for integration are the integration region bounds (``peak
-end``, ``background begin`` and ``background end``), but we have established
-that the current values (3, 3, 6) are good enough for the moment. Check the
-``Compute gradient`` box and integrate the peaks by clicking ``integrate peaks``.
+end``, ``background begin`` and ``background end``). Here we choose the "fixed
+ellipsoid" integration region type, which means the ellipsoids defining
+integration regions have a fixed :math:`r_2` metric given in pixels by the
+``peak end`` value of 5.5. The ``background begin`` and ``background end``
+values are scaling factors, such that the background region will be an ellipsoid
+scaled by the given values of 1.3 and 2.3 respectively. Check the ``Compute
+gradient`` box and integrate the peaks by clicking ``integrate peaks``.
 
 .. _integrated:
 .. figure:: images/tutorial/integrated.png
