@@ -56,7 +56,17 @@ background and peak pixels respectively:
    ~|~ r_2^2 < (\mathbf{q}_p-\mathbf{Q})^\intercal \mathbf{\Sigma}^{-1}
    (\mathbf{q}_p-\mathbf{Q}) < r_3^2 \}\end{aligned}
 
-\ The local background is estimated as
+The intensity is estimated as,
+
+.. math::
+
+   \begin{aligned}
+    I &= \sum_{i \in \mathcal{P}} (M_i - \mu_B) \\
+    \sigma^2_I &= I + \frac{|\mathcal{P}|^2}{|\mathcal{B}|} \overline{B}
+    \end{aligned}
+
+
+and the local background is estimated as,
 
 .. math::
 

@@ -238,9 +238,9 @@ class TestFullWorkFlow(unittest.TestCase):
         # Check Rpim and completeness against reference values
         for i in range(len(ref_rpim)):
             self.assertTrue(isclose(
-                ref_rpim[i], merger.shellQuality().shells[i].Rpim, abs_tol=eps_stat))
+                ref_rpim[i], merger.sumShellQuality().shells[i].Rpim, abs_tol=eps_stat))
             self.assertTrue(isclose(
-                ref_completeness[i], merger.shellQuality().shells[i].Completeness, abs_tol=eps_stat))
+                ref_completeness[i], merger.sumShellQuality().shells[i].Completeness, abs_tol=eps_stat))
 
         print("Workflow complete")
 

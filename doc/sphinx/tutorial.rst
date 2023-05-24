@@ -107,7 +107,7 @@ information on adjacent frames. Click on the ``Find peaks`` icon on the sidebar.
 
 The most important peak finder parameter is the threshold, which determines the
 minimum number of counts for a pixel to be in a peak region; in this case, we
-have decreased it from the default 80 to 50 in order to have more peaks to
+have decreased it from the default 80 to 30 in order to have more peaks to
 construct a shape model. If our detector images had too few peaks to generate a
 convincing shape model, we could decrease it further, and also decrease the
 ``Minimum size``. The danger in doing this is, of course, that including very
@@ -152,16 +152,17 @@ get good statistics.
 
    After peak finding and integration
 
-Note that after integration some peaks are marked as invalid; specifically, 11505
-out of 15316 peaks are valid. We can check the ``reason for rejection`` column in
-the table to see why they were rejected. In the first few frames and last few
-frames of the data set, the reason is usually because the peak extends outside
-the sample rotation range and is therefore incomplete. Also note how peaks close
-to the rotation axis are often rejected, since they intersect the Ewald sphere
-on many images, and frequently extend outside the sample rotation range as a
-result. In any case, we have a good number of peaks, which we can use to both
-determine the unit cell and generate a good shape model. Finally, click on
-``create peak collection`` and name the collection ``found``.
+Note that after integration some peaks are marked as invalid; specifically,
+approximately 15000 out of 26000 peaks are valid. We can check the ``reason for
+rejection`` column in the table to see why they were rejected. In the first few
+frames and last few frames of the data set, the reason is usually because the
+peak extends outside the sample rotation range and is therefore incomplete. Also
+note how peaks close to the rotation axis are often rejected, since they
+intersect the Ewald sphere on many images, and frequently extend outside the
+sample rotation range as a result. In any case, we have a good number of peaks,
+which we can use to both determine the unit cell and generate a good shape
+model. Finally, click on ``create peak collection`` and name the collection
+``found``.
 
 .. _index:
 
@@ -192,11 +193,11 @@ well as possible.
 
 .. _indexed:
 .. figure:: images/tutorial/indexed.png
-   :alt: Masking the detector images
+   :alt: Autoindexing screen
    :name: fig:indexed
    :width: 100.0%
 
-   Masking the detector images
+   Autoindexing screen
 
 Here, the direct beam position has been moved by about one and a half pixels in
 the *x* and *y* directions, but even this tiny change has made a precipitous
@@ -265,8 +266,8 @@ stage, but want to be sure that the predicted peak shapes are reasonable so
 that it's possible to refine them. The most important parameter at this stage is
 ``minimum I/sigma``, excluding weak peaks from the model. Set this to 3.0, then
 click ``build shape model`` and wait for the integration to complete. In the
-example, around 11491 shapes should be generated, i.e. the model consists of the
-shapes of 11491 strong peaks. Click on ``save shape model`` and save the model.
+example, around 15000 shapes should be generated, i.e. the model consists of the
+shapes of 15000 strong peaks. Click on ``save shape model`` and save the model.
 
 .. _shape_params:
 .. figure:: images/tutorial/shape_params.png
@@ -278,26 +279,27 @@ shapes of 11491 strong peaks. Click on ``save shape model`` and save the model.
 
 A shape generated at specific detector coordinates can be previewed using the
 shape preview widget. Here I have chosen the coordinates of a strong peak at
-coordinates ``(1452, 359, 97)``, and compute a mean shape within a radius of 500
-pixels and 10 frames.
+coordinates ``(1330, 290, 22)``, and compute a mean shape within a radius of 200
+pixels and 5 frames.
 
 .. _shape_preview:
-.. figure:: images/tutorial/shape_preview.png
+.. figure:: images/tutorial/shape_preview_params.png
    :alt: Shape preview parameters
-   :name: fig:shape_preview
+   :name: fig:shape_preview_params
    :width: 30.0%
 
    Shape preview parameters
 
-Note that the shape in the preview does not look much like the shape of the
-strong peak at highlighted on the detector image. This is because the covariance
-matrix has been interpolated on a square (20 x 20) grid, whereas most
-peaks will have a rectangular bounding box, resulting in elliptical peak shapes.
+The shape is previewed in the two panels between the table and detector
+views. On the left is a sequence of images depicting the peak, pixel-for-pixel,
+as it appears in the detector image. On the right is a plot of the 3D profile
+corresponding to that peak, i.e. the predicted value :math:`p_i` for each pixel
+in the bounding box defined by the peak.
 
 .. _preliminary_shapes:
-.. figure:: images/tutorial/preliminary_shapes.png
+.. figure:: images/tutorial/shape_preview.png
    :alt: On generating the preliminary shape model
-   :name: fig:preliminary_shapes
+   :name: fig:shape_preview
    :width: 100.0%
 
    On generating the preliminary shape model
@@ -520,10 +522,20 @@ reflection, but may be indicative of a systematic problem with affects peaks in
 high resolution areas of the detector image. For now, however, we will proceed
 with the integration.
 
+.. _integration_params:
+.. figure:: images/tutorial/integrate_params.png
+   :alt: Integration parameters
+   :name: fig:integration_params
+   :width: 30.0%
+
 The crucial parameters for integration are the integration region bounds (``peak
-end``, ``background begin`` and ``background end``), but we have established
-that the current values (3, 3, 6) are good enough for the moment. Check the
-``Compute gradient` box and integrate the peaks by clicking ``integrate peaks``.
+end``, ``background begin`` and ``background end``). Here we choose the "fixed
+ellipsoid" integration region type, which means the ellipsoids defining
+integration regions have a fixed :math:`r_2` metric given in pixels by the
+``peak end`` value of 5.5. The ``background begin`` and ``background end``
+values are scaling factors, such that the background region will be an ellipsoid
+scaled by the given values of 1.3 and 2.3 respectively. Check the ``Compute
+gradient`` box and integrate the peaks by clicking ``integrate peaks``.
 
 .. _integrated:
 .. figure:: images/tutorial/integrated.png
@@ -580,10 +592,10 @@ as invalid.
    Resolution shell statistics
 
 There are many different quality metrics, but for this tutorial, we will just
-look at :math:`R_\mathrm{pim}`. It is close to zero at low resolutions (0.028
+look at :math:`R_\mathrm{pim}`. It is close to zero at low resolutions (0.025
 between 3.23 and 50.0 Å), and monotonically increases as the resolution
-increases, up to 0.48 in the 1.5 to 1.55 Å regime. Crucially, we should note
-that the completeness is good, averaging 94\% over all resolution shells. The
+increases, up to 0.45 in the 1.5 to 1.55 Å regime. Crucially, we should note
+that the completeness is good, averaging 72\% over all resolution shells. The
 completeness is the fraction of the total number of peaks predicted that have
 been integrated successfully, and can effectively be indefinitely improved just
 by rejecting more and more peaks; however, this would defeat the purpose of our
