@@ -38,123 +38,151 @@ existing experiment state.
 There are three tables summarising the state of the experiment on the left hand
 side of this window.
 
-.. table:: Datasets
+.. list-table:: Data sets
+   :widths: 20, 10, 20
+   :header-rows: 1
+   :align: left
 
-   +--------------------+----------------+-------------------------------+
-   | **Column**         | Unit           | Description                   |
-   +====================+================+===============================+
-   | **Name**           |                | Name of the data set          |
-   +--------------------+----------------+-------------------------------+
-   | **Diffractometer** |                | Name of diffractometer used   |
-   +--------------------+----------------+-------------------------------+
-   | **Number of**      |                | Number of images in this      |
-   | **frames**         |                | data set                      |
-   +--------------------+----------------+-------------------------------+
-   | **Number of**      | pixels         | Height of image in pixels     |
-   | **rows**           |                |                               |
-   +--------------------+----------------+-------------------------------+
-   | **Number of**      | pixels         | Width of image in pixels      |
-   | **columns**        |                |                               |
-   +--------------------+----------------+-------------------------------+
+   * - Column
+     - Unit
+     - Description
+   * - Name
+     -
+     - Name of the data set
+   * - Diffractometer
+     -
+     - Name of diffractometer used
+   * - Number of frames
+     -
+     - Number of images in this data set
+   * - Number of rows
+     - pixels
+     - Height of image
+   * - Number of columns
+     - pixels
+     - Width of image
 
-.. table:: Peak collections
+.. list-table:: Peak collections
+   :widths: 20, 10, 20
+   :header-rows: 1
+   :align: left
 
-   +--------------------+----------------+-------------------------------+
-   | **Column**         | Unit           | Description                   |
-   +====================+================+===============================+
-   | **Name**           |                | Name of the peak collection   |
-   +--------------------+----------------+-------------------------------+
-   | **Number of**      |                | Number of peaks in this       |
-   | **peaks**          |                | collection                    |
-   +--------------------+----------------+-------------------------------+
-   | **Number of**      |                | Number of rejected peaks      |
-   | **invalid peaks**  |                | in this collection            |
-   +--------------------+----------------+-------------------------------+
-   | **Is indexed**     |                | Whether peaks in this         |
-   |                    |                | collection have Miller        |
-   |                    |                | indices assigned              |
-   +--------------------+----------------+-------------------------------+
-   | **Is integrated**  |                | Whether peak in this          |
-   |                    |                | collection have had           |
-   |                    |                | intensities and sigmas        |
-   |                    |                | calculated                    |
-   +--------------------+----------------+-------------------------------+
-   | **Type**           |                | Labels the peak collection    |
-   |                    |                | as either ``found`` or        |
-   |                    |                | ``predicted``                 |
-   +--------------------+----------------+-------------------------------+
+   * - Column
+     - Unit
+     - Description
+   * - Name
+     -
+     - Name of the peak collection
+   * - Number of peaks
+     -
+     - Number of peaks in this collection
+   * - Number of invalid
+     -
+     - Number of rejected peaks in this collection
+   * - Is indexed
+     - Y/N
+     - Peaks in this collection have Miller indices
+   * - Is integrated
+     - Y/N
+     - Peaks in this collection have calculated intensities
+   * - Type
+     -
+     - Labels peak collection as ``found`` or ``predicted``
 
-.. table:: Unit cells
+.. list-table:: Unit cells
+   :widths: 10, 10, 20
+   :header-rows: 1
+   :align: left
 
-   +--------------------+----------------+-------------------------------+
-   | **Column**         | Unit           | Description                   |
-   +====================+================+===============================+
-   | **ID**             |                | Integer label of cell         |
-   +--------------------+----------------+-------------------------------+
-   | **Name**           |                | Name of the unit cell         |
-   +--------------------+----------------+-------------------------------+
-   | **Space group**    |                | Space group of cell           |
-   +--------------------+----------------+-------------------------------+
-   | **a**              | Å              | *a* cell parameter            |
-   +--------------------+----------------+-------------------------------+
-   | **b**              | Å              | *b* cell parameter            |
-   +--------------------+----------------+-------------------------------+
-   | **c**              | Å              | *c* cell parameter            |
-   +--------------------+----------------+-------------------------------+
-   | :math:`\alpha`     | degrees        | :math:`\alpha` cell angle     |
-   +--------------------+----------------+-------------------------------+
-   | :math:`\beta`      | degrees        | :math:`\beta` cell angle      |
-   +--------------------+----------------+-------------------------------+
-   | :math:`\gamma`     | degrees        | :math:`\gamma` cell angle     |
-   +--------------------+----------------+-------------------------------+
+   * - Column
+     - Unit
+     - Description
+   * - ID
+     -
+     - Integer label of unit cell
+   * - Name
+     -
+     - Name of Unit Cell
+   * - Space group
+     -
+     - Assigned space group of unit cell
+   * - :math:`a`
+     - Å
+     - :math:`a` cell parameter
+   * - :math:`b`
+     - Å
+     - :math:`b` cell parameter
+   * - :math:`c`
+     - Å
+     - :math:`c` cell parameter
+   * - :math:`\alpha`
+     - degrees
+     - :math:`\alpha` cell angle
+   * - :math:`\beta`
+     - degrees
+     - :math:`\beta` cell angle
+   * - :math:`\gamma`
+     - degrees
+     - :math:`\gamma` cell angle
+
+Sets of detector images taken at different sample rotation angles can be added to the experiment either via the ``Data`` menu or by clicking the "add data set" icon on the home panel. Image data sets can take the form of ``.tiff`` images, ``.raw`` images or Nexus data sets. After selecting the appropriate option to load data files, the user is prompted to select files, and then in the case of raw and tiff data, enter some metadata parameters via the raw/tiff data loader dialogue.
+
+.. list-table:: Tiff and raw data loader parameters
+   :widths: 20, 10, 20
+   :header-rows: 1
+   :align: left
+
+   * - Parameters
+     - Unit
+     - Description
+   * - Data arrangement
+     - Row/column major
+     - Whether rows or columns are contiguous in memory
+   * - Data format
+     - 16/32 bit integer/float
+     - Bit depth and type of pixel value
+   * - Swap endian
+     - T/F
+     - Swap endianness of data (big/little)
+   * - Image resolution
+     - pixels
+     - Select image resolution, columns x rows (Raw only)
+   * - Rebinning
+     - pixels
+     - Downscale image by given ratio (Tiff only)
+   * - delta chi
+     - degrees
+     - :math:`\chi` angular stepping for sample
+   * - delta omega
+     - degrees
+     - :math:`\omega` angular stepping for sample
+   * - delta phi
+     - degrees
+     - :math:`\phi` angular stepping for sample
+   * - wavelength
+     - Å
+     - wavelength of incident neutron beam
+   * - Use baseline/gain
+     - T/F
+     - Use the baseline and gain specified for the detector
+   * - baseline
+     -
+     - Value subtracted from each pixel before integration
+   * - gain
+     -
+     - Value dividing each pixel before integration
+
+Unlike raw images, tiff image files include a header containing most of the
+required metadata, so only information on the experimental parameters will be
+required. Nexus files contain all the necessary experimental metadata and has
+no associated loading dialogue.
 
 Experiment
 ----------
 
-Most information on the experiment can be found in this panel, including
-settings for the instrument, the raw data sets, any computed unit cells and the
-peak collections.
-
-Raw data is loaded from this screen, by going to the "data" tab, clicking on the
-green "+" and selecting the relevant data format. The file dialogue box can be
-used to select multiple images if necessary, and these will be loaded in the
-order they are sorted by the OS (normally numerically, but some care is
-required). In the case of the raw data format (`.tiff` and `.nxs`), some
-additional metadata is requested in a prompt dialogue.
-
-.. table:: Raw data loader parameters
-
-   +-------------------+----------------+-------------------------------+
-   | **Parameters**    | Unit           | Description                   |
-   +===================+================+===============================+
-   | **Data**          | Row/column     | Specifies whether rows or     |
-   | **arrangement**   | Major          | columns are contiguous in     |
-   |                   |                | memory                        |
-   +-------------------+----------------+-------------------------------+
-   | **Data format**   | 8/16/32 bit    | Number of bits per pixel      |
-   |                   |                | in raw images                 |
-   +-------------------+----------------+-------------------------------+
-   | **Swap endian**   | T/F            | Toggle endianness of data     |
-   |                   |                | (big endian/little endian)    |
-   +-------------------+----------------+-------------------------------+
-   | **delta chi**     | degrees        | Angular stepping for sample   |
-   |                   |                | angle :math:`\chi`            |
-   +-------------------+----------------+-------------------------------+
-   | **delta omega**   | degrees        | Angular stepping for sample   |
-   |                   |                | angle :math:`\omega`          |
-   +-------------------+----------------+-------------------------------+
-   | **delta phi**     | degrees        | Angular stepping for sample   |
-   |                   |                | angle :math:`\phi`            |
-   +-------------------+----------------+-------------------------------+
-   | **wavelength**    | Å              | Incident wavelength           |
-   +-------------------+----------------+-------------------------------+
-
-The detector image serves three purposes:
-
-1. To adjust the intensity colour scale via the slider on the right
-2. To mask regions of the image such as the beam stop or specific peaks, to
-   exclude them from further processing
-3. To plot intensity profiles along a line
+This panel contains three tabs with functionality that is normally required
+before the data reduction process is started: ``strategy``, ``histograms`` and
+``masks``.
 
 There are three tabs on the left-hand panel: `strategy`, `Histograms` and
 `Masks`.
@@ -304,6 +332,8 @@ the criterion described in **TODO: find literature**.
    :alt: Masking the detector image
    :name: fig:peak_finder
    :width: 100.0%
+
+   Masking the detector image
 
 The screenshot above demostrates masking the detector image to exclude invalid
 regions from the peak search. The beam stop and the seam between detector plates
