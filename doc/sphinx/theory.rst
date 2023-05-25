@@ -188,6 +188,28 @@ each square representing one pixel. The principle axis of the ellipsoid is not
 generally perpendicular to the image plane, so centre of the ellipse
 intersecting the image will vary from frame to frame, as the sample rotates.
 
+There are two schemes for defining an integration region in OpenHKL:
+
+1. *Variable ellipsoid* --- The peak and background ellipsoids are bounded using
+   three parameters: peak end, background begin and background end, all of which
+   are scaling factors. The peak ellipsoid is defined by the covariance matrix
+   of a blob of voxels in the case of strong peaks, and as the mean covariance
+   of neighbouring strong peaks in the case of weak peaks. The covariance matrix
+   is scaled by the peak end factor to define the peak region, and the shell
+   between the covariance matrix scaled by background begin and background end
+   defines the background region. All three of these parameters are in units of
+   multiples of :math:`\sigma`, the covariance of the ellipsoid.
+
+2. *Fixed ellipsoid* --- The peak region is defined by the "mean radius" of the
+   covariance ellipsoid in pixels; this is simply the mean of the half principal
+   axes of the ellipsoid. The background begin and background end are scaling
+   factors, which multiply the peak region.
+
+The variable ellipsoid scheme is more natural, since it only requires three
+scaling factors; however, weak peaks with large variances will necessarily have
+larger integration regions, which is usually undesirable. Thus the fixed
+ellipsoid scheme is normally preferable.
+
 .. _beam_profile:
 
 Rotating the beam profile
