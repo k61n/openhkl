@@ -92,7 +92,7 @@ panel, and any mistakes can be selected and deleted.
 
 In this case we have masked a width of 250 pixels on the left and right of the
 image to remove backscattered peaks and the beam stops, the central beam stop,
-and the seam between detector plates between 1725 and 1740 pixels.
+and the seam between detector plates between 1729 and 1736 pixels.
 
 .. _find_peaks:
 
@@ -153,16 +153,17 @@ get good statistics.
    After peak finding and integration
 
 Note that after integration some peaks are marked as invalid; specifically,
-approximately 15000 out of 26000 peaks are valid. We can check the ``reason for
-rejection`` column in the table to see why they were rejected. In the first few
-frames and last few frames of the data set, the reason is usually because the
-peak extends outside the sample rotation range and is therefore incomplete. Also
-note how peaks close to the rotation axis are often rejected, since they
-intersect the Ewald sphere on many images, and frequently extend outside the
-sample rotation range as a result. In any case, we have a good number of peaks,
-which we can use to both determine the unit cell and generate a good shape
-model. Finally, click on ``create peak collection`` and name the collection
-``found``.
+approximately 16802 out of 25318 peaks are valid (Note that this number might
+vary if your masks are not exactly the same as in the screenshot). We can check
+the ``reason for rejection`` column in the table to see why they were rejected.
+In the first few frames and last few frames of the data set, the reason is
+usually because the peak extends outside the sample rotation range and is
+therefore incomplete. Also note how peaks close to the rotation axis are often
+rejected, since they intersect the Ewald sphere on many images, and frequently
+extend outside the sample rotation range as a result. In any case, we have a
+good number of peaks, which we can use to both determine the unit cell and
+generate a good shape model. Finally, click on ``create peak collection`` and
+name the collection ``found``.
 
 .. _index:
 
@@ -266,8 +267,8 @@ stage, but want to be sure that the predicted peak shapes are reasonable so
 that it's possible to refine them. The most important parameter at this stage is
 ``minimum I/sigma``, excluding weak peaks from the model. Set this to 3.0, then
 click ``build shape model`` and wait for the integration to complete. In the
-example, around 15000 shapes should be generated, i.e. the model consists of the
-shapes of 15000 strong peaks. Click on ``save shape model`` and save the model.
+example, around 16436 shapes should be generated, i.e. the model consists of the
+shapes of 16436 strong peaks. Click on ``save shape model`` and save the model.
 
 .. _shape_params:
 .. figure:: images/tutorial/shape_params.png
@@ -279,8 +280,8 @@ shapes of 15000 strong peaks. Click on ``save shape model`` and save the model.
 
 A shape generated at specific detector coordinates can be previewed using the
 shape preview widget. Here I have chosen the coordinates of a strong peak at
-coordinates ``(1330, 290, 22)``, and compute a mean shape within a radius of 200
-pixels and 5 frames.
+coordinates ``(1501, 267, 18)``, and compute a mean shape within a radius of 200
+pixels and 10 frames.
 
 .. _shape_preview:
 .. figure:: images/tutorial/shape_preview_params.png
@@ -459,14 +460,6 @@ then clicking ``refine`` again, followed by ``update``. From the screenshot
 below, we can see not much has changed, but there are a few higher resolution
 peaks that have moved significantly.
 
-.. _refine2:
-.. figure:: images/tutorial/refine2.png
-   :alt: Predicted peaks pre- and post-refinement, second run
-   :name: fig:refine2
-   :width: 100.0%
-
-   Predicted peaks pre- and post-refinement, second run
-
 This is good enough for now, but later on we might want to run the refiner again
 when we've applied a better shape model.
 
@@ -625,6 +618,101 @@ refinement of structural models; it is simply a list of peaks with their Miller
 indices, coordinates, intensities and sigmas. The merged peaks tab gives the
 redundancy, the number of symmetry-equivalent peaks for a given index, together
 with a "goodness of fit" parameter in the form of a :math:`\chi^2` value.
+
+Profile integration
+-------------------
+
+We can improve the quality of the integration at high resolutions by using
+profile integration for weak peaks (see :ref:`sec_3dprofile`). Instead of
+subtracting a mean local background from each pixel and summing together the
+resulting values in a given region, it is usually more accurate to weight each
+pixel by a factor corresponding to the value of a pixel in a mean profile. That
+is, we use strong peaks within a given radius of our reference weak peaks to
+construct a mean profile, and use the resulting normalised shape to weight pixel
+values of a peak with a poorly defined shape.
+
+There are a few parameters that strongly affect the quality of profile
+integration; the first of these is the number of histogram bins used in
+constructing the mean profiles. The first of these is in the construction of the
+shape model: the default grid is 20 x 20 x 10, corresponding to the x, y and
+frame number coordinates respectively. Empirically, a lower value of the number
+of frame bins seems to work better, so construct a new shape model using a 20 x
+20 x 6 grid (the parameters are pictured below).
+
+.. _profile_shape_params:
+.. figure:: images/tutorial/profile_shape_params.png
+   :alt: Shape model parameters for profile integration.
+   :name: fig:profile_shape_params
+   :width: 30.0%
+
+   Shape model parameters for profile integration
+
+This new model should be set on the integration screen, where the remaining
+parameters are, notably the radius for neighbour searching and the minimum
+number of neighbours.
+
+.. _profile_integration_params:
+.. figure:: images/tutorial/profile_integration_params.png
+   :alt: Profile integration parameters
+   :name: fig:profile_integration_params
+   :width: 30.0%
+
+   Profile integration parameters
+
+Choosing the correct neighbour search parameters is a delicate balancing act.
+Ideally we want a good statistical model for our weak peak, which means using as
+many peaks as possible to generate the profile. However, choosing an excessively
+large radius will degrade the model quality because of the spatial dependence of
+peak shapes, i.e. if our radius is large, we are more likely to include strong
+peaks that are far enough away to have radically different shapes. Moreover, we
+do not want to reintegrate strong peaks, since their shape is already well
+defined, and any attempt to scale the pixel values will simply make the
+integration quality worse. Therefore, we check the ``Maximum strength for
+profile integration box`` and set the upper limit to profile integrate a peak to
+a strength of 1. We can motivate this choice by looking at the peak statistics
+in the "reject" widget.
+
+.. _strength_distribution:
+.. figure:: images/tutorial/strength_distribution.png
+   :alt: Histogram of sum-integrated peak strengths
+   :name: fig:strength_distribution:
+   :width: 100.0%
+
+   Histogram of sum-integrated peak strengths
+
+We can use this tool to plot a histogram of sum-integrated peak strengths. The
+vast majority of peaks have a strength lower than 10. Adjusting x-axis range on
+the plot filters the detector image to show the peak *in that range* in green,
+and any outside that range in red. By experimenting with this view, it should be
+possible to convince yourself that the peaks that are essentially invisible to
+the naked eye on the image have strengths below 1, although this value could
+probably be optimised somewhat.
+
+Note that this is the *sum integrated* strength, and relies on
+having already integrated the predicted peaks using pixel sum integration.
+Set the profile integration parameters as above, then integrate the predicted
+peaks again.
+
+.. _profile_integrated:
+.. figure:: images/tutorial/profile_integrate.png
+   :alt: After profile integration
+   :name: fig:profile_integrate
+   :width: 100.0%
+
+   After profile integration
+
+Note that the profile integrated columns in the table are now populated. We can
+now switch to the merge widget, and compare the integration metrics. For this
+choice of parameters, we have improved :math:`R_\mathcal{pim}`, but it may be
+possible to improve it even more.
+
+.. _profile_merge:
+.. figure:: images/tutorial/profile_merge.png
+   :alt: Merge statistics after profile integration
+   :name: fig:profile_merge
+   :width: 100.0%
+
+   Merge statistics after profile integration
 
 Further work
 ------------
