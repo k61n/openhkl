@@ -247,7 +247,7 @@ void SubframeExperiment::setHistogramUp()
 
     _npoints_intensity = gfiller.addSpinBox(QString("Number of bins:"));
 
-    _calc_intensity = gfiller.addButton("Calculate intensity");
+    _calc_intensity = gfiller.addButton("Build pixel count histogram");
 
     _totalHistogram = gfiller.addCheckBox("All images", 1);
     _yLog = gfiller.addCheckBox("Log-linear", 1);
@@ -659,7 +659,7 @@ void SubframeExperiment::plotIntensities()
 
     auto plot = getPlot();
     if (plot != nullptr)
-        plot->plotData(histo, QString("Pixels"), QString("Counts"), xmin, xmax, ymin, ymax);
+        plot->plotData(histo, QString("Number of pixels"), QString("Counts"), xmin, xmax, ymin, ymax);
     _tab_widget->setCurrentIndex(0);
 }
 

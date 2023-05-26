@@ -137,11 +137,8 @@ void SubframeFindPeaks::setBlobUp()
         "Merging scale",
         "(" + QString(QChar(0x03C3)) + ") - blob scaling factor to detect collisions");
 
-    _min_size_spin = f.addSpinBox(
-        "Minimum size", "(integer) - blobs containing fewer points than this count are discarded");
-
-    _max_size_spin = f.addSpinBox(
-        "Maximum size", "(integer) - blobs containing more points than this count are discarded");
+    std::tie(_min_size_spin, _max_size_spin) =
+        f.addSpinBoxPair("Blob size range", "(counts) - only blobs containing counts in this range will be kept");
 
     _max_width_spin = f.addSpinBox(
         "Maximum width", "(frames) - blob is discarded if it spans more frames than this value");
@@ -160,11 +157,8 @@ void SubframeFindPeaks::setBlobUp()
     _kernel_para_table = new QTableWidget(0, 2, this);
     f.addWidget(_kernel_para_table, 1);
 
-    _start_frame_spin = f.addSpinBox(
-        "First detector image", "(detector image number) - starting image for peak finding");
-
-    _end_frame_spin =
-        f.addSpinBox("Last detector image", "(detector image number) - end image for peak finding");
+    std::tie(_start_frame_spin, _end_frame_spin) =
+        f.addSpinBoxPair("Frame range", "start and end image of range in which to find peaks");
 
     _threshold_check =
         f.addCheckBox("Apply threshold to preview", "Only show pixels above threshold");
