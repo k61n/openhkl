@@ -249,10 +249,8 @@ void SubframeExperiment::setHistogramUp()
 
     _calc_intensity = gfiller.addButton("Calculate intensity");
 
-    _totalHistogram = gfiller.addCheckBox("Show total histogram", 1);
-    _yLog = gfiller.addCheckBox("Use logarithmic y scale", 1);
-    _xZoom = gfiller.addCheckBox("Range on x axis", 1);
-    _yZoom = gfiller.addCheckBox("Range on y axis", 1);
+    _totalHistogram = gfiller.addCheckBox("All images", 1);
+    _yLog = gfiller.addCheckBox("Log-linear", 1);
 
     _histogram_layout->addWidget(_intensity_plot_box);
 
@@ -262,27 +260,17 @@ void SubframeExperiment::setHistogramUp()
     _npoints_intensity->setMinimum(100);
     _npoints_intensity->setValue(100);
 
-    _minX = gfiller.addSpinBox("Minimum x value:");
-    _maxX = gfiller.addSpinBox("Maximum x value:");
-    _minY = gfiller.addSpinBox("Minimum y value:");
-    _maxY = gfiller.addSpinBox("Maximum y value:");
-
+    std::tie(_minX, _maxX) = gfiller.addSpinBoxPair("x range", "Horizontal axis range");
+    std::tie(_minY, _maxY) = gfiller.addSpinBoxPair("y range", "vertical (frequency) axis range");
 
     _update_plot = gfiller.addButton("Update plot");
 
     connect(_totalHistogram, &QCheckBox::clicked, this, &SubframeExperiment::refreshAll);
-
-    connect(_xZoom, &QCheckBox::clicked, this, &SubframeExperiment::refreshAll);
-
-    connect(_yZoom, &QCheckBox::clicked, this, &SubframeExperiment::refreshAll);
-
     connect(_yLog, &QCheckBox::clicked, this, &SubframeExperiment::setLogarithmicScale);
-
     connect(
         _calc_intensity, &QPushButton::clicked, this, &SubframeExperiment::calculateIntensities);
 
     _lineplot_box = new SpoilerCheck("Plot intensity profiles");
-    //_lineplot_box->setMaximumWidth(400);
     GridFiller gfiller2(_lineplot_box, true);
 
     _lineplot_combo = gfiller2.addCombo("Plot type");
@@ -625,16 +613,12 @@ void SubframeExperiment::updateRanges()
     if (!histo)
         return;
 
-    if (!_xZoom->isChecked()) {
-        _minX->setValue(0);
-        _maxX->setValue(data->maxCount());
-    }
-    if (!_yZoom->isChecked()) {
-        double max_element = *(std::max_element(histo->bin, histo->bin + histo->n * 8));
+    _minX->setValue(0);
+    _maxX->setValue(data->maxCount());
 
-        _minY->setValue(0);
-        _maxY->setValue(max_element);
-    }
+    double max_element = *(std::max_element(histo->bin, histo->bin + histo->n * 8));
+    _minY->setValue(0);
+    _maxY->setValue(max_element);
 }
 
 void SubframeExperiment::showFilteredImage()
@@ -668,15 +652,6 @@ void SubframeExperiment::plotIntensities()
     int ymin = _minY->value();
     int xmax = _maxX->value();
     int ymax = _maxY->value();
-
-    if (!_xZoom->isChecked()) {
-        xmin = -1;
-        xmax = -1;
-    }
-    if (!_yZoom->isChecked()) {
-        ymin = -1;
-        ymax = -1;
-    }
 
     if (histo->range == nullptr || histo->bin == nullptr)
         throw std::runtime_error(
@@ -727,12 +702,6 @@ void SubframeExperiment::toggleUnsafeWidgets()
 
     _calc_intensity->setEnabled(false);
     _yLog->setEnabled(false);
-    _yZoom->setEnabled(false);
-    _xZoom->setEnabled(false);
-    _minX->setEnabled(false);
-    _minY->setEnabled(false);
-    _maxX->setEnabled(false);
-    _maxY->setEnabled(false);
     _update_plot->setEnabled(false);
     _totalHistogram->setEnabled(false);
 
@@ -762,14 +731,8 @@ void SubframeExperiment::toggleUnsafeWidgets()
     bool hasHistograms = _data_combo->currentData()->getNumberHistograms() > 0;
 
     _yLog->setEnabled(hasHistograms);
-    _yZoom->setEnabled(hasHistograms);
-    _xZoom->setEnabled(hasHistograms);
     _totalHistogram->setEnabled(hasHistograms);
 
-    _minX->setEnabled(_xZoom->isChecked() && _xZoom->isEnabled());
-    _minY->setEnabled(_yZoom->isChecked() && _yZoom->isEnabled());
-    _maxX->setEnabled(_xZoom->isChecked() && _xZoom->isEnabled());
-    _maxY->setEnabled(_yZoom->isChecked() && _yZoom->isEnabled());
     _update_plot->setEnabled(hasHistograms);
 
     bool hasSelectedMasks = false;
