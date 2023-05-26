@@ -107,9 +107,9 @@ void SubframeShapes::setInputUp()
     _peak_combo =
         f.addPeakCombo(ComboType::PeakCollection, "Peaks for shapes", "Used to build shape model");
 
-    _nx = f.addSpinBox("histogram bins x", "Number of histogram bins in x direction");
-    _ny = f.addSpinBox("histogram bins y", "Number of histogram bins in y direction");
-    _nz = f.addSpinBox("histogram bins frames", "Number of histogram bins about rotation axis");
+    _nx = f.addSpinBox("Histogram bins x", "Number of histogram bins in x direction");
+    _ny = f.addSpinBox("Histogram bins y", "Number of histogram bins in y direction");
+    _nz = f.addSpinBox("Histogram bins frames", "Number of histogram bins about rotation axis");
     _nsubdiv = f.addSpinBox("Subdivisions", "Number of subdivisions along each axis per pixel");
 
     _sigma_d = new SafeDoubleSpinBox();
@@ -138,10 +138,9 @@ void SubframeShapes::setInputUp()
     _min_strength = f.addDoubleSpinBox(
         ("Minimum I/" + QString(QChar(0x03C3))),
         "Minimum strength (I/\u03C3) of peak to include in average");
-    _min_d = f.addDoubleSpinBox(
-        "Maximum resolution (min. d)", "Minimum d (\u212B) of peak to include in average");
-    _max_d = f.addDoubleSpinBox(
-        "Minimum resolution (max. d)", "Maximum d (\u212B) of peak to include in average");
+    std::tie(_min_d, _max_d) =
+        f.addDoubleSpinBoxPair("Resolution (d) range",
+                               "(\u212B) - resolution range for peaks to include in model");
 
 
     _integration_region_type = f.addCombo("Integration region type");
