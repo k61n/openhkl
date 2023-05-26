@@ -118,7 +118,6 @@ class SubframeFilterPeaks : public QWidget {
     QCheckBox* _masked;
     QCheckBox* _indexed_peaks;
     QCheckBox* _extinct_spacegroup;
-    QCheckBox* _keep_complementary;
     CellComboBox* _unit_cell;
 
     SafeDoubleSpinBox* _tolerance;

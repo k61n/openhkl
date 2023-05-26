@@ -263,10 +263,6 @@ void SubframeFilterPeaks::setProceedUp()
     _extinct_spacegroup->setChecked(false);
     _left_layout->addWidget(_extinct_spacegroup);
 
-    _keep_complementary = new QCheckBox("Keep the complementary selection");
-    _keep_complementary->setChecked(false);
-    _left_layout->addWidget(_keep_complementary);
-
     _filter_button = new QPushButton("Filter");
     _left_layout->addWidget(_filter_button);
 
@@ -378,7 +374,6 @@ void SubframeFilterPeaks::grabFilterParameters()
     _masked->setChecked(flags->masked);
     _indexed_peaks->setChecked(flags->indexed);
     _extinct_spacegroup->setChecked(flags->extinct);
-    _keep_complementary->setChecked(flags->complementary);
     _unit_cell_box->setChecked(flags->index_tol);
     _strength_box->setChecked(flags->strength);
     _d_range_box->setChecked(flags->d_range);
@@ -409,7 +404,6 @@ void SubframeFilterPeaks::setFilterParameters()
     }
     flags->extinct = _extinct_spacegroup->isChecked();
     flags->overlapping = _overlap_box->isChecked();
-    flags->complementary = _keep_complementary->isChecked();
     flags->index_tol = _unit_cell_box->isChecked();
     flags->strength = _strength_box->isChecked();
     flags->d_range = _d_range_box->isChecked();
