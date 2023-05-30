@@ -218,7 +218,7 @@ void PeakFilter::filterMasked(PeakCollection* peak_collection) const
     int nrejected = 0;
     for (int i = 0; i < peak_collection->numberOfPeaks(); ++i) {
         ohkl::Peak3D* peak_ptr = peak_collection->getPeak(i);
-        if (peak_ptr->rejectionFlag() == RejectionFlag::Masked) {
+        if (peak_ptr->isRejectedFor(RejectionFlag::Masked)) {
             peak_ptr->rejectYou(true);
             ++nrejected;
         } else {

@@ -111,7 +111,7 @@ void IIntegrator::integrate(
     }
 
     for (auto peak : peaks) {
-        if (!peak->enabled() && (peak->rejectionFlag() != RejectionFlag::Extinct))
+        if (!peak->enabled() && peak->isRejectedFor(RejectionFlag::Extinct))
             continue;
 
         regions.emplace(std::make_pair(
@@ -128,7 +128,7 @@ void IIntegrator::integrate(
 
         if (lo[0] < 0 || lo[1] < 0 || lo[2] < 0 || hi[0] >= data->nCols() || hi[1] >= data->nRows()
             || hi[2] >= data->nFrames())
-            peak->setIntegrationFlag(RejectionFlag::InvalidRegion);
+            peak->setIntegrationFlag(RejectionFlag::InvalidRegion, _params.integrator_type);
     }
 
     // only integrate the peaks with valid integration regions
@@ -213,12 +213,14 @@ void IIntegrator::integrate(
                         _sumIntensity, _profileIntensity, _params.peak_end, _params.bkg_begin,
                         _params.bkg_end, _params.region_type);
                     if (saturated)
-                        peak->setIntegrationFlag(RejectionFlag::SaturatedPixel);
+                        peak->setIntegrationFlag(
+                            RejectionFlag::SaturatedPixel, _params.integrator_type);
                 } else {
 #pragma omp atomic
                     ++nfailures;
                     // This is a fallback. The RejectionFlag should have been set by this point.
-                    peak->setIntegrationFlag(RejectionFlag::IntegrationFailure);
+                    peak->setIntegrationFlag(
+                        RejectionFlag::IntegrationFailure, _params.integrator_type);
                 }
                 // free memory (important!!)
                 current_peak->reset();
@@ -284,8 +286,8 @@ void IIntegrator::removeOverlaps(
     for (auto collision : tree.getCollisions()) {
         unsigned int i = collision.first - &ellipsoids[0];
         unsigned int j = collision.second - &ellipsoids[0];
-        peaks.at(i)->setIntegrationFlag(RejectionFlag::OverlappingPeak);
-        peaks.at(j)->setIntegrationFlag(RejectionFlag::OverlappingPeak);
+        peaks.at(i)->setIntegrationFlag(RejectionFlag::OverlappingPeak, _params.integrator_type);
+        peaks.at(j)->setIntegrationFlag(RejectionFlag::OverlappingPeak, _params.integrator_type);
         nrejected += 2;
     }
     ohklLog(Level::Info, "IIntegrator::removeOverlaps: ", nrejected, " overlapping peaks rejected");

@@ -20,6 +20,7 @@
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/InstrumentState.h"
 #include "core/instrument/InterpolatedState.h"
+#include "core/integration/IIntegrator.h"
 #include "core/peak/IntegrationRegion.h"
 #include "core/peak/Intensity.h"
 #include "tables/crystal/MillerIndex.h"
@@ -74,7 +75,8 @@ Peak3D::Peak3D(sptrDataSet data)
     , _rejected_by_filter(false)
     , _transmission(1.0)
     , _rejection_flag(RejectionFlag::NotRejected)
-    , _integration_flag(RejectionFlag::NotRejected)
+    , _sum_integration_flag(RejectionFlag::NotRejected)
+    , _profile_integration_flag(RejectionFlag::NotRejected)
     , _data(data)
     , _rockingCurve()
 {
@@ -97,7 +99,8 @@ Peak3D::Peak3D(sptrDataSet data, const MillerIndex& hkl)
     , _rejected_by_filter(false)
     , _transmission(1.0)
     , _rejection_flag(RejectionFlag::NotRejected)
-    , _integration_flag(RejectionFlag::NotRejected)
+    , _sum_integration_flag(RejectionFlag::NotRejected)
+    , _profile_integration_flag(RejectionFlag::NotRejected)
     , _data(data)
     , _rockingCurve()
 {
@@ -218,7 +221,8 @@ bool Peak3D::enabled() const
 {
     return (
         _rejection_flag == RejectionFlag::NotRejected
-        && _integration_flag == RejectionFlag::NotRejected);
+        && _sum_integration_flag == RejectionFlag::NotRejected
+        && _profile_integration_flag == RejectionFlag::NotRejected);
 }
 
 void Peak3D::reject(RejectionFlag flag)
@@ -236,29 +240,29 @@ void Peak3D::updateIntegration(
     _meanBkgGradient = meanBkgGradient;
     if (sumBkg.isValid()) {
         if (sumBkg.sigma() < _sigma2_eps) // NaN sigma handled by Intensity constructor
-            setIntegrationFlag(RejectionFlag::InvalidBkgSigma);
+            setIntegrationFlag(RejectionFlag::InvalidBkgSigma, IntegratorType::PixelSum);
         else
             _sumBackground = sumBkg;
     }
-    if (profBkg.isValid()) {
-        if (profBkg.sigma() < _sigma2_eps) // NaN sigma handled by Intensity constructor
-            setIntegrationFlag(RejectionFlag::InvalidBkgSigma);
-        else
-            _profileBackground = profBkg;
-    }
     if (sumInt.isValid()) { // Default intensity constructor is zero, _valid = false
         if (sumInt.sigma() < _sigma2_eps) // NaN sigma handled by Intensity constructor
-            setIntegrationFlag(RejectionFlag::InvalidSigma);
+            setIntegrationFlag(RejectionFlag::InvalidSigma, IntegratorType::PixelSum);
         else
             _sumIntensity = sumInt;
     }
     if (profInt.isValid()) {
         if (profInt.sigma() < _sigma2_eps) // NaN sigma handled by Intensity constructor
-            setIntegrationFlag(RejectionFlag::InvalidSigma);
+            setIntegrationFlag(RejectionFlag::InvalidSigma, IntegratorType::Profile3D);
         else
             _profileIntensity = profInt;
     }
-
+    if (profBkg.isValid()) {
+        if (profBkg.sigma() < _sigma2_eps) // NaN sigma handled by Intensity constructor
+            // Not necessarily Profile3D, just establishing *any* profile integration
+            setIntegrationFlag(RejectionFlag::InvalidBkgSigma, IntegratorType::Profile3D);
+        else
+            _profileBackground = profBkg;
+    }
 
     //_sumIntensity = integrator.peakIntensity(); // TODO: test, reactivate ???
     //_shape = integrator.fitShape(); // TODO: test, reactivate ???
@@ -341,8 +345,8 @@ void Peak3D::rejectYou(bool reject)
 void Peak3D::setManually(
     const Intensity& sumInt, const Intensity& profInt, double peakEnd, double bkgBegin,
     double bkgEnd, int region_type, double scale, double transmission, const Intensity& sumBkg,
-    const Intensity& profBkg, int rejection_flag, int integration_flag,
-    Intensity sumBkgGrad /* = {} */)
+    const Intensity& profBkg, int rejection_flag, int sum_integration_flag,
+    int profile_integration_flag, Intensity sumBkgGrad /* = {} */)
 {
     _peakEnd = peakEnd;
     _bkgBegin = bkgBegin;
@@ -355,7 +359,8 @@ void Peak3D::setManually(
     _sumIntensity = sumInt;
     _profileIntensity = profInt;
     _rejection_flag = static_cast<RejectionFlag>(rejection_flag);
-    _integration_flag = static_cast<RejectionFlag>(integration_flag);
+    _sum_integration_flag = static_cast<RejectionFlag>(sum_integration_flag);
+    _profile_integration_flag = static_cast<RejectionFlag>(profile_integration_flag);
     _meanBkgGradient = sumBkgGrad;
 }
 
@@ -402,17 +407,55 @@ void Peak3D::setRejectionFlag(RejectionFlag flag, bool overwrite /* = false */)
     }
 }
 
-void Peak3D::setIntegrationFlag(RejectionFlag flag)
+void Peak3D::setIntegrationFlag(
+    RejectionFlag flag, IntegratorType integrator, bool overwrite /* = false */)
 {
-    if (_integration_flag == RejectionFlag::NotRejected)
-        _integration_flag = flag;
+    if (integrator == IntegratorType::PixelSum) {
+        if (_sum_integration_flag == RejectionFlag::NotRejected) {
+            _sum_integration_flag = flag;
+        } else {
+            if (overwrite)
+                _sum_integration_flag = flag;
+        }
+    } else {
+        if (_profile_integration_flag == RejectionFlag::NotRejected) {
+            _profile_integration_flag = flag;
+        } else {
+            if (overwrite)
+                _profile_integration_flag = flag;
+        }
+    }
 }
 
 RejectionFlag Peak3D::rejectionFlag() const
 {
-    if (_integration_flag == RejectionFlag::NotRejected)
+    if (_profile_integration_flag != RejectionFlag::NotRejected)
+        return _profile_integration_flag;
+    if (_sum_integration_flag != RejectionFlag::NotRejected)
+        return _sum_integration_flag;
+    return _rejection_flag;
+}
+
+    RejectionFlag Peak3D::sumRejectionFlag() const
+{
+    if (_sum_integration_flag == RejectionFlag::NotRejected)
         return _rejection_flag;
-    return _integration_flag;
+    return _sum_integration_flag;
+}
+
+RejectionFlag Peak3D::profileRejectionFlag() const
+{
+    if (_profile_integration_flag == RejectionFlag::NotRejected)
+        return _rejection_flag;
+    return _profile_integration_flag;
+}
+
+bool Peak3D::isRejectedFor(RejectionFlag flag) const
+{
+    if (_rejection_flag == flag) return true;
+    if (_sum_integration_flag == flag) return true;
+    if (_profile_integration_flag == flag) return true;
+    return false;
 }
 
 std::string Peak3D::rejectionString() const

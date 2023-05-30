@@ -277,11 +277,11 @@ void PeakCollection::buildShapeModel(const ShapeModelParameters& params)
         peak->setUnitCell(cell);
 }
 
-void PeakCollection::resetIntegrationFlags()
+void PeakCollection::resetIntegrationFlags(IntegratorType integrator)
 {
     ohklLog(Level::Info, "PeakCollection::resetIntegrationFlags");
     for (auto* peak : getPeakList())
-        peak->setIntegrationFlag(RejectionFlag::NotRejected);
+        peak->setIntegrationFlag(RejectionFlag::NotRejected, integrator, true);
 }
 
 } // namespace ohkl

@@ -27,6 +27,7 @@
 namespace ohkl {
 
 enum class RegionType;
+enum class IntegratorType;
 class IIntegrator;
 class MillerIndex;
 
@@ -169,8 +170,8 @@ class Peak3D {
     void setManually(
         const Intensity& sumInt, const Intensity& profInt, double peakEnd, double bkgBegin,
         double bkgEnd, int region_type, double scale, double transmission, const Intensity& sumBkg,
-        const Intensity& profBkg, int rejection_flag, int integration_flag,
-        Intensity sumBkgGrad = {});
+        const Intensity& profBkg, int rejection_flag, int sum_integration_flag,
+        int profile_integration_flag, Intensity sumBkgGrad = {});
 
     //! Update the integration parameters for this peak
     void updateIntegration(
@@ -198,13 +199,21 @@ class Peak3D {
     //! Set the reason for this peak being disabled
     void setRejectionFlag(RejectionFlag flag, bool overwrite = false);
     //! Set the reason for rejection during integration
-    void setIntegrationFlag(RejectionFlag flag);
+    void setIntegrationFlag(RejectionFlag flag, IntegratorType integrator, bool overwrite = false);
     //! Return the rejection flag only
     RejectionFlag getRejectionFlag() const { return _rejection_flag; };
-    //! Return the integration flag only
-    RejectionFlag getIntegrationFlag() const { return _integration_flag; };
-    //! Return the integration flag, or rejection flag if the former is not set
+    //! Return the sum integration flag only
+    RejectionFlag getSumIntegrationFlag() const { return _sum_integration_flag; };
+    //! Return the profile integration flag only
+    RejectionFlag getProfileIntegrationFlag() const { return _profile_integration_flag; };
+    //! Return the highest level rejection flag (pre-integration < sum < profile)
     RejectionFlag rejectionFlag() const;
+    //! Return the sum integration flag, or rejection flag if the former is not set
+    RejectionFlag sumRejectionFlag() const;
+    //! Return the sum integration flag, or rejection flag if the former is not set
+    RejectionFlag profileRejectionFlag() const;
+    //! Check if any rejection flag matches argument
+    bool isRejectedFor(RejectionFlag flag) const;
     //! Return a string explaining the rejection
     std::string rejectionString() const;
     //! Return a string representation of the peak
@@ -254,7 +263,9 @@ class Peak3D {
     //! Reason for rejection
     ohkl::RejectionFlag _rejection_flag;
     //! Reason for rejection during integration
-    ohkl::RejectionFlag _integration_flag;
+    ohkl::RejectionFlag _sum_integration_flag;
+    //! Reason for rejection during integration
+    ohkl::RejectionFlag _profile_integration_flag;
 
     //! Pointer to the dataset from which this peak is derived
     sptrDataSet _data;

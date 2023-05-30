@@ -226,7 +226,8 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
 
             Eigen_VecXint region_type(n_peaks);
             Eigen_VecXint rejection_flag(n_peaks);
-            Eigen_VecXint integration_flag(n_peaks);
+            Eigen_VecXint sum_integration_flag(n_peaks);
+            Eigen_VecXint profile_integration_flag(n_peaks);
 
             std::map<std::string, Eigen_VecXd*> double_keys{
                 {ohkl::ds_BkgBegin, &bkg_begin},
@@ -248,7 +249,8 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
             std::map<std::string, Eigen_VecXint*> int_keys{
                 {ohkl::ds_RegionType, &region_type},
                 {ohkl::ds_RejectionFlag, &rejection_flag},
-                {ohkl::ds_IntegrationFlag, &integration_flag},
+                {ohkl::ds_sumIntegrationFlag, &sum_integration_flag},
+                {ohkl::ds_profileIntegrationFlag, &profile_integration_flag},
             };
 
             // Eigen_VecXbool selected(n_peaks);
@@ -391,7 +393,7 @@ void ExperimentImporter::loadPeaks(Experiment* experiment)
                 peak->setManually(
                     sum_int, prof_int, peak_end[k], bkg_begin[k], bkg_end[k], region_type[k],
                     scale[k], transmission[k], sum_bkg, prof_bkg, rejection_flag[k],
-                    integration_flag[k], peak_bkg_grad);
+                    sum_integration_flag[k], profile_integration_flag[k], peak_bkg_grad);
 
 
                 if (experiment->numUnitCells() > 0) {

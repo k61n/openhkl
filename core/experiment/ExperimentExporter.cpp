@@ -357,7 +357,8 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
         // initialize integers
         std::vector<int> region_type(nPeaks);
         std::vector<int> rejection_flag(nPeaks);
-        std::vector<int> integration_flag(nPeaks);
+        std::vector<int> sum_integration_flag(nPeaks);
+        std::vector<int> profile_integration_flag(nPeaks);
 
         // initialize the booleans
         // std::unique_ptr<bool[]> selected{new bool[nPeaks]};
@@ -391,7 +392,8 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
 
             region_type[i] = static_cast<int>(peak->regionType());
             rejection_flag[i] = static_cast<int>(peak->getRejectionFlag());
-            integration_flag[i] = static_cast<int>(peak->getIntegrationFlag());
+            sum_integration_flag[i] = static_cast<int>(peak->getSumIntegrationFlag());
+            profile_integration_flag[i] = static_cast<int>(peak->getProfileIntegrationFlag());
 
             // selected[i] = peak->selected();
 
@@ -454,8 +456,10 @@ void ExperimentExporter::writePeaks(const std::map<std::string, PeakCollection*>
                 {ohkl::ds_RegionType, H5::PredType::NATIVE_INT32, peak_space, region_type.data()},
                 {ohkl::ds_RejectionFlag, H5::PredType::NATIVE_INT32, peak_space,
                  rejection_flag.data()},
-                {ohkl::ds_IntegrationFlag, H5::PredType::NATIVE_INT32, peak_space,
-                 integration_flag.data()},
+                {ohkl::ds_sumIntegrationFlag, H5::PredType::NATIVE_INT32, peak_space,
+                 sum_integration_flag.data()},
+                {ohkl::ds_profileIntegrationFlag, H5::PredType::NATIVE_INT32, peak_space,
+                 profile_integration_flag.data()},
                 {ohkl::ds_hkl, H5::PredType::NATIVE_INT32, hkl_space, hkl.data()},
                 // NATIVE_HBOOL
                 // {ohkl::ds_Selected, H5::PredType::NATIVE_HBOOL, peak_space, selected.get()},

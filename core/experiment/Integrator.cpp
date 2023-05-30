@@ -18,6 +18,7 @@
 #include "core/experiment/DataHandler.h"
 #include "core/experiment/PeakFinder.h"
 #include "core/integration/GaussianIntegrator.h"
+#include "core/integration/IIntegrator.h"
 #include "core/integration/ISigmaIntegrator.h"
 #include "core/integration/PixelSumIntegrator.h"
 #include "core/integration/Profile1DIntegrator.h"
@@ -66,7 +67,7 @@ void Integrator::integratePeaks(
     ohklLog(
         Level::Info,
         "Integrator::integratePeaks: integrating PeakCollection '" + peaks->name() + "'");
-    peaks->resetIntegrationFlags();
+    peaks->resetIntegrationFlags(integrator_type);
     IIntegrator* integrator = getIntegrator(integrator_type);
     integrator->setParameters(*_params);
     integrator->integrate(peaks->getPeakList(), peaks->shapeModel(), data);
@@ -89,7 +90,7 @@ void Integrator::integratePeaks(
     ohklLog(
         Level::Info,
         "Integrator::integratePeaks: integrating PeakCollection '" + peaks->name() + "'");
-    peaks->resetIntegrationFlags();
+    peaks->resetIntegrationFlags(_params->integrator_type);
     IIntegrator* integrator = getIntegrator(_params->integrator_type);
     integrator->setParameters(*params);
     integrator->integrate(peaks->getPeakList(), shapes, data);
