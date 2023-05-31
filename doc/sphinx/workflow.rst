@@ -132,7 +132,7 @@ Sets of detector images taken at different sample rotation angles can be added t
    :header-rows: 1
    :align: left
 
-   * - Parameters
+   * - Parameter
      - Unit
      - Description
    * - Data arrangement
@@ -187,6 +187,9 @@ before the data reduction process is started: ``strategy``, ``histograms`` and
 There are three tabs on the left-hand panel: `strategy`, `Histograms` and
 `Masks`.
 
+Strategy
+~~~~~~~~
+
 The `strategy` tab contains controls for finding blobs (notionally
 peaks) in a single image, using those blobs to determine the unit cell, and
 predicting the completeness of the peaks given a sample rotation angle
@@ -202,96 +205,96 @@ The `Find blobs in this image` box allows the user to leverage image processing
 algorithms from the OpenCV (namely `SimpleBlobDetector`) library to locate
 detector spots.
 
-.. table:: 2D blob finder parameters
+.. list-table:: 2D blob finder parameters
+   :widths: 20, 10, 20
+   :header-rows: 1
+   :align: left
 
-   +-------------------+----------------+-------------------------------+
-   | **Parameters**    | Unit           | Description                   |
-   +===================+================+===============================+
-   | **Convolution**   |                | Convolution kernel for blob   |
-   | **kernel**        |                | search                        |
-   |                   |                |                               |
-   +-------------------+----------------+-------------------------------+
-   | **Threshold**     | counts         | Pixels with a value below the |
-   |                   |                | threshold are discarded       |
-   +-------------------+----------------+-------------------------------+
-   | **Minimum blob**  | integer        | Blob is discarded if it       |
-   | **threshold**     |                | contains fewer points than    |
-   |                   |                | this                          |
-   +-------------------+----------------+-------------------------------+
-   | **Maximum blob**  | integer        | Blob is discarded if it       |
-   | **threshold**     |                | contains more points than     |
-   |                   |                | this                          |
-   +-------------------+----------------+-------------------------------+
-   | **Search all**    |                | Loop through all images to    |
-   | **images**        |                | find detector spots           |
-   |                   |                |                               |
-   +-------------------+----------------+-------------------------------+
+   * - Parameter
+     - Unit
+     - Description
+   * - Convolution kernel
+     -
+     - Matrix for image filtering
+   * - Filtered image threshold
+     - pixel counts
+     - Pixels with value below threshold are discarded
+   * - Minimum blob threshold
+     - pixel counts
+     - Blob is discarded if it contains fewer points than this
+   * - Maximum blob threshold
+     - pixel counts
+     - Blob is discarded if it contains more points than this
+   * - Search all images
+     -
+     - FInd spots in all images in data set
+   * - Apply threshold to preview
+     -
+     - Show the filtered and threshold image
 
 The autoindexer parameters are described in :ref:`sec_autoindexing`, but it
 should be noted that indexing from a single image generally requires masking of
 ``difficult'' regions of the detector such as the beam stop, and a good initial
 guess for the direct beam position.
 
+.. list-table:: Strategy peak prediction
+   :widths: 20, 10, 20
+   :header-rows: 1
+   :align: left
+
+   * - Parameter
+     - Unit
+     - Description
+   * - :math:`\Delta\chi`
+     - degrees
+     - Angle increment for sample rotation about :math:`\chi` axis
+   * - :math:`\Delta\omega`
+     - degrees
+     - Angle increment for sample rotation about :math:`\omega` axis
+   * - :math:`\Delta\phi`
+     - degrees
+     - Angle increment for sample rotation about :math:`\phi` axis
+   * - Number of increments
+     -
+     - Sample rotation increments or images to simulate
+   * - d range
+     - Å
+     - Resolution range for predicting peaks
+
+Histograms
+~~~~~~~~~~
+
 The `Histograms` tab allows the user to plot histograms of *pixel* statistics
 (as opposed to peak statistics).
 
-.. table:: Pixel statistics parameters
+The `Per-pixel detector count histograme` allows the user to plota histogram of
+pixel counts for either the current single image, or for all images (by checking
+the ``All images`` box. Checking the ``Plot intensity profiles`` box changes the
+interaction mode in the detector image to draw a ("Line plot", "Horizontal
+slice" or "Vertical slice") through the image, and plot a histogram of the
+intensity along that line with the given number of bins.
 
-   +-------------------+----------------+-------------------------------+
-   | **Parameters**    | Unit           | Description                   |
-   +===================+================+===============================+
-   | **Number of**     | integer        | Number of histogram bins      |
-   | **bins**          |                |                               |
-   |                   |                |                               |
-   +-------------------+----------------+-------------------------------+
-   | **Calculate**     |                | Plot a histogram of pixel     |
-   | **intensity**     |                | intensity statistics for the  |
-   |                   |                | visible image                 |
-   +-------------------+----------------+-------------------------------+
-   | **Show total**    |                | Display histogram for all     |
-   | **histogram**     |                | detector images in data set   |
-   |                   |                |                               |
-   +-------------------+----------------+-------------------------------+
-   | **Use**           |                | Use logarithmic scale for     |
-   | **logarithmic**   |                | counts                        |
-   | **scale**         |                |                               |
-   +-------------------+----------------+-------------------------------+
-   | **Range on x**    |                | Adjust range on x axis        |
-   | **axis**          |                |                               |
-   +-------------------+----------------+-------------------------------+
-   | **Range on y**    |                | Adjust range on y axis        |
-   | **axis**          |                |                               |
-   +-------------------+----------------+-------------------------------+
-   | **Minimum x**     |                | Minimum value on x axis       |
-   | **value**         |                |                               |
-   +-------------------+----------------+-------------------------------+
-   | **Maximum x**     |                | Maximum value on x axis       |
-   | **value**         |                |                               |
-   +-------------------+----------------+-------------------------------+
-   | **Maximum y**     |                | Minimum value on y axis       |
-   | **value**         |                |                               |
-   +-------------------+----------------+-------------------------------+
-   | **Minimum y**     |                | Maximum value on y axis       |
-   | **value**         |                |                               |
-   +-------------------+----------------+-------------------------------+
-   | **Update plot**   |                | Refresh the plot              |
-   +-------------------+----------------+-------------------------------+
+Masks
+~~~~~
 
-   The `Plot intensity profiles` box changes the interaction mode in the
-   detector image to draw a ("Line plot", "Horizontal slice" or "Vertical
-   slice") through the image, and plot a histogram of the intensity along that
-   line with the given number of bins.
+The `Masks` tab allows the user to add masks to the data set. A mask is
+either an ellipse or a rectangle present on *all images in the data set*, on
+which detected spots or peaks and integration is not valid. Possible reasons
+to add a mask can be to prevent peak finding on a the beam spot, or to
+prevent integration of peaks on heterogeneous features such as seams between
+detector plates. The `Add detector image masks` check box changes the
+interaction mode in the detector image to draw a mask by dragging and
+dropping, the shape of which is specified in the list (rectangular or
+elliptical). Masks are displayed in the list below, and the extents of the
+masks can be fine tuned.
 
-   The `Masks` tab allows the user to add masks to the data set. A mask is
-   either an ellipse or a rectangle present on *all images in the data set*, on
-   which detected spots or peaks and integration is not valid. Possible reasons
-   to add a mask can be to prevent peak finding on a the beam spot, or to
-   prevent integration of peaks on heterogeneous features such as seams between
-   detector plates. The `Add detector image masks` check box changes the
-   interaction mode in the detector image to draw a mask by dragging and
-   dropping, the shape of which is specified in the list (rectangular or
-   elliptical). Masks are displayed in the list below, and the extents of the
-   masks can be fine tuned.
+The screenshot above demostrates masking the detector image to exclude invalid
+regions from the peak search. The beam stop and the seam between detector plates
+(thin white line in this context) have been masked using the masking tool in the
+bottom right hand corner, such that any peaks found in these regions will be
+rejected. The region around the beam stop containing the air scattering halo has
+also been masked because the heterogeneous background will result in poor
+integration.
 
 
 Find peaks
@@ -324,61 +327,41 @@ merging process is repeated until there are no longer any overlapping
 ellipsoids.
 
 The collision detection problem for ellipsoids is sped up by storing
-them in an octree. The ellipsoid overlap detection is implemented using
-the criterion described in **TODO: find literature**.
+them in an octree.
 
-.. _peakfinder:
-.. figure:: peak_finder.png
-   :alt: Masking the detector image
-   :name: fig:peak_finder
-   :width: 100.0%
+.. list-table:: Peak finder parameters
+   :widths: 20, 10, 20
+   :header-rows: 1
+   :align: left
 
-   Masking the detector image
-
-The screenshot above demostrates masking the detector image to exclude invalid
-regions from the peak search. The beam stop and the seam between detector plates
-(thin white line in this context) have been masked using the masking tool in the
-bottom right hand corner, such that any peaks found in these regions will be
-rejected. The region around the beam stop containing the air scattering halo has
-also been masked because the heterogeneous background will result in poor
-integration.
-
-.. table:: Peak search parameters
-
-   +-------------------+----------------+-------------------------------+
-   | **Parameters**    | Unit           | Description                   |
-   +===================+================+===============================+
-   | **Threshold**     | counts         | Pixels with a value below the |
-   |                   |                | threshold are discarded       |
-   +-------------------+----------------+-------------------------------+
-   | **Merging scale** | :math:`\sigma` | Peak scale in sigmas, to      |
-   |                   |                | detect collisions between     |
-   |                   |                | blobs                         |
-   +-------------------+----------------+-------------------------------+
-   | **Minimum size**  | integer        | Blob is discarded if it       |
-   |                   |                | contains fewer points than    |
-   |                   |                | this                          |
-   +-------------------+----------------+-------------------------------+
-   | **Maximum size**  | integer        | Blob is discarded if it       |
-   |                   |                | contains more points than     |
-   |                   |                | this                          |
-   +-------------------+----------------+-------------------------------+
-   | **Maximum width** | frames         | Blob is discarded if it spans |
-   |                   |                | more frames than this         |
-   +-------------------+----------------+-------------------------------+
-   | **Kernel**        |                | Convolution kernel for peak   |
-   |                   |                | search                        |
-   +-------------------+----------------+-------------------------------+
-   | **Parameters**    |                | parameters                    |
-   |                   |                | :math:`r_1, r_2, r_3` for the |
-   |                   |                | :ref:`sec_pixelsum`           |
-   +-------------------+----------------+-------------------------------+
-   | **Start frame**   | frame          | Initial frame in range for    |
-   |                   |                | peak finding                  |
-   +-------------------+----------------+-------------------------------+
-   | **End frame**     | frame          | Final frame in range for peak |
-   |                   |                | finding                       |
-   +-------------------+----------------+-------------------------------+
+   * - Parameter
+     - Unit
+     - Description
+   * - Threshold
+     - pixel counts
+     - During peak finding, pixels above this value are set to 1, otherwise 0
+       after filtering
+   * - Merging scale
+     - :math:`\sigma`
+     - Scale factor for covariance matrix to detect collisions between blobs
+   * - Blob size range
+     - pixel counts
+     - Only blobs with counts in this range will be kept
+   * - Maximum width
+     - frames
+     - Only blobs spanning fewer images than this number will be kept
+   * - Convolution kernel
+     -
+     - Type of convolution matrix to use in image filtering
+   * - Parameters
+     -
+     - Radius parameters used in construction of convolution matrix
+   * - Frame range
+     - frames
+     - Find peaks in this image range
+   * - Apply threshold to preview
+     -
+     - Switch detector image to filtered and thresholded view
 
 At this stage in the workflow, there are no available profiles to perform
 profile integration. The found peaks are integrated at this stage using 
@@ -394,20 +377,32 @@ the ellipsoid, 95.4% for :math:`2\sigma` and 99.7% for :math:`3\sigma`. The
 ellipsoids (projected to ellipses on the detector scene) can be visualised via
 the "Show/hide" peaks widget.
 
-.. table:: Integration parameters
+.. list-table:: Integration parameters
+   :widths: 20, 10, 20
+   :header-rows: 1
+   :align: left
 
-   +-----------------+----------------+---------------------------------+
-   | **Parameters**  | Unit           | Description                     |
-   +=================+================+=================================+
-   | **Peak end**    | :math:`\sigma` | End of peak region in detector  |
-   |                 |                | coordinates                     |
-   +-----------------+----------------+---------------------------------+
-   | **Bkg. begin**  | :math:`\sigma` | Beginning of background region  |
-   |                 |                | in detector coordinates         |
-   +-----------------+----------------+---------------------------------+
-   | **Bkg. end**    | :math:`\sigma` | End of background region in     |
-   |                 |                | detector coordinates            |
-   +-----------------+----------------+---------------------------------+
+   * - Parameter
+     - Unit
+     - Description
+   * - Peak end
+     - :math:`\sigma`
+     - End of peak region in multiples of the blob covariance matrix
+   * - Background begin
+     - :math:`\sigma`
+     - Beginning of background region in multiples of the blob covariance matrix
+   * - Background end
+     - :math:`\sigma`
+     - End of background region in multiples of the blob covariance matrix
+   * - Compute gradient
+     -
+     - Whether to compute the image gradient
+   * - FFT gradient
+     -
+     - Whether to use Fast Fourier Transform to compute gradient
+   * - Gradient kernel
+     -
+     - Matrix kernel to use for gradient convolution
 
 Filter peaks
 ------------
@@ -480,14 +475,14 @@ workflow.
 The algorithm works as follows. We are given some set of
 :math:`\mathbf{q}` vectors which lie approximately on a lattice, yet to
 be determined. To find candidate lattice directions, we take a random
-sample of directions. For each direction, we perform the orthogonal
-projection of each :math:`\mathbf{q}` vector to the infinite line
-specified by the direction. We then take a finite number of bins along
-this line (the way the binning is performed can be controlled by
-user-defined parameters), and then take FFT of the resulting histogram.
-The histogram will be strongly periodic when the direction corresponds
-to a lattice direction, so we identify lattice vectors by taking the
-strongest Fourier modes of the histograms.
+sample of directions using the Fibonacci sphere algorithm. For each direction,
+we perform the orthogonal projection of each :math:`\mathbf{q}` vector to the
+infinite line specified by the direction. We then take a finite number of bins
+along this line (the way the binning is performed can be controlled by
+user-defined parameters), and then take FFT of the resulting histogram. The
+histogram will be strongly periodic when the direction corresponds to a lattice
+direction, so we identify lattice vectors by taking the strongest Fourier modes
+of the histograms.
 
 The FFT method produces a finite set of potential lattice vectors. To
 find a basis, we enumerate over triples of these basis vectors and rank
@@ -500,67 +495,55 @@ them according to
 This provides a ranked list of candidate unit cells, from which the user
 may choose.
 
-.. table:: Autoindexing parameters
+.. list-table:: Autoindexing parameters
+   :widths: 20, 10, 20
+   :header-rows: 1
+   :align: left
 
-   +----------------------+---------------+-------------------------+
-   | **Parameters**       | Unit          | Description             |
-   +======================+===============+=========================+
-   | **Frames**           | frame number  | Choose a limited subset |
-   |                      |               | of images from the data |
-   |                      |               | set. Fourier transform  |
-   |                      |               | autoindexing tends to   |
-   |                      |               | work best on a subset   |
-   |                      |               | of images, typically    |
-   |                      |               | :math:`\simeq` 5        |
-   |                      |               | degrees of oscillation  |
-   |                      |               | at the start of the     |
-   |                      |               | range, or a few         |
-   |                      |               | (:math:`\simeq 10`)     |
-   |                      |               | frames.                 |
-   +----------------------+---------------+-------------------------+
-   | **D range**          | Å             | Peaks with q vectors    |
-   |                      |               | outside this range will |
-   |                      |               | not be using in         |
-   |                      |               | indexing                |
-   +----------------------+---------------+-------------------------+
-   | **Strength**         |               | Peaks with strength     |
-   |                      |               | (:math:`I/\sigma`)      |
-   |                      |               | outside this range will |
-   |                      |               | not be used in indexing |
-   +----------------------+---------------+-------------------------+
-   | **Gruber Tol.**      |               |                         |
-   +----------------------+---------------+-------------------------+
-   | **Niggli Tol.**      |               |                         |
-   +----------------------+---------------+-------------------------+
-   | **Find Niggli cell** | T/F           | Whether to find the     |
-   |                      |               | Niggli primitive cell   |
-   +----------------------+---------------+-------------------------+
-   | **Max Cell dim.**    | Å             | Maximum length of *any* |
-   |                      |               | lattice vector          |
-   +----------------------+---------------+-------------------------+
-   | **Q Vertices**       | integer       | Number of reciprocal    |
-   |                      |               | space directions to     |
-   |                      |               | search for lattice      |
-   |                      |               | vector                  |
-   +----------------------+---------------+-------------------------+
-   | **Subdivisions**     | integer       | Number of reciprocal    |
-   |                      |               | space bins for Fourier  |
-   |                      |               | transform               |
-   +----------------------+---------------+-------------------------+
-   | **Unit Cells**       | integer       | Maximum number of unit  |
-   |                      |               | cells to find           |
-   +----------------------+---------------+-------------------------+
-   | **Min Volume**       | Å\ :math:`^3` | Minimum unit cell       |
-   |                      |               | volume                  |
-   +----------------------+---------------+-------------------------+
-   | **Indexing Tol.**    |               |                         |
-   +----------------------+---------------+-------------------------+
-   | **Frequency Tol.**   | 0.0 - 1.0     | Minimum fraction of     |
-   |                      |               | amplitude of the zeroth |
-   |                      |               | Fourier frequency to    |
-   |                      |               | accept as a candidate   |
-   |                      |               | lattice vector          |
-   +----------------------+---------------+-------------------------+
+   * - Parameter
+     - Unit
+     - Description
+   * - Image range
+     - frames
+     - Choose a limited (contiguous) subset of images over which to index
+   * - Resolution (d) range
+     - Å
+     - Peaks with q-vector outside this range will not be used in indexing
+   * - Strength range
+     -
+     - Peaks with strengths outside this range will not be used in indexing
+   * - Gruber tolerance
+     -
+     -
+   * - Niggli tolerance
+     -
+     -
+   * - Find Niggli cell
+     - T/F
+     - Whether to find the Niggli primitive cell
+   * - Max. cell dimension
+     - Å
+     - Maximum length of *any* cell vector
+   * - Num. Q-space trial vectors
+     -
+     - Number of reciprocal space directions to search for lattice vector
+   * - Num. FFT histogram bins
+     -
+     - Number of reciprocal space bins for Fourier transform
+   * - Number of solutions
+     -
+     - Number of trial lattice vectors with which to construct triples
+   * - Minimum volume
+     - :math:`Å^3`
+     - Minimum unit cell volume
+   * - Indexing tolerance
+     -
+     - Maximum difference between floating point :math:`hkl` and integer
+       :math:`hkl`
+   * - Frequency tolerance
+     - 0.0 - 1.0
+     - Minimum fraction of amplitude of zeroth Fourier frequency to accept as
+       candidate lattice vector
 
 The FFT indexing method can be difficult to use correctly because there
 is no systematic method for reaching the correct solution, and there are
@@ -629,9 +612,60 @@ rotation angle). The shape model is intended to define the shape of peaks which
 do not have strong intensity regions on the detector image, and whose shape
 (covariance matrix) is unknown, even though the position of the centre of the
 peak is known. A shape model is constructed by adding the shapes of *strong*
-peaks from a peak collection to a "library"; this model can be used to predict
+peaks from a peak collection to a "shape model"; this model can be used to predict
 the shape of the peak with its centre at given coordinates by taking the mean of
 the covariance matrix of the neighbouring peaks, within a cutoff.
+
+.. list-table:: Shape model parameters
+   :widths: 20, 10, 20
+   :header-rows: 1
+   :align: left
+
+   * - Parameter
+     - Unit
+     - Description
+   * - Histogram bins x
+     -
+     - Number of bins to sample peak pixels in detector x direction
+   * - Histogram bins y
+     -
+     - Number of bins to sample peak pixels in detector y direction
+   * - Histogram bins frames
+     -
+     - Number of bins to sample peak pixels in detector frame (rotation) direction
+   * - Subdivisions
+     -
+     - Number of sampling subdivisions along each axis, per pixel
+   * - Kabsch coordinates
+     - T/F
+     - Use Kabsch coordinate system to undo effects of detector geometry on profiles
+   * - Beam divergence :math:`\sigma`
+     -
+     - Peak variance due to beam divergence in Kabsch model (:math:`\sigma_D`)
+   * - Mosaicity :math:`\sigma`
+     -
+     - Peak variance due to crystal mosaicity in Kabsch model (:math:`\sigma_M`)
+   * - Minimum :math:`I/\sigma`
+     -
+     - Minimum strength of peak to use in shape model
+   * - Resolution (d) range
+     - Å
+     - Only include peaks in this resolution range in the model
+   * - Integration region type
+     -
+     -
+   * - Show single integration region
+     -
+     -
+   * - Peak end
+     -
+     -
+   * - Background begin
+     -
+     -
+   * - Background end
+     -
+     -
 
    +------------------------+----------------+-------------------------+
    | **Parameters**         | Unit           | Description             |
