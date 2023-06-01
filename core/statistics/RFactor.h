@@ -35,18 +35,18 @@ class RFactor : public IMergedPeakStatistic {
     }
     ~RFactor() { }
 
-    void calculate(MergedData* data);
+    void calculate(MergedData* data) override;
 
-    double Rmerge() { return _Rmerge; }
-    double Rmeas() { return _Rmeas; }
-    double Rpim() { return _Rpim; }
+    double Rmerge() const { return _Rmerge; }
+    double Rmeas() const { return _Rmeas; }
+    double Rpim() const { return _Rpim; }
 
     //! Expected value of Rmerge, based on error estimates
-    double expectedRmerge() { return _expectedRmerge; }
+    double expectedRmerge() const { return _expectedRmerge; }
     //! Expected Rmeas, based on error estimates
-    double expectedRmeas() { return _expectedRmeas; }
+    double expectedRmeas() const { return _expectedRmeas; }
     //! Expected Rpim, based on error estimates
-    double expectedRpim() { return _expectedRpim; }
+    double expectedRpim() const { return _expectedRpim; }
 
  private:
     double _Rmerge, _Rmeas, _Rpim;

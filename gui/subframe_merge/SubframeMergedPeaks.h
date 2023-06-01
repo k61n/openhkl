@@ -98,10 +98,14 @@ class SubframeMergedPeaks : public QWidget {
     //! Do a single batch refinement to get one unit cell
     ohkl::sptrUnitCell singleBatchRefine();
 
-    //! The merged peak list
-    ohkl::MergedData* _merged_data;
-    //! Merged data per resolution shell
-    std::vector<ohkl::MergedData*> _merged_data_per_shell;
+    //! The merged peak list from pixel sum integration
+    ohkl::MergedData* _sum_merged_data;
+    //! Merged data per resolution shell from pixel sum integration
+    std::vector<ohkl::MergedData*> _sum_merged_data_per_shell;
+    //! The merged peak list from profile integration
+    ohkl::MergedData* _profile_merged_data;
+    //! Merged data per resolution shell from profile integration
+    std::vector<ohkl::MergedData*> _profile_merged_data_per_shell;
     //! The peak exporter
     ohkl::PeakExporter _exporter;
 

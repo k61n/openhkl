@@ -67,7 +67,6 @@ class PeakExporter {
 
  private:
     Intensity unmergedIntensity(const Peak3D* peak);
-    Intensity mergedIntensity(const MergedPeak& peak);
 
     std::map<ExportFormat, std::string> _export_fmt_strings;
     bool _sum_intensities; // use pixel sum intensities if true, otherwise profile

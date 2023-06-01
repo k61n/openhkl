@@ -37,8 +37,9 @@ class MergedData {
     //! this is not already part of the space group symmetry.
     MergedData(
         SpaceGroup space_group, std::vector<PeakCollection*> peak_collections, bool friedel,
-        int fmin = -1, int fmax = -1);
-    MergedData(SpaceGroup space_group, bool friedel, int fmin = -1, int fmax = -1);
+        bool sum_intensity, int fmin = -1, int fmax = -1);
+    MergedData(
+        SpaceGroup space_group, bool friedel, bool sum_intensity, int fmin = -1, int fmax = -1);
     //! Add a peak to the data set. It will be automatically merged correctly
     //! according to the space group symmetry.
     void addPeak(Peak3D* peak);
@@ -72,6 +73,7 @@ class MergedData {
     bool _friedel;
     MergedPeakSet _merged_peak_set;
     std::vector<PeakCollection*> _peak_collections;
+    bool _sum_intensity;
     double _d_min;
     double _d_max;
     int _frame_min;

@@ -492,7 +492,8 @@ void SubframeMergedPeaks::processMerge()
     setMergeParameters();
 
     if (!gSession->currentProject()->hasPeakCollection()) {
-        _merged_data = nullptr;
+        _sum_merged_data = nullptr;
+        _profile_merged_data = nullptr;
     } else {
         std::vector<ohkl::PeakCollection*> peak_collections;
         QString collection1 = _peak_combo_1->currentText();
@@ -508,8 +509,10 @@ void SubframeMergedPeaks::processMerge()
             merger->addPeakCollection(expt->getPeakCollection(collection2.toStdString()));
 
         merger->mergePeaks();
-        _merged_data = merger->getMergedData();
-        _merged_data_per_shell = merger->getMergedDataPerShell();
+        _sum_merged_data = merger->sumMergedData();
+        _sum_merged_data_per_shell = merger->sumMergedDataPerShell();
+        _profile_merged_data = merger->profileMergedData();
+        _profile_merged_data_per_shell = merger->profileMergedDataPerShell();
     }
     refreshTables();
     gGui->setReady(true);
@@ -527,7 +530,7 @@ void SubframeMergedPeaks::refreshDShellTable()
 {
     auto* expt = gSession->currentProject()->experiment();
     auto* merger = expt->peakMerger();
-    auto* merged_data = merger->getMergedData();
+    auto* merged_data = merger->sumMergedData();
 
     if (merged_data == nullptr)
         return;
@@ -595,26 +598,24 @@ void SubframeMergedPeaks::refreshMergedTable()
 {
     _merged_model->removeRows(0, _merged_model->rowCount());
 
-    if (_merged_data == nullptr)
+    if (_sum_merged_data == nullptr)
         return;
 
-    for (const ohkl::MergedPeak& peak : _merged_data->mergedPeakSet()) {
+    ohkl::MergedData* merged_data = _sum_merged_data;
+    if (_sum_profile_tab_widget->currentIndex() != 0)
+        merged_data = _profile_merged_data;
+
+    for (const ohkl::MergedPeak& peak : merged_data->mergedPeakSet()) {
+
         const auto hkl = peak.index();
 
         const int h = hkl[0];
         const int k = hkl[1];
         const int l = hkl[2];
 
-        ohkl::Intensity I;
-        bool sum_intensity = true;
-        if (_sum_profile_tab_widget->currentIndex() == 0) {
-            I = peak.sumIntensity();
-        } else {
-            I = peak.profileIntensity();
-            sum_intensity = false;
-        }
-        const double chi2 = peak.chi2(sum_intensity);
-        const double p = peak.chi2(sum_intensity);
+        const ohkl::Intensity I = peak.intensity();
+        const double chi2 = peak.chi2();
+        const double p = peak.chi2();
 
         const double intensity = I.value();
         const double sigma = I.sigma();
@@ -638,10 +639,17 @@ void SubframeMergedPeaks::refreshUnmergedTable()
 {
     _unmerged_model->removeRows(0, _unmerged_model->rowCount());
 
-    if (_merged_data == nullptr)
+    if (_sum_merged_data == nullptr)
         return;
 
-    for (const ohkl::MergedPeak& peak : _merged_data->mergedPeakSet()) {
+    ohkl::MergedData* merged_data = _sum_merged_data;
+    bool sum_intensity = true;
+    if (_sum_profile_tab_widget->currentIndex() != 0) {
+        merged_data = _profile_merged_data;
+        sum_intensity = false;
+    }
+
+    for (const ohkl::MergedPeak& peak : merged_data->mergedPeakSet()) {
         for (auto unmerged_peak : peak.peaks()) {
             const ohkl::UnitCell& cell = *(unmerged_peak->unitCell());
             const ohkl::ReciprocalVector& q = unmerged_peak->q();
@@ -654,7 +662,7 @@ void SubframeMergedPeaks::refreshUnmergedTable()
 
             const Eigen::Vector3d& c = unmerged_peak->shape().center();
             ohkl::Intensity I;
-            if (_sum_profile_tab_widget->currentIndex() == 0)
+            if (sum_intensity)
                 I = unmerged_peak->correctedSumIntensity();
             else
                 I = unmerged_peak->correctedProfileIntensity();
@@ -681,10 +689,10 @@ void SubframeMergedPeaks::refreshGraph(int column)
 {
     _statistics_plot->clearGraphs();
 
-    if (_merged_data == nullptr)
+    if (_sum_merged_data == nullptr)
         return;
 
-    if (_merged_data->totalSize() == 0)
+    if (_sum_merged_data->totalSize() == 0)
         return;
 
     int nshells = _sum_model->rowCount() - 1;
@@ -810,9 +818,13 @@ void SubframeMergedPeaks::savePeaks(bool merged)
     else
         scale = _intensity_rescale_unmerged->value();
 
+    ohkl::MergedData* merged_data = merger->sumMergedData();
+    if (_sum_profile_tab_widget->currentIndex() != 0)
+        merged_data = merger->profileMergedData();
+
     std::string comment = "";
     bool success = _exporter.exportPeaks(
-        fmt, filename.toStdString(), merger->getMergedData(), data, cell, merged, scale, comment);
+        fmt, filename.toStdString(), merged_data, data, cell, merged, scale, comment);
     if (!success)
         QMessageBox::critical(this, "Error", "Peak export unsuccessful");
 

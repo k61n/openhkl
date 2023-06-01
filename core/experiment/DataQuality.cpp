@@ -36,7 +36,7 @@ void DataQuality::computeQuality(MergedData& merged_peaks, bool sum_intensities)
 
     ohkl::RFactor rfactor(sum_intensities);
     rfactor.calculate(&merged_peaks);
-    ohkl::CC cc(sum_intensities);
+    ohkl::CC cc;
     cc.calculate(&merged_peaks);
     Rmerge = rfactor.Rmerge();
     expectedRmerge = rfactor.expectedRmerge();

@@ -31,7 +31,7 @@ class MergedPeak {
     //! input peaks. The parameter \p friedel specifies whether to also include
     //! the Friedel relation \f$(h,k,l)\mapsto(-h,-k,-l)\f$, if this is not
     //! already part of the space group symmetry.
-    MergedPeak(const SpaceGroup& grp, bool friedel = false);
+    MergedPeak(const SpaceGroup& grp, bool sum_intensity, bool friedel = false);
 
     //! Add a peak to the merged peak.
     MergeFlag addPeak(Peak3D* peak);
@@ -39,20 +39,17 @@ class MergedPeak {
     //! Returns a representative Miller index of the peak.
     MillerIndex index() const;
 
-    //! Returns the merged pixel sum intensity of the peak.
-    Intensity sumIntensity() const;
-
-    //! Returns the merged profile intensity of the peak.
-    Intensity profileIntensity() const;
+    //! Returns the merged intensity of the peak.
+    Intensity intensity() const;
 
     //! Returns the redundancy (number of symmetry-equivalent observations) of the merged peak.
     size_t redundancy() const;
 
     //! Compute the chi-squared statistic of a merged peak.
-    double chi2(bool sum_intensities) const;
+    double chi2() const;
 
     //! Compute the p-value of the chi-squared statistic of the merged peak.
-    double pValue(bool sum_intensities) const;
+    double pValue() const;
 
     //! Returns vector of peaks used to compute the merged peak.
     std::vector<Peak3D*> peaks() const;
@@ -66,10 +63,10 @@ class MergedPeak {
     void update();
 
     MillerIndex _hkl;
-    Intensity _sumIntensity;
-    Intensity _profileIntensity;
+    Intensity _intensity;
     std::vector<Peak3D*> _peaks;
     SpaceGroup _grp;
+    bool _sum_intensity;
     bool _friedel;
 };
 

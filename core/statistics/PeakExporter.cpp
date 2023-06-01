@@ -81,8 +81,8 @@ bool PeakExporter::saveToShelXMerged(const std::string& filename, MergedData* me
     std::fstream file(filename, std::ios::out);
     for (const MergedPeak& peak : mergedData->mergedPeakSet()) {
         const auto hkl = peak.index();
-        const double intensity = mergedIntensity(peak).value();
-        const double sigma = mergedIntensity(peak).sigma();
+        const double intensity = peak.intensity().value();
+        const double sigma = peak.intensity().sigma();
 
         file << std::fixed << std::setw(4) << hkl[0] << std::fixed << std::setw(4) << hkl[1]
              << std::fixed << std::setw(4) << hkl[2] << std::fixed << std::setw(14)
@@ -151,8 +151,8 @@ bool PeakExporter::saveToFullProfMerged(const std::string& filename, MergedData*
 
     for (const MergedPeak& peak : mergedData->mergedPeakSet()) {
         const auto hkl = peak.index();
-        const double intensity = mergedIntensity(peak).value();
-        const double sigma = mergedIntensity(peak).sigma();
+        const double intensity = peak.intensity().value();
+        const double sigma = peak.intensity().sigma();
 
         file << std::fixed << std::setw(4) << hkl[0] << std::fixed << std::setw(4) << hkl[1]
              << std::fixed << std::setw(4) << hkl[2] << std::fixed << std::setw(14)
@@ -245,8 +245,8 @@ bool PeakExporter::saveToSCAMerged(
 
     for (const MergedPeak& peak : mergedData->mergedPeakSet()) {
         const auto hkl = peak.index();
-        const double intensity = mergedIntensity(peak).value() * scale;
-        const double sigma_intensity = mergedIntensity(peak).sigma() * scale;
+        const double intensity = peak.intensity().value() * scale;
+        const double sigma_intensity = peak.intensity().sigma() * scale;
 
         file << std::fixed << std::setw(4) << hkl(0) << std::fixed << std::setw(4) << hkl(1)
              << std::fixed << std::setw(4) << hkl(2) << " " << std::setprecision(1);
@@ -323,14 +323,6 @@ Intensity PeakExporter::unmergedIntensity(const Peak3D* peak)
         return peak->correctedSumIntensity();
     else
         return peak->correctedProfileIntensity();
-}
-
-Intensity PeakExporter::mergedIntensity(const MergedPeak& peak)
-{
-    if (_sum_intensities)
-        return peak.sumIntensity();
-    else
-        return peak.profileIntensity();
 }
 
 } // namespace ohkl

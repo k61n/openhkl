@@ -29,15 +29,20 @@
 
 namespace ohkl {
 
-MergedPeak::MergedPeak(const SpaceGroup& grp, bool friedel)
-    : _sumIntensity(0.0, 0.0), _profileIntensity(0.0, 0.0), _grp(grp), _friedel(friedel)
+MergedPeak::MergedPeak(const SpaceGroup& grp, bool sum_intensity, bool friedel)
+    : _intensity(0.0, 0.0), _grp(grp), _sum_intensity(sum_intensity), _friedel(friedel)
 {
 }
 
 MergeFlag MergedPeak::addPeak(Peak3D* peak)
 {
-    if (!peak->enabled())
-        return MergeFlag::Invalid;
+    if (_sum_intensity) {
+        if (peak->sumRejectionFlag() != RejectionFlag::NotRejected)
+            return MergeFlag::Invalid;
+    } else {
+        if (peak->profileRejectionFlag() != RejectionFlag::NotRejected)
+            return MergeFlag::Invalid;
+    }
 
     const UnitCell* cell = peak->unitCell();
     const ReciprocalVector q = peak->q();
@@ -52,8 +57,10 @@ MergeFlag MergedPeak::addPeak(Peak3D* peak)
     }
     // add peak to list
     _peaks.push_back(peak);
-    _sumIntensity += peak->correctedSumIntensity();
-    _profileIntensity += peak->correctedProfileIntensity();
+    if (_sum_intensity)
+        _intensity += peak->correctedSumIntensity();
+    else
+        _intensity += peak->correctedProfileIntensity();
     return MergeFlag::Added;
 }
 
@@ -62,14 +69,9 @@ MillerIndex MergedPeak::index() const
     return _hkl;
 }
 
-Intensity MergedPeak::sumIntensity() const
+Intensity MergedPeak::intensity() const
 {
-    return _sumIntensity / _peaks.size();
-}
-
-Intensity MergedPeak::profileIntensity() const
-{
-    return _profileIntensity / _peaks.size();
+    return _intensity / _peaks.size();
 }
 
 size_t MergedPeak::redundancy() const
@@ -158,13 +160,9 @@ bool operator<(const MergedPeak& p, const MergedPeak& q)
 //! method computes the statistic \f[ \chi^2 = \frac{\sum_i
 //! (I_i-I_{\mathrm{merge}})^2}{N \sigma_{\mathrm{merge}}^2}, \f] which is
 //! approximately a chi-squared statistic with \f$N-1\f$ degrees of freedom.
-double MergedPeak::chi2(bool sum_intensities) const
+double MergedPeak::chi2() const
 {
-    double I_merge;
-    if (sum_intensities)
-        I_merge = sumIntensity().value();
-    else
-        I_merge = profileIntensity().value();
+    double I_merge = intensity().value();
 
     if (redundancy() < 1.99) // if there is no redundancy, we cannot compute chi2
         return 0;
@@ -172,7 +170,7 @@ double MergedPeak::chi2(bool sum_intensities) const
     double chi_sq = 0;
     for (const auto& peak : _peaks) {
         Intensity I;
-        if (sum_intensities)
+        if (_sum_intensity)
             I = peak->correctedSumIntensity();
         else
             I = peak->correctedProfileIntensity();
@@ -188,7 +186,7 @@ double MergedPeak::chi2(bool sum_intensities) const
 //! indicates that the computed variance is larger than the expected variance,
 //! indicating the possibility of a systematic error either in the integrated
 //! intensities or in the computed error.
-double MergedPeak::pValue(bool sum_intensities) const
+double MergedPeak::pValue() const
 {
     // todo: k or k-1?? need to check
     const double k = redundancy() - 1.0;
@@ -197,7 +195,7 @@ double MergedPeak::pValue(bool sum_intensities) const
     if (k < 0.9)
         return 0;
 
-    const double x = chi2(sum_intensities);
+    const double x = chi2();
     return gsl_cdf_chisq_P(x, k);
 }
 
