@@ -165,19 +165,19 @@ std::vector<double> PeakMerger::strategyMerge(double fmin, double fmax, std::siz
 void PeakMerger::computeQuality()
 {
     ShellQuality quality;
-    _sum_overall_quality.shells.clear();
-    _sum_shell_qualities.shells.clear();
-    _profile_overall_quality.shells.clear();
-    _profile_shell_qualities.shells.clear();
+    _sum_overall_quality.clear();
+    _sum_shell_qualities.clear();
+    _profile_overall_quality.clear();
+    _profile_shell_qualities.clear();
     // R-factors, CC, completeness per shell
     for (std::size_t idx = 0; idx < _params->n_shells; ++idx) {
         quality.computeQuality(
             *_sum_merged_data_per_shell[idx], _sum_merged_data_per_shell[idx]->dMin(),
-            _sum_merged_data_per_shell[idx]->dMax());
+            _sum_merged_data_per_shell[idx]->dMax(), true);
         _sum_shell_qualities.addShell(quality);
         quality.computeQuality(
             *_profile_merged_data_per_shell[idx], _profile_merged_data_per_shell[idx]->dMin(),
-            _profile_merged_data_per_shell[idx]->dMax());
+            _profile_merged_data_per_shell[idx]->dMax(), false);
         _profile_shell_qualities.addShell(quality);
     }
     // Overall R-factors, CC, completeness

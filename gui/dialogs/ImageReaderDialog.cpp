@@ -26,7 +26,6 @@
 #include <QGridLayout>
 #include <QLabel>
 #include <QMessageBox>
-#include <iostream>
 #include <stdexcept>
 
 ImageReaderDialog::ImageReaderDialog(

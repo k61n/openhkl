@@ -47,9 +47,6 @@
 
 #include <fstream>
 #include <iomanip>
-#include <iostream>
-#include <qtabwidget.h>
-#include <qwidget.h>
 
 #include "gui/dialogs/PeakExportDialog.h"
 

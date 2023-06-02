@@ -44,7 +44,7 @@ struct DataQuality {
     double Completeness; //!< # valid predicted peaks / # predicted peaks
     bool sum_statistics; //!< Use sum (true) or profile (false) integrated intensities
 
-    void computeQuality(MergedData& merged_peaks, bool sum_intensities = true);
+    void computeQuality(MergedData& merged_peaks, bool sum_intensities);
     std::string toString() const;
     void log() const;
 };
