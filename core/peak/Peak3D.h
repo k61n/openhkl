@@ -199,7 +199,7 @@ class Peak3D {
     //! Set the reason for this peak being disabled
     void setRejectionFlag(RejectionFlag flag, bool overwrite = false);
     //! Set the reason for rejection during integration
-    void setIntegrationFlag(RejectionFlag flag, IntegratorType integrator, bool overwrite = false);
+    void setIntegrationFlag(const RejectionFlag& flag, const IntegratorType& integrator, bool overwrite = false);
     //! Return the rejection flag only
     RejectionFlag getRejectionFlag() const { return _rejection_flag; };
     //! Return the sum integration flag only
@@ -213,7 +213,7 @@ class Peak3D {
     //! Return the sum integration flag, or rejection flag if the former is not set
     RejectionFlag profileRejectionFlag() const;
     //! Check if any rejection flag matches argument
-    bool isRejectedFor(RejectionFlag flag) const;
+    bool isRejectedFor(const RejectionFlag& flag) const;
     //! Return a string explaining the rejection
     std::string rejectionString() const;
     //! Return a string representation of the peak

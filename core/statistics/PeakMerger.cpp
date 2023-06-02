@@ -85,21 +85,18 @@ void PeakMerger::mergePeaks()
 
     _sum_merged_data->setDRange(_params->d_min, _params->d_max);
     _profile_merged_data->setDRange(_params->d_min, _params->d_max);
-    ResolutionShell sum_resolution_shell{_params->d_min, _params->d_max, _params->n_shells};
-    ResolutionShell profile_resolution_shell{_params->d_min, _params->d_max, _params->n_shells};
+    ResolutionShell resolution_shell{_params->d_min, _params->d_max, _params->n_shells};
 
     // Sort the peaks by resolution shell (concentric shells in d)
     for (PeakCollection* collection : _peak_collections) {
-        for (Peak3D* peak : collection->getPeakList()) {
-            sum_resolution_shell.addPeak(peak);
-            profile_resolution_shell.addPeak(peak);
-        }
+        for (Peak3D* peak : collection->getPeakList())
+            resolution_shell.addPeak(peak);
     }
 
     // Generate merged peak collections per resolution shell
     for (int i = _params->n_shells - 1; i >= 0; --i) {
-        double d_lower = sum_resolution_shell.shell(i).dmin;
-        double d_upper = sum_resolution_shell.shell(i).dmax;
+        double d_lower = resolution_shell.shell(i).dmin;
+        double d_upper = resolution_shell.shell(i).dmax;
 
         std::unique_ptr<MergedData> sum_merged_data_per_shell = std::make_unique<MergedData>(
             _space_group, _params->friedel, true, _params->frame_min, _params->frame_max);
@@ -114,11 +111,10 @@ void PeakMerger::mergePeaks()
         sum_merged_data_per_shell->setDRange(d_lower, d_upper);
         profile_merged_data_per_shell->setDRange(d_lower, d_upper);
 
-        for (auto peak : sum_resolution_shell.shell(i).peaks)
+        for (auto peak : resolution_shell.shell(i).peaks) {
             sum_merged_data_per_shell->addPeak(peak);
-
-        for (auto peak : profile_resolution_shell.shell(i).peaks)
             profile_merged_data_per_shell->addPeak(peak);
+        }
 
         _sum_merged_data_per_shell.push_back(std::move(sum_merged_data_per_shell));
         _profile_merged_data_per_shell.push_back(std::move(profile_merged_data_per_shell));

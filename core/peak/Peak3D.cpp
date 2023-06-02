@@ -408,7 +408,7 @@ void Peak3D::setRejectionFlag(RejectionFlag flag, bool overwrite /* = false */)
 }
 
 void Peak3D::setIntegrationFlag(
-    RejectionFlag flag, IntegratorType integrator, bool overwrite /* = false */)
+    const RejectionFlag& flag, const IntegratorType& integrator, bool overwrite /* = false */)
 {
     if (integrator == IntegratorType::PixelSum) {
         if (_sum_integration_flag == RejectionFlag::NotRejected) {
@@ -450,7 +450,7 @@ RejectionFlag Peak3D::profileRejectionFlag() const
     return _profile_integration_flag;
 }
 
-bool Peak3D::isRejectedFor(RejectionFlag flag) const
+bool Peak3D::isRejectedFor(const RejectionFlag& flag) const
 {
     if (_rejection_flag == flag) return true;
     if (_sum_integration_flag == flag) return true;
