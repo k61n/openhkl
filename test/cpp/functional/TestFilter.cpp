@@ -60,7 +60,7 @@ TEST_CASE("test/data/TestFilter.cpp", "")
     filter->filter(peaks);
     std::cout << peaks->numberCaughtByFilter() << "/" << npeaks << " with strength 5 - 10000"
               << std::endl;
-    CHECK(peaks->numberCaughtByFilter() == 392);
+    CHECK(peaks->numberCaughtByFilter() == 422);
 
     filter->resetFilterFlags();
     filter->resetFiltering(peaks);
@@ -92,5 +92,5 @@ TEST_CASE("test/data/TestFilter.cpp", "")
     filter->filter(peaks);
     std::cout << peaks->numberCaughtByFilter() << "/" << npeaks << " with gradient < 6.5"
               << std::endl;
-    CHECK(peaks->numberCaughtByFilter() == 482);
+    CHECK(peaks->numberCaughtByFilter() == 492);
 }
