@@ -19,7 +19,7 @@
 
 namespace ohkl {
 
-CC::CC() : _CChalf(0), _CCstar(0) { };
+CC::CC(bool sum_intensity) : _CChalf(0), _CCstar(0), _sum_intensity(sum_intensity) { };
 
 void CC::calculate(MergedData* data)
 {
@@ -40,7 +40,7 @@ void CC::calculate(std::vector<MergedPeak> peaks)
         if (peak.redundancy() < 2)
             continue;
 
-        auto split = peak.split();
+        auto split = peak.split(_sum_intensity);
         MergedPeak& p1 = split.first;
         MergedPeak& p2 = split.second;
 

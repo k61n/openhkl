@@ -178,7 +178,7 @@ class Peak3D {
         const std::vector<Intensity>& rockingCurve, const Intensity& sumBkg,
         const Intensity& profBkg, const Intensity& meanBkgGradient, const Intensity& sumInt,
         const Intensity& profInt, double peakEnd, double bkgBegin, double bkgEnd,
-        RegionType regionType);
+        const RegionType& regionType);
     //! Return the q vector of the peak, transformed into sample coordinates.
     ReciprocalVector q() const;
     //! Return q vector in cases where we do *not* want to interpolate the InstrumentState
@@ -197,7 +197,7 @@ class Peak3D {
     //! Return the integration region type
     RegionType regionType() { return _regionType; };
     //! Set the reason for this peak being disabled
-    void setRejectionFlag(RejectionFlag flag, bool overwrite = false);
+    void setRejectionFlag(const RejectionFlag& flag, bool overwrite = false);
     //! Set the reason for rejection during integration
     void setIntegrationFlag(const RejectionFlag& flag, const IntegratorType& integrator, bool overwrite = false);
     //! Return the rejection flag only

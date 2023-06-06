@@ -234,7 +234,7 @@ void Peak3D::reject(RejectionFlag flag)
 void Peak3D::updateIntegration(
     const std::vector<Intensity>& rockingCurve, const Intensity& sumBkg, const Intensity& profBkg,
     const Intensity& meanBkgGradient, const Intensity& sumInt, const Intensity& profInt,
-    double peakEnd, double bkgBegin, double bkgEnd, RegionType regionType)
+    double peakEnd, double bkgBegin, double bkgEnd, const RegionType& regionType)
 {
     _rockingCurve = rockingCurve;
     _meanBkgGradient = meanBkgGradient;
@@ -397,7 +397,7 @@ void Peak3D::setMillerIndices()
     }
 }
 
-void Peak3D::setRejectionFlag(RejectionFlag flag, bool overwrite /* = false */)
+void Peak3D::setRejectionFlag(const RejectionFlag& flag, bool overwrite /* = false */)
 {
     if (_rejection_flag == RejectionFlag::NotRejected) {
         _rejection_flag = flag;

@@ -21,7 +21,6 @@
 #include "core/statistics/PeakMerger.h"
 
 #include <functional>
-#include <iostream>
 #include <regex>
 #include <string.h>
 #include <string>

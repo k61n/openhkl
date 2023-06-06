@@ -190,15 +190,18 @@ void IIntegrator::integrate(
                 result = current_peak->advanceFrame(current_frame, mask, idx);
 
             // Skip strong peaks during profile integration
-            if (profile_integration && _params.use_max_strength) {
-                if (peak->sumIntensity().strength() > _params.max_strength) {
+            if (profile_integration && _params.use_max_strength &&
+                peak->sumIntensity().strength() > _params.max_strength) {
+                if (peak->sumRejectionFlag() == RejectionFlag::NotRejected) {
                     peak->updateIntegration(
                         _rockingCurve, peak->sumBackground(), peak->sumBackground(),
                         peak->meanBkgGradient(), peak->sumIntensity(), peak->sumIntensity(),
                          _params.peak_end, _params.bkg_begin, _params.bkg_end, _params.region_type);
-                    result = false;
-                    integrated[peak] = true;
+                } else { // make sure we reject the peak if the sum intensity is not valid
+                    peak->setIntegrationFlag(peak->sumRejectionFlag(), IntegratorType::Profile3D);
                 }
+                result = false;
+                integrated[peak] = true;
             }
 
             // this allows for partials at end of data

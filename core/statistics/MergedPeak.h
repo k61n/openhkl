@@ -55,7 +55,7 @@ class MergedPeak {
     std::vector<Peak3D*> peaks() const;
 
     //! split the merged peak randomly into two, for calculation of CC
-    std::pair<MergedPeak, MergedPeak> split() const;
+    std::pair<MergedPeak, MergedPeak> split(bool sum_intensity) const;
 
  private:
     //! Update the hkl that represents the set of equivalences.

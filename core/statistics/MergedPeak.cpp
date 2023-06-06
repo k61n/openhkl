@@ -115,7 +115,7 @@ std::vector<Peak3D*> MergedPeak::peaks() const
     return _peaks;
 }
 
-std::pair<MergedPeak, MergedPeak> MergedPeak::split() const
+std::pair<MergedPeak, MergedPeak> MergedPeak::split(bool sum_intensity) const
 {
     // make copy of peak list
     std::vector<size_t> random_idx(_peaks.size());
@@ -128,7 +128,7 @@ std::pair<MergedPeak, MergedPeak> MergedPeak::split() const
 
     unsigned int parity = Random::intRange() % 2;
 
-    MergedPeak p1(_grp, _friedel), p2(_grp, _friedel);
+    MergedPeak p1(_grp, sum_intensity, _friedel), p2(_grp, sum_intensity, _friedel);
 
     for (unsigned int i = 0; i < _peaks.size(); ++i) {
         auto idx = random_idx[i];
