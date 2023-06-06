@@ -227,7 +227,7 @@ void PeakExportDialog::processMerge()
 
     _exporter.exportPeaks(
         fmt, filename.toStdString(), merged_data, _data_combo->currentData(), cell,
-        _rb_merged->isChecked(), _scale_factor->value(), comment);
+        _rb_merged->isChecked(), _rb_sum->isChecked(), _scale_factor->value(), comment);
     accept();
 }
 

@@ -297,8 +297,9 @@ bool PeakExporter::saveToSCA(
 
 bool PeakExporter::exportPeaks(
     ExportFormat fmt, const std::string& filename, MergedData* merged_data, sptrDataSet data,
-    sptrUnitCell cell, bool merged, double scale, std::string comment)
+    sptrUnitCell cell, bool merged, bool sum_intensity, double scale, std::string comment)
 {
+    _sum_intensities = sum_intensity;
     switch (fmt) {
         case ExportFormat::Mtz: {
             MtzExporter exporter(merged_data, data, cell, merged, _sum_intensities, comment);
