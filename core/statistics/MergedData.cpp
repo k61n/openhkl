@@ -22,8 +22,8 @@
 namespace ohkl {
 
 MergedData::MergedData(
-    SpaceGroup space_group, std::vector<PeakCollection*> peak_collections, bool friedel, bool sum_intensity,
-    int fmin, int fmax)
+    SpaceGroup space_group, std::vector<PeakCollection*> peak_collections,
+    bool friedel, bool sum_intensity, int fmin, int fmax)
     : _group(space_group)
     , _friedel(friedel)
     , _merged_peak_set()

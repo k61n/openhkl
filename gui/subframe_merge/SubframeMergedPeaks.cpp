@@ -692,7 +692,7 @@ void SubframeMergedPeaks::updateMergedModel(QStandardItemModel* model, ohkl::Mer
 void SubframeMergedPeaks::refreshUnmergedTable()
 {
     _sum_unmerged_model->removeRows(0, _sum_unmerged_model->rowCount());
-    _profile_unmerged_model->removeRows(0, _sum_unmerged_model->rowCount());
+    _profile_unmerged_model->removeRows(0, _profile_unmerged_model->rowCount());
 
     if (_sum_merged_data == nullptr)
         return;
