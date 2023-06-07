@@ -120,9 +120,9 @@ void DataResolution::log() const
 {
     std::ostringstream oss;
     if (shells[0].sum_statistics)
-        oss << "Sum integrated";
+        oss << "Sum integrated ";
     else
-        oss << "Profile integrated";
+        oss << "Profile integrated ";
     oss << "metrics (per resolution shell):" << std::endl;
     oss << std::setw(8) << "dmin" << std::setw(8) << "dmax" << std::setw(8) << "Rmea"
         << std::setw(8) << "eRmea" << std::setw(8) << "Rmer" << std::setw(8) << "eRmer"

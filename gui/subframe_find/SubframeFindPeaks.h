@@ -28,6 +28,7 @@
 #include <QTableWidget>
 #include <QVBoxLayout>
 #include <QWidget>
+#include <qcombobox.h>
 
 class DataComboBox;
 class DetectorScene;
@@ -128,9 +129,10 @@ class SubframeFindPeaks : public QWidget {
     PeakViewWidget* _peak_view_widget;
     QCheckBox* _threshold_check;
 
-    SafeDoubleSpinBox* _peak_area;
-    SafeDoubleSpinBox* _bkg_lower;
-    SafeDoubleSpinBox* _bkg_upper;
+    QComboBox* _integration_region_type;
+    SafeDoubleSpinBox* _peak_end;
+    SafeDoubleSpinBox* _bkg_begin;
+    SafeDoubleSpinBox* _bkg_end;
     QCheckBox* _gradient_check;
     QCheckBox* _fft_gradient_check;
     QComboBox* _gradient_kernel;

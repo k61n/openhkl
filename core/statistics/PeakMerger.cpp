@@ -56,8 +56,10 @@ void PeakMerger::setSpaceGroup(const SpaceGroup& group)
 void PeakMerger::reset()
 {
     _peak_collections.clear();
-    _merged_data.reset();
-    _merged_data_per_shell.clear();
+    _sum_merged_data.reset();
+    _sum_merged_data_per_shell.clear();
+    _profile_merged_data.reset();
+    _profile_merged_data_per_shell.clear();
     _sum_shell_qualities.clear();
     _sum_overall_quality.clear();
     _profile_shell_qualities.clear();
@@ -66,13 +68,23 @@ void PeakMerger::reset()
 
 void PeakMerger::mergePeaks()
 {
-    _merged_data.reset();
-    _merged_data_per_shell.clear();
     ohklLog(Level::Info, "PeakMerger::mergePeaks: parameters");
     _params->log(Level::Info);
-    _merged_data = std::make_unique<MergedData>(
-        _space_group, _peak_collections, _params->friedel, _params->frame_min, _params->frame_max);
-    _merged_data->setDRange(_params->d_min, _params->d_max);
+
+    _sum_merged_data.reset();
+    _sum_merged_data_per_shell.clear();
+    _profile_merged_data.reset();
+    _profile_merged_data_per_shell.clear();
+
+    _sum_merged_data = std::make_unique<MergedData>(
+        _space_group, _peak_collections, _params->friedel, true,
+        _params->frame_min, _params->frame_max);
+    _profile_merged_data = std::make_unique<MergedData>(
+        _space_group, _peak_collections, _params->friedel, false,
+        _params->frame_min, _params->frame_max);
+
+    _sum_merged_data->setDRange(_params->d_min, _params->d_max);
+    _profile_merged_data->setDRange(_params->d_min, _params->d_max);
     ResolutionShell resolution_shell{_params->d_min, _params->d_max, _params->n_shells};
 
     // Sort the peaks by resolution shell (concentric shells in d)
@@ -86,16 +98,26 @@ void PeakMerger::mergePeaks()
         double d_lower = resolution_shell.shell(i).dmin;
         double d_upper = resolution_shell.shell(i).dmax;
 
-        std::unique_ptr<MergedData> merged_data_per_shell = std::make_unique<MergedData>(
-            _space_group, _params->friedel, _params->frame_min, _params->frame_max);
-        for (PeakCollection* collection : _peak_collections)
-            merged_data_per_shell->addPeakCollection(collection);
-        merged_data_per_shell->setDRange(d_lower, d_upper);
+        std::unique_ptr<MergedData> sum_merged_data_per_shell = std::make_unique<MergedData>(
+            _space_group, _params->friedel, true, _params->frame_min, _params->frame_max);
 
-        for (auto peak : resolution_shell.shell(i).peaks)
-            merged_data_per_shell->addPeak(peak);
+        std::unique_ptr<MergedData> profile_merged_data_per_shell = std::make_unique<MergedData>(
+            _space_group, _params->friedel, false, _params->frame_min, _params->frame_max);
 
-        _merged_data_per_shell.push_back(std::move(merged_data_per_shell));
+        for (PeakCollection* collection : _peak_collections) {
+            sum_merged_data_per_shell->addPeakCollection(collection);
+            profile_merged_data_per_shell->addPeakCollection(collection);
+        }
+        sum_merged_data_per_shell->setDRange(d_lower, d_upper);
+        profile_merged_data_per_shell->setDRange(d_lower, d_upper);
+
+        for (auto peak : resolution_shell.shell(i).peaks) {
+            sum_merged_data_per_shell->addPeak(peak);
+            profile_merged_data_per_shell->addPeak(peak);
+        }
+
+        _sum_merged_data_per_shell.push_back(std::move(sum_merged_data_per_shell));
+        _profile_merged_data_per_shell.push_back(std::move(profile_merged_data_per_shell));
     }
 }
 
@@ -114,18 +136,18 @@ std::vector<double> PeakMerger::strategyMerge(double fmin, double fmax, std::siz
     }
 
     for (std::size_t idx = 0; idx < slices.nslices(); ++idx) {
-        _merged_data.reset();
-        _merged_data = std::make_unique<MergedData>(_space_group, _params->friedel);
-        _merged_data->setDRange(
+        _sum_merged_data.reset();
+        _sum_merged_data = std::make_unique<MergedData>(_space_group, _params->friedel, true);
+        _sum_merged_data->setDRange(
             _params->d_min, _params->d_max, _peak_collections[0]->data(),
             _peak_collections[0]->unitCell());
 
         // Sort the peaks by resolution shell (concentric shells in d)
         for (Peak3D* peak : slices.slice(idx).peaks)
-            _merged_data->addPeak(peak);
+            _sum_merged_data->addPeak(peak);
 
         ShellQuality quality;
-        quality.computeQuality(*_merged_data, _params->d_min, _params->d_max);
+        quality.computeQuality(*_sum_merged_data, _params->d_min, _params->d_max);
         completeness_per_slice.push_back(quality.Completeness);
         if (_handler) {
             double progress = 100.0 * static_cast<double>(idx) / static_cast<double>(nslices);
@@ -143,24 +165,25 @@ std::vector<double> PeakMerger::strategyMerge(double fmin, double fmax, std::siz
 void PeakMerger::computeQuality()
 {
     ShellQuality quality;
-    _sum_overall_quality.shells.clear();
-    _sum_shell_qualities.shells.clear();
-    _profile_overall_quality.shells.clear();
-    _profile_shell_qualities.shells.clear();
+    _sum_overall_quality.clear();
+    _sum_shell_qualities.clear();
+    _profile_overall_quality.clear();
+    _profile_shell_qualities.clear();
     // R-factors, CC, completeness per shell
-    for (auto&& merged_data : _merged_data_per_shell) {
+    for (std::size_t idx = 0; idx < _params->n_shells; ++idx) {
         quality.computeQuality(
-            *merged_data, merged_data->dMin(), merged_data->dMax(), true);
+            *_sum_merged_data_per_shell[idx], _sum_merged_data_per_shell[idx]->dMin(),
+            _sum_merged_data_per_shell[idx]->dMax(), true);
         _sum_shell_qualities.addShell(quality);
         quality.computeQuality(
-            *merged_data, merged_data->dMin(), merged_data->dMax(), false);
+            *_profile_merged_data_per_shell[idx], _profile_merged_data_per_shell[idx]->dMin(),
+            _profile_merged_data_per_shell[idx]->dMax(), false);
         _profile_shell_qualities.addShell(quality);
     }
     // Overall R-factors, CC, completeness
-    quality.computeQuality(*_merged_data, _params->d_min, _params->d_max, true);
+    quality.computeQuality(*_sum_merged_data, _params->d_min, _params->d_max, true);
     _sum_overall_quality.addShell(quality);
-    quality.computeQuality(
-        *_merged_data, _params->d_min, _params->d_max, false);
+    quality.computeQuality(*_profile_merged_data, _params->d_min, _params->d_max, false);
     _profile_overall_quality.addShell(quality);
 
     _sum_overall_quality.log();
@@ -174,15 +197,28 @@ MergeParameters* PeakMerger::parameters() const
     return _params.get();
 }
 
-MergedData* PeakMerger::getMergedData() const
+MergedData* PeakMerger::sumMergedData() const
 {
-    return _merged_data.get();
+    return _sum_merged_data.get();
 }
 
-std::vector<MergedData*> PeakMerger::getMergedDataPerShell() const
+std::vector<MergedData*> PeakMerger::sumMergedDataPerShell() const
 {
     std::vector<MergedData*> merged_data;
-    for (auto&& item : _merged_data_per_shell)
+    for (auto&& item : _sum_merged_data_per_shell)
+        merged_data.push_back(item.get());
+    return merged_data;
+}
+
+MergedData* PeakMerger::profileMergedData() const
+{
+    return _profile_merged_data.get();
+}
+
+std::vector<MergedData*> PeakMerger::profileMergedDataPerShell() const
+{
+    std::vector<MergedData*> merged_data;
+    for (auto&& item : _profile_merged_data_per_shell)
         merged_data.push_back(item.get());
     return merged_data;
 }

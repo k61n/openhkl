@@ -17,6 +17,7 @@
 
 #include "core/data/DataTypes.h"
 #include "core/experiment/DataQuality.h"
+#include "core/statistics/MergedData.h"
 #include "core/statistics/PeakExporter.h"
 #include "tables/crystal/UnitCell.h"
 
@@ -93,15 +94,24 @@ class SubframeMergedPeaks : public QWidget {
     //! Update the shell models
     void updateShellModel(
         QStandardItemModel* model, ohkl::DataResolution* resolution, ohkl::DataResolution* overall);
+    //! Update the merged moddels
+    void updateMergedModel(QStandardItemModel* model, ohkl::MergedData* merged_data);
+    //! Update the unmerged moddels
+    void updateUnmergedModel(
+        QStandardItemModel* model, ohkl::MergedData* merged_data, bool sum_intensity);
 
 
     //! Do a single batch refinement to get one unit cell
     ohkl::sptrUnitCell singleBatchRefine();
 
-    //! The merged peak list
-    ohkl::MergedData* _merged_data;
-    //! Merged data per resolution shell
-    std::vector<ohkl::MergedData*> _merged_data_per_shell;
+    //! The merged peak list from pixel sum integration
+    ohkl::MergedData* _sum_merged_data;
+    //! Merged data per resolution shell from pixel sum integration
+    std::vector<ohkl::MergedData*> _sum_merged_data_per_shell;
+    //! The merged peak list from profile integration
+    ohkl::MergedData* _profile_merged_data;
+    //! Merged data per resolution shell from profile integration
+    std::vector<ohkl::MergedData*> _profile_merged_data_per_shell;
     //! The peak exporter
     ohkl::PeakExporter _exporter;
 
@@ -114,17 +124,18 @@ class SubframeMergedPeaks : public QWidget {
     QWidget* _shell_tab;
     QWidget* _merged_tab;
     QWidget* _unmerged_tab;
-    QTabWidget* _sum_profile_tab_widget;
-    QWidget* _sum_tab;
-    QWidget* _profile_tab;
+    QTabWidget* _statistics_tab_widget;
+    QTabWidget* _merged_tab_widget;
+    QTabWidget* _unmerged_tab_widget;
+
 
     IntegratedPeakComboBox* _peak_combo_1;
     IntegratedPeakComboBox* _peak_combo_2;
 
     QTableView* _sum_shell_view;
     QTableView* _profile_shell_view;
-    QStandardItemModel* _sum_model;
-    QStandardItemModel* _profile_model;
+    QStandardItemModel* _sum_shell_model;
+    QStandardItemModel* _profile_shell_model;
     QDoubleSpinBox* _d_min;
     QDoubleSpinBox* _d_max;
     QSpinBox* _frame_min;
@@ -138,15 +149,19 @@ class SubframeMergedPeaks : public QWidget {
     QDoubleSpinBox* _intensity_rescale_unmerged;
     QPushButton* _save_shell;
 
-    QTableView* _merged_view;
+    QTableView* _sum_merged_view;
+    QTableView* _profile_merged_view;
     QComboBox* _merged_save_type;
     QPushButton* _save_merged;
-    QStandardItemModel* _merged_model;
+    QStandardItemModel* _sum_merged_model;
+    QStandardItemModel* _profile_merged_model;
 
-    QTableView* _unmerged_view;
+    QTableView* _sum_unmerged_view;
+    QTableView* _profile_unmerged_view;
     QComboBox* _unmerged_save_type;
     QPushButton* _save_unmerged;
-    QStandardItemModel* _unmerged_model;
+    QStandardItemModel* _sum_unmerged_model;
+    QStandardItemModel* _profile_unmerged_model;
 
     bool _frame_set;
 };

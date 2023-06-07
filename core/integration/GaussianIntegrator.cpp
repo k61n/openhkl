@@ -159,15 +159,15 @@ bool GaussianIntegrator::compute(
 
     // consistency check: center should still be in dataset!
     if (x0(0) < 0 || x0(0) >= peak->dataSet()->nCols()) {
-        peak->setIntegrationFlag(RejectionFlag::CentreOutOfBounds);
+        peak->setIntegrationFlag(RejectionFlag::CentreOutOfBounds, IntegratorType::Gaussian);
         return false;
     }
     if (x0(1) < 0 || x0(1) >= peak->dataSet()->nRows()) {
-        peak->setIntegrationFlag(RejectionFlag::CentreOutOfBounds);
+        peak->setIntegrationFlag(RejectionFlag::CentreOutOfBounds, IntegratorType::Gaussian);
         return false;
     }
     if (x0(2) < 0 || x0(2) >= peak->dataSet()->nFrames()) {
-        peak->setIntegrationFlag(RejectionFlag::CentreOutOfBounds);
+        peak->setIntegrationFlag(RejectionFlag::CentreOutOfBounds, IntegratorType::Gaussian);
         return false;
     }
 
@@ -175,7 +175,7 @@ bool GaussianIntegrator::compute(
     Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d> solver(from_cholesky(a));
 
     if (solver.eigenvalues().minCoeff() <= 0) {
-        peak->setIntegrationFlag(RejectionFlag::InvalidCovariance);
+        peak->setIntegrationFlag(RejectionFlag::InvalidCovariance, IntegratorType::Gaussian);
         return false;
     }
 
@@ -189,7 +189,7 @@ bool GaussianIntegrator::compute(
     residuals(r, B, I, x0, a, x, counts, &pearson);
 
     if (pearson <= 0.75) {
-        peak->setIntegrationFlag(RejectionFlag::BadIntegrationFit);
+        peak->setIntegrationFlag(RejectionFlag::BadIntegrationFit, IntegratorType::Gaussian);
         return false;
     }
     _sumIntensity = {};

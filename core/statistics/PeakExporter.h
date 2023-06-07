@@ -61,13 +61,13 @@ class PeakExporter {
     //! Export peaks to the specified format
     bool exportPeaks(
         ExportFormat fmt, const std::string& filename, MergedData* merged_data, sptrDataSet data,
-        sptrUnitCell cell, bool merged, double scale = 1.0, std::string comment = "");
+        sptrUnitCell cell, bool merged, bool sum_intensity,
+        double scale = 1.0, std::string comment = "");
 
     std::map<ExportFormat, std::string>* exportFormatStrings() { return &_export_fmt_strings; };
 
  private:
     Intensity unmergedIntensity(const Peak3D* peak);
-    Intensity mergedIntensity(const MergedPeak& peak);
 
     std::map<ExportFormat, std::string> _export_fmt_strings;
     bool _sum_intensities; // use pixel sum intensities if true, otherwise profile

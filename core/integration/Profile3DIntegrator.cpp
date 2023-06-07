@@ -14,6 +14,7 @@
 
 #include "core/integration/Profile3DIntegrator.h"
 #include "core/data/DataSet.h"
+#include "core/peak/Peak3D.h"
 
 namespace ohkl {
 
@@ -59,7 +60,7 @@ bool Profile3DIntegrator::compute(
     Peak3D* peak, ShapeModel* shape_model, const IntegrationRegion& region)
 {
     if (!shape_model) {
-        peak->setIntegrationFlag(RejectionFlag::NoShapeModel);
+        peak->setIntegrationFlag(RejectionFlag::NoShapeModel, IntegratorType::Profile3D);
         return false;
     }
 
@@ -71,7 +72,7 @@ bool Profile3DIntegrator::compute(
 
     // TODO: should this be hard-coded??
     if (events.size() < 29) {
-        peak->setIntegrationFlag(RejectionFlag::TooFewPoints);
+        peak->setIntegrationFlag(RejectionFlag::TooFewPoints, IntegratorType::Profile3D);
         return false;
     }
 
@@ -132,7 +133,7 @@ bool Profile3DIntegrator::compute(
     double sigma = _profileIntensity.sigma();
 
     if (std::isnan(sigma) && sigma > 0) {
-        peak->setIntegrationFlag(RejectionFlag::InvalidSigma);
+        peak->setIntegrationFlag(RejectionFlag::InvalidSigma, IntegratorType::Profile3D);
         return false;
     }
     _sumIntensity = {};

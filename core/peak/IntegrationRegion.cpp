@@ -18,6 +18,7 @@
 #include "core/data/DataSet.h"
 #include "core/detector/Detector.h"
 #include "core/instrument/Diffractometer.h"
+#include "core/integration/IIntegrator.h"
 #include "core/peak/Peak3D.h"
 #include "tables/crystal/UnitCell.h"
 
@@ -35,7 +36,8 @@ IntegrationRegion::IntegrationRegion(
 {
     _shape = peak->shape();
     if (_shape.aabb().lower().hasNaN() || _shape.aabb().upper().hasNaN()) {
-        peak->setIntegrationFlag(RejectionFlag::InvalidShape);
+        peak->setIntegrationFlag(RejectionFlag::InvalidShape, IntegratorType::PixelSum);
+        peak->setIntegrationFlag(RejectionFlag::InvalidShape, IntegratorType::Profile3D);
         _valid = false;
         return;
     }
@@ -51,22 +53,25 @@ IntegrationRegion::IntegrationRegion(
             const double r = _shape.radii().sum() / 3.0;
             if (!std::isnan(r)) // Eigensolver to compute radii can fail, resulting in NaN
                 _shape.scale(peak_end / r);
-            else
-                peak->setIntegrationFlag(RejectionFlag::InvalidRegion);
+            else {
+                peak->setIntegrationFlag(RejectionFlag::InvalidRegion, IntegratorType::PixelSum);
+                peak->setIntegrationFlag(RejectionFlag::InvalidRegion, IntegratorType::Profile3D);
+            }
 
             _peakEnd = peak_end;
             _fixed = true;
             break;
         }
         default: {
-            peak->setIntegrationFlag(RejectionFlag::InvalidRegion);
+            peak->setIntegrationFlag(RejectionFlag::InvalidRegion, IntegratorType::PixelSum);
+            peak->setIntegrationFlag(RejectionFlag::InvalidRegion, IntegratorType::Profile3D);
             break;
         }
     }
 
-    if (peak->rejectionFlag() == RejectionFlag::InvalidRegion
-        || peak->rejectionFlag() == RejectionFlag::InterpolationFailure
-        || peak->rejectionFlag() == RejectionFlag::Masked) {
+    if (peak->isRejectedFor(RejectionFlag::InvalidRegion)
+        || peak->isRejectedFor(RejectionFlag::InterpolationFailure)
+        || peak->isRejectedFor(RejectionFlag::Masked)) {
         _valid = false;
     } else {
         Ellipsoid bkg(_shape);

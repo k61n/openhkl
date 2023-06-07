@@ -35,7 +35,6 @@ struct MergeParameters {
     size_t n_shells = 10; //!< Number of resolution shells
     bool friedel = true; //!< Whether to include the Friedel relation
     double scale = 1.0; //!< Scale factor for intensities (Phenix only)
-    bool sum_intensity = true; //!< Whether to use sum or profile intensities
 
     void log(const Level& level) const;
 };
@@ -69,10 +68,14 @@ class PeakMerger {
     //! Return a pointer to the parameter structure
     MergeParameters* parameters() const;
 
-    //! Get a pointer to the MergedData object
-    MergedData* getMergedData() const;
-    //! Get a pointer to the merged data per resolution shell
-    std::vector<MergedData*> getMergedDataPerShell() const;
+    //! Get a pointer to the sum integrated MergedData object
+    MergedData* sumMergedData() const;
+    //! Get a pointer to the sum integrated merged data per resolution shell
+    std::vector<MergedData*> sumMergedDataPerShell() const;
+    //! Get a pointer to the profile integrated MergedData object
+    MergedData* profileMergedData() const;
+    //! Get a pointer to the profile integrated merged data per resolution shell
+    std::vector<MergedData*> profileMergedDataPerShell() const;
 
     //! Get the quality sum integrated statistics per resolution shell
     DataResolution* sumShellQuality();
@@ -93,8 +96,10 @@ class PeakMerger {
     void setHandler(sptrProgressHandler handler) { _handler = handler; };
 
  private:
-    std::unique_ptr<MergedData> _merged_data;
-    std::vector<std::unique_ptr<MergedData>> _merged_data_per_shell;
+    std::unique_ptr<MergedData> _sum_merged_data;
+    std::vector<std::unique_ptr<MergedData>> _sum_merged_data_per_shell;
+    std::unique_ptr<MergedData> _profile_merged_data;
+    std::vector<std::unique_ptr<MergedData>> _profile_merged_data_per_shell;
     std::vector<PeakCollection*> _peak_collections;
 
     DataResolution _sum_shell_qualities;

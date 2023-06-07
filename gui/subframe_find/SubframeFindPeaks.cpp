@@ -102,6 +102,11 @@ SubframeFindPeaks::SubframeFindPeaks()
     connect(
         _peak_view_widget, &PeakViewWidget::settingsChanged, _detector_widget,
         &DetectorWidget::refresh);
+
+    connect(
+        _integration_region_type,
+        static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), _detector_widget,
+        &DetectorWidget::refresh);
 }
 
 void SubframeFindPeaks::setDataUp()
@@ -198,14 +203,20 @@ void SubframeFindPeaks::setIntegrateUp()
     Spoiler* integration_para = new Spoiler("Integration parameters");
     GridFiller f(integration_para);
 
-    _peak_area = f.addDoubleSpinBox(
+    _integration_region_type = f.addCombo("Integration region type");
+    for (int i = 0; i < static_cast<int>(ohkl::RegionType::Count); ++i)
+        for (const auto& [key, val] : ohkl::regionTypeDescription)
+            if (i == static_cast<int>(key))
+                _integration_region_type->addItem(QString::fromStdString(val));
+
+    _peak_end = f.addDoubleSpinBox(
         "Peak end", "(" + QString(QChar(0x03C3)) + ") - scaling factor for peak region");
 
-    _bkg_lower = f.addDoubleSpinBox(
+    _bkg_begin = f.addDoubleSpinBox(
         "Background begin",
         "(" + QString(QChar(0x03C3)) + ") - scaling factor for lower limit of background");
 
-    _bkg_upper = f.addDoubleSpinBox(
+    _bkg_end = f.addDoubleSpinBox(
         "Background end",
         "(" + QString(QChar(0x03C3)) + ") - scaling factor for upper limit of background");
 
@@ -218,9 +229,9 @@ void SubframeFindPeaks::setIntegrateUp()
 
     _integrate_button = f.addButton("Integrate");
 
-    _peak_area->setMaximum(10);
-    _bkg_lower->setMaximum(10);
-    _bkg_upper->setMaximum(10);
+    _peak_end->setMaximum(10);
+    _bkg_begin->setMaximum(10);
+    _bkg_end->setMaximum(10);
 
     for (const auto& [kernel, description] : _kernel_description)
         _gradient_kernel->addItem(description);
@@ -241,15 +252,35 @@ void SubframeFindPeaks::setPreviewUp()
 
     connect(
         _peak_view_widget->set1.peakEnd, qOverload<double>(&QDoubleSpinBox::valueChanged),
-        _peak_area, &QDoubleSpinBox::setValue);
+        _peak_end, &QDoubleSpinBox::setValue);
 
     connect(
         _peak_view_widget->set1.bkgBegin, qOverload<double>(&QDoubleSpinBox::valueChanged),
-        _bkg_lower, &QDoubleSpinBox::setValue);
+        _bkg_begin, &QDoubleSpinBox::setValue);
 
     connect(
         _peak_view_widget->set1.bkgEnd, qOverload<double>(&QDoubleSpinBox::valueChanged),
-        _bkg_upper, &QDoubleSpinBox::setValue);
+        _bkg_end, &QDoubleSpinBox::setValue);
+
+    connect(
+        _peak_view_widget->set1.regionType, &QComboBox::currentTextChanged,
+        _integration_region_type, &QComboBox::setCurrentText);
+
+    connect(
+        _peak_end, qOverload<double>(&QDoubleSpinBox::valueChanged),
+        _peak_view_widget->set1.peakEnd, &QDoubleSpinBox::setValue);
+
+    connect(
+        _bkg_begin, qOverload<double>(&QDoubleSpinBox::valueChanged),
+        _peak_view_widget->set1.bkgBegin, &QDoubleSpinBox::setValue);
+
+    connect(
+        _bkg_end, qOverload<double>(&QDoubleSpinBox::valueChanged), _peak_view_widget->set1.bkgEnd,
+        &QDoubleSpinBox::setValue);
+
+    connect(
+        _integration_region_type, &QComboBox::currentTextChanged,
+        _peak_view_widget->set1.regionType, &QComboBox::setCurrentText);
 
     preview_spoiler->setContentLayout(*_peak_view_widget);
 
@@ -410,9 +441,21 @@ void SubframeFindPeaks::grabIntegrationParameters()
 {
     auto* params = gSession->currentProject()->experiment()->integrator()->parameters();
 
-    _peak_area->setValue(params->peak_end);
-    _bkg_lower->setValue(params->bkg_begin);
-    _bkg_upper->setValue(params->bkg_end);
+    for (auto it = ohkl::regionTypeDescription.begin(); it != ohkl::regionTypeDescription.end();
+         ++it)
+        if (it->first == params->region_type)
+            _integration_region_type->setCurrentText(QString::fromStdString(it->second));
+
+    if (params->region_type == ohkl::RegionType::VariableEllipsoid) {
+        _peak_end->setValue(params->peak_end);
+        _bkg_begin->setValue(params->bkg_begin);
+        _bkg_end->setValue(params->bkg_end);
+    } else {
+        _peak_end->setValue(params->fixed_peak_end);
+        _bkg_begin->setValue(params->fixed_bkg_begin);
+        _bkg_end->setValue(params->fixed_bkg_end);
+    }
+
     _gradient_check->setChecked(params->use_gradient);
     _fft_gradient_check->setChecked(params->fft_gradient);
     _gradient_kernel->setCurrentIndex(static_cast<int>(params->gradient_type));
@@ -425,9 +468,16 @@ void SubframeFindPeaks::setIntegrationParameters()
 
     auto* params = gSession->currentProject()->experiment()->integrator()->parameters();
 
-    params->peak_end = _peak_area->value();
-    params->bkg_begin = _bkg_lower->value();
-    params->bkg_end = _bkg_upper->value();
+    params->region_type = static_cast<ohkl::RegionType>(_integration_region_type->currentIndex());
+    if (params->region_type == ohkl::RegionType::VariableEllipsoid) {
+        params->peak_end = _peak_end->value();
+        params->bkg_begin = _bkg_begin->value();
+        params->bkg_end = _bkg_end->value();
+    } else {
+        params->fixed_peak_end = _peak_end->value();
+        params->fixed_bkg_begin = _bkg_begin->value();
+        params->fixed_bkg_end = _bkg_end->value();
+    }
     params->use_gradient = _gradient_check->isChecked();
     params->fft_gradient = _fft_gradient_check->isChecked();
     params->gradient_type = static_cast<ohkl::GradientKernel>(_gradient_kernel->currentIndex());

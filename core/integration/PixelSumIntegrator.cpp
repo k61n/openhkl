@@ -97,13 +97,13 @@ bool PixelSumIntegrator::compute(Peak3D* peak, ShapeModel*, const IntegrationReg
     const auto& counts = region.peakData().counts();
 
     if (events.empty()) {
-        peak->setIntegrationFlag(RejectionFlag::TooFewPoints);
+        peak->setIntegrationFlag(RejectionFlag::TooFewPoints, IntegratorType::PixelSum);
         return false;
     }
 
     auto [meanBackground, bkgGradient] = compute_background(region, _params.use_gradient);
     if (!meanBackground.isValid()) {
-        peak->setIntegrationFlag(RejectionFlag::TooFewPoints);
+        peak->setIntegrationFlag(RejectionFlag::TooFewPoints, IntegratorType::PixelSum);
         return false;
     }
     _sumBackground = meanBackground;
@@ -166,7 +166,7 @@ bool PixelSumIntegrator::compute(Peak3D* peak, ShapeModel*, const IntegrationReg
         if (blob.isValid()) {
             center = blob.center();
         } else {
-            peak->setIntegrationFlag(RejectionFlag::InvalidCentroid);
+            peak->setIntegrationFlag(RejectionFlag::InvalidCentroid, IntegratorType::PixelSum);
             return false;
         }
     } else {
@@ -177,7 +177,7 @@ bool PixelSumIntegrator::compute(Peak3D* peak, ShapeModel*, const IntegrationReg
         if (blob.isValid()) {
             cov = blob.covariance();
         } else {
-            peak->setIntegrationFlag(RejectionFlag::InvalidCentroid);
+            peak->setIntegrationFlag(RejectionFlag::InvalidCentroid, IntegratorType::PixelSum);
             return false;
         }
     } else {
@@ -186,12 +186,12 @@ bool PixelSumIntegrator::compute(Peak3D* peak, ShapeModel*, const IntegrationReg
 
     // center of mass is consistent
     if (std::isnan(center.norm())) {
-        peak->setIntegrationFlag(RejectionFlag::InvalidCentroid);
+        peak->setIntegrationFlag(RejectionFlag::InvalidCentroid, IntegratorType::PixelSum);
         return false;
     }
 
     if (!peak->shape().isInside(center)) {
-        peak->setIntegrationFlag(RejectionFlag::InvalidCentroid);
+        peak->setIntegrationFlag(RejectionFlag::InvalidCentroid, IntegratorType::PixelSum);
         return false;
     }
 
@@ -201,7 +201,7 @@ bool PixelSumIntegrator::compute(Peak3D* peak, ShapeModel*, const IntegrationReg
 
     // check that the covariance is consistent
     if (!(dA < 2.0)) {
-        peak->setIntegrationFlag(RejectionFlag::InvalidCovariance);
+        peak->setIntegrationFlag(RejectionFlag::InvalidCovariance, IntegratorType::PixelSum);
         return false;
     }
 
@@ -209,7 +209,7 @@ bool PixelSumIntegrator::compute(Peak3D* peak, ShapeModel*, const IntegrationReg
     Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d> solver(cov);
     const auto& w = solver.eigenvalues();
     if (w.minCoeff() < 0.1 || w.maxCoeff() > 100) {
-        peak->setIntegrationFlag(RejectionFlag::InvalidShape);
+        peak->setIntegrationFlag(RejectionFlag::InvalidShape, IntegratorType::PixelSum);
         return false;
     }
 

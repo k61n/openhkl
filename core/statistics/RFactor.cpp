@@ -44,11 +44,7 @@ void RFactor::calculate(MergedData* data)
         if (n < 1.999)
             continue;
 
-        double Iave;
-        if (_sum_intensities)
-            Iave = peak.sumIntensity().value();
-        else
-            Iave = peak.profileIntensity().value();
+        const double Iave = peak.intensity().value();
         const double Fmeas = std::sqrt(n / (n - 1));
         const double Fpim = std::sqrt(1 / (n - 1));
 

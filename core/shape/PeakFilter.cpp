@@ -72,12 +72,12 @@ void PeakFilter::filterSignificance(PeakCollection* peak_collection) const
         collection_vector.push_back(peak_collection);
         const std::vector<Peak3D*> filtered_peaks = peak_collection->getFilteredPeakList();
 
-        MergedData merged(cell->spaceGroup(), collection_vector, true);
+        MergedData merged(cell->spaceGroup(), collection_vector, true, true);
         for (const auto& peak : filtered_peaks)
             merged.addPeak(peak);
 
         for (const auto& merged_peak : merged.mergedPeakSet()) {
-            if (merged_peak.pValue(true)
+            if (merged_peak.pValue()
                 > _filter_params->significance) { // TODO: modify for profile
                 for (const auto& m : merged_peak.peaks())
                     m->rejectYou(true);
@@ -218,7 +218,7 @@ void PeakFilter::filterMasked(PeakCollection* peak_collection) const
     int nrejected = 0;
     for (int i = 0; i < peak_collection->numberOfPeaks(); ++i) {
         ohkl::Peak3D* peak_ptr = peak_collection->getPeak(i);
-        if (peak_ptr->rejectionFlag() == RejectionFlag::Masked) {
+        if (peak_ptr->isRejectedFor(RejectionFlag::Masked)) {
             peak_ptr->rejectYou(true);
             ++nrejected;
         } else {

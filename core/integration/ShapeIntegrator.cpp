@@ -43,12 +43,12 @@ bool ShapeIntegrator::compute(
     auto data = peak->dataSet();
 
     if (!uc) {
-        peak->setIntegrationFlag(RejectionFlag::NoUnitCell);
+        peak->setIntegrationFlag(RejectionFlag::NoUnitCell, IntegratorType::PixelSum);
         return false;
     }
 
     if (!data) {
-        peak->setIntegrationFlag(RejectionFlag::NoDataSet);
+        peak->setIntegrationFlag(RejectionFlag::NoDataSet, IntegratorType::PixelSum);
         return false;
     }
 

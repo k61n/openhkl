@@ -22,9 +22,14 @@
 namespace ohkl {
 
 MergedData::MergedData(
-    SpaceGroup space_group, std::vector<PeakCollection*> peak_collections, bool friedel, int fmin,
-    int fmax)
-    : _group(space_group), _friedel(friedel), _merged_peak_set(), _frame_min(fmin), _frame_max(fmax)
+    SpaceGroup space_group, std::vector<PeakCollection*> peak_collections,
+    bool friedel, bool sum_intensity, int fmin, int fmax)
+    : _group(space_group)
+    , _friedel(friedel)
+    , _merged_peak_set()
+    , _sum_intensity(sum_intensity)
+    , _frame_min(fmin)
+    , _frame_max(fmax)
 {
     ohklLog(Level::Info, "MergedData::MergedData: merging peaks");
     _peak_collections = peak_collections;
@@ -45,10 +50,14 @@ MergedData::MergedData(
     }
 }
 
-MergedData::MergedData(SpaceGroup space_group, bool friedel, int fmin, int fmax)
-    : _friedel(friedel), _merged_peak_set(), _frame_min(fmin), _frame_max(fmax)
+MergedData::MergedData(SpaceGroup space_group, bool friedel, bool sum_intensity, int fmin, int fmax)
+    : _group(space_group)
+    , _friedel(friedel)
+    , _merged_peak_set()
+    , _sum_intensity(sum_intensity)
+    , _frame_min(fmin)
+    , _frame_max(fmax)
 {
-    _group = space_group;
 }
 
 void MergedData::addPeak(Peak3D* peak)
@@ -60,7 +69,7 @@ void MergedData::addPeak(Peak3D* peak)
             return;
     }
 
-    MergedPeak new_peak(_group, _friedel);
+    MergedPeak new_peak(_group, _sum_intensity, _friedel);
 
     MergeFlag flag = new_peak.addPeak(peak);
     if (flag == MergeFlag::Invalid) {

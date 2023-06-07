@@ -21,7 +21,6 @@
 #include "core/statistics/PeakMerger.h"
 
 #include <functional>
-#include <iostream>
 #include <regex>
 #include <string.h>
 #include <string>
@@ -385,11 +384,7 @@ void MtzExporter::buildMtzCols()
     if (_merged) { /* MERGED DATA */
         for (const MergedPeak& peak : peaks) {
             const auto hkl = peak.index();
-            Intensity intensity;
-            if (_sum_intensities)
-                intensity = peak.sumIntensity();
-            else
-                intensity = peak.profileIntensity();
+            Intensity intensity = peak.intensity();
 
             _mtz_cols[0]->ref[idx] = hkl.h();
             _mtz_cols[1]->ref[idx] = hkl.k();

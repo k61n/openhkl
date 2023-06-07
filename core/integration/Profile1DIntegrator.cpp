@@ -79,7 +79,7 @@ bool Profile1DIntegrator::compute(
     Peak3D* peak, ShapeModel* shape_model, const IntegrationRegion& region)
 {
     if (!shape_model) {
-        peak->setIntegrationFlag(RejectionFlag::NoShapeModel);
+        peak->setIntegrationFlag(RejectionFlag::NoShapeModel, IntegratorType::Profile1D);
         return false;
     }
 
@@ -91,7 +91,7 @@ bool Profile1DIntegrator::compute(
 
     // TODO: should this be hard-coded??
     if (events.size() < 29) {
-        peak->setIntegrationFlag(RejectionFlag::TooFewPoints);
+        peak->setIntegrationFlag(RejectionFlag::TooFewPoints, IntegratorType::Profile1D);
         return false;
     }
 
@@ -139,7 +139,7 @@ bool Profile1DIntegrator::compute(
     double sigma = I.sigma();
 
     if (std::isnan(sigma) || sigma <= 0.0) {
-        peak->setIntegrationFlag(RejectionFlag::InvalidSigma);
+        peak->setIntegrationFlag(RejectionFlag::InvalidSigma, IntegratorType::Profile1D);
         return false;
     }
 
