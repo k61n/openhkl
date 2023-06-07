@@ -514,6 +514,7 @@ void SubframePredictPeaks::applyShapeModel()
 
     shapes->setParameters(_shape_params);
     shapes->setHandler(handler);
+    _peak_collection.resetRejectionFlags();
     shapes->setPredictedShapes(&_peak_collection);
 
     refreshPeakTable();

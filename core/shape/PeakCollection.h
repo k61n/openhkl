@@ -141,6 +141,8 @@ class PeakCollection {
 
     void setUnitCell(const sptrUnitCell& cell, bool setPeaks = true);
 
+    //! Reset peak rejection flags
+    void resetRejectionFlags();
     //! Reset peak rejection status to pre-integration values
     void resetIntegrationFlags(IntegratorType integrator);
 
