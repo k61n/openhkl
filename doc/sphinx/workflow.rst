@@ -150,13 +150,13 @@ Sets of detector images taken at different sample rotation angles can be added t
    * - Rebinning
      - pixels
      - Downscale image by given ratio (Tiff only)
-   * - delta chi
+   * - :math:`\Delta\chi`
      - degrees
      - :math:`\chi` angular stepping for sample
-   * - delta omega
+   * - :math:`\Delta\omega`
      - degrees
      - :math:`\omega` angular stepping for sample
-   * - delta phi
+   * - :math:`\Delta\phi`
      - degrees
      - :math:`\phi` angular stepping for sample
    * - wavelength
@@ -997,7 +997,7 @@ Note that only the parameters ``Peak end``, ``Background begin`` and
 ``Background end`` apply to pixel sum integration; the rest are specific to
 profile fitting integration.
 
-.. list-table:: Refinement parameters
+.. list-table:: Integration parameters
    :widths: 20, 10, 20
    :header-rows: 1
    :align: left
@@ -1179,8 +1179,35 @@ The sphere in q-space defined by ``d range`` is divided into a number of
 concentric resolution shells of equal reciprocal volume, determined by ``number
 of d-shells``. For each shell and the overall volume, R-factors and CC values
 are calculated, allowing the user to determine the maximum resolution (if any)
-to which the data set is reliable. The merger is controlled by the following
+to which the data set is reliable. The merge is controlled by the following
 parameters.
+
+.. list-table:: Merge statistics parameters
+   :widths: 20, 10, 20
+   :header-rows: 1
+   :align: left
+
+   * - Parameter
+     - Unit
+     - Description
+   * - Resolution (d) range
+     - Å
+     - Limit merged peaks to this resolution range
+   * - Image range
+     -
+     - Limit merged peaks to this range of images
+   * - Num. resolution shells
+     -
+     - Number of resolutions shells into which to divide reciprocal space
+   * - Space group
+     -
+     - Space group of the unit cell
+   * - Include friedel
+     - T/F
+     - Include the Friedel relation if not part of the space group
+   * - Plot y axis
+     -
+     - Select statistic to plot on the graph, as a function of resolution shell
 
 .. _merge:
 .. figure:: images/workflow/merge.png
@@ -1193,78 +1220,43 @@ range; the rationale for this is that it may be better to ignore peaks on the
 first and last frames, for which it is impossible to interpolate the frame
 coordinate.
 
-.. table:: Merge statistics parameters
-
-   +------------------------+----------------+-------------------------+
-   | **Parameters**         | Unit           | Description             |
-   +========================+================+=========================+
-   | **d range**            |  Å             | Only include peaks      |
-   |                        |                | inside this d range     |
-   +------------------------+----------------+-------------------------+
-   | **frame range**        | integer        | Only include peaks      |
-   |                        |                | inside this frame range |
-   +------------------------+----------------+-------------------------+
-   | **Number of d-shells** | integer        | Number of resolution    |
-   |                        |                | shells to divide into   |
-   +------------------------+----------------+-------------------------+
-   | **Include Friedel**    | T/F            | Whether to include the  |
-   |                        |                | Friedel relation if not |
-   |                        |                | part of the space group |
-   |                        |                | symmetry                |
-   +------------------------+----------------+-------------------------+
-   | **Plot axis**          |                | Value to plot on the    |
-   |                        |                | y axis                  |
-   +------------------------+----------------+-------------------------+
-
 The tabulated statistics are comprised of the following fields:
 
-.. table:: Merge statistics fields
+.. list-table:: Merge statistics table fields
+   :widths: 10, 20
+   :header-rows: 1
+   :align: left
 
-   +-------------------+-----------------------------------------------+
-   | **abbreviation**  | Description                                   |
-   +===================+===============================================+
-   | **dmax**          | Maximum value of d for this resolution shell  |
-   |                   |                                               |
-   +-------------------+-----------------------------------------------+
-   | **dmin**          | Minimum value of d for this resolution shell  |
-   |                   |                                               |
-   +-------------------+-----------------------------------------------+
-   | **nobs**          | Number of observed peaks in shell             |
-   |                   |                                               |
-   +-------------------+-----------------------------------------------+
-   | **nmerge**        | Number of merged (i.e. symmetry-unique) peaks |
-   |                   | in shell                                      |
-   +-------------------+-----------------------------------------------+
-   | **redundancy**    | Average peak redundancy (nobs/nmerge)         |
-   |                   |                                               |
-   +-------------------+-----------------------------------------------+
-   | **Rmeas**         | see :ref:`dataquality`                        |
-   |                   |                                               |
-   +-------------------+-----------------------------------------------+
-   | **Rmeas(est)**    | see :ref:`dataquality`                        |
-   |                   |                                               |
-   +-------------------+-----------------------------------------------+
-   | **Rmerge/Rsym**   | see :ref:`dataquality`                        |
-   |                   |                                               |
-   +-------------------+-----------------------------------------------+
-   | **Rmerge(est)**   | see :ref:`dataquality`                        |
-   |                   |                                               |
-   +-------------------+-----------------------------------------------+
-   | **Rpim**          | see :ref:`dataquality`                        |
-   |                   |                                               |
-   +-------------------+-----------------------------------------------+
-   | **Rpim(est)**     | see :ref:`dataquality`                        |
-   |                   |                                               |
-   +-------------------+-----------------------------------------------+
-   | **CChalf**        | see :ref:`dataquality`                        |
-   |                   |                                               |
-   +-------------------+-----------------------------------------------+
-   | **CC\***          | see :ref:`dataquality`                        |
-   |                   |                                               |
-   +-------------------+-----------------------------------------------+
-   | Completeness      | Number of valid peaks / total number of peaks |
-   |                   |                                               |
-   +-------------------+-----------------------------------------------+
+   * - Abbreviation
+     - Description
+   * - dmax
+     - Maximum value of d for this resolution shell
+   * - dmin
+     - Minimum value of d for this resolution shell
+   * - nobs
+     - Number of observed peaks in this shell
+   * - nmerge
+     - Number of merged (symmetry-unique) peaks in this shell
+   * - redundancy
+     - Average peak redundancy (nobs/nmerge)
+   * - Rmeas
+     - see :ref:`dataquality`
+   * - Rmeas (est.)
+     - see :ref:`dataquality`
+   * - Rmerge/Rsym
+     - see :ref:`dataquality`
+   * - Rmerge/Rsym (est.)
+     - see :ref:`dataquality`
+   * - Rpim
+     - see :ref:`dataquality`
+   * - Rpim (est.)
+     - see :ref:`dataquality`
+   * - CChalf
+     - see :ref:`dataquality`
+   * - CC*
+     - see :ref:`dataquality`
+   * - Completeness
+     - Number of valid peaks / theoretical maximum number of peaks
 
 A high quality data set will have R-factors close to zero, CC values close to
 one and a completeness close to 100\%.
@@ -1275,37 +1267,31 @@ Merged representation tab
 
 A list of merged peaks is displayed in this section.
 
-.. table:: Merged representation fields
+.. list-table:: Merged representation table fields
+   :widths: 10, 20
+   :header-rows: 1
+   :align: left
 
-   +--------------------+----------------------------------------------+
-   | **abbreviation**   | Description                                  |
-   +====================+==============================================+
-   | **h**              | *h* Miller index                             |
-   |                    |                                              |
-   +--------------------+----------------------------------------------+
-   | **k**              | *k* Miller index                             |
-   |                    |                                              |
-   +--------------------+----------------------------------------------+
-   | **l**              | *l* Miller index                             |
-   |                    |                                              |
-   +--------------------+----------------------------------------------+
-   | **I**              | Integrated intensity                         |
-   |                    |                                              |
-   +--------------------+----------------------------------------------+
-   |   :math:`\sigma`   | Variance of integrated intensity             |
-   |                    |                                              |
-   +--------------------+----------------------------------------------+
-   | **nobs**           | Redundancy of this peak (number of symmetry  |
-   |                    | equivalents)                                 |
-   +--------------------+----------------------------------------------+
-   | :math:`\chi^2`     | The chi-squared intensity of the merged peak |
-   |                    |                                              |
-   +--------------------+----------------------------------------------+
-   | **p**              | Probability that the intensity takes a value |
-   |                    | less than the chi-squared                    |
-   +--------------------+----------------------------------------------+
+   * - Abbreviation
+     - Description
+   * - *h*
+     - *h* Miller index
+   * - *k**
+     - *k* Miller index
+   * - *l*
+     - *l* Miller index
+   * - *I*
+     - Mean integrated intensity of unmerged peaks
+   * - :math:`\sigma`
+     - Variance of integrated intensity of unmerged peaks
+   * - *nobs*
+     - Redundancy of this peaks (number of symmetry equivalents observed)
+   * - :math:`\chi^2`
+     - Chi-squared of intensity
+   * - **p**
+     - Probability that inensity takes a value less than the chi-squared
 
-The merged peaks can be saved to ShelX, FullProf or Phenix format. The Phenix
+The merged peaks can be saved to CCP4 (.mtz), ShelX, FullProf or Phenix format. The Phenix
 format is fixed width, and some instruments such as BioDiff have a
 photomultiplier, meaning that one count on the detector corresponds not to one
 neutron, but some factor greater than one. This can cause the intensities to
@@ -1320,37 +1306,31 @@ Unmerged representation tab
 
 A list of unmerged peaks is displayed in this section.
 
-.. table:: Unmerged representation fields
+.. list-table:: Unmerged representation table fields
+   :widths: 10, 20
+   :header-rows: 1
+   :align: left
 
-   +--------------------+----------------------------------------------+
-   | **abbreviation**   | Description                                  |
-   +====================+==============================================+
-   | **h**              | *h* Miller index                             |
-   |                    |                                              |
-   +--------------------+----------------------------------------------+
-   | **k**              | *k* Miller index                             |
-   |                    |                                              |
-   +--------------------+----------------------------------------------+
-   | **l**              | *l* Miller index                             |
-   |                    |                                              |
-   +--------------------+----------------------------------------------+
-   | **I**              | Integrated intensity                         |
-   |                    |                                              |
-   +--------------------+----------------------------------------------+
+   * - Abbreviation
+     - Description
+   * - *h*
+     - *h* Miller index
+   * - *k**
+     - *k* Miller index
+   * - *l*
+     - *l* Miller index
+   * - *I*
+     - Integrated intensity
+   * - :math:`\sigma`
+     - Variance of integrated intensity of unmerged peaks
+   * - *x*
+     - x coordinate of unmerged peak (pixels)
+   * - *y*
+     - y coordinate of unmerged peak (pixels)
+   * - *frame*
+     - frame coordinate of unmerged peak
 
-   |                    |                                              |
-   +--------------------+----------------------------------------------+
-   | **x**              | x coordinate of peak (pixels)                |
-   |                    |                                              |
-   +--------------------+----------------------------------------------+
-   | **y**              | y coordinate of peak (pixels)                |
-   |                    |                                              |
-   +--------------------+----------------------------------------------+
-   | **frame**          | frame coordinate of peak (frames)            |
-   |                    |                                              |
-   +--------------------+----------------------------------------------+
-
-The unmerged peaks can be saved to ShelX, FullProf or Phenix format. The Phenix
+The unmerged peaks can be saved to CCP4 (.mtz), ShelX, FullProf or Phenix format. The Phenix
 format is fixed width, andsome instruments such as BioDiff have a
 photomultiplier, meaning that one count on the detector corresponds not to one
 neutron, but some factor greater than one. This can cause the intensities to
