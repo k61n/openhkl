@@ -412,6 +412,8 @@ Langrange multipliers we must solve
 which tells us immediately that the axis is in the direction of
 :math:`{\mathbf{{e}}}_1`.
 
+.. _sec_least_squares:
+
 Least squares integration
 -------------------------
 
