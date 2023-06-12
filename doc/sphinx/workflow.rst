@@ -727,14 +727,9 @@ image, or entering the coordinates of the peak and clicking `Calculate profile`.
 Either way, a shape model must have been built beforehand. The preview panel
 shows two peaks side by side: on the left the reference peak as it appears on
 the detector image, and on the right, the mean profile as computed by the shape
-model. This is the shape that will be either assigned to a predicted peak
-collection (by clicking `Apply shape model` if such a peak collection exists),
-or used in profile integration.
-
-When shown on the detector image, the shape is plotted as an integration region,
-with bounds determined by the "integration region type", "peak end", "background
-begin" and "background end" parameters. The peak pixels for this region are
-highlighted in yellow, and the local background pixels in green.
+model. The selected peak is highlighted with a red box. This is the shape that
+will be either assigned to a predicted peak collection (by clicking `Apply shape
+model` if such a peak collection exists), or used in profile integration.
 
 .. _shapemodel:
 .. figure:: images/workflow/shape_model.png
@@ -879,7 +874,8 @@ assigned.
    :width: 100.0%
 
 If a shape is not assigned, the predicted peak retains its default shape
-(spherical), which will be grossly inaccurate.
+(spherical), which will be grossly inaccurate. Note that the above window can be
+opened by double clicking on a peak in the detector image.
 
 .. _sec_refine:
 
