@@ -26,10 +26,14 @@
 #include "tables/crystal/UnitCell.h"
 
 #include <QAbstractItemModel>
+#include <QComboBox>
 #include <QFileDialog>
+#include <QHBoxLayout>
 #include <QHeaderView>
 #include <QInputDialog>
 #include <QListView>
+#include <QListWidget>
+#include <QListWidgetItem>
 #include <QMenu>
 #include <QMessageBox>
 #include <QSettings>
@@ -49,17 +53,17 @@ SubframeHome::SubframeHome()
     QVBoxLayout* main_layout = new QVBoxLayout(this);
     QHBoxLayout* sub_layout = new QHBoxLayout();
 
-    _setLeftLayout(sub_layout);
-    _setRightLayout(sub_layout);
+    setLeftLayout(sub_layout);
+    setRightLayout(sub_layout);
     main_layout->addLayout(sub_layout);
 
     readSettings();
     toggleUnsafeWidgets();
-    _updateLastLoadedWidget();
+    updateLastLoadedWidget();
     gGui->refreshMenu();
 }
 
-void SubframeHome::_setLeftLayout(QHBoxLayout* main_layout)
+void SubframeHome::setLeftLayout(QHBoxLayout* main_layout)
 {
     QVBoxLayout* left = new QVBoxLayout;
     QHBoxLayout* left_top = new QHBoxLayout();
@@ -105,7 +109,7 @@ void SubframeHome::_setLeftLayout(QHBoxLayout* main_layout)
 
     _last_import_widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     _last_import_widget->setStyleSheet("background-color: transparent;");
-    connect(_last_import_widget, &QListWidget::itemClicked, this, &SubframeHome::_loadSelectedItem);
+    connect(_last_import_widget, &QListWidget::itemClicked, this, &SubframeHome::loadSelectedItem);
 
     left->addWidget(_last_import_widget);
 
@@ -114,7 +118,7 @@ void SubframeHome::_setLeftLayout(QHBoxLayout* main_layout)
     _open_experiments_view->setModel(_open_experiments_model.get());
     connect(
         _open_experiments_view, &ExperimentTableView::clicked, this,
-        &SubframeHome::_switchCurrentExperiment);
+        &SubframeHome::switchCurrentExperiment);
 
     left->addWidget(_open_experiments_view);
 
@@ -153,9 +157,32 @@ void SubframeHome::_setLeftLayout(QHBoxLayout* main_layout)
     _open_experiments_view->resizeColumnsToContents();
 }
 
-void SubframeHome::_setRightLayout(QHBoxLayout* main_layout)
+void SubframeHome::setRightLayout(QHBoxLayout* main_layout)
 {
+    QString path{":images/icons/"};
+    QString light{"lighttheme/"};
+    QString dark{"darktheme/"};
+
+    if (gGui->isDark()) // looks like we have a dark theme
+        path = path + dark;
+    else
+        path = path + light;
+
     QVBoxLayout* right = new QVBoxLayout();
+
+    _add_data = new QComboBox;
+    _add_single_image = new QComboBox;
+
+    _add_data->addItem(QIcon(path + "plus.svg"), "Add data set");
+    _add_data->addItem("Tiff (.tiff)");
+    _add_data->addItem("Raw (.raw)");
+    _add_data->addItem("Nexus (.nxs)");
+    _add_data->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum);
+
+    _add_single_image->addItem(QIcon(path + "plus.svg"), "Add single image");
+    _add_single_image->addItem("Tiff (.tiff)");
+    _add_single_image->addItem("Raw (.raw)");
+    _add_single_image->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum);
 
     _dataset_table = new QTableWidget(0, 6);
     _dataset_table->setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -195,11 +222,18 @@ void SubframeHome::_setRightLayout(QHBoxLayout* main_layout)
     QLabel* lab_peaks = new QLabel("Peak collections in current experiment", this);
     QLabel* lab_unitcell = new QLabel("Unit cells in current experiment", this);
 
+    QGridLayout* lay_add_data = new QGridLayout();
     QHBoxLayout* lay_datasets_head = new QHBoxLayout();
     QVBoxLayout* lay_datasets = new QVBoxLayout();
     QHBoxLayout* lay_peaks_head = new QHBoxLayout();
     QVBoxLayout* lay_peaks = new QVBoxLayout();
     QVBoxLayout* lay_unitcells = new QVBoxLayout();
+
+    int ncols = 5;
+    for (int i = 0; i < ncols; ++i)
+        lay_add_data->setColumnStretch(i, 1);
+    lay_add_data->addWidget(_add_data, 0, ncols - 2, 1, 1);
+    lay_add_data->addWidget(_add_single_image, 0, ncols - 1, 1, 1);
 
     lay_datasets_head->addWidget(lab_dataset);
 
@@ -213,6 +247,7 @@ void SubframeHome::_setRightLayout(QHBoxLayout* main_layout)
     lay_unitcells->addWidget(lab_unitcell);
     lay_unitcells->addWidget(_unitcell_table);
 
+    right->addLayout(lay_add_data);
     right->addLayout(lay_datasets);
     right->addLayout(lay_peaks);
     right->addLayout(lay_unitcells);
@@ -221,6 +256,8 @@ void SubframeHome::_setRightLayout(QHBoxLayout* main_layout)
 
     main_layout->addLayout(right);
 
+    connect(_add_data, QOverload<int>::of(&QComboBox::activated), this, &SubframeHome::addDataSet);
+    connect(_add_single_image, QOverload<int>::of(&QComboBox::activated), this, &SubframeHome::addSingleImage);
     connect(
         _dataset_table, &QWidget::customContextMenuRequested, this,
         &SubframeHome::setContextMenuDatasetTable);
@@ -290,7 +327,7 @@ void SubframeHome::loadFromFile()
         _open_experiments_model = std::make_unique<ExperimentModel>();
         _open_experiments_view->setModel(_open_experiments_model.get());
         _open_experiments_view->resizeColumnsToContents();
-        _updateLastLoadedList(
+        updateLastLoadedList(
             QString::fromStdString(gSession->currentProject()->experiment()->name()), file_path);
         toggleUnsafeWidgets();
     } catch (const std::exception& e) {
@@ -330,7 +367,7 @@ void SubframeHome::saveCurrent(bool dialogue /* = false */)
         settings.setValue("experiment", info.absolutePath());
 
         gSession->currentProject()->saveToFile(file_path);
-        _updateLastLoadedList(
+        updateLastLoadedList(
             QString::fromStdString(gSession->currentProject()->experiment()->name()), file_path);
     } catch (const std::exception& e) {
         QMessageBox::critical(this, "Error", QString(e.what()));
@@ -350,7 +387,7 @@ void SubframeHome::removeCurrent()
     }
 }
 
-void SubframeHome::_switchCurrentExperiment(const QModelIndex& index)
+void SubframeHome::switchCurrentExperiment(const QModelIndex& index)
 {
     if (gSession->hasProject()) {
         gSession->selectProject(index.row());
@@ -387,7 +424,7 @@ void SubframeHome::readSettings()
     gGui->refreshMenu();
 }
 
-void SubframeHome::_updateLastLoadedList(QString name, QString file_path)
+void SubframeHome::updateLastLoadedList(QString name, QString file_path)
 {
     if (_last_experiments.empty())
         _last_experiments.prepend(qMakePair(name, file_path));
@@ -397,12 +434,12 @@ void SubframeHome::_updateLastLoadedList(QString name, QString file_path)
     if (_last_experiments.size() > 5)
         _last_experiments.removeLast();
 
-    _updateLastLoadedWidget();
+    updateLastLoadedWidget();
     refreshTables();
     gGui->refreshMenu();
 }
 
-void SubframeHome::_updateLastLoadedWidget()
+void SubframeHome::updateLastLoadedWidget()
 {
     QSignalBlocker blocker(_last_import_widget);
     _last_import_widget->clear();
@@ -429,7 +466,7 @@ void SubframeHome::_updateLastLoadedWidget()
     }
 }
 
-void SubframeHome::_loadSelectedItem(QListWidgetItem* item)
+void SubframeHome::loadSelectedItem(QListWidgetItem* item)
 {
     gGui->setReady(false);
     try {
@@ -437,7 +474,7 @@ void SubframeHome::_loadSelectedItem(QListWidgetItem* item)
         _open_experiments_model.reset();
         _open_experiments_model = std::make_unique<ExperimentModel>();
         _open_experiments_view->setModel(_open_experiments_model.get());
-        _updateLastLoadedList(
+        updateLastLoadedList(
             QString::fromStdString(gSession->currentProject()->experiment()->name()),
             item->data(100).toString());
         _open_experiments_view->resizeColumnsToContents();
@@ -455,6 +492,12 @@ void SubframeHome::toggleUnsafeWidgets()
     _save_current->setEnabled(gSession->hasProject());
     _save_current->setEnabled(gSession->hasProject());
     _remove_current->setEnabled(gSession->hasProject());
+
+    if (!gSession->hasProject())
+        return;
+
+    _add_data->setEnabled(!gSession->currentProject()->strategyMode());
+    _add_single_image->setEnabled(gSession->currentProject()->strategyMode());
 }
 
 void SubframeHome::refreshTables() const
@@ -778,4 +821,52 @@ void SubframeHome::setContextMenuUnitCellTable(QPoint pos)
             }
         }
     });
+}
+
+void SubframeHome::addDataSet(int index)
+{
+    QSignalBlocker blocker(_add_data);
+    switch(index) {
+    case 1: {
+        gSession->loadTiffData(false);
+        gGui->sideBar()->refreshCurrent();
+        _add_data->setCurrentIndex(0);
+        break;
+    }
+    case 2: {
+        gSession->loadRawData(false);
+        gGui->sideBar()->refreshCurrent();
+        _add_data->setCurrentIndex(0);
+        break;
+    }
+    case 3: {
+        gSession->loadData(ohkl::DataFormat::NEXUS);
+        gGui->sideBar()->refreshCurrent();
+        _add_data->setCurrentIndex(0);
+        break;
+    }
+    default: {
+    }
+    }
+}
+
+void SubframeHome::addSingleImage(int index)
+{
+    QSignalBlocker blocker(_add_single_image);
+    switch (index) {
+        case 1: {
+            gSession->loadTiffData(true);
+            gGui->sideBar()->refreshCurrent();
+            _add_data->setCurrentIndex(0);
+            break;
+        }
+        case 2: {
+            gSession->loadRawData(true);
+            gGui->sideBar()->refreshCurrent();
+            _add_data->setCurrentIndex(0);
+            break;
+        }
+        default: {
+        }
+    }
 }

@@ -38,7 +38,6 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
-#include <qobjectdefs.h>
 #include <string>
 
 class DataComboBox;
