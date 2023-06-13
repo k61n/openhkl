@@ -238,7 +238,7 @@ A list of candidate unit cells is shown. If you were careful when adjusting the
 direct beam, it should be quite easy to find the correct unit cell. In this
 case, the cell parameters are ``54.97 58.53 67.58 90 90 90``. The space group in
 this case is :math:`P2_12_12_1`, which corresponds body-centred orthorhombic
-Bravais lattice (`oP` in the table). Again, the ability to find the correct
+Bravais lattice (``oP`` in the table). Again, the ability to find the correct
 Bravais lattice and centring is crucial, and strongly dependent on the direct
 beam position. In the screen shot, we can see that the hightlighted solution has
 a quality of 100\%, meaning that 100\% of peaks in this collection can be
@@ -745,11 +745,7 @@ an exercise for the reader. Here are some hints:
    centres will also change, so it will be necessary to perform the refinement
    process again.
 
-3. **Better integration**. So far, we have used the most naive integration
-   technique, pixel sum integration. This is simply a sum of the peak intensity
-   pixels with the local background subtracted. It is possible to achieve better
-   results using a profile integration technique, which averages in the shapes
-   of surrounding peaks. Results might also be improved with a better choice of
+3. **Better integration**. Results might also be improved with a better choice of
    integration region. One possibility is modifying the bounds of the integration
    region (``peak end``, ``background begin`` and ``background end``) to ensure
    that even in cases where the predicted peak is slightly off
@@ -767,7 +763,7 @@ an exercise for the reader. Here are some hints:
    effect on the quality of the data reduction, so as well as being careful with
    our choice of integration bounds, we can also reject overlapping peaks.
 
-4. **Outlier rejection**. The `Reject` widget accessible from the sidebar allows
+4. **Outlier rejection**. The ``Reject`` widget accessible from the sidebar allows
    the generation of *peak* statistical models (as opposed to pixel statistics),
    and rejection of peaks that do not fit that model, for example, peaks with
    outlying background gradient values can be identified and rejected.

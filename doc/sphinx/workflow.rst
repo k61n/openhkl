@@ -184,25 +184,25 @@ This panel contains three tabs with functionality that is normally required
 before the data reduction process is started: ``strategy``, ``histograms`` and
 ``masks``.
 
-There are three tabs on the left-hand panel: `strategy`, `Histograms` and
-`Masks`.
+There are three tabs on the left-hand panel: ``Strategy``, ``Histograms`` and
+``Masks``.
 
 Strategy
 ~~~~~~~~
 
-The `strategy` tab contains controls for finding blobs (notionally
+The ``strategy`` tab contains controls for finding blobs (notionally
 peaks) in a single image, using those blobs to determine the unit cell, and
 predicting the completeness of the peaks given a sample rotation angle
-increment. The `Set initial direct beam position` controls the point at which
+increment. The ``Set initial direct beam position`` controls the point at which
 the direct beam intersects the detector image. In the first instance, this is
 assumed to be in the centre of the image, but this may be off by a few pixels.
 Clicking the checkbox allows the user to drag a resizable crosshair in the
-detector image panel, which will define the exact direct beam position. The `x
-offset` and `y offset` controls define the offset of this crosshair, in pixels,
+detector image panel, which will define the exact direct beam position. The ``x
+offset`` and ``y offset`` controls define the offset of this crosshair, in pixels,
 with respect to the *centre* of the image.
 
-The `Find blobs in this image` box allows the user to leverage image processing
-algorithms from the OpenCV (namely `SimpleBlobDetector`) library to locate
+The ``Find blobs in this image`` box allows the user to leverage image processing
+algorithms from the OpenCV (namely ``SimpleBlobDetector``) library to locate
 detector spots.
 
 .. list-table:: 2D blob finder parameters
@@ -264,10 +264,10 @@ guess for the direct beam position.
 Histograms
 ~~~~~~~~~~
 
-The `Histograms` tab allows the user to plot histograms of *pixel* statistics
+The ``Histograms`` tab allows the user to plot histograms of *pixel* statistics
 (as opposed to peak statistics).
 
-The `Per-pixel detector count histograme` allows the user to plota histogram of
+The ``Per-pixel detector count histograme`` allows the user to plota histogram of
 pixel counts for either the current single image, or for all images (by checking
 the ``All images`` box. Checking the ``Plot intensity profiles`` box changes the
 interaction mode in the detector image to draw a ("Line plot", "Horizontal
@@ -277,12 +277,12 @@ intensity along that line with the given number of bins.
 Masks
 ~~~~~
 
-The `Masks` tab allows the user to add masks to the data set. A mask is
+The ``Masks`` tab allows the user to add masks to the data set. A mask is
 either an ellipse or a rectangle present on *all images in the data set*, on
 which detected spots or peaks and integration is not valid. Possible reasons
 to add a mask can be to prevent peak finding on a the beam spot, or to
 prevent integration of peaks on heterogeneous features such as seams between
-detector plates. The `Add detector image masks` check box changes the
+detector plates. The ``Add detector image masks`` check box changes the
 interaction mode in the detector image to draw a mask by dragging and
 dropping, the shape of which is specified in the list (rectangular or
 elliptical). Masks are displayed in the list below, and the extents of the
@@ -364,9 +364,9 @@ them in an octree.
      - Switch detector image to filtered and thresholded view
 
 At this stage in the workflow, there are no available profiles to perform
-profile integration. The found peaks are integrated at this stage using 
-pixel sum integration :ref:`sec_pixelsum`, a simple summation of peak pixel
-counts with a mean background subtraction.
+profile integration. The found peaks are integrated at this stage using
+:ref:`sec_pixelsum`, a simple summation of peak pixel counts with a mean
+background subtraction.
 
 The following three integration parameters are explained in detail in
 :ref:`sec_peakshape` . Briefly, however, they are scaling factors that determine
@@ -572,8 +572,8 @@ substantial effect on the success (or otherwise) of the procedure:
 The closest unit cell can then be selected as a row from the table of solutions
 and assigned to a peak collection (usually the collection of *found* peaks. Note
 that it is important to find the cell with the correct centering (Bravais type)
-or the correct space group may not be visible in the list in the `Assign unit
-cell` dialogue box. This may require additional experimentation with the
+or the correct space group may not be visible in the list in the ``Assign unit
+cell`` dialogue box. This may require additional experimentation with the
 parameters.
 
 In practice, the position of the direct beam is the parameter that usually
@@ -627,7 +627,7 @@ The first set of parameters determines the shape model, and includes,
 
 The binning scheme for constructing the shape model is described in
 :ref:`sec_least_squares`. Once the parameters are set, the shape model is
-constructed by clicking `Build shape model`. The shape model is used later,
+constructed by clicking ``Build shape model``. The shape model is used later,
 in assigning shapes to predicted peaks and profile integration.
 
 .. list-table:: Shape model parameters
@@ -723,13 +723,13 @@ and "intensity" (weaker peaks have a smaller contribution).
      - Weighting scheme to use when averaging profiles
 
 A preview shape can be constructed either by clicking on a peak in the detector
-image, or entering the coordinates of the peak and clicking `Calculate profile`.
+image, or entering the coordinates of the peak and clicking ``Calculate profile``.
 Either way, a shape model must have been built beforehand. The preview panel
 shows two peaks side by side: on the left the reference peak as it appears on
 the detector image, and on the right, the mean profile as computed by the shape
 model. The selected peak is highlighted with a red box. This is the shape that
-will be either assigned to a predicted peak collection (by clicking `Apply shape
-model` if such a peak collection exists), or used in profile integration.
+will be either assigned to a predicted peak collection (by clicking ``Apply shape
+model`` if such a peak collection exists), or used in profile integration.
 
 .. _shapemodel:
 .. figure:: images/workflow/shape_model.png
@@ -741,7 +741,7 @@ An example of a shape generated from a model is shown above: clicking on a peak
 from the selected *predicted* peak collection ("target peak collection")
 displays the integration region for the shape int he Preview widget, and plots
 
-The beam divergence and mosaicity variances are estimated as in section
+The beam divergence and mosaicity variances are estimated as in the section on
 :ref:`beam_profile`. The beeam divergence variance :math:`\sigma_D` affects the
 spread of the detector spot in the plane of the detector image, and the
 mosaicity variance :math:`\sigma_M` affects the spread in the direction of the
