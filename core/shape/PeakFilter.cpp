@@ -27,7 +27,7 @@
 #include "core/peak/Peak3D.h"
 #include "core/shape/Octree.h"
 #include "core/shape/PeakFilter.h"
-#include "core/statistics/MergedData.h"
+#include "core/statistics/MergedPeakCollection.h"
 #include "tables/crystal/MillerIndex.h"
 #include "tables/crystal/SpaceGroup.h"
 #include "tables/crystal/UnitCell.h"
@@ -72,7 +72,7 @@ void PeakFilter::filterSignificance(PeakCollection* peak_collection) const
         collection_vector.push_back(peak_collection);
         const std::vector<Peak3D*> filtered_peaks = peak_collection->getFilteredPeakList();
 
-        MergedData merged(cell->spaceGroup(), collection_vector, true, true);
+        MergedPeakCollection merged(cell->spaceGroup(), collection_vector, true, true);
         for (const auto& peak : filtered_peaks)
             merged.addPeak(peak);
 

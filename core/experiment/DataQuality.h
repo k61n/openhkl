@@ -22,7 +22,7 @@
 
 namespace ohkl {
 
-class MergedData;
+class MergedPeakCollection;
 class RFactor;
 class CC;
 class PeakCollection;
@@ -44,7 +44,7 @@ struct DataQuality {
     double Completeness; //!< # valid predicted peaks / # predicted peaks
     bool sum_statistics; //!< Use sum (true) or profile (false) integrated intensities
 
-    void computeQuality(MergedData& merged_peaks, bool sum_intensities);
+    void computeQuality(MergedPeakCollection& merged_peaks, bool sum_intensities);
     std::string toString() const;
     void log() const;
 };
@@ -54,7 +54,7 @@ struct ShellQuality : DataQuality {
     double dmax; //!< Upper limit of d for resolution shell
 
     void computeQuality(
-        MergedData& merged_peaks, double d_min, double d_max, bool sum_intensities = true);
+        MergedPeakCollection& merged_peaks, double d_min, double d_max, bool sum_intensities = true);
     std::string toString() const;
 };
 

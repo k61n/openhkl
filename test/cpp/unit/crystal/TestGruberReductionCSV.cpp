@@ -44,11 +44,6 @@ TEST_CASE("test/crystal/TestGruberReductionCSV.cpp", "")
 
     CHECK(database.is_open());
 
-    unsigned int total, correct;
-
-    total = 0;
-    correct = 0;
-
     std::string symbol;
     double a, b, c, alpha, beta, gamma;
 
@@ -76,8 +71,6 @@ TEST_CASE("test/crystal/TestGruberReductionCSV.cpp", "")
         } catch (...) {
             continue; // unknown space group
         }
-
-        ++total;
 
         ohkl::UnitCell niggliCell(a, b, c, alpha, beta, gamma);
         ohkl::UnitCell gruberCell(a, b, c, alpha, beta, gamma);
@@ -108,7 +101,6 @@ TEST_CASE("test/crystal/TestGruberReductionCSV.cpp", "")
         gruberCell.setLatticeCentring(centering);
 
         if (gruberCell.bravaisTypeSymbol() == bravais) {
-            ++correct;
             outfile << row[0] << '\t' << row[1] << '\t' << row[2] << '\t' << row[3] << '\t'
                     << row[4] << '\t' << row[5] << '\t' << row[6] << '\t' << row[7] << '\n';
         }

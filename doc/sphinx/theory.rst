@@ -174,14 +174,48 @@ the peak and background. If we interpret the eigenvalues :math:`\sigma_i, (i =
 axes, then scaling the peak ellipsoid by :math:`3\sigma` means that 99.7% of the
 points are contained in the peak region.
 
+.. _finder_params:
+.. figure:: images/theory/ellipsoid.png
+   :alt: Integration region ellipsoiid
+   :name: fig:ellipsoid
+   :width: 60.0%
+
+   Integration region ellipsoid
+
+An example is sketched above. The dotted ellipses are the integration regions
+where the ellipsoids intersects the detector images. The grid is a single image,
+each square representing one pixel. The principle axis of the ellipsoid is not
+generally perpendicular to the image plane, so centre of the ellipse
+intersecting the image will vary from frame to frame, as the sample rotates.
+
+There are two schemes for defining an integration region in OpenHKL:
+
+1. *Variable ellipsoid* --- The peak and background ellipsoids are bounded using
+   three parameters: peak end, background begin and background end, all of which
+   are scaling factors. The peak ellipsoid is defined by the covariance matrix
+   of a blob of voxels in the case of strong peaks, and as the mean covariance
+   of neighbouring strong peaks in the case of weak peaks. The covariance matrix
+   is scaled by the peak end factor to define the peak region, and the shell
+   between the covariance matrix scaled by background begin and background end
+   defines the background region. All three of these parameters are in units of
+   multiples of :math:`\sigma`, the covariance of the ellipsoid.
+
+2. *Fixed ellipsoid* --- The peak region is defined by the "mean radius" of the
+   covariance ellipsoid in pixels; this is simply the mean of the half principal
+   axes of the ellipsoid. The background begin and background end are scaling
+   factors, which multiply the peak region.
+
+The variable ellipsoid scheme is more natural, since it only requires three
+scaling factors; however, weak peaks with large variances will necessarily have
+larger integration regions, which is usually undesirable. Thus the fixed
+ellipsoid scheme is normally preferable.
+
 .. _beam_profile:
 
 Rotating the beam profile
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-We make a simplifying assumption, that for a *perfect plane wave*
-:math:`{\mathbf{{k}}}_\text{i}`, the observed scattering function has the
-form
+We make a simplifying assumption, that for a *perfect plane wave* :math:`{\mathbf{{k}}}_\text{i}`, the observed scattering function has the form
 
 .. math::
 
@@ -378,6 +412,8 @@ Langrange multipliers we must solve
 which tells us immediately that the axis is in the direction of
 :math:`{\mathbf{{e}}}_1`.
 
+.. _sec_least_squares:
+
 Least squares integration
 -------------------------
 
@@ -450,54 +486,23 @@ then put the solved values into the error model
 and iterate until either :math:`I` becomes negative, or :math:`(B, I)`
 do not change within some given convergence criterion.
 
-**Bayesian approach** [JWu apr19]: Determine expectation values or most
-probable values of :math:`B,I` from the conditional probability
+.. _profile_fitting:
+.. figure:: images/theory/profile-fitting.png
+   :alt: Profile fitting process
+   :name: fig:profile-fitting
+   :width: 60.0%
 
-.. math::
-   :label: Ebayes
+   Profile fitting process
 
-     P(B,I|M) \propto P(M|B,I) P(B) P(I).
-
-Count statistics of the single pixels are independent of each other,
-hence
-
-.. math::
-   :label: Ec2p
-
-     P(M|B,I) = \prod_p\, c(M_p|B,I;R_p)
-
-with the single-pixel count probability distribution given by Poisson
-statistics,
-
-.. math:: c(m|B,I;r) = \frac{\lambda^m{\mathrm e}^{-\lambda}}{m!}
-
-with :math:`\lambda=B+Ir`.
-
-Rewrite :eq:`Ebayes` as
-
-.. math:: \ln P(B,I|M) = \sum_p\Big\{M_p\ln(B+IR_p)-(B+IR_p)\Big\} +\ln P(B) + \ln P(I) + \mathrm{const}.
-
-Let :math:`N` pixels contribute to the sum. Use the
-normalization :eq:`Eresnor`. Then
-
-.. math:: \ln P(B,I|M) = \sum_p\Big\{M_p\ln(B+IR_p)\Big\}-(NB+I) +\ln P(B) + \ln P(I) + \mathrm{const}.
-
-We now must specify the a priori distributions of :math:`B` and
-:math:`I`. This cannot be done without some arbitrariness. For instance,
-assume equal probability per decade within given limits. Then
-
-.. math:: P(I) = \frac{1}{\ln(I_{+}/I_{-})} \frac{1}{I},
-
-and similarly for :math:`B`, lest we breed a better idea.
-
-Now, compute the most probable parameter values from
-
-.. math::
-
-   \begin{array}{l}
-     \partial \ln P(B,I|M) / \partial B = 0, \\[1.2ex]
-     \partial \ln P(B,I|M) / \partial I = 0.
-     \end{array}
+The image above demonstrates the process of generating and fitting profiles in
+practice. One or more strong peaks in the neighbourhood of a weak reference peak
+are averaged over histogram with a different grid. In the image, a strong peak
+with a 7 x 6 pixel bounding box is binned on a 20 x 20 histogram, which is
+normalised after adding all of the neighbouring peaks. In practice, each pixel
+of a strong peak is subdivided on a finer mesh, in this case, a 5 x 5 subgrid,
+and 1/25 of the pixel signal is added to the relevant histogram bin. This
+results in smoother profiles. When profile integrating a weak peak, the profile
+value of pixel :math:`i`, :math:`p_i`, is taken from the nearest histogram bin.
 
 .. _sec_isigma:
 

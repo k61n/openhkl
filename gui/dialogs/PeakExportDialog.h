@@ -38,7 +38,6 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
-#include <qobjectdefs.h>
 #include <string>
 
 class DataComboBox;
@@ -62,7 +61,7 @@ class PeakExportDialog : public QDialog {
     //! get entered comment
     std::string getComment() { return _comment; }
     //! get if unmerged/merged data should be exported
-    bool useMergedData() { return _merged_data; };
+    bool useMergedPeakCollection() { return _merged_data; };
 
  public slots:
     void setSumIntensities(bool flag);

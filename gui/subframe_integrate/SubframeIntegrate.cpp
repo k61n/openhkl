@@ -304,6 +304,38 @@ void SubframeIntegrate::setIntegrateUp()
 
     _integrator_combo = f.addCombo();
 
+    _fit_center =
+        f.addCheckBox("Fit peak center", "Allow the peak center to move during integration", 1);
+
+    _fit_covariance = f.addCheckBox(
+        "Fit peak covariance", "Allow the peak covariance matrix to vary during integration", 1);
+
+    _remove_overlaps = f.addCheckBox(
+        "Remove overlaps", "Remove peaks with overlapping adjacent background regions", 1);
+
+    _remove_masked =
+        f.addCheckBox("Remove masked peaks", "Remove peaks intersecting detector image masks", 1);
+
+    _compute_gradient = new QGroupBox("Compute gradient");
+    _compute_gradient->setAlignment(Qt::AlignLeft);
+    _compute_gradient->setCheckable(true);
+    _compute_gradient->setChecked(false);
+    _compute_gradient->setToolTip("Discard peaks with high mean background gradient");
+
+    _gradient_kernel = new QComboBox();
+
+    _fft_gradient = new QCheckBox("FFT gradient");
+    _fft_gradient->setToolTip("Use Fourier transform for image filtering");
+    _fft_gradient->setChecked(false);
+
+    QGridLayout* grid = new QGridLayout();
+    _compute_gradient->setLayout(grid);
+    QLabel* label = new QLabel("Kernel");
+    grid->addWidget(label, 0, 0, 1, 1);
+    grid->addWidget(_gradient_kernel, 0, 1, 1, 1);
+    grid->addWidget(_fft_gradient, 1, 1, 1, -1);
+    f.addWidget(_compute_gradient);
+
     _discard_saturated = new QGroupBox("Discard saturated");
     _discard_saturated->setAlignment(Qt::AlignLeft);
     _discard_saturated->setCheckable(true);
@@ -313,9 +345,9 @@ void SubframeIntegrate::setIntegrateUp()
     _max_counts = new SafeDoubleSpinBox();
     _max_counts->setMaximum(100000);
 
-    QLabel* label = new QLabel("Maximum count");
+    label = new QLabel("Maximum count");
     label->setToolTip("Maximum count for a pixel in a single peak");
-    QGridLayout* grid = new QGridLayout();
+    grid = new QGridLayout();
     _discard_saturated->setLayout(grid);
     grid->addWidget(label, 0, 0, 1, 1);
     grid->addWidget(_max_counts, 0, 1, 1, 1);
@@ -339,35 +371,9 @@ void SubframeIntegrate::setIntegrateUp()
     grid->addWidget(_max_strength, 0, 1, 1, 1);
     f.addWidget(_use_max_strength);
 
-    _compute_gradient = new QGroupBox("Compute gradient");
-    _compute_gradient->setAlignment(Qt::AlignLeft);
-    _compute_gradient->setCheckable(true);
-    _compute_gradient->setChecked(false);
-    _compute_gradient->setToolTip("Discard peaks with high mean background gradient");
-
-    _gradient_kernel = new QComboBox();
-
-    _fft_gradient = new QCheckBox("FFT gradient");
-    _fft_gradient->setToolTip("Use Fourier transform for image filtering");
-    _fft_gradient->setChecked(false);
-
-    grid = new QGridLayout();
-    _compute_gradient->setLayout(grid);
-    label = new QLabel("Kernel");
-    grid->addWidget(label, 0, 0, 1, 1);
-    grid->addWidget(_gradient_kernel, 0, 1, 1, 1);
-    grid->addWidget(_fft_gradient, 1, 1, 1, -1);
-    f.addWidget(_compute_gradient);
-
     for (const auto& [kernel, description] : _kernel_description)
         _gradient_kernel->addItem(description);
     _gradient_kernel->setCurrentIndex(1);
-
-    _fit_center =
-        f.addCheckBox("Fit peak center", "Allow the peak center to move during integration", 1);
-
-    _fit_covariance = f.addCheckBox(
-        "Fit peak covariance", "Allow the peak covariance matrix to vary during integration", 1);
 
     _radius_int = f.addDoubleSpinBox(
         "Search radius (pixels):", "(pixels) - neighbour search radius in pixels");
@@ -382,12 +388,6 @@ void SubframeIntegrate::setIntegrateUp()
         f.addCombo("Interpolation type", "Interpolation strategy for computing mean covariance");
 
     _shape_combo = f.addShapeCombo("Shape model", "The shape model used in integraton");
-
-    _remove_overlaps = f.addCheckBox(
-        "Remove overlaps", "Remove peaks with overlapping adjacent background regions", 1);
-
-    _remove_masked =
-        f.addCheckBox("Remove masked peaks", "Remove peaks intersecting detector image masks", 1);
 
     _integrate_button = f.addButton("Integrate peaks");
 
@@ -497,9 +497,7 @@ void SubframeIntegrate::changeSelected(PeakItemGraphic* peak_graphic)
 
 void SubframeIntegrate::toggleUnsafeWidgets()
 {
-    _integrate_button->setEnabled(false);
-    _remove_overlaps->setEnabled(false);
-    _use_max_strength->setEnabled(false);
+    bool isPxsum = _integrator_combo->currentIndex() == 0;
 
     if (!gSession->hasProject())
         return;
@@ -510,13 +508,20 @@ void SubframeIntegrate::toggleUnsafeWidgets()
     if (!gSession->currentProject()->hasPeakCollection())
         return;
 
-    _remove_overlaps->setEnabled(true);
-
-    if (_integrator_combo->currentIndex() == 0)
-        _integrate_button->setEnabled(true);
-    else {
+    _integrate_button->setToolTip("");
+    _integrate_button->setEnabled(isPxsum);
+    _use_max_strength->setEnabled(!isPxsum);
+    _compute_gradient->setEnabled(isPxsum);
+    _fit_center->setEnabled(isPxsum);
+    _fit_covariance->setEnabled(isPxsum);
+    _radius_int->setEnabled(!isPxsum);
+    _n_frames_int->setEnabled(!isPxsum);
+    _min_neighbours->setEnabled(!isPxsum);
+    _interpolation_combo->setEnabled(!isPxsum);
+    _shape_combo->setEnabled(!isPxsum);
+    if (!isPxsum) {
         _integrate_button->setEnabled(gSession->currentProject()->hasShapeModel());
-        _use_max_strength->setEnabled(true);
+        _integrate_button->setToolTip("No shape model available");
     }
 }
 

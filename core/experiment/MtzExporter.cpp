@@ -17,7 +17,7 @@
 #include "core/data/DataTypes.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/shape/PeakCollection.h"
-#include "core/statistics/MergedData.h"
+#include "core/statistics/MergedPeakCollection.h"
 #include "core/statistics/PeakMerger.h"
 
 #include <functional>
@@ -28,7 +28,7 @@
 
 namespace ohkl {
 MtzExporter::MtzExporter(
-    MergedData* merged_data, sptrDataSet data, sptrUnitCell cell, bool merged, bool sum_intensities,
+    MergedPeakCollection* merged_data, sptrDataSet data, sptrUnitCell cell, bool merged, bool sum_intensities,
     std::string comment)
     : _merged_data(merged_data)
     , _ohkl_data(data)

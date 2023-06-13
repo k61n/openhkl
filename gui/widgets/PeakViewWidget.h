@@ -69,6 +69,7 @@ class PeakViewWidget : public QGridLayout {
     QComboBox* addCombo(int row);
     ColorButton* addColorButton(int row, int col, const QColor& color);
 
+    void togglePreview();
     void switchIntRegionType();
 };
 

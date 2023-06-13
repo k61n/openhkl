@@ -155,8 +155,6 @@ class SubframeExperiment : public QWidget {
     QPushButton* _update_plot;
     QCheckBox* _totalHistogram;
     QCheckBox* _yLog;
-    QCheckBox* _xZoom;
-    QCheckBox* _yZoom;
     QSpinBox* _npoints_intensity;
     QSpinBox* _npoints_lineplot;
     QSpinBox* _minX;

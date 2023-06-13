@@ -17,7 +17,7 @@
 
 namespace ohkl {
 
-class MergedData;
+class MergedPeakCollection;
 
 //! Pure virtual base class for statistics of merged peaks. Only realised by RFactor.
 
@@ -25,7 +25,7 @@ class IMergedPeakStatistic {
  public:
     virtual ~IMergedPeakStatistic() = default;
     //! Calculate the statistic on a given merged data set.
-    virtual void calculate(MergedData* data) = 0;
+    virtual void calculate(MergedPeakCollection* data) = 0;
     //! Retrieve the value of the computed statistic.
     double value() const;
 };

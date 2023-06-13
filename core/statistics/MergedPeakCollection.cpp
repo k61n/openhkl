@@ -2,8 +2,8 @@
 //
 //  OpenHKL: data reduction for single crystal diffraction
 //
-//! @file      core/statistics/MergedData.cpp
-//! @brief     Implements class MergedData
+//! @file      core/statistics/MergedPeakCollection.cpp
+//! @brief     Implements class MergedPeakCollection
 //!
 //! @homepage  https://openhkl.org
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "core/statistics/MergedData.h"
+#include "core/statistics/MergedPeakCollection.h"
 
 #include "base/utils/Logger.h"
 #include "core/data/DataSet.h"
@@ -21,7 +21,7 @@
 
 namespace ohkl {
 
-MergedData::MergedData(
+MergedPeakCollection::MergedPeakCollection(
     SpaceGroup space_group, std::vector<PeakCollection*> peak_collections,
     bool friedel, bool sum_intensity, int fmin, int fmax)
     : _group(space_group)
@@ -31,26 +31,26 @@ MergedData::MergedData(
     , _frame_min(fmin)
     , _frame_max(fmax)
 {
-    ohklLog(Level::Info, "MergedData::MergedData: merging peaks");
+    ohklLog(Level::Info, "MergedPeakCollection::MergedPeakCollection: merging peaks");
     _peak_collections = peak_collections;
     for (int i = 0; i < _peak_collections.size(); ++i) {
         if (_peak_collections[i] == nullptr)
             continue;
         ohklLog(
-            Level::Info, "MergedData::MergedData: peak collection ", _peak_collections[i]->name());
+            Level::Info, "MergedPeakCollection::MergedPeakCollection: peak collection ", _peak_collections[i]->name());
         std::vector<Peak3D*> peaks = _peak_collections[i]->getPeakList();
         for (int j = 0; j < peaks.size(); ++j)
             addPeak(peaks[j]);
     }
     if (_nInvalid > 0) {
-        ohklLog(Level::Info, "MergedData::MergedData: ", totalSize(), " observed peaks");
-        ohklLog(Level::Info, "MergedData::MergedData: ", _nInvalid, " disabled peaks");
-        ohklLog(Level::Info, "MergedData::MergedData: ", _nInequivalent, " inequivalent peaks");
-        ohklLog(Level::Info, "MergedData::MergedData: ", nUnique(), " symmetry-unique peaks");
+        ohklLog(Level::Info, "MergedPeakCollection::MergedPeakCollection: ", totalSize(), " observed peaks");
+        ohklLog(Level::Info, "MergedPeakCollection::MergedPeakCollection: ", _nInvalid, " disabled peaks");
+        ohklLog(Level::Info, "MergedPeakCollection::MergedPeakCollection: ", _nInequivalent, " inequivalent peaks");
+        ohklLog(Level::Info, "MergedPeakCollection::MergedPeakCollection: ", nUnique(), " symmetry-unique peaks");
     }
 }
 
-MergedData::MergedData(SpaceGroup space_group, bool friedel, bool sum_intensity, int fmin, int fmax)
+MergedPeakCollection::MergedPeakCollection(SpaceGroup space_group, bool friedel, bool sum_intensity, int fmin, int fmax)
     : _group(space_group)
     , _friedel(friedel)
     , _merged_peak_set()
@@ -60,7 +60,7 @@ MergedData::MergedData(SpaceGroup space_group, bool friedel, bool sum_intensity,
 {
 }
 
-void MergedData::addPeak(Peak3D* peak)
+void MergedPeakCollection::addPeak(Peak3D* peak)
 {
     auto c = peak->shape().center();
     // Ignore the peaks outside the frame range (mainly to exclude peaks that can't be interpolated)
@@ -91,17 +91,17 @@ void MergedData::addPeak(Peak3D* peak)
     _merged_peak_set.emplace(std::move(new_peak));
 }
 
-void MergedData::addPeakCollection(PeakCollection* peaks)
+void MergedPeakCollection::addPeakCollection(PeakCollection* peaks)
 {
     _peak_collections.push_back(peaks);
 }
 
-const MergedPeakSet& MergedData::mergedPeakSet() const
+const MergedPeakSet& MergedPeakCollection::mergedPeakSet() const
 {
     return _merged_peak_set;
 }
 
-size_t MergedData::totalSize() const
+size_t MergedPeakCollection::totalSize() const
 {
     size_t total = 0;
 
@@ -110,42 +110,42 @@ size_t MergedData::totalSize() const
     return total;
 }
 
-double MergedData::redundancy() const
+double MergedPeakCollection::redundancy() const
 {
     return double(totalSize()) / double(_merged_peak_set.size());
 }
 
-void MergedData::clear()
+void MergedPeakCollection::clear()
 {
     _merged_peak_set.clear();
 }
 
-void MergedData::setDRange(const double d_min, const double d_max)
+void MergedPeakCollection::setDRange(const double d_min, const double d_max)
 {
     _d_min = d_min;
     _d_max = d_max;
     double lambda = _peak_collections[0]->data()->wavelength();
     sptrUnitCell cell = _peak_collections[0]->unitCell();
     _max_peaks = cell->maxPeaks(d_min, d_max, lambda);
-    ohklLog(Level::Info, "MergedData::setDRange: ", _max_peaks, " maximum possible peaks");
+    ohklLog(Level::Info, "MergedPeakCollection::setDRange: ", _max_peaks, " maximum possible peaks");
 }
 
-void MergedData::setDRange(
+void MergedPeakCollection::setDRange(
     const double d_min, const double d_max, sptrDataSet data, sptrUnitCell cell)
 {
     _d_min = d_min;
     _d_max = d_max;
     double lambda = data->wavelength();
     _max_peaks = cell->maxPeaks(d_min, d_max, lambda);
-    ohklLog(Level::Info, "MergedData::setDRange: ", _max_peaks, " maximum possible peaks");
+    ohklLog(Level::Info, "MergedPeakCollection::setDRange: ", _max_peaks, " maximum possible peaks");
 }
 
-double MergedData::dMin() const
+double MergedPeakCollection::dMin() const
 {
     return _d_min;
 }
 
-double MergedData::dMax() const
+double MergedPeakCollection::dMax() const
 {
     return _d_max;
 }

@@ -29,7 +29,7 @@
 
 namespace ohkl {
 
-class MergedData;
+class MergedPeakCollection;
 class PeakCollection;
 class PeakMerger;
 
@@ -37,7 +37,7 @@ class MtzExporter {
  public:
     //! Constructor
     MtzExporter(
-        MergedData* merged_data, sptrDataSet data, sptrUnitCell cell, bool merged,
+        MergedPeakCollection* merged_data, sptrDataSet data, sptrUnitCell cell, bool merged,
         bool sum_intensities, std::string comment);
     //! Destructor
     ~MtzExporter();
@@ -70,11 +70,8 @@ class MtzExporter {
         std::string name, std::string label, int grp, int set_id, int active, int src);
 
  private:
-    //! Merger object to process the merge if necessary
-    PeakMerger* _merger;
-
     // ohkl data structures
-    MergedData* _merged_data;
+    MergedPeakCollection* _merged_data;
     sptrDataSet _ohkl_data;
     UnitCell* _ohkl_cell;
     //! Whether to export merged (true) or unmerged (false) peaks

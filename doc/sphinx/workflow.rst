@@ -38,232 +38,263 @@ existing experiment state.
 There are three tables summarising the state of the experiment on the left hand
 side of this window.
 
-.. table:: Datasets
+.. list-table:: Data sets
+   :widths: 20, 10, 20
+   :header-rows: 1
+   :align: left
 
-   +--------------------+----------------+-------------------------------+
-   | **Column**         | Unit           | Description                   |
-   +====================+================+===============================+
-   | **Name**           |                | Name of the data set          |
-   +--------------------+----------------+-------------------------------+
-   | **Diffractometer** |                | Name of diffractometer used   |
-   +--------------------+----------------+-------------------------------+
-   | **Number of**      |                | Number of images in this      |
-   | **frames**         |                | data set                      |
-   +--------------------+----------------+-------------------------------+
-   | **Number of**      | pixels         | Height of image in pixels     |
-   | **rows**           |                |                               |
-   +--------------------+----------------+-------------------------------+
-   | **Number of**      | pixels         | Width of image in pixels      |
-   | **columns**        |                |                               |
-   +--------------------+----------------+-------------------------------+
+   * - Column
+     - Unit
+     - Description
+   * - Name
+     -
+     - Name of the data set
+   * - Diffractometer
+     -
+     - Name of diffractometer used
+   * - Number of frames
+     -
+     - Number of images in this data set
+   * - Number of rows
+     - pixels
+     - Height of image
+   * - Number of columns
+     - pixels
+     - Width of image
 
-.. table:: Peak collections
+.. list-table:: Peak collections
+   :widths: 20, 10, 20
+   :header-rows: 1
+   :align: left
 
-   +--------------------+----------------+-------------------------------+
-   | **Column**         | Unit           | Description                   |
-   +====================+================+===============================+
-   | **Name**           |                | Name of the peak collection   |
-   +--------------------+----------------+-------------------------------+
-   | **Number of**      |                | Number of peaks in this       |
-   | **peaks**          |                | collection                    |
-   +--------------------+----------------+-------------------------------+
-   | **Number of**      |                | Number of rejected peaks      |
-   | **invalid peaks**  |                | in this collection            |
-   +--------------------+----------------+-------------------------------+
-   | **Is indexed**     |                | Whether peaks in this         |
-   |                    |                | collection have Miller        |
-   |                    |                | indices assigned              |
-   +--------------------+----------------+-------------------------------+
-   | **Is integrated**  |                | Whether peak in this          |
-   |                    |                | collection have had           |
-   |                    |                | intensities and sigmas        |
-   |                    |                | calculated                    |
-   +--------------------+----------------+-------------------------------+
-   | **Type**           |                | Labels the peak collection    |
-   |                    |                | as either ``found`` or        |
-   |                    |                | ``predicted``                 |
-   +--------------------+----------------+-------------------------------+
+   * - Column
+     - Unit
+     - Description
+   * - Name
+     -
+     - Name of the peak collection
+   * - Number of peaks
+     -
+     - Number of peaks in this collection
+   * - Number of invalid
+     -
+     - Number of rejected peaks in this collection
+   * - Is indexed
+     - Y/N
+     - Peaks in this collection have Miller indices
+   * - Is integrated
+     - Y/N
+     - Peaks in this collection have calculated intensities
+   * - Type
+     -
+     - Labels peak collection as ``found`` or ``predicted``
 
-.. table:: Unit cells
+.. list-table:: Unit cells
+   :widths: 10, 10, 20
+   :header-rows: 1
+   :align: left
 
-   +--------------------+----------------+-------------------------------+
-   | **Column**         | Unit           | Description                   |
-   +====================+================+===============================+
-   | **ID**             |                | Integer label of cell         |
-   +--------------------+----------------+-------------------------------+
-   | **Name**           |                | Name of the unit cell         |
-   +--------------------+----------------+-------------------------------+
-   | **Space group**    |                | Space group of cell           |
-   +--------------------+----------------+-------------------------------+
-   | **a**              | Å              | *a* cell parameter            |
-   +--------------------+----------------+-------------------------------+
-   | **b**              | Å              | *b* cell parameter            |
-   +--------------------+----------------+-------------------------------+
-   | **c**              | Å              | *c* cell parameter            |
-   +--------------------+----------------+-------------------------------+
-   | :math:`\alpha`     | degrees        | :math:`\alpha` cell angle     |
-   +--------------------+----------------+-------------------------------+
-   | :math:`\beta`      | degrees        | :math:`\beta` cell angle      |
-   +--------------------+----------------+-------------------------------+
-   | :math:`\gamma`     | degrees        | :math:`\gamma` cell angle     |
-   +--------------------+----------------+-------------------------------+
+   * - Column
+     - Unit
+     - Description
+   * - ID
+     -
+     - Integer label of unit cell
+   * - Name
+     -
+     - Name of Unit Cell
+   * - Space group
+     -
+     - Assigned space group of unit cell
+   * - :math:`a`
+     - Å
+     - :math:`a` cell parameter
+   * - :math:`b`
+     - Å
+     - :math:`b` cell parameter
+   * - :math:`c`
+     - Å
+     - :math:`c` cell parameter
+   * - :math:`\alpha`
+     - degrees
+     - :math:`\alpha` cell angle
+   * - :math:`\beta`
+     - degrees
+     - :math:`\beta` cell angle
+   * - :math:`\gamma`
+     - degrees
+     - :math:`\gamma` cell angle
+
+Sets of detector images taken at different sample rotation angles can be added to the experiment either via the ``Data`` menu or by clicking the "add data set" icon on the home panel. Image data sets can take the form of ``.tiff`` images, ``.raw`` images or Nexus data sets. After selecting the appropriate option to load data files, the user is prompted to select files, and then in the case of raw and tiff data, enter some metadata parameters via the raw/tiff data loader dialogue.
+
+.. list-table:: Tiff and raw data loader parameters
+   :widths: 20, 10, 20
+   :header-rows: 1
+   :align: left
+
+   * - Parameter
+     - Unit
+     - Description
+   * - Data arrangement
+     - Row/column major
+     - Whether rows or columns are contiguous in memory
+   * - Data format
+     - 16/32 bit integer/float
+     - Bit depth and type of pixel value
+   * - Swap endian
+     - T/F
+     - Swap endianness of data (big/little)
+   * - Image resolution
+     - pixels
+     - Select image resolution, columns x rows (Raw only)
+   * - Rebinning
+     - pixels
+     - Downscale image by given ratio (Tiff only)
+   * - :math:`\Delta\chi`
+     - degrees
+     - :math:`\chi` angular stepping for sample
+   * - :math:`\Delta\omega`
+     - degrees
+     - :math:`\omega` angular stepping for sample
+   * - :math:`\Delta\phi`
+     - degrees
+     - :math:`\phi` angular stepping for sample
+   * - wavelength
+     - Å
+     - wavelength of incident neutron beam
+   * - Use baseline/gain
+     - T/F
+     - Use the baseline and gain specified for the detector
+   * - baseline
+     -
+     - Value subtracted from each pixel before integration
+   * - gain
+     -
+     - Value dividing each pixel before integration
+
+Unlike raw images, tiff image files include a header containing most of the
+required metadata, so only information on the experimental parameters will be
+required. Nexus files contain all the necessary experimental metadata and has
+no associated loading dialogue.
 
 Experiment
 ----------
 
-Most information on the experiment can be found in this panel, including
-settings for the instrument, the raw data sets, any computed unit cells and the
-peak collections.
+This panel contains three tabs with functionality that is normally required
+before the data reduction process is started: ``strategy``, ``histograms`` and
+``masks``.
 
-Raw data is loaded from this screen, by going to the "data" tab, clicking on the
-green "+" and selecting the relevant data format. The file dialogue box can be
-used to select multiple images if necessary, and these will be loaded in the
-order they are sorted by the OS (normally numerically, but some care is
-required). In the case of the raw data format (`.tiff` and `.nxs`), some
-additional metadata is requested in a prompt dialogue.
+There are three tabs on the left-hand panel: ``Strategy``, ``Histograms`` and
+``Masks``.
 
-.. table:: Raw data loader parameters
+Strategy
+~~~~~~~~
 
-   +-------------------+----------------+-------------------------------+
-   | **Parameters**    | Unit           | Description                   |
-   +===================+================+===============================+
-   | **Data**          | Row/column     | Specifies whether rows or     |
-   | **arrangement**   | Major          | columns are contiguous in     |
-   |                   |                | memory                        |
-   +-------------------+----------------+-------------------------------+
-   | **Data format**   | 8/16/32 bit    | Number of bits per pixel      |
-   |                   |                | in raw images                 |
-   +-------------------+----------------+-------------------------------+
-   | **Swap endian**   | T/F            | Toggle endianness of data     |
-   |                   |                | (big endian/little endian)    |
-   +-------------------+----------------+-------------------------------+
-   | **delta chi**     | degrees        | Angular stepping for sample   |
-   |                   |                | angle :math:`\chi`            |
-   +-------------------+----------------+-------------------------------+
-   | **delta omega**   | degrees        | Angular stepping for sample   |
-   |                   |                | angle :math:`\omega`          |
-   +-------------------+----------------+-------------------------------+
-   | **delta phi**     | degrees        | Angular stepping for sample   |
-   |                   |                | angle :math:`\phi`            |
-   +-------------------+----------------+-------------------------------+
-   | **wavelength**    | Å              | Incident wavelength           |
-   +-------------------+----------------+-------------------------------+
-
-The detector image serves three purposes:
-
-1. To adjust the intensity colour scale via the slider on the right
-2. To mask regions of the image such as the beam stop or specific peaks, to
-   exclude them from further processing
-3. To plot intensity profiles along a line
-
-There are three tabs on the left-hand panel: `strategy`, `Histograms` and
-`Masks`.
-
-The `strategy` tab contains controls for finding blobs (notionally
+The ``strategy`` tab contains controls for finding blobs (notionally
 peaks) in a single image, using those blobs to determine the unit cell, and
 predicting the completeness of the peaks given a sample rotation angle
-increment. The `Set initial direct beam position` controls the point at which
+increment. The ``Set initial direct beam position`` controls the point at which
 the direct beam intersects the detector image. In the first instance, this is
 assumed to be in the centre of the image, but this may be off by a few pixels.
 Clicking the checkbox allows the user to drag a resizable crosshair in the
-detector image panel, which will define the exact direct beam position. The `x
-offset` and `y offset` controls define the offset of this crosshair, in pixels,
+detector image panel, which will define the exact direct beam position. The ``x
+offset`` and ``y offset`` controls define the offset of this crosshair, in pixels,
 with respect to the *centre* of the image.
 
-The `Find blobs in this image` box allows the user to leverage image processing
-algorithms from the OpenCV (namely `SimpleBlobDetector`) library to locate
+The ``Find blobs in this image`` box allows the user to leverage image processing
+algorithms from the OpenCV (namely ``SimpleBlobDetector``) library to locate
 detector spots.
 
-.. table:: 2D blob finder parameters
+.. list-table:: 2D blob finder parameters
+   :widths: 20, 10, 20
+   :header-rows: 1
+   :align: left
 
-   +-------------------+----------------+-------------------------------+
-   | **Parameters**    | Unit           | Description                   |
-   +===================+================+===============================+
-   | **Convolution**   |                | Convolution kernel for blob   |
-   | **kernel**        |                | search                        |
-   |                   |                |                               |
-   +-------------------+----------------+-------------------------------+
-   | **Threshold**     | counts         | Pixels with a value below the |
-   |                   |                | threshold are discarded       |
-   +-------------------+----------------+-------------------------------+
-   | **Minimum blob**  | integer        | Blob is discarded if it       |
-   | **threshold**     |                | contains fewer points than    |
-   |                   |                | this                          |
-   +-------------------+----------------+-------------------------------+
-   | **Maximum blob**  | integer        | Blob is discarded if it       |
-   | **threshold**     |                | contains more points than     |
-   |                   |                | this                          |
-   +-------------------+----------------+-------------------------------+
-   | **Search all**    |                | Loop through all images to    |
-   | **images**        |                | find detector spots           |
-   |                   |                |                               |
-   +-------------------+----------------+-------------------------------+
+   * - Parameter
+     - Unit
+     - Description
+   * - Convolution kernel
+     -
+     - Matrix for image filtering
+   * - Filtered image threshold
+     - pixel counts
+     - Pixels with value below threshold are discarded
+   * - Minimum blob threshold
+     - pixel counts
+     - Blob is discarded if it contains fewer points than this
+   * - Maximum blob threshold
+     - pixel counts
+     - Blob is discarded if it contains more points than this
+   * - Search all images
+     -
+     - FInd spots in all images in data set
+   * - Apply threshold to preview
+     -
+     - Show the filtered and threshold image
 
 The autoindexer parameters are described in :ref:`sec_autoindexing`, but it
 should be noted that indexing from a single image generally requires masking of
 ``difficult'' regions of the detector such as the beam stop, and a good initial
 guess for the direct beam position.
 
-The `Histograms` tab allows the user to plot histograms of *pixel* statistics
+.. list-table:: Strategy peak prediction
+   :widths: 20, 10, 20
+   :header-rows: 1
+   :align: left
+
+   * - Parameter
+     - Unit
+     - Description
+   * - :math:`\Delta\chi`
+     - degrees
+     - Angle increment for sample rotation about :math:`\chi` axis
+   * - :math:`\Delta\omega`
+     - degrees
+     - Angle increment for sample rotation about :math:`\omega` axis
+   * - :math:`\Delta\phi`
+     - degrees
+     - Angle increment for sample rotation about :math:`\phi` axis
+   * - Number of increments
+     -
+     - Sample rotation increments or images to simulate
+   * - d range
+     - Å
+     - Resolution range for predicting peaks
+
+Histograms
+~~~~~~~~~~
+
+The ``Histograms`` tab allows the user to plot histograms of *pixel* statistics
 (as opposed to peak statistics).
 
-.. table:: Pixel statistics parameters
+The ``Per-pixel detector count histograme`` allows the user to plota histogram of
+pixel counts for either the current single image, or for all images (by checking
+the ``All images`` box. Checking the ``Plot intensity profiles`` box changes the
+interaction mode in the detector image to draw a ("Line plot", "Horizontal
+slice" or "Vertical slice") through the image, and plot a histogram of the
+intensity along that line with the given number of bins.
 
-   +-------------------+----------------+-------------------------------+
-   | **Parameters**    | Unit           | Description                   |
-   +===================+================+===============================+
-   | **Number of**     | integer        | Number of histogram bins      |
-   | **bins**          |                |                               |
-   |                   |                |                               |
-   +-------------------+----------------+-------------------------------+
-   | **Calculate**     |                | Plot a histogram of pixel     |
-   | **intensity**     |                | intensity statistics for the  |
-   |                   |                | visible image                 |
-   +-------------------+----------------+-------------------------------+
-   | **Show total**    |                | Display histogram for all     |
-   | **histogram**     |                | detector images in data set   |
-   |                   |                |                               |
-   +-------------------+----------------+-------------------------------+
-   | **Use**           |                | Use logarithmic scale for     |
-   | **logarithmic**   |                | counts                        |
-   | **scale**         |                |                               |
-   +-------------------+----------------+-------------------------------+
-   | **Range on x**    |                | Adjust range on x axis        |
-   | **axis**          |                |                               |
-   +-------------------+----------------+-------------------------------+
-   | **Range on y**    |                | Adjust range on y axis        |
-   | **axis**          |                |                               |
-   +-------------------+----------------+-------------------------------+
-   | **Minimum x**     |                | Minimum value on x axis       |
-   | **value**         |                |                               |
-   +-------------------+----------------+-------------------------------+
-   | **Maximum x**     |                | Maximum value on x axis       |
-   | **value**         |                |                               |
-   +-------------------+----------------+-------------------------------+
-   | **Maximum y**     |                | Minimum value on y axis       |
-   | **value**         |                |                               |
-   +-------------------+----------------+-------------------------------+
-   | **Minimum y**     |                | Maximum value on y axis       |
-   | **value**         |                |                               |
-   +-------------------+----------------+-------------------------------+
-   | **Update plot**   |                | Refresh the plot              |
-   +-------------------+----------------+-------------------------------+
+Masks
+~~~~~
 
-   The `Plot intensity profiles` box changes the interaction mode in the
-   detector image to draw a ("Line plot", "Horizontal slice" or "Vertical
-   slice") through the image, and plot a histogram of the intensity along that
-   line with the given number of bins.
+The ``Masks`` tab allows the user to add masks to the data set. A mask is
+either an ellipse or a rectangle present on *all images in the data set*, on
+which detected spots or peaks and integration is not valid. Possible reasons
+to add a mask can be to prevent peak finding on a the beam spot, or to
+prevent integration of peaks on heterogeneous features such as seams between
+detector plates. The ``Add detector image masks`` check box changes the
+interaction mode in the detector image to draw a mask by dragging and
+dropping, the shape of which is specified in the list (rectangular or
+elliptical). Masks are displayed in the list below, and the extents of the
+masks can be fine tuned.
 
-   The `Masks` tab allows the user to add masks to the data set. A mask is
-   either an ellipse or a rectangle present on *all images in the data set*, on
-   which detected spots or peaks and integration is not valid. Possible reasons
-   to add a mask can be to prevent peak finding on a the beam spot, or to
-   prevent integration of peaks on heterogeneous features such as seams between
-   detector plates. The `Add detector image masks` check box changes the
-   interaction mode in the detector image to draw a mask by dragging and
-   dropping, the shape of which is specified in the list (rectangular or
-   elliptical). Masks are displayed in the list below, and the extents of the
-   masks can be fine tuned.
+The screenshot above demostrates masking the detector image to exclude invalid
+regions from the peak search. The beam stop and the seam between detector plates
+(thin white line in this context) have been masked using the masking tool in the
+bottom right hand corner, such that any peaks found in these regions will be
+rejected. The region around the beam stop containing the air scattering halo has
+also been masked because the heterogeneous background will result in poor
+integration.
 
 
 Find peaks
@@ -296,64 +327,46 @@ merging process is repeated until there are no longer any overlapping
 ellipsoids.
 
 The collision detection problem for ellipsoids is sped up by storing
-them in an octree. The ellipsoid overlap detection is implemented using
-the criterion described in **TODO: find literature**.
+them in an octree.
 
-.. _peakfinder:
-.. figure:: peak_finder.png
-   :alt: Masking the detector image
-   :name: fig:peak_finder
-   :width: 100.0%
+.. list-table:: Peak finder parameters
+   :widths: 20, 10, 20
+   :header-rows: 1
+   :align: left
 
-The screenshot above demostrates masking the detector image to exclude invalid
-regions from the peak search. The beam stop and the seam between detector plates
-(thin white line in this context) have been masked using the masking tool in the
-bottom right hand corner, such that any peaks found in these regions will be
-rejected. The region around the beam stop containing the air scattering halo has
-also been masked because the heterogeneous background will result in poor
-integration.
-
-.. table:: Peak search parameters
-
-   +-------------------+----------------+-------------------------------+
-   | **Parameters**    | Unit           | Description                   |
-   +===================+================+===============================+
-   | **Threshold**     | counts         | Pixels with a value below the |
-   |                   |                | threshold are discarded       |
-   +-------------------+----------------+-------------------------------+
-   | **Merging scale** | :math:`\sigma` | Peak scale in sigmas, to      |
-   |                   |                | detect collisions between     |
-   |                   |                | blobs                         |
-   +-------------------+----------------+-------------------------------+
-   | **Minimum size**  | integer        | Blob is discarded if it       |
-   |                   |                | contains fewer points than    |
-   |                   |                | this                          |
-   +-------------------+----------------+-------------------------------+
-   | **Maximum size**  | integer        | Blob is discarded if it       |
-   |                   |                | contains more points than     |
-   |                   |                | this                          |
-   +-------------------+----------------+-------------------------------+
-   | **Maximum width** | frames         | Blob is discarded if it spans |
-   |                   |                | more frames than this         |
-   +-------------------+----------------+-------------------------------+
-   | **Kernel**        |                | Convolution kernel for peak   |
-   |                   |                | search                        |
-   +-------------------+----------------+-------------------------------+
-   | **Parameters**    |                | parameters                    |
-   |                   |                | :math:`r_1, r_2, r_3` for the |
-   |                   |                | :ref:`sec_pixelsum`           |
-   +-------------------+----------------+-------------------------------+
-   | **Start frame**   | frame          | Initial frame in range for    |
-   |                   |                | peak finding                  |
-   +-------------------+----------------+-------------------------------+
-   | **End frame**     | frame          | Final frame in range for peak |
-   |                   |                | finding                       |
-   +-------------------+----------------+-------------------------------+
+   * - Parameter
+     - Unit
+     - Description
+   * - Threshold
+     - pixel counts
+     - During peak finding, pixels above this value are set to 1, otherwise 0
+       after filtering
+   * - Merging scale
+     - :math:`\sigma`
+     - Scale factor for covariance matrix to detect collisions between blobs
+   * - Blob size range
+     - pixel counts
+     - Only blobs with counts in this range will be kept
+   * - Maximum width
+     - frames
+     - Only blobs spanning fewer images than this number will be kept
+   * - Convolution kernel
+     -
+     - Type of convolution matrix to use in image filtering
+   * - Parameters
+     -
+     - Radius parameters used in construction of convolution matrix
+   * - Frame range
+     - frames
+     - Find peaks in this image range
+   * - Apply threshold to preview
+     -
+     - Switch detector image to filtered and thresholded view
 
 At this stage in the workflow, there are no available profiles to perform
-profile integration. The found peaks are integrated at this stage using 
-pixel sum integration :ref:`sec_pixelsum`, a simple summation of peak pixel
-counts with a mean background subtraction.
+profile integration. The found peaks are integrated at this stage using
+:ref:`sec_pixelsum`, a simple summation of peak pixel counts with a mean
+background subtraction.
 
 The following three integration parameters are explained in detail in
 :ref:`sec_peakshape` . Briefly, however, they are scaling factors that determine
@@ -364,20 +377,32 @@ the ellipsoid, 95.4% for :math:`2\sigma` and 99.7% for :math:`3\sigma`. The
 ellipsoids (projected to ellipses on the detector scene) can be visualised via
 the "Show/hide" peaks widget.
 
-.. table:: Integration parameters
+.. list-table:: Integration parameters
+   :widths: 20, 10, 20
+   :header-rows: 1
+   :align: left
 
-   +-----------------+----------------+---------------------------------+
-   | **Parameters**  | Unit           | Description                     |
-   +=================+================+=================================+
-   | **Peak end**    | :math:`\sigma` | End of peak region in detector  |
-   |                 |                | coordinates                     |
-   +-----------------+----------------+---------------------------------+
-   | **Bkg. begin**  | :math:`\sigma` | Beginning of background region  |
-   |                 |                | in detector coordinates         |
-   +-----------------+----------------+---------------------------------+
-   | **Bkg. end**    | :math:`\sigma` | End of background region in     |
-   |                 |                | detector coordinates            |
-   +-----------------+----------------+---------------------------------+
+   * - Parameter
+     - Unit
+     - Description
+   * - Peak end
+     - :math:`\sigma`
+     - End of peak region in multiples of the blob covariance matrix
+   * - Background begin
+     - :math:`\sigma`
+     - Beginning of background region in multiples of the blob covariance matrix
+   * - Background end
+     - :math:`\sigma`
+     - End of background region in multiples of the blob covariance matrix
+   * - Compute gradient
+     -
+     - Whether to compute the image gradient
+   * - FFT gradient
+     -
+     - Whether to use Fast Fourier Transform to compute gradient
+   * - Gradient kernel
+     -
+     - Matrix kernel to use for gradient convolution
 
 Filter peaks
 ------------
@@ -450,14 +475,14 @@ workflow.
 The algorithm works as follows. We are given some set of
 :math:`\mathbf{q}` vectors which lie approximately on a lattice, yet to
 be determined. To find candidate lattice directions, we take a random
-sample of directions. For each direction, we perform the orthogonal
-projection of each :math:`\mathbf{q}` vector to the infinite line
-specified by the direction. We then take a finite number of bins along
-this line (the way the binning is performed can be controlled by
-user-defined parameters), and then take FFT of the resulting histogram.
-The histogram will be strongly periodic when the direction corresponds
-to a lattice direction, so we identify lattice vectors by taking the
-strongest Fourier modes of the histograms.
+sample of directions using the Fibonacci sphere algorithm. For each direction,
+we perform the orthogonal projection of each :math:`\mathbf{q}` vector to the
+infinite line specified by the direction. We then take a finite number of bins
+along this line (the way the binning is performed can be controlled by
+user-defined parameters), and then take FFT of the resulting histogram. The
+histogram will be strongly periodic when the direction corresponds to a lattice
+direction, so we identify lattice vectors by taking the strongest Fourier modes
+of the histograms.
 
 The FFT method produces a finite set of potential lattice vectors. To
 find a basis, we enumerate over triples of these basis vectors and rank
@@ -470,67 +495,55 @@ them according to
 This provides a ranked list of candidate unit cells, from which the user
 may choose.
 
-.. table:: Autoindexing parameters
+.. list-table:: Autoindexing parameters
+   :widths: 20, 10, 20
+   :header-rows: 1
+   :align: left
 
-   +----------------------+---------------+-------------------------+
-   | **Parameters**       | Unit          | Description             |
-   +======================+===============+=========================+
-   | **Frames**           | frame number  | Choose a limited subset |
-   |                      |               | of images from the data |
-   |                      |               | set. Fourier transform  |
-   |                      |               | autoindexing tends to   |
-   |                      |               | work best on a subset   |
-   |                      |               | of images, typically    |
-   |                      |               | :math:`\simeq` 5        |
-   |                      |               | degrees of oscillation  |
-   |                      |               | at the start of the     |
-   |                      |               | range, or a few         |
-   |                      |               | (:math:`\simeq 10`)     |
-   |                      |               | frames.                 |
-   +----------------------+---------------+-------------------------+
-   | **D range**          | Å             | Peaks with q vectors    |
-   |                      |               | outside this range will |
-   |                      |               | not be using in         |
-   |                      |               | indexing                |
-   +----------------------+---------------+-------------------------+
-   | **Strength**         |               | Peaks with strength     |
-   |                      |               | (:math:`I/\sigma`)      |
-   |                      |               | outside this range will |
-   |                      |               | not be used in indexing |
-   +----------------------+---------------+-------------------------+
-   | **Gruber Tol.**      |               |                         |
-   +----------------------+---------------+-------------------------+
-   | **Niggli Tol.**      |               |                         |
-   +----------------------+---------------+-------------------------+
-   | **Find Niggli cell** | T/F           | Whether to find the     |
-   |                      |               | Niggli primitive cell   |
-   +----------------------+---------------+-------------------------+
-   | **Max Cell dim.**    | Å             | Maximum length of *any* |
-   |                      |               | lattice vector          |
-   +----------------------+---------------+-------------------------+
-   | **Q Vertices**       | integer       | Number of reciprocal    |
-   |                      |               | space directions to     |
-   |                      |               | search for lattice      |
-   |                      |               | vector                  |
-   +----------------------+---------------+-------------------------+
-   | **Subdivisions**     | integer       | Number of reciprocal    |
-   |                      |               | space bins for Fourier  |
-   |                      |               | transform               |
-   +----------------------+---------------+-------------------------+
-   | **Unit Cells**       | integer       | Maximum number of unit  |
-   |                      |               | cells to find           |
-   +----------------------+---------------+-------------------------+
-   | **Min Volume**       | Å\ :math:`^3` | Minimum unit cell       |
-   |                      |               | volume                  |
-   +----------------------+---------------+-------------------------+
-   | **Indexing Tol.**    |               |                         |
-   +----------------------+---------------+-------------------------+
-   | **Frequency Tol.**   | 0.0 - 1.0     | Minimum fraction of     |
-   |                      |               | amplitude of the zeroth |
-   |                      |               | Fourier frequency to    |
-   |                      |               | accept as a candidate   |
-   |                      |               | lattice vector          |
-   +----------------------+---------------+-------------------------+
+   * - Parameter
+     - Unit
+     - Description
+   * - Image range
+     - frames
+     - Choose a limited (contiguous) subset of images over which to index
+   * - Resolution (d) range
+     - Å
+     - Peaks with q-vector outside this range will not be used in indexing
+   * - Strength range
+     -
+     - Peaks with strengths outside this range will not be used in indexing
+   * - Gruber tolerance
+     -
+     -
+   * - Niggli tolerance
+     -
+     -
+   * - Find Niggli cell
+     - T/F
+     - Whether to find the Niggli primitive cell
+   * - Max. cell dimension
+     - Å
+     - Maximum length of *any* cell vector
+   * - Num. Q-space trial vectors
+     -
+     - Number of reciprocal space directions to search for lattice vector
+   * - Num. FFT histogram bins
+     -
+     - Number of reciprocal space bins for Fourier transform
+   * - Number of solutions
+     -
+     - Number of trial lattice vectors with which to construct triples
+   * - Minimum volume
+     - :math:`Å^3`
+     - Minimum unit cell volume
+   * - Indexing tolerance
+     -
+     - Maximum difference between floating point :math:`hkl` and integer
+       :math:`hkl`
+   * - Frequency tolerance
+     - 0.0 - 1.0
+     - Minimum fraction of amplitude of zeroth Fourier frequency to accept as
+       candidate lattice vector
 
 The FFT indexing method can be difficult to use correctly because there
 is no systematic method for reaching the correct solution, and there are
@@ -559,8 +572,8 @@ substantial effect on the success (or otherwise) of the procedure:
 The closest unit cell can then be selected as a row from the table of solutions
 and assigned to a peak collection (usually the collection of *found* peaks. Note
 that it is important to find the cell with the correct centering (Bravais type)
-or the correct space group may not be visible in the list in the `Assign unit
-cell` dialogue box. This may require additional experimentation with the
+or the correct space group may not be visible in the list in the ``Assign unit
+cell`` dialogue box. This may require additional experimentation with the
 parameters.
 
 In practice, the position of the direct beam is the parameter that usually
@@ -599,87 +612,124 @@ rotation angle). The shape model is intended to define the shape of peaks which
 do not have strong intensity regions on the detector image, and whose shape
 (covariance matrix) is unknown, even though the position of the centre of the
 peak is known. A shape model is constructed by adding the shapes of *strong*
-peaks from a peak collection to a "library"; this model can be used to predict
+peaks from a peak collection to a "shape model"; this model can be used to predict
 the shape of the peak with its centre at given coordinates by taking the mean of
 the covariance matrix of the neighbouring peaks, within a cutoff.
 
-   +------------------------+----------------+-------------------------+
-   | **Parameters**         | Unit           | Description             |
-   +========================+================+=========================+
-   | **histogram bins**     | integer        | Number of histogram     |
-   | **x/y/z**              |                | bins for profile in     |
-   |                        |                | x/y/z direction         |
-   +------------------------+----------------+-------------------------+
-   | **Kabsch coordinates** | T/F            | Toggle Kabsch           |
-   |                        |                | coordinate system as    |
-   |                        |                | opposed to detector     |
-   |                        |                | coordinate system       |
-   |                        |                | (applies only to        |
-   |                        |                | Profile 3D and Profile  |
-   |                        |                | 1D integrators)         |
-   +------------------------+----------------+-------------------------+
-   | Beam divergence        |                | Peak variance due to    |
-   | :math:`\sigma`         |                | beam divergence         |
-   +------------------------+----------------+-------------------------+
-   | Mosaicity              |                | Peak variance due to    |
-   | :math:`\sigma`         |                | crystal mosaicity       |
-   +------------------------+----------------+-------------------------+
-   | **Minimum**            |                | Exclude weak peaks with |
-   | I/:math:`\sigma`       |                | strength                |
-   |                        |                | (I/:math:`\sigma`)      |
-   |                        |                | below this value        |
-   +------------------------+----------------+-------------------------+
-   | **Minimum d**          | Å              | Only include peaks      |
-   |                        |                | above this d value      |
-   +------------------------+----------------+-------------------------+
-   | **Maximum d**          | Å              | Only include peaks      |
-   |                        |                | below this d value      |
-   +------------------------+----------------+-------------------------+
-   | **Peak end**           | :math:`\sigma` | Size of peak region     |
-   +------------------------+----------------+-------------------------+
-   | **Background begin**   | :math:`\sigma` | Size of beginning of    |
-   |                        |                | background region       |
-   +------------------------+----------------+-------------------------+
-   | **Background end**     | :math:`\sigma` | Size of end of          |
-   |                        |                | background region       |
-   +------------------------+----------------+-------------------------+
-   |                        |                |                         |
-   +------------------------+----------------+-------------------------+
-   | **x/y**                | pixels         | Compute mean profile    |
-   |                        |                | for these detector x/y  |
-   |                        |                | coordinates             |
-   +------------------------+----------------+-------------------------+
-   | **Frame**              | frame          | Compute mean profile    |
-   |                        |                | for this frame          |
-   |                        |                | coordinate coordinates  |
-   |                        |                | (with x/y)              |
-   +------------------------+----------------+-------------------------+
-   | **Radius**             | pixels         | Detector image radius   |
-   |                        |                | for neighbour search    |
-   |                        |                | for computing mean      |
-   |                        |                | profile                 |
-   +------------------------+----------------+-------------------------+
-   | **N frames**           | frame          | Detector image radius   |
-   |                        |                | in frames for neighbour |
-   |                        |                | search for computing    |
-   |                        |                | mean profile            |
-   +------------------------+----------------+-------------------------+
-   | **Interpolation type** |                | Type of interpolation   |
-   |                        |                | to use when calculating |
-   |                        |                | mean covariance         |
-   +------------------------+----------------+-------------------------+
+The first set of parameters determines the shape model, and includes,
 
-The number of histogram bins in the x/y/z directions do affect the shape
-model, they only control the grid over which the predicted shape is plottied int
-he "shape preview" widget. The preview is constructed for a single peak at
-coordinates :math:`(x, y, \mathrm{frame})`, and all neighbouring strong peaks
-with in the specified pixel and frame cutoff are used to compute the mean
-covariance matrix. This peak is shown in the shape preview widget, and can also
-be displayed in the detector image widget if the coordinates are chosen by
-clicking somewhere on the detector image. When shown on the detector image, the
-shape is plotted as an integration region, with bounds determined by the "peak
-end", "background begin" and "background end" parameters. The peak pixels for
-this region are highlighted in yellow, and the local background pixels in green.
+1. The size and shape of the histogram on which to construct the mean profile
+2. The number of subdivisions per pixel to use when binning
+3. The coordinate systems (Kabsch or detector)
+4. The parameters used by the Kabsch coordinate system
+5. Parameters to filter unwanted peaks from the model
+6. Integration parameters for the shape model
+
+The binning scheme for constructing the shape model is described in
+:ref:`sec_least_squares`. Once the parameters are set, the shape model is
+constructed by clicking ``Build shape model``. The shape model is used later,
+in assigning shapes to predicted peaks and profile integration.
+
+.. list-table:: Shape model parameters
+   :widths: 20, 10, 20
+   :header-rows: 1
+   :align: left
+
+   * - Parameter
+     - Unit
+     - Description
+   * - Histogram bins x
+     -
+     - Number of bins to sample peak pixels in detector x direction
+   * - Histogram bins y
+     -
+     - Number of bins to sample peak pixels in detector y direction
+   * - Histogram bins frames
+     -
+     - Number of bins to sample peak pixels in detector frame (rotation) direction
+   * - Subdivisions
+     -
+     - Number of sampling subdivisions along each axis, per pixel
+   * - Kabsch coordinates
+     - T/F
+     - Use Kabsch coordinate system to undo effects of detector geometry on profiles
+   * - Beam divergence :math:`\sigma`
+     -
+     - Peak variance due to beam divergence in Kabsch model (:math:`\sigma_D`)
+   * - Mosaicity :math:`\sigma`
+     -
+     - Peak variance due to crystal mosaicity in Kabsch model (:math:`\sigma_M`)
+   * - Minimum :math:`I/\sigma`
+     -
+     - Minimum strength of peak to use in shape model
+   * - Resolution (d) range
+     - Å
+     - Only include peaks in this resolution range in the model
+   * - Integration region type
+     -
+     - Switch between variable and fixed-size integration regions
+   * - Show single integration region
+     -
+     - Display integration region of single clicked peak on detector image
+   * - Peak end
+     - :math:`\sigma`
+     - End of peak region in multiples of the blob covariance matrix
+   * - Background begin
+     - :math:`\sigma`
+     - Beginning of background region in multiples of the blob covariance matrix
+   * - Background end
+     - :math:`\sigma`
+     - End of background region in multiples of the blob covariance matrix
+
+The second set of parameters controls the preview images generated in the "Shape
+preview" panel. These include the coordinates of the chosen peak (these can also
+be set by clicking on a peak in the detector image), the minimum number of
+neighbouring *strong* peaks in the given radius required to construct a sensible
+shape, and two radii for neighbour searches, in the plane of the detector image
+(in pixels) and perpendicular to the detector image (in frames). The weighting
+scheme determines the weights used in averaging neighbouring strong peaks to
+construct a profile: this can be set to "none" (a weight of 1), "inverse
+distance" (peaks further from the reference peak have a smaller contribution)
+and "intensity" (weaker peaks have a smaller contribution).
+
+.. list-table:: Shape preview parameters
+   :widths: 20, 10, 20
+   :header-rows: 1
+   :align: left
+
+   * - Parameter
+     - Unit
+     - Description
+   * - x coordinate
+     - pixels
+     - x-coordinate of target peak to visualise
+   * - y coordinate
+     - pixels
+     - y-coordinate of target peak to visualise
+   * - frame coordinate
+     - image number
+     - image number of target peak to visualise
+   * - Minimum neighbors
+     -
+     - Minimum number of neighbouring profile to construct a profile/shape
+   * - Search radius (pixels)
+     - pixels
+     - Pixel radius in image to search for neighbouring profiles
+   * - Search radius (images)
+     - image number
+     - Image radius in data set to search for neighbouring profiles
+   * - Interpolation Type
+     -
+     - Weighting scheme to use when averaging profiles
+
+A preview shape can be constructed either by clicking on a peak in the detector
+image, or entering the coordinates of the peak and clicking ``Calculate profile``.
+Either way, a shape model must have been built beforehand. The preview panel
+shows two peaks side by side: on the left the reference peak as it appears on
+the detector image, and on the right, the mean profile as computed by the shape
+model. The selected peak is highlighted with a red box. This is the shape that
+will be either assigned to a predicted peak collection (by clicking ``Apply shape
+model`` if such a peak collection exists), or used in profile integration.
 
 .. _shapemodel:
 .. figure:: images/workflow/shape_model.png
@@ -691,11 +741,7 @@ An example of a shape generated from a model is shown above: clicking on a peak
 from the selected *predicted* peak collection ("target peak collection")
 displays the integration region for the shape int he Preview widget, and plots
 
-Note that in order to display the integration region, there must be a predicted
-peak collection ("target peak collection") to which the shape model can be
-applied, and a saved shape model.
-
-The beam divergence and mosaicity variances are estimated as in section
+The beam divergence and mosaicity variances are estimated as in the section on
 :ref:`beam_profile`. The beeam divergence variance :math:`\sigma_D` affects the
 spread of the detector spot in the plane of the detector image, and the
 mosaicity variance :math:`\sigma_M` affects the spread in the direction of the
@@ -712,9 +758,9 @@ integration regions.
 Predict peaks
 -------------
 
-Given the unit cell, an exhaustive set of Miller indexed reflections can
-be generated within the specified d range. Space group-forbiden reflections can
-then be removed from theis collection.
+Given the unit cell, an exhaustive set of Miller indexed reflections can be
+generated within the specified resolution (d) range, with space group-forbidden
+reflections rejected (marked in red).
 
 A complete set of Miller index :math:`(hkl)` triples is generated withing a
 given resolution range, then for each triple, a reciprocal space vector
@@ -725,28 +771,77 @@ finding the non-integer frame coordinate at which the sign of
 :math:`\mathbf{k}_f - \mathbf{k}_i` changes, bearing in mind that this can
 happen more than once over the rotation range.
 
-.. table:: Peak prediction parameters
+The position of the direct beam is of crucial importance at this stage. If it is
+off by a few pixels, the predicted peak positions may be off-centre to an extent
+that can't be corrected by least squares refinement. If the direct beam position
+was set in the autoindexing step, this should not be necessary, but can also be
+one at this stage.
 
-   +------------------+--------+----------------------------------------+
-   | **Parameters**   | Unit   | Description                            |
-   +==================+========+========================================+
-   | **Unit cell**    |        | Unit cell to predict peaks from        |
-   +------------------+--------+----------------------------------------+
-   | **Interpolation**|        | Interpolation type for shape model     |
-   +------------------+--------+----------------------------------------+
-   | **d min**        | Å      | Only include peaks above this d value  |
-   +------------------+--------+----------------------------------------+
-   | **d max**        | Å      | Only include peaks below this d value  |
-   +------------------+--------+----------------------------------------+
-   | **Show direct**  | T/F    | Show the position of the direct beam   |
-   | **beam**         |        | (incident wavevector) on the detector  |
-   |                  |        | image                                  |
-   +------------------+--------+----------------------------------------+
+.. list-table:: Direct beam adjustment parameters
+   :widths: 20, 10, 20
+   :header-rows: 1
+   :align: left
 
-As in the autoindexing step, the positions of the predicted peaks are very
-sensitive to the position of the direct beam. Since we now have the unit cell,
-it is possible to refine the direct beam position using least squares
-minimisation, as described in :ref:`sec_refine`.
+   * - Parameter
+     - Unit
+     - Description
+   * - Set initial direct beam position
+     - T/F
+     - Add a draggable crosshair to the detector image to adjust direct beam position
+   * - x offset
+     - pixels
+     - Offset of the direct beam relative to the image centre, x direction
+   * - y offset
+     - pixels
+     - Offset of the direct beam relative to the image centre, y direction
+   * - Crosshair size
+     - pixels
+     - Radius of the crosshair
+
+Moreover, now that the approximate unit cell is known, the beam position can be
+adjusted by refinement, as discussed in :ref:`sec_refine`.
+
+.. list-table:: Direct beam refinement parameters
+   :widths: 20, 10, 20
+   :header-rows: 1
+   :align: left
+
+   * - Parameter
+     - Unit
+     - Description
+   * - Found peaks
+     -
+     - Peaks from image analysis step
+   * - Number of batches
+     -
+     - Split peaks into this many batches, sorted by rotation angle (i.e. image number)
+   * - Maximum iterations
+     -
+     - Maximum number of steps for least squares refinement
+   * - Show direct beam
+     -
+     - Add a black circle to the detector image indicating the direct beam position
+
+Peak prediction requires only a unit cell and a resolution range over which to
+limit the predictions.
+
+.. list-table:: Peak prediction parameters
+   :widths: 20, 10, 20
+   :header-rows: 1
+   :align: left
+
+   * - Parameter
+     - Unit
+     - Description
+   * - Unit cell
+     -
+     - unit cell used to predict peaks
+   * - Maximum resolution (min. d)
+     - Å
+     - Upper resolution limit for predicted peaks
+   * - Minimum resolution (max. d)
+     - Å
+     - Lower resolution limit for predicted peaks
 
 At this point, the predicted peaks (detector spots) have a position, but no
 shape. A saved shape model (generated in :ref:`sec_shape_model`) can be applied
@@ -754,16 +849,17 @@ to the predicted peaks.
 
 For the purposes of refinement, it is extremely important to assign a shape
 model to the predicted peak collection. Each peak can be considered to be an
-ellipsoid in real space, and the detector spots are ellipses where the ellipsoid
-intersects the detector image. In general , the principle axes of ellipsoid will
-not coincide with the plane of the detector image, and as a result the ellipse
-for a single peak will generally have differenct centre coordiinates on each
-frame on which it appears (this results in the "precession" of the spot across
-the detector if one scrolls through the images). If we do not have a good
-initial guess for the shape of the ellipsoid before refinement, then it will be
-impossible for the refiner to improve the positions of the detector spots across
-all frames. This can be seen by comparing the integration regions of a predicted
-peak before and after the shape model is assigned.
+ellipsoid in real space (see :ref:`sec_peakshape`), and the detector spots are
+ellipses where the ellipsoid intersects the detector image. In general , the
+principle axes of ellipsoid will not coincide with the plane of the detector
+image, and as a result the ellipse for a single peak will generally have
+differenct centre coordiinates on each frame on which it appears (this results
+in the "precession" of the spot across the detector if one scrolls through the
+images). If we do not have a good initial guess for the shape of the ellipsoid
+before refinement, then it will be impossible for the refiner to improve the
+positions of the detector spots across all frames. This can be seen by comparing
+the integration regions of a predicted peak before and after the shape model is
+assigned.
 
 .. _preshapemodel:
 .. figure:: images/workflow/pre-shape-model.png
@@ -778,7 +874,8 @@ peak before and after the shape model is assigned.
    :width: 100.0%
 
 If a shape is not assigned, the predicted peak retains its default shape
-(spherical), which will be grossly inaccurate.
+(spherical), which will be grossly inaccurate. Note that the above window can be
+opened by double clicking on a peak in the detector image.
 
 .. _sec_refine:
 
@@ -796,8 +893,8 @@ first frame and the last, for example, the temperature, which would affect the
 unit cell. As such the peaks are refined in batches, each encompassing a few
 frames in a limited subset of the angular range of the experiment. For example,
 if we specify 10 batches for an experiment with 100 frames (detector images), we
-will get 10 sets of equal numbers of peaks in partially overlapping but distinct
-angular ranges.
+will get 10 batches of equal numbers of peaks in partially overlapping but
+distinct angular ranges.
 
 The change in each of these quantities can be plotted as a function of frame (or
 equivalently angle) in the bottom panel. The per-frame values for the unit cell
@@ -818,23 +915,43 @@ the ``residual type`` combo:
 
 These are described in :cite:`w-Leslie2005`.
 
-.. table:: Refiner parameters
+.. list-table:: Refinement parameters
+   :widths: 20, 10, 20
+   :header-rows: 1
+   :align: left
 
-   +------------------------+---------+-----------------------------------------+
-   | **Parameters**         | Unit    | Description                             |
-   +========================+=========+=========================================+
-   | **Use refined cell**   | T/F     | Use unit cells from previous refinement |
-   +------------------------+---------+-----------------------------------------+
-   | **Number of batches**  | integer | Split peaks into this number of batches |
-   +------------------------+---------+-----------------------------------------+
-   | **Maximum iterations** | integer | Maximum number of iterations for least  |
-   |                        |         | squares minimisation                    |
-   +------------------------+---------+-----------------------------------------+
-   | **Residual type**      |         | Switch between residual types for       |
-   |                        |         | least squares minimisation              |
-   +------------------------+---------+-----------------------------------------+
+   * - Parameter
+     - Unit
+     - Description
+   * - Use refined cell
+     - T/F
+     - Use per-batch unit cells from previous refinement
+   * - Number of batches
+     -
+     - Split peaks into this many batches, sorted by rotation angle (i.e. image number)
+   * - Maximum iterations
+     -
+     - Maximum number of steps for least squares refinement
+   * - Residual type
+     -
+     - Reciprocal or real space residuals
+   * - Cell vectors
+     - T/F
+     - Refine unit cell vectors
+   * - Sample position
+     - T/F
+     - Refine sample position offset
+   * - Sample orientation
+     - T/F
+     - Refine sample orientation matrix
+   * - Detector position
+     - T/F
+     - Refine detector position offset
+   * - Incident wavevector
+     - T/F
+     - Refine direct beam position
 
-After refinement, clicking ``Update`` in the `Update predictions` panel will
+After refinement, clicking ``Update`` in the ``Update predictions`` panel will
 update the peak centre coordiates that changed as a result of unit cell and
 instruement state refinement. The change in peak centre coordinates after
 refinement is usually significant, as shown in the example below (pre-refinement
@@ -846,10 +963,8 @@ positions are shown in dark green, post-refinement positions in light green).
    :name: fig:refinement
    :width: 100.0%
 
-Both the found and predicted peaks should then be reintegrated.
-
 Note that floating point Miller indices are generated from the "found" peaks,
-i.e. the peaks derived from image processing. The predicted peaks by definition
+the peaks derived from image processing. The predicted peaks by definition
 have integer Miller indices, and are purely a function of the unit cell and
 instrument states. Thus the peak collection undergoing refinement will always be
 a "found" collection.
@@ -865,60 +980,107 @@ Integrate peaks
 
 In this section, the peaks, usually a set of *predicted* peaks, are integrated
 to compute their intensities and variances (sigmas). Integrating a predicted
-peak collection using the basic pixel sum integrator is unreliable because many
+peak collection using the basic pixel sum integrator is somewhat flawed because many
 (indeed, most) of the predicted peaks will have intensities that are difficult
 to distinguish from the background, and simply summing the pixels and
-subtracting the background will give a poor estimate. Thus, profile integration
-is used, in which the integral is a function of the pixel values on the detector
-image, and the intensities of the nearby strong peaks.
+subtracting the background will give a basic estimate. Profile integration can
+improve on this; here we use "profile" as a catch-all term to encompass all
+integrators implemented in OpenHKL that are not the pixel sum integrator. These
+integrators will usually improve the integration results, with a judicious
+parameter choice.
 
-Note that only the parameters ``Peak end``, ``Bkg begin`` and ``Bkg end``
-apply to pixel sum integration; the rest are specific to profile fitting
-integration.
+Note that only the parameters ``Peak end``, ``Background begin`` and
+``Background end`` apply to pixel sum integration; the rest are specific to
+profile fitting integration.
 
-.. table:: Integration parameters
+.. list-table:: Integration parameters
+   :widths: 20, 10, 20
+   :header-rows: 1
+   :align: left
 
-   +------------------------+----------------+----------------------------------+
-   | **Parameters**         | Unit           | Description                      |
-   +========================+================+==================================+
-   | **Discard saturated**  | T/F            | Discard peaks containing pixels  |
-   |                        |                | with counts overflowing the      |
-   |                        |                | specified maximum                |
-   +------------------------+----------------+----------------------------------+
-   | **Maximum counts**     | counts         | Maximum possible counts per      |
-   |                        |                | pixel before peak is discarded   |
-   +------------------------+----------------+----------------------------------+
-   | **Fit the center**     | T/F            | Whether to fit the peak center   |
-   +------------------------+----------------+----------------------------------+
-   | **Fit the covariance** | T/F            | Whether to fit the covariance    |
-   +------------------------+----------------+----------------------------------+
-   | **Peak end**           | :math:`\sigma` | End of peak region in detector   |
-   |                        |                | coordinates                      |
-   +------------------------+----------------+----------------------------------+
-   | **Bkg begin**          | :math:`\sigma` | Beginning of background region in|
-   |                        |                | detector coordinates             |
-   +------------------------+----------------+----------------------------------+
-   | **Bkg end**            | :math:`\sigma` | End of background region in      |
-   |                        |                | detector coordinates             |
-   +------------------------+----------------+----------------------------------+
-   | **Minimum d**          | Å              | Only include peaks               |
-   |                        |                | above this d value               |
-   +------------------------+----------------+----------------------------------+
-   | **Maximum d**          | Å              | Only include peaks               |
-   |                        |                | below this d value               |
-   +------------------------+----------------+----------------------------------+
-   | **Search radius**      | pixels         | Detector image radius in pixels  | 
-   |                        |                | for neighbour search for         |
-   |                        |                | computing mean profile           |
-   +------------------------+----------------+----------------------------------+
-   | **N. of frames**       | frame          | Detector image radius in frames  |
-   |                        |                | for neighbour search for         |
-   |                        |                | computing mean profile           |
-   +------------------------+----------------+----------------------------------+
-   | **Min. neighbours**    | integer        | Minium number of neighbours      |
-   |                        |                | within the cutoffs above required|
-   |                        |                | to compute mean shape            |
-   +------------------------+----------------+----------------------------------+
+   * - Parameter
+     - Unit
+     - Description
+   * - Integration region type
+     -
+     - Switch between variable and fixed-size integration regions
+   * - Peak end
+     - :math:`\sigma`/pixels (see below)
+     - End of peak region in multiples of the blob covariance matrix
+   * - Background begin
+     - :math:`\sigma`/factor (see below)
+     - Beginning of background region in multiples of the blob covariance matrix
+   * - Background end
+     - :math:`\sigma`/factor (see below)
+     - End of background region in multiples of the blob covariance matrix
+   * - Integrator
+     -
+     - Select from Pixel sum or profile integrators
+   * - Fit peak center
+     - T/F
+     - Adjust peak centre coordinates during integration
+   * - Fit peak covariance
+     - T/F
+     - Adjust peak covariance matrix during integration
+   * - Remove overlaps
+     - T/F
+     - Reject peaks with overlapping peak areas
+   * - Remove masked peaks
+     - T/F
+     - Remove peaks intersecting detector image masks
+   * - Compute gradient
+     - T/F
+     - Compute the image gradient (Pixel sum only)
+   * - Gradient kernel
+     -
+     - Convolution kernel to use when computing image gradient
+   * - FFT gradient
+     - T/F
+     - Use Fast Fourier Transform to compute the image gradient
+   * - Discard saturated
+     - T/F
+     - Discard peaks containing saturated pixels
+   * - Maximum count
+     - counts
+     - Count threshold for discarding saturated pixels
+   * - Maximum strength for profile integration
+     - T/F
+     - Only profile integrate strong peaks
+   * - Maximum strength
+     - :math:`I/\sigma`
+     - Strength threshold defining a weak peak, to be profile integrated
+   * - Search radius (pixels)
+     - pixels
+     - Pixel radius in image to search for neighbouring profiles
+   * - Search radius (images)
+     - image number
+     - Image radius in data set to search for neighbouring profiles
+   * - Minimum neighbors
+     -
+     - Minimum number of neighbouring profile to construct a profile/shape
+   * - Interpolation Type
+     -
+     - Weighting scheme to use when averaging profiles
+   * - Shape model
+     -
+     - Shape model to use for profile integration
+
+The integration region type can be switched between a variable integration
+region and a fixed integration region. For the former, the covariance matrix of
+the peak, :math:`\sigma` is the starting point. :math:`sigma` is scaled by a
+factor to define the integration region bounds; for example, the default "peak
+end" value, i.e. the end of the peak region occurs at :math:`3\sigma`, meaning
+the covariance matrix is scaled by a factor of three, and thus according to
+Gaussian statistics, contains 99.5\% of counts in the peak. The background begin
+and background end scaling factors determine the beginning and end of the
+background region in a similar way. The construction of the integration region
+is described in :ref:`sec_peakshape`. When the fixed ellipsoid integration
+region is selected, the definiteions of these parameters changes. Peak end is
+now in units of pixels, and determines the size of the peak region ellipsoid. If
+a value of *r* is given, the ellipsoid is scaled to have a volume equal to a
+sphere of radius *r*. The background begin and background end are now simple
+scaling factors for the covariance matrix, with a value of 1 corresponding
+exactly to the peak end limit.
 
 .. _integration:
 .. figure:: images/workflow/integration.png
@@ -926,32 +1088,10 @@ integration.
    :name: fig:integration
    :width: 100.0%
 
-A 16 bit detector image will be able to display a maximum of 65535 counts, so in
-some cases there is a numerical limit on the number of counts per pixel.
-Moreover, it is possible for the detector to be overexposed, resulting in
-"saturated" pixels. Such pixels will result in incorrect integrated intensities,
-so in cases where an accurate integration is required, peaks containing such
-pixels should be rejected. This is the rationale behind the ``Discard
-saturated`` option.
-
-When a shape collection is generated using the *Build shape collection* button
-(see :ref:`sec_shape_collection`, the computed collection can be used to assign
-shapes to a peak collection. For each peak in the collection, the shape is
-computed as the mean covariance of all neighbouring peaks within the given
-cutoffs (range, i.e. number of pixels on the detector image, and radius, i.e.
-number of frames).
-
-The ``Peak interpolation`` combo sets the type of interpolation to use when
-computing the shape of a peak. A predicted peak is given a shape that is the
-mean of all *found* peaks in a given radius of pixels on the detector image and
-rotation increments (i.e. frames). When computing the mean, the neighbouring
-peak contributes with a weight determined by the chosen peak interpolation
-method. For ``none``, all peaks are given a weight of 1.0. For ``inverse distance``,
-the neighbouring peak is given a weight of the inverse of the distance from the
-reference peak in reciprocal space, i.e. peaks that are further away in
-reciprocal space have a lower weight. For ``intensity``, the neighbouring peak is
-weighted by its intensity divided by its variance, i.e. weaker peaks have a lower
-weight.
+The ``Fit center`` and ``Fit covariance`` options apply only to pixel sum
+integration, and set the peak centre coordinates and covariance matrix to be
+those of the blob of pixels (notioinally an ellipsoid) found during integration,
+rather than the ellipsoid specified as the peak shape.
 
 The ``remove overlaps`` checkbox will remove any instances of the peak
 (intensity) region of a peak intersecting with an adjacent peak region, since
@@ -961,7 +1101,51 @@ so background calculations are not ruined by intruding peak intensity regions.
 It is also possible to prevent overlaps by modifying the integration region
 parameters "peak end", "background begin" and "background end". These
 respectively affect the scaling of the peak region, the start of the background
-region and the end of the background region respectively.
+region and the end of the background region respectively. The ``remove masked``
+checkbox ensures that any peaks intersecting a masked region of the detector
+image will be rejected.
+
+The ``Compute gradient`` checkbox enables computation of the *background*
+gradient, and is only available during Pixel sum integration. The selected
+kernel is convoluted with the image, resulting in a gradient in the x/y
+direction, i.e. only in the image plane. This can be done in real space, or more
+efficiently in reciprocal space using the FFT option. The background gradient
+can be used as a rejection criterion later in the workflow.
+
+A 16 bit detector image (for exmple) can hold a maximum of 65535 counts per
+pixel, so if the detector image is overexposed, pixels will overflow and be
+saturated. "saturated" pixels. Such pixels will result in incorrect integrated
+intensities, so in cases where an accurate integration is required, peaks
+containing such pixels should be rejected.
+
+The remaining options apply only to profile integration.
+
+The pixel sum integrator will attempt to integrate all peaks in a collection,
+but profile integrators will only generally be used to integrate weak peaks with
+a low signal to noise ratio. This is because (image resolution and finite sample
+rotation angle notwithstanding), pixel sum integration is more reliable for
+strong peaks than profile integration, because weighting pixels using a mean
+profile will only degrade the quality of a well-defined peak. Therefore, when
+profile integrating, it is generally advisable to only integration weak peaks by
+setting a strength threshold. This can be achieved by checking the ``Maximum
+strength for profile integration`` and setting the maximum strength threshold
+appropriately. Given the correct baseline and gain for the instrument, this
+should be of the order of one.
+
+The ``Search radius`` controls determine the search radius for neighbouring
+profiles (i.e. strong peaks) to use to construct a mean profile for the given
+peak. A minimum number of peaks to construct a mean profile can also be
+specified. The ``Peak interpolation`` combo sets the type of interpolation to
+use when computing the shape of a peak. A predicted peak is given a shape that
+is the mean of all *found* peaks in a given radius of pixels on the detector
+image and rotation increments (i.e. frames). When computing the mean, the
+neighbouring peak contributes with a weight determined by the chosen peak
+interpolation method. For ``none``, all peaks are given a weight of 1.0. For
+``inverse distance``, the neighbouring peak is given a weight of the inverse of
+the distance from the reference peak in reciprocal space, i.e. peaks that are
+further away in reciprocal space have a lower weight. For ``intensity``, the
+neighbouring peak is weighted by its intensity divided by its variance, i.e.
+weaker peaks have a lower weight.
 
 
 Merge peaks
@@ -991,8 +1175,35 @@ The sphere in q-space defined by ``d range`` is divided into a number of
 concentric resolution shells of equal reciprocal volume, determined by ``number
 of d-shells``. For each shell and the overall volume, R-factors and CC values
 are calculated, allowing the user to determine the maximum resolution (if any)
-to which the data set is reliable. The merger is controlled by the following
+to which the data set is reliable. The merge is controlled by the following
 parameters.
+
+.. list-table:: Merge statistics parameters
+   :widths: 20, 10, 20
+   :header-rows: 1
+   :align: left
+
+   * - Parameter
+     - Unit
+     - Description
+   * - Resolution (d) range
+     - Å
+     - Limit merged peaks to this resolution range
+   * - Image range
+     -
+     - Limit merged peaks to this range of images
+   * - Num. resolution shells
+     -
+     - Number of resolutions shells into which to divide reciprocal space
+   * - Space group
+     -
+     - Space group of the unit cell
+   * - Include friedel
+     - T/F
+     - Include the Friedel relation if not part of the space group
+   * - Plot y axis
+     -
+     - Select statistic to plot on the graph, as a function of resolution shell
 
 .. _merge:
 .. figure:: images/workflow/merge.png
@@ -1005,119 +1216,78 @@ range; the rationale for this is that it may be better to ignore peaks on the
 first and last frames, for which it is impossible to interpolate the frame
 coordinate.
 
-.. table:: Merge statistics parameters
-
-   +------------------------+----------------+-------------------------+
-   | **Parameters**         | Unit           | Description             |
-   +========================+================+=========================+
-   | **d range**            |  Å             | Only include peaks      |
-   |                        |                | inside this d range     |
-   +------------------------+----------------+-------------------------+
-   | **frame range**        | integer        | Only include peaks      |
-   |                        |                | inside this frame range |
-   +------------------------+----------------+-------------------------+
-   | **Number of d-shells** | integer        | Number of resolution    |
-   |                        |                | shells to divide into   |
-   +------------------------+----------------+-------------------------+
-   | **Include Friedel**    | T/F            | Whether to include the  |
-   |                        |                | Friedel relation if not |
-   |                        |                | part of the space group |
-   |                        |                | symmetry                |
-   +------------------------+----------------+-------------------------+
-   | **Plot axis**          |                | Value to plot on the    |
-   |                        |                | y axis                  |
-   +------------------------+----------------+-------------------------+
-
 The tabulated statistics are comprised of the following fields:
 
-.. table:: Merge statistics fields
+.. list-table:: Merge statistics table fields
+   :widths: 10, 20
+   :header-rows: 1
+   :align: left
 
-   +-------------------+-----------------------------------------------+
-   | **abbreviation**  | Description                                   |
-   +===================+===============================================+
-   | **dmax**          | Maximum value of d for this resolution shell  |
-   |                   |                                               |
-   +-------------------+-----------------------------------------------+
-   | **dmin**          | Minimum value of d for this resolution shell  |
-   |                   |                                               |
-   +-------------------+-----------------------------------------------+
-   | **nobs**          | Number of observed peaks in shell             |
-   |                   |                                               |
-   +-------------------+-----------------------------------------------+
-   | **nmerge**        | Number of merged (i.e. symmetry-unique) peaks |
-   |                   | in shell                                      |
-   +-------------------+-----------------------------------------------+
-   | **redundancy**    | Average peak redundancy (nobs/nmerge)         |
-   |                   |                                               |
-   +-------------------+-----------------------------------------------+
-   | **Rmeas**         | see :ref:`dataquality`                        |
-   |                   |                                               |
-   +-------------------+-----------------------------------------------+
-   | **Rmeas(est)**    | see :ref:`dataquality`                        |
-   |                   |                                               |
-   +-------------------+-----------------------------------------------+
-   | **Rmerge/Rsym**   | see :ref:`dataquality`                        |
-   |                   |                                               |
-   +-------------------+-----------------------------------------------+
-   | **Rmerge(est)**   | see :ref:`dataquality`                        |
-   |                   |                                               |
-   +-------------------+-----------------------------------------------+
-   | **Rpim**          | see :ref:`dataquality`                        |
-   |                   |                                               |
-   +-------------------+-----------------------------------------------+
-   | **Rpim(est)**     | see :ref:`dataquality`                        |
-   |                   |                                               |
-   +-------------------+-----------------------------------------------+
-   | **CChalf**        | see :ref:`dataquality`                        |
-   |                   |                                               |
-   +-------------------+-----------------------------------------------+
-   | **CC\***          | see :ref:`dataquality`                        |
-   |                   |                                               |
-   +-------------------+-----------------------------------------------+
-   | Completeness      | Number of valid peaks / total number of peaks |
-   |                   |                                               |
-   +-------------------+-----------------------------------------------+
+   * - Abbreviation
+     - Description
+   * - dmax
+     - Maximum value of d for this resolution shell
+   * - dmin
+     - Minimum value of d for this resolution shell
+   * - nobs
+     - Number of observed peaks in this shell
+   * - nmerge
+     - Number of merged (symmetry-unique) peaks in this shell
+   * - redundancy
+     - Average peak redundancy (nobs/nmerge)
+   * - Rmeas
+     - see :ref:`dataquality`
+   * - Rmeas (est.)
+     - see :ref:`dataquality`
+   * - Rmerge/Rsym
+     - see :ref:`dataquality`
+   * - Rmerge/Rsym (est.)
+     - see :ref:`dataquality`
+   * - Rpim
+     - see :ref:`dataquality`
+   * - Rpim (est.)
+     - see :ref:`dataquality`
+   * - CChalf
+     - see :ref:`dataquality`
+   * - CC*
+     - see :ref:`dataquality`
+   * - Completeness
+     - Number of valid peaks / theoretical maximum number of peaks
 
 A high quality data set will have R-factors close to zero, CC values close to
 one and a completeness close to 100\%.
-   
+
 
 Merged representation tab
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
 A list of merged peaks is displayed in this section.
 
-.. table:: Merged representation fields
+.. list-table:: Merged representation table fields
+   :widths: 10, 20
+   :header-rows: 1
+   :align: left
 
-   +--------------------+----------------------------------------------+
-   | **abbreviation**   | Description                                  |
-   +====================+==============================================+
-   | **h**              | *h* Miller index                             |
-   |                    |                                              |
-   +--------------------+----------------------------------------------+
-   | **k**              | *k* Miller index                             |
-   |                    |                                              |
-   +--------------------+----------------------------------------------+
-   | **l**              | *l* Miller index                             |
-   |                    |                                              |
-   +--------------------+----------------------------------------------+
-   | **I**              | Integrated intensity                         |
-   |                    |                                              |
-   +--------------------+----------------------------------------------+
-   |   :math:`\sigma`   | Variance of integrated intensity             |
-   |                    |                                              |
-   +--------------------+----------------------------------------------+
-   | **nobs**           | Redundancy of this peak (number of symmetry  |
-   |                    | equivalents)                                 |
-   +--------------------+----------------------------------------------+
-   | :math:`\chi^2`     | The chi-squared intensity of the merged peak |
-   |                    |                                              |
-   +--------------------+----------------------------------------------+
-   | **p**              | Probability that the intensity takes a value |
-   |                    | less than the chi-squared                    |
-   +--------------------+----------------------------------------------+
+   * - Abbreviation
+     - Description
+   * - *h*
+     - *h* Miller index
+   * - *k**
+     - *k* Miller index
+   * - *l*
+     - *l* Miller index
+   * - *I*
+     - Mean integrated intensity of unmerged peaks
+   * - :math:`\sigma`
+     - Variance of integrated intensity of unmerged peaks
+   * - *nobs*
+     - Redundancy of this peaks (number of symmetry equivalents observed)
+   * - :math:`\chi^2`
+     - Chi-squared of intensity
+   * - **p**
+     - Probability that inensity takes a value less than the chi-squared
 
-The merged peaks can be saved to ShelX, FullProf or Phenix format. The Phenix
+The merged peaks can be saved to CCP4 (.mtz), ShelX, FullProf or Phenix format. The Phenix
 format is fixed width, and some instruments such as BioDiff have a
 photomultiplier, meaning that one count on the detector corresponds not to one
 neutron, but some factor greater than one. This can cause the intensities to
@@ -1132,37 +1302,31 @@ Unmerged representation tab
 
 A list of unmerged peaks is displayed in this section.
 
-.. table:: Unmerged representation fields
+.. list-table:: Unmerged representation table fields
+   :widths: 10, 20
+   :header-rows: 1
+   :align: left
 
-   +--------------------+----------------------------------------------+
-   | **abbreviation**   | Description                                  |
-   +====================+==============================================+
-   | **h**              | *h* Miller index                             |
-   |                    |                                              |
-   +--------------------+----------------------------------------------+
-   | **k**              | *k* Miller index                             |
-   |                    |                                              |
-   +--------------------+----------------------------------------------+
-   | **l**              | *l* Miller index                             |
-   |                    |                                              |
-   +--------------------+----------------------------------------------+
-   | **I**              | Integrated intensity                         |
-   |                    |                                              |
-   +--------------------+----------------------------------------------+
-   | :math:`\sigma`     | Variance of integrated intensity             |
-   |                    |                                              |
-   +--------------------+----------------------------------------------+
-   | **x**              | x coordinate of peak (pixels)                |
-   |                    |                                              |
-   +--------------------+----------------------------------------------+
-   | **y**              | y coordinate of peak (pixels)                |
-   |                    |                                              |
-   +--------------------+----------------------------------------------+
-   | **frame**          | frame coordinate of peak (frames)            |
-   |                    |                                              |
-   +--------------------+----------------------------------------------+
+   * - Abbreviation
+     - Description
+   * - *h*
+     - *h* Miller index
+   * - *k**
+     - *k* Miller index
+   * - *l*
+     - *l* Miller index
+   * - *I*
+     - Integrated intensity
+   * - :math:`\sigma`
+     - Variance of integrated intensity of unmerged peaks
+   * - *x*
+     - x coordinate of unmerged peak (pixels)
+   * - *y*
+     - y coordinate of unmerged peak (pixels)
+   * - *frame*
+     - frame coordinate of unmerged peak
 
-The unmerged peaks can be saved to ShelX, FullProf or Phenix format. The Phenix
+The unmerged peaks can be saved to CCP4 (.mtz), ShelX, FullProf or Phenix format. The Phenix
 format is fixed width, andsome instruments such as BioDiff have a
 photomultiplier, meaning that one count on the detector corresponds not to one
 neutron, but some factor greater than one. This can cause the intensities to

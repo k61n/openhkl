@@ -130,13 +130,6 @@ void PeakViewWidget::addIntegrationRegion(Set& set, const QColor& peak, const QC
     addLabel(row, "Show:");
     set.drawIntegrationRegion =
         addCheckBox(row++, 1, "Integration region", Qt::CheckState::Unchecked);
-    set.previewIntRegion = addCheckBox(row++, 1, "Preview new parameters", Qt::CheckState::Checked);
-    set.regionType = addCombo(row++);
-
-    for (int i = 0; i < static_cast<int>(ohkl::RegionType::Count); ++i) {
-        std::string description = ohkl::regionTypeDescription.at(static_cast<ohkl::RegionType>(i));
-        set.regionType->addItem(QString::fromStdString(description));
-    }
 
     addLabel(row, "Alpha:");
     set.alphaIntegrationRegion = addDoubleSpinBox(row++, 0.2);
@@ -145,6 +138,9 @@ void PeakViewWidget::addIntegrationRegion(Set& set, const QColor& peak, const QC
     set.colorIntPeak = addColorButton(row++, 1, peak);
     addLabel(row, "Background colour:");
     set.colorIntBkg = addColorButton(row++, 1, bkg);
+    set.previewIntRegion = addCheckBox(row++, 1, "Preview new parameters", Qt::CheckState::Checked);
+    addLabel(row, "Integration region type");
+    set.regionType = addCombo(row++);
     addLabel(row, "Peak end:");
     set.peakEnd = addDoubleSpinBox(row++, set.params.peak_end);
     set.peakEnd->setMaximum(50.0);
@@ -155,10 +151,30 @@ void PeakViewWidget::addIntegrationRegion(Set& set, const QColor& peak, const QC
     set.bkgEnd = addDoubleSpinBox(row++, set.params.bkg_end);
     set.bkgEnd->setMaximum(10.0);
 
+    for (int i = 0; i < static_cast<int>(ohkl::RegionType::Count); ++i) {
+        std::string description = ohkl::regionTypeDescription.at(static_cast<ohkl::RegionType>(i));
+        set.regionType->addItem(QString::fromStdString(description));
+    }
+
     QFrame* line = new QFrame();
     line->setFrameShape(QFrame::HLine);
     line->setFrameShadow(QFrame::Sunken);
     addWidget(line, row++, 0, 1, 3);
+
+    connect(set.previewIntRegion, &QCheckBox::stateChanged, this, &PeakViewWidget::togglePreview);
+}
+void PeakViewWidget::togglePreview()
+{
+    set1.regionType->setDisabled(true);
+    set1.peakEnd->setDisabled(true);
+    set1.bkgBegin->setDisabled(true);
+    set1.bkgEnd->setDisabled(true);
+    if (set1.previewIntRegion->isChecked()) {
+        set1.regionType->setDisabled(false);
+        set1.peakEnd->setDisabled(false);
+        set1.bkgBegin->setDisabled(false);
+        set1.bkgEnd->setDisabled(false);
+    }
 }
 
 void PeakViewWidget::switchIntRegionType()
@@ -187,6 +203,7 @@ void PeakViewWidget::Set::setColor(const QColor& color)
 {
     colorPeaks->setColor(color);
 }
+
 
 void PeakViewWidget::Set::setIntegrationRegionColors(
     const QColor& peak, const QColor& bkg, double alpha)

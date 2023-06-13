@@ -56,7 +56,6 @@ class ImageReaderDialog : public QDialog {
 
     QComboBox* _dataArrangement;
     QComboBox* _dataFormat;
-    QComboBox* _resolution;
     QCheckBox* _swapEndianness;
     SafeDoubleSpinBox* _chi;
     SafeDoubleSpinBox* _omega;

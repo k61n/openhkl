@@ -2,8 +2,8 @@
 //
 //  OpenHKL: data reduction for single crystal diffraction
 //
-//! @file      core/statistics/MergedData.h
-//! @brief     Defines class MergedData
+//! @file      core/statistics/MergedPeakCollection.h
+//! @brief     Defines class MergedPeakCollection
 //!
 //! @homepage  https://openhkl.org
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef OHKL_CORE_STATISTICS_MERGEDDATA_H
-#define OHKL_CORE_STATISTICS_MERGEDDATA_H
+#ifndef OHKL_CORE_STATISTICS_MERGEDPEAKCOLLECTION_H
+#define OHKL_CORE_STATISTICS_MERGEDPEAKCOLLECTION_H
 
 #include "core/data/DataTypes.h"
 #include "core/shape/PeakCollection.h"
@@ -30,15 +30,15 @@ using MergedPeakSet = std::set<MergedPeak>;
 
 //! Contains a set of `MergedPeak`s and crystallographic information (SpaceGroup and Friedel flag).
 
-class MergedData {
+class MergedPeakCollection {
  public:
     //! Construct merged dataset with given spacegroup. Paramter \p friedel
     //! determines whether to include the Friedel relation \f$q \mapsto -q\f$, if
     //! this is not already part of the space group symmetry.
-    MergedData(
+    MergedPeakCollection(
         SpaceGroup space_group, std::vector<PeakCollection*> peak_collections, bool friedel,
         bool sum_intensity, int fmin = -1, int fmax = -1);
-    MergedData(
+    MergedPeakCollection(
         SpaceGroup space_group, bool friedel, bool sum_intensity, int fmin = -1, int fmax = -1);
     //! Add a peak to the data set. It will be automatically merged correctly
     //! according to the space group symmetry.
@@ -87,4 +87,4 @@ class MergedData {
 
 } // namespace ohkl
 
-#endif // OHKL_CORE_STATISTICS_MERGEDDATA_H
+#endif // OHKL_CORE_STATISTICS_MERGEDPEAKCOLLECTION_H

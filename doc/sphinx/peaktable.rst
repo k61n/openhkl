@@ -6,45 +6,62 @@ Peak Table
 The peak table features in many parts of the workflow, and contains (with a few
 exceptions) the following columns.
 
+.. list-table:: Peak table fields
+   :widths: 10, 20
+   :header-rows: 1
+   :align: left
 
-+-----------------------+----------------+-------------------------------+
-| **Column**            | Unit           | Description                   |
-+=======================+================+===============================+
-| **h**                 |                | *h* Miller index              |
-+-----------------------+----------------+-------------------------------+
-| **k**                 |                | *k* Miller index              |
-+-----------------------+----------------+-------------------------------+
-| **l**                 |                | *l* Miller index              |
-+-----------------------+----------------+-------------------------------+
-| **x pixel**           | pixels         | x coordinate of the peak      |
-|                       |                | centre                        |
-+-----------------------+----------------+-------------------------------+
-| **y pixel**           | pixels         | y coordinate of the peak      |
-|                       |                | centre                        |
-+-----------------------+----------------+-------------------------------+
-| **Intensity**         | counts         | Integrated (corrected)        |
-|                       |                | intensity *I* of the peak     |
-+-----------------------+----------------+-------------------------------+
-| :math:`\sigma` (Int.) | counts         | Standard deviation of the     |
-|                       |                | corrected intensity           |
-+-----------------------+----------------+-------------------------------+
-| **Strength**          |                | :math:`I/\sigma`              |
-+-----------------------+----------------+-------------------------------+
-| **Data set**          |                | Name of data set from which   |
-|                       |                | this peak was derived         |
-+-----------------------+----------------+-------------------------------+
-| **Unit cell**         |                | Name of unit cell assigned to |
-|                       |                | this peak                     |
-+-----------------------+----------------+-------------------------------+
-| **d**                 | Å              | *d* from Braggs law, or       |
-|                       |                | the resolution                |
-+-----------------------+----------------+-------------------------------+
-| **Reason for**        |                | Reason, if any, why this peak |
-| **rejection**         |                | is marked as invalid          |
-+-----------------------+----------------+-------------------------------+
-| **Caught by filter**  | T/F            | Whether this peaks was caught |
-|                       |                | by the filter (for sorting)   |
-+-----------------------+----------------+-------------------------------+
+   * - Abbreviation
+     - Description
+   * - *h*
+     - *h* Miller index
+   * - *k*
+     - *k* Miller index
+   * - *l*
+     - *l* Miller index
+   * - *x*
+     - x coordinate of unmerged peak (pixels)
+   * - *y*
+     - y coordinate of unmerged peak (pixels)
+   * - *frame*
+     - frame coordinate of unmerged peak
+   * - I (sum)
+     - Integrated (corrected) intensity from pixel sum integration
+   * - I (profile)
+     - Integrated (corrected) intensity from profile integration
+   * - :math:`\sigma` (sum)
+     - Variance from pixel sum integration
+   * - :math:`\sigma` (profile)
+     - Variance from profile integration
+   * - :math:`I/\sigma` (sum)
+     - Strength from pixel sum integration
+   * - :math:`I/\sigma` (profile)
+     - Strength from profile integration
+   * - *B* (sum)
+     - Integrated backround from pixel sum integration
+   * - *B* (profile)
+     - Integrated backround from profile integration
+   * - :math:`\sigma` (B, sum)
+     - Background variance from pixel sum integration
+   * - :math:`\sigma` (B, profile)
+     - Background variance from profile integration
+   * - Gradient
+     - Background gradient (image plane only, pixel sum integration only)
+   * - :math:`\sigma` (Grad.)
+     - Background gradient variance
+   * - Data set
+     - Data set associated with this peak
+   * - Unit cell
+     - Unit cell associated with this peak
+   * - *d*
+     - Resolution associated with this peak (*d* from Bragg's law)
+   * - Reason for rejection
+     - Reason, if any, why this peak is marked as invalid
+   * - Caught by filter
+     - Whether this peak was caught by a filter
+
+Note that not all of these columns appear in every instance of the peak table,
+but this is an exhaustive list of possible fields.
 
 Rejection flags
 ===============

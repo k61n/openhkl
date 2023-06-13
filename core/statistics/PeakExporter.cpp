@@ -26,7 +26,7 @@
 #include "tables/crystal/UnitCell.h"
 
 #include "core/peak/Peak3D.h"
-#include "core/statistics/MergedData.h"
+#include "core/statistics/MergedPeakCollection.h"
 #include "core/statistics/ResolutionShell.h"
 #include "tables/crystal/SpaceGroup.h"
 
@@ -47,7 +47,7 @@ PeakExporter::PeakExporter() : _sum_intensities(true)
     };
 }
 
-bool PeakExporter::saveToShelXUnmerged(const std::string& filename, MergedData* mergedData)
+bool PeakExporter::saveToShelXUnmerged(const std::string& filename, MergedPeakCollection* mergedData)
 {
     std::vector<Peak3D*> peak_vector;
     for (const MergedPeak& peak : mergedData->mergedPeakSet()) {
@@ -76,7 +76,7 @@ bool PeakExporter::saveToShelXUnmerged(const std::string& filename, MergedData* 
     return true;
 }
 
-bool PeakExporter::saveToShelXMerged(const std::string& filename, MergedData* mergedData)
+bool PeakExporter::saveToShelXMerged(const std::string& filename, MergedPeakCollection* mergedData)
 {
     std::fstream file(filename, std::ios::out);
     for (const MergedPeak& peak : mergedData->mergedPeakSet()) {
@@ -93,7 +93,7 @@ bool PeakExporter::saveToShelXMerged(const std::string& filename, MergedData* me
     return true;
 }
 
-bool PeakExporter::saveToFullProfUnmerged(const std::string& filename, MergedData* mergedData)
+bool PeakExporter::saveToFullProfUnmerged(const std::string& filename, MergedPeakCollection* mergedData)
 {
     std::fstream file(filename, std::ios::out);
     if (!file.is_open())
@@ -130,7 +130,7 @@ bool PeakExporter::saveToFullProfUnmerged(const std::string& filename, MergedDat
     return true;
 }
 
-bool PeakExporter::saveToFullProfMerged(const std::string& filename, MergedData* mergedData)
+bool PeakExporter::saveToFullProfMerged(const std::string& filename, MergedPeakCollection* mergedData)
 {
     std::fstream file(filename, std::ios::out);
     if (!file.is_open())
@@ -166,7 +166,7 @@ bool PeakExporter::saveToFullProfMerged(const std::string& filename, MergedData*
 }
 
 bool PeakExporter::saveToSCAUnmerged(
-    const std::string& filename, MergedData* mergedData, sptrUnitCell cell, double scale)
+    const std::string& filename, MergedPeakCollection* mergedData, sptrUnitCell cell, double scale)
 {
     std::fstream file(filename, std::ios::out);
     if (!file.is_open())
@@ -219,7 +219,7 @@ bool PeakExporter::saveToSCAUnmerged(
 }
 
 bool PeakExporter::saveToSCAMerged(
-    const std::string& filename, MergedData* mergedData, sptrUnitCell cell, double scale)
+    const std::string& filename, MergedPeakCollection* mergedData, sptrUnitCell cell, double scale)
 {
     std::fstream file(filename, std::ios::out);
     if (!file.is_open())
@@ -269,7 +269,7 @@ bool PeakExporter::saveToSCAMerged(
     return true;
 }
 
-bool PeakExporter::saveToShellX(const std::string filename, MergedData* merged_data, bool merged)
+bool PeakExporter::saveToShellX(const std::string filename, MergedPeakCollection* merged_data, bool merged)
 {
     if (merged)
         return saveToShelXMerged(filename, merged_data);
@@ -277,7 +277,7 @@ bool PeakExporter::saveToShellX(const std::string filename, MergedData* merged_d
         return saveToShelXUnmerged(filename, merged_data);
 }
 
-bool PeakExporter::saveToFullProf(const std::string filename, MergedData* merged_data, bool merged)
+bool PeakExporter::saveToFullProf(const std::string filename, MergedPeakCollection* merged_data, bool merged)
 {
     if (merged)
         return saveToFullProfMerged(filename, merged_data);
@@ -286,7 +286,7 @@ bool PeakExporter::saveToFullProf(const std::string filename, MergedData* merged
 }
 
 bool PeakExporter::saveToSCA(
-    const std::string filename, MergedData* merged_data, sptrUnitCell cell, bool merged,
+    const std::string filename, MergedPeakCollection* merged_data, sptrUnitCell cell, bool merged,
     double scale)
 {
     if (merged)
@@ -296,7 +296,7 @@ bool PeakExporter::saveToSCA(
 }
 
 bool PeakExporter::exportPeaks(
-    ExportFormat fmt, const std::string& filename, MergedData* merged_data, sptrDataSet data,
+    ExportFormat fmt, const std::string& filename, MergedPeakCollection* merged_data, sptrDataSet data,
     sptrUnitCell cell, bool merged, bool sum_intensity, double scale, std::string comment)
 {
     _sum_intensities = sum_intensity;

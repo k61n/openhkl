@@ -243,7 +243,7 @@ QPushButton* GridFiller::addButton(const QString& text, const QString& tooltip)
 {
     auto* button = new QPushButton(text);
     button->setToolTip(tooltip);
-    _mainLayout->addWidget(button, _nextRow, 1, 1, -1);
+    _mainLayout->addWidget(button, _nextRow, 0, 1, -1);
 
     _nextRow++;
     return button;

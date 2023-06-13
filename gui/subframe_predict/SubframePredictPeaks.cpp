@@ -182,10 +182,9 @@ void SubframePredictPeaks::setParametersUp()
     GridFiller f(para_box, true);
 
     _cell_combo = f.addCellCombo("Unit cell:");
-    _d_min = f.addDoubleSpinBox(
-        "Maximum resolution (min. d):", QString::fromUtf8("(\u212B) - minimum d (Bragg's law)"));
-    _d_max = f.addDoubleSpinBox(
-        "Minimum resolution (max. d):", QString::fromUtf8("(\u212B) - maximum d (Bragg's law)"));
+    std::tie(_d_min, _d_max) =
+        f.addDoubleSpinBoxPair("Resolution (d) range",
+                               "(\u212B)  - minimum and maximum resolution for peak prediction");
     _predict_button = f.addButton("Predict");
     _predict_button->setEnabled(false);
 

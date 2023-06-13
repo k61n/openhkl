@@ -19,7 +19,7 @@
 
 namespace ohkl {
 
-class MergedData;
+class MergedPeakCollection;
 
 //! Calculates correlation coefficients (CChalf and CC*).
 
@@ -29,7 +29,7 @@ class CC {
     //! Calculate the statistic on the given set of merged peaks.
     void calculate(std::vector<MergedPeak> peaks);
     //! Calculate the statistic on the given data.
-    void calculate(MergedData* data);
+    void calculate(MergedPeakCollection* data);
     //! Returns CC half (correlation of a random split of data into two bags)
     double CChalf() const;
     //! Returns CC star (estimate)

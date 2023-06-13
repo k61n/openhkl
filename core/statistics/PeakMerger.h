@@ -18,7 +18,7 @@
 #include "base/utils/Logger.h"
 #include "base/utils/ProgressHandler.h"
 #include "core/experiment/DataQuality.h"
-#include "core/statistics/MergedData.h"
+#include "core/statistics/MergedPeakCollection.h"
 #include "core/statistics/ResolutionShell.h"
 
 namespace ohkl {
@@ -68,14 +68,14 @@ class PeakMerger {
     //! Return a pointer to the parameter structure
     MergeParameters* parameters() const;
 
-    //! Get a pointer to the sum integrated MergedData object
-    MergedData* sumMergedData() const;
+    //! Get a pointer to the sum integrated MergedPeakCollection object
+    MergedPeakCollection* sumMergedPeakCollection() const;
     //! Get a pointer to the sum integrated merged data per resolution shell
-    std::vector<MergedData*> sumMergedDataPerShell() const;
-    //! Get a pointer to the profile integrated MergedData object
-    MergedData* profileMergedData() const;
+    std::vector<MergedPeakCollection*> sumMergedPeakCollectionPerShell() const;
+    //! Get a pointer to the profile integrated MergedPeakCollection object
+    MergedPeakCollection* profileMergedPeakCollection() const;
     //! Get a pointer to the profile integrated merged data per resolution shell
-    std::vector<MergedData*> profileMergedDataPerShell() const;
+    std::vector<MergedPeakCollection*> profileMergedPeakCollectionPerShell() const;
 
     //! Get the quality sum integrated statistics per resolution shell
     DataResolution* sumShellQuality();
@@ -96,10 +96,10 @@ class PeakMerger {
     void setHandler(sptrProgressHandler handler) { _handler = handler; };
 
  private:
-    std::unique_ptr<MergedData> _sum_merged_data;
-    std::vector<std::unique_ptr<MergedData>> _sum_merged_data_per_shell;
-    std::unique_ptr<MergedData> _profile_merged_data;
-    std::vector<std::unique_ptr<MergedData>> _profile_merged_data_per_shell;
+    std::unique_ptr<MergedPeakCollection> _sum_merged_data;
+    std::vector<std::unique_ptr<MergedPeakCollection>> _sum_merged_data_per_shell;
+    std::unique_ptr<MergedPeakCollection> _profile_merged_data;
+    std::vector<std::unique_ptr<MergedPeakCollection>> _profile_merged_data_per_shell;
     std::vector<PeakCollection*> _peak_collections;
 
     DataResolution _sum_shell_qualities;

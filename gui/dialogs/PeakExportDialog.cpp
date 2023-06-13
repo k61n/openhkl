@@ -221,9 +221,9 @@ void PeakExportDialog::processMerge()
     if (filename.isEmpty())
         return;
 
-    ohkl::MergedData* merged_data = merger->sumMergedData();
+    ohkl::MergedPeakCollection* merged_data = merger->sumMergedPeakCollection();
     if (_rb_profile->isChecked())
-        merged_data = merger->profileMergedData();
+        merged_data = merger->profileMergedPeakCollection();
 
     _exporter.exportPeaks(
         fmt, filename.toStdString(), merged_data, _data_combo->currentData(), cell,

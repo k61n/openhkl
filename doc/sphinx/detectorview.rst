@@ -3,89 +3,43 @@
 Detector image widget
 =====================
 
-The ``Experiment``, ``Find peaks``, ``Peak filter``, ``Predict``, ``Refine`` and
-``Integrate`` tabs all have detector view widgets that give *contextual
-information* related to their stage in the workflow. The basic widget has three
-control elements:
+.. _detector_image:
+.. figure:: images/detector/detector_image.png
+   :alt: The detector widget
+   :name: fig:detector_image
+   :width: 100.0%
 
-1. A combo box to select the data set
-2. A scroll bar with which to scroll through the imagees in the data set
-3. A spin box to select an image in the data set
-4. A slider to set the maximum intensity of the image (i.e. change th contrast)
+   The detector image
 
-In any detector widget without the ``interaction mode`` combo box, dragging out
-a rectangle will zoom in on a region with a fixed aspect ratio. The previous
-zoom level can be returned by right-clicking.
+Most panels of the OpenHKL GUI contain some variation of the detector image
+widget, showing a single image from the data set (selectable via (1)). The
+scroll bar and spin box (2) can be used to cycle through the images in order,
+and the slider on the right of the widget used to adjust the maximum intensity
+of the colour map, which is useful for visually enhancing low contrast images.
 
-Some detector views have additional widgets:
+In addition, there is a toolbar with several more controls:
 
-Experiment
-~~~~~~~~~~
+3. Switch between normal image and image gradient
+4. Toggle the resolution contours on and off
+5. Toggle the detector masks on and offer
+6. Toggle Miller indices of peaks on and off
+7. Copy the image with all overlays to the clipboard
+8. Save the image with all overlays to a file
+9. Zoom select tool
+10. Rectangle select tool
+11. Change the information displayed in the tooltip attached to the cursor
 
-The ``Experiment`` widget has an additional combo box to select the
-``Interaction mode``. This presents several options:
-
-1. ``Zoom`` --- drawing a rectangle on the detector image will zoom in to the
-   selected region. Note that the aspect ratio is constrained, so the zoomed
-   image segment will not correspond exactly to the selection.
-
-2. ``Selection`` --- drawing a rectangle will select any objects superimposed onto
-   the detector image, namely peaks and masks. Hitting ``Backspace`` will
-   *deselect* any peaks with centres inside the rectangle, and *delete* any
-   masks that collide with the rectangle. Clicking anywhere will dismiss the
-   selection box.
-
-3. ``Rectangular mask`` --- draw a rectangular mask on the detector image. When
-   runninng ``Find peaks``, any peaks in these regions will be flagged as
-   ``masked`` and ignored in any subsequent processing.
-
-4. ``Elliptical mask`` --- draw a elliptical mask on the detector image with the
-   given rectangular bounding box. When runninng ``Find peaks``, any peaks in
-   these regions will be flagged as ``masked`` and ignored in any subsequent
-   processing.
-
-5. ``Line plot`` --- draw a line along the plot; the intensity along the line is
-   plotted in the graph widget below.
-
-6. ``Horizontal slice`` --- draw a rectangle on the detector image; the columns are
-   integrated, resulting in an intensity plot along the horizontal axis.
-
-7. ``Vertical slice`` --- draw a rectangle on the detector image; the rows are
-   integrated, resulting in an intensity plot along the vertical axis.
+The detector widget is by default in zoom mode, in which the user can drag a
+rectangular selection box, which will be zoomed into when the mouse button is
+released. A right mouse button click will zoom out one level.
 
 
-Find Peaks
-~~~~~~~~~~
+Cursor mode
+~~~~~~~~~~~
 
-The ``Find peaks`` widget has an additional combo box to select the
-``Interaction mode``. This presents several options:
-
-1. ``Zoom`` --- drawing a rectangle on the detector image will zoom in to the
-   selected region. Note that the aspect ratio is constrained, so the zoomed
-   image segment will not correspond exactly to the selection.
-
-2. ``Selection`` --- drawing a rectangle will select any objects superimposed onto
-   the detector image, namely peaks and masks. Hitting ``Backspace`` will
-   *deselect* any peaks with centres inside the rectangle, and *delete* any
-   masks that collide with the rectangle. Clicking anywhere will dismiss the
-   selection box.
-
-3. ``Rectangular mask`` --- draw a rectangular mask on the detector image. When
-   runninng ``Find peaks``, any peaks in these regions will be flagged as
-   ``masked`` and ignored in any subsequent processing.
-
-4. ``Elliptical mask`` --- draw a elliptical mask on the detector image with the
-   given rectangular bounding box. When runninng ``Find peaks``, any peaks in
-   these regions will be flagged as ``masked`` and ignored in any subsequent
-   processing.
-
-Detector window
-~~~~~~~~~~~~~~~
-
-The non-contextual ``Detector window`` (available from the ``View`` menu), has
-an additional combo to control the ``Cursor mode``, i.e. the information
-displayed as a tooltip when hovering over a pixel in the detector image. The
-options are,
+The ``Cursor mode`` combo box changes the information displayed in the tooltip
+attached to the mouse cursor when hovering over a pixel in the detector image.
+The options are:
 
 1. ``Pixel`` --- the pixel coordinates (x, y) followed by the count of the
    pixel
@@ -105,9 +59,17 @@ options are,
 Show/hide peaks widget
 ======================
 
+.. _peak_view_widget:
+.. figure:: images/detector/peak_view_widget.png
+   :alt: The peak_view_widget
+   :name: fig:peak_view_widget
+   :width: 30.0%
+
+   The show/hide peaks widget
+
 Every detector widget has an assocated widget to change the peak visualisatioon
 settings on the control panel on the left of the application, in most cases,
-this is labelled ``Show/hide peaks``. It enables control of three different
+this is labeled ``Show/hide peaks``. It enables control of three different
 aspects of the information superimposed on the detector image:
 
 Valid peaks
@@ -126,19 +88,18 @@ Integration Regions
 Generate an overlay indicating the peak intensity regions (default green) and
 background regions (default yellow).
 
-1. Show or hide the integration regions
-2. Change the alpha (transparency) of the integration regions; 0 = transparent,
+4. Show or hide the integration regions
+5. Change the alpha (transparency) of the integration regions; 0 = transparent,
    1 = opaque.
-3. Change the colour of the integration regions, respectively the peak
-   (intensity) region and the background region.
-4. Preview the integration regions. If this is checked, the integration
+6. Set the colour of the peak (intensity) region
+7. Set the colour of the background region      
+8. Preview the integration regions. If this is checked, the integration
    parameters below are used to determine the size of the integration regions.
-   If unchecked, the integration regions are determined from the either the
-   default parameters, or the paremeters used last time the peaks were
-   integrated.
-5. Integration region size parameters: these control the size of the
-   peak/intensity region, the start of the background region and the end of the
-   background region in sigmas. See :ref:`sec_peakshape`.
+   If unchecked, the integration regions are determined from the parameters used
+   last time the peaks were integrated.
+9. Peak region size (see :ref:`sec_peakshape`)
+10. Beginning of background region (see :ref:`sec_peakshape`)
+11. End of background region (see :ref:`sec_peakshape`)
 
 Invalid peaks
 ~~~~~~~~~~~~~
@@ -146,6 +107,6 @@ Invalid peaks
 Plot peaks that have for some reason been disabled as circles on the detector
 image.
 
-1. Show or hide the invalid peaks (peaks which are ``masked`` or *not* selected.
-2. Change the size of the circle indicating the centre of the peak
-3. Change the colour of the circle indicating the centre of the peak
+13. Show or hide the invalid peaks
+14. Change the size of the circle indicating the centre of the peak
+15. Change the colour of the circle indicating the centre of the peak
