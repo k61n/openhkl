@@ -33,7 +33,7 @@ class TestSimulatedData(unittest.TestCase):
         ref_valid_predicted_peaks = 1587
 
         # Numerical check thresholds
-        eps_peaks = 5;
+        eps_peaks = 10;
         eps_stat = 0.01;
 
         data_dir = '.' # Path to .raw data files

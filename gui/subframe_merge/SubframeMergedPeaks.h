@@ -17,7 +17,7 @@
 
 #include "core/data/DataTypes.h"
 #include "core/experiment/DataQuality.h"
-#include "core/statistics/MergedData.h"
+#include "core/statistics/MergedPeakCollection.h"
 #include "core/statistics/PeakExporter.h"
 #include "tables/crystal/UnitCell.h"
 
@@ -37,7 +37,7 @@
 
 class IntegratedPeakComboBox;
 class PeakComboBox;
-class MergedData;
+class MergedPeakCollection;
 class QStandardItemModel;
 class SXPlot;
 
@@ -95,23 +95,23 @@ class SubframeMergedPeaks : public QWidget {
     void updateShellModel(
         QStandardItemModel* model, ohkl::DataResolution* resolution, ohkl::DataResolution* overall);
     //! Update the merged moddels
-    void updateMergedModel(QStandardItemModel* model, ohkl::MergedData* merged_data);
+    void updateMergedModel(QStandardItemModel* model, ohkl::MergedPeakCollection* merged_data);
     //! Update the unmerged moddels
     void updateUnmergedModel(
-        QStandardItemModel* model, ohkl::MergedData* merged_data, bool sum_intensity);
+        QStandardItemModel* model, ohkl::MergedPeakCollection* merged_data, bool sum_intensity);
 
 
     //! Do a single batch refinement to get one unit cell
     ohkl::sptrUnitCell singleBatchRefine();
 
     //! The merged peak list from pixel sum integration
-    ohkl::MergedData* _sum_merged_data;
+    ohkl::MergedPeakCollection* _sum_merged_data;
     //! Merged data per resolution shell from pixel sum integration
-    std::vector<ohkl::MergedData*> _sum_merged_data_per_shell;
+    std::vector<ohkl::MergedPeakCollection*> _sum_merged_data_per_shell;
     //! The merged peak list from profile integration
-    ohkl::MergedData* _profile_merged_data;
+    ohkl::MergedPeakCollection* _profile_merged_data;
     //! Merged data per resolution shell from profile integration
-    std::vector<ohkl::MergedData*> _profile_merged_data_per_shell;
+    std::vector<ohkl::MergedPeakCollection*> _profile_merged_data_per_shell;
     //! The peak exporter
     ohkl::PeakExporter _exporter;
 

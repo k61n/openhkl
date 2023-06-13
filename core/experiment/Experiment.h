@@ -30,7 +30,7 @@
 #include "core/raw/DataKeys.h"
 #include "core/shape/PeakFilter.h"
 #include "core/shape/Predictor.h"
-#include "core/statistics/MergedData.h"
+#include "core/statistics/MergedPeakCollection.h"
 #include "core/statistics/PeakMerger.h"
 #include "core/statistics/ResolutionShell.h"
 #include "tables/crystal/UnitCell.h"

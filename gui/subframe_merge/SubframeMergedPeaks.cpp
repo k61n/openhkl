@@ -20,7 +20,7 @@
 #include "core/peak/Peak3D.h"
 #include "core/shape/PeakCollection.h"
 #include "core/statistics/CC.h"
-#include "core/statistics/MergedData.h"
+#include "core/statistics/MergedPeakCollection.h"
 #include "core/statistics/MergedPeak.h"
 #include "core/statistics/PeakExporter.h"
 #include "core/statistics/PeakMerger.h"
@@ -560,10 +560,10 @@ void SubframeMergedPeaks::processMerge()
             merger->addPeakCollection(expt->getPeakCollection(collection2.toStdString()));
 
         merger->mergePeaks();
-        _sum_merged_data = merger->sumMergedData();
-        _sum_merged_data_per_shell = merger->sumMergedDataPerShell();
-        _profile_merged_data = merger->profileMergedData();
-        _profile_merged_data_per_shell = merger->profileMergedDataPerShell();
+        _sum_merged_data = merger->sumMergedPeakCollection();
+        _sum_merged_data_per_shell = merger->sumMergedPeakCollectionPerShell();
+        _profile_merged_data = merger->profileMergedPeakCollection();
+        _profile_merged_data_per_shell = merger->profileMergedPeakCollectionPerShell();
     }
     refreshTables();
     gGui->setReady(true);
@@ -581,7 +581,7 @@ void SubframeMergedPeaks::refreshDShellTable()
 {
     auto* expt = gSession->currentProject()->experiment();
     auto* merger = expt->peakMerger();
-    auto* merged_data = merger->sumMergedData();
+    auto* merged_data = merger->sumMergedPeakCollection();
 
     if (merged_data == nullptr)
         return;
@@ -657,7 +657,7 @@ void SubframeMergedPeaks::refreshMergedTable()
     updateMergedModel(_profile_merged_model, _profile_merged_data);
 }
 
-void SubframeMergedPeaks::updateMergedModel(QStandardItemModel* model, ohkl::MergedData* merged_data)
+void SubframeMergedPeaks::updateMergedModel(QStandardItemModel* model, ohkl::MergedPeakCollection* merged_data)
 {
     for (const ohkl::MergedPeak& peak : merged_data->mergedPeakSet()) {
 
@@ -702,7 +702,7 @@ void SubframeMergedPeaks::refreshUnmergedTable()
 }
 
 void SubframeMergedPeaks::updateUnmergedModel(
-    QStandardItemModel* model, ohkl::MergedData* merged_data, bool sum_intensity)
+    QStandardItemModel* model, ohkl::MergedPeakCollection* merged_data, bool sum_intensity)
 {
     for (const ohkl::MergedPeak& peak : merged_data->mergedPeakSet()) {
         for (auto unmerged_peak : peak.peaks()) {
@@ -868,7 +868,7 @@ void SubframeMergedPeaks::savePeaks(bool merged)
     auto data = _peak_combo_1->currentPeakCollection()->data();
 
     double scale;
-    ohkl::MergedData* merged_data;
+    ohkl::MergedPeakCollection* merged_data;
     bool sum_intensity = true;
     if (_merged_tab_widget->currentIndex() != 0)
         sum_intensity = false;

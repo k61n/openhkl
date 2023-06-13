@@ -17,7 +17,7 @@
 #include "base/utils/Logger.h"
 #include "core/shape/PeakCollection.h"
 #include "core/statistics/CC.h"
-#include "core/statistics/MergedData.h"
+#include "core/statistics/MergedPeakCollection.h"
 #include "core/statistics/RFactor.h"
 #include "core/statistics/ResolutionShell.h"
 #include "tables/crystal/SpaceGroup.h"
@@ -26,7 +26,7 @@
 
 namespace ohkl {
 
-void DataQuality::computeQuality(MergedData& merged_peaks, bool sum_intensities)
+void DataQuality::computeQuality(MergedPeakCollection& merged_peaks, bool sum_intensities)
 {
     nobserved = merged_peaks.totalSize();
     int max_peaks = merged_peaks.maxPeaks();
@@ -52,7 +52,7 @@ void DataQuality::computeQuality(MergedData& merged_peaks, bool sum_intensities)
 
 
 void ShellQuality::computeQuality(
-    MergedData& merged_peaks, double d_min, double d_max, bool sum_intensities)
+    MergedPeakCollection& merged_peaks, double d_min, double d_max, bool sum_intensities)
 {
     DataQuality::computeQuality(merged_peaks, sum_intensities);
     dmin = d_min;

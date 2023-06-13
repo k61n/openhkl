@@ -364,7 +364,7 @@ ArrayExtendCRef(MillerIndex, int);
 %include "core/shape/KeyPointCollection.h"
 %include "core/shape/PeakCollection.h"
 %include "core/shape/PeakFilter.h"
-%include "core/statistics/MergedData.h"
+%include "core/statistics/MergedPeakCollection.h"
 %include "core/experiment/PeakFinder.h"
 %include "core/experiment/PeakFinder2D.h"
 %include "core/experiment/DataQuality.h"
