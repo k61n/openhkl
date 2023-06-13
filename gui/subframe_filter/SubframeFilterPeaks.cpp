@@ -147,13 +147,15 @@ void SubframeFilterPeaks::setStrengthUp()
 
     _strength_min = f.addDoubleSpinBox("Minimum:");
     _strength_min->setValue(1.00000);
-    _strength_min->setMaximum(100000);
-    _strength_min->setDecimals(6);
+    _strength_min->setMinimum(-1000000);
+    _strength_min->setMaximum(1000000);
+    _strength_min->setDecimals(2);
 
     _strength_max = f.addDoubleSpinBox("Maximum:");
     _strength_max->setValue(3.00000);
-    _strength_max->setMaximum(1e10);
-    _strength_max->setDecimals(6);
+    _strength_max->setMinimum(1000000);
+    _strength_max->setMaximum(-1000000);
+    _strength_max->setDecimals(2);
 
     _left_layout->addWidget(_strength_box);
 }
