@@ -54,7 +54,7 @@ class DataSet {
 
  public:
     DataSet(const std::string& dataset_name, Diffractometer* diffractometer);
-    ~DataSet() = default;
+    virtual ~DataSet() = default;
 
     DataSet() = delete;
     DataSet(const DataSet& other) = delete;

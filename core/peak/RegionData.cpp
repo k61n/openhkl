@@ -102,7 +102,6 @@ void RegionData::buildProfile(ShapeModel* shapes, double radius, double nframes)
     auto profile = shapes->meanProfile(center, radius, nframes);
 
     const auto& events = _integration_region->peakData().events();
-    const auto& counts = _integration_region->peakData().counts();
     std::vector<double> profile_counts;
 
     for (const auto& mat : _data)
@@ -129,7 +128,6 @@ void RegionData::buildProfile(ShapeModel* shapes, double radius, double nframes)
         if (!profile)
             throw std::runtime_error("RegionData::buildProfile: bad profile");
 
-        const double predict = _profile.predict(coords);
         profile_counts.push_back(profile.value().predict(coords));
     }
 

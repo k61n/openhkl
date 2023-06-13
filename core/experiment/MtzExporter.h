@@ -70,9 +70,6 @@ class MtzExporter {
         std::string name, std::string label, int grp, int set_id, int active, int src);
 
  private:
-    //! Merger object to process the merge if necessary
-    PeakMerger* _merger;
-
     // ohkl data structures
     MergedPeakCollection* _merged_data;
     sptrDataSet _ohkl_data;

@@ -101,8 +101,6 @@ class PeakCollectionGraphics {
     ohkl::IntegrationParameters _int_params;
     //! The peak model
     PeakCollectionModel* _peak_model;
-    //! Pointer to peak selected in DetectorScene
-    ohkl::Peak3D* _selected_peak;
     //! Externally generated peak data
     ohkl::PeakCenterDataSet* _peak_center_data;
     //! Detector spots found using OpenCV

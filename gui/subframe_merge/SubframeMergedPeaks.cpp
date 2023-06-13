@@ -862,13 +862,11 @@ void SubframeMergedPeaks::savePeaks(bool merged)
     if (filename.isEmpty())
         return;
 
-    auto* expt = gSession->currentProject()->experiment();
-    auto* merger = expt->peakMerger();
     auto cell = singleBatchRefine();
     auto data = _peak_combo_1->currentPeakCollection()->data();
 
     double scale;
-    ohkl::MergedPeakCollection* merged_data;
+    ohkl::MergedPeakCollection* merged_data = nullptr;
     bool sum_intensity = true;
     if (_merged_tab_widget->currentIndex() != 0)
         sum_intensity = false;
@@ -876,7 +874,7 @@ void SubframeMergedPeaks::savePeaks(bool merged)
     if (merged) {
         scale = _intensity_rescale_merged->value();
         merged_data = _sum_merged_data;
-        if (!sum_intensity);
+        if (!sum_intensity)
             merged_data = _profile_merged_data;
     } else {
         scale = _intensity_rescale_unmerged->value();

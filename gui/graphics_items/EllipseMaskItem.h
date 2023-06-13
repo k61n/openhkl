@@ -42,7 +42,7 @@ class EllipseMaskItem : public MaskItem {
 
     //! Returns the bounding rectangle of the mask
     QRectF boundingRect() const override;
-    ohkl::AABB* getAABB();
+    ohkl::AABB* getAABB() override;
     //! Sets the starting corner of the mask
     void setFrom(const QPointF& pos);
     //! Overload setFrom for an Eigen::Vector3d argument
@@ -64,7 +64,6 @@ class EllipseMaskItem : public MaskItem {
 
  private:
     void updateAABB();
-    bool _selected;
 };
 
 #endif // OHKL_GUI_GRAPHICS_ITEMS_ELLIPSEITEM_H

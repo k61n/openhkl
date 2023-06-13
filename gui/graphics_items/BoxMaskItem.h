@@ -41,7 +41,7 @@ class BoxMaskItem : public MaskItem {
 
     //! Returns the bounding rectangle of the mask
     QRectF boundingRect() const override;
-    ohkl::AABB* getAABB();
+    ohkl::AABB* getAABB() override;
     //! Sets the starting corner of the mask
     void setFrom(const QPointF& pos);
     //! Overload setFrom for an Eigen::Vector3d argument

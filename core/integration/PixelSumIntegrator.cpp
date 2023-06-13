@@ -117,7 +117,6 @@ bool PixelSumIntegrator::compute(Peak3D* peak, ShapeModel*, const IntegrationReg
     // should be approximately mean_bkg / num_bkg for Poisson statistics
     const double std_bkg = _sumBackground.sigma();
     size_t npeak = 0.0;
-    size_t nbkg = 0.0;
     Blob3D blob;
 
     // background sigma, assuming Poisson statistics
@@ -128,7 +127,6 @@ bool PixelSumIntegrator::compute(Peak3D* peak, ShapeModel*, const IntegrationReg
         auto ev_type = region.classify(ev);
 
         if (ev_type == IntegrationRegion::EventType::BACKGROUND) {
-            nbkg++;
             continue;
         }
 

@@ -22,7 +22,7 @@
 #include <QStyleOptionGraphicsItem>
 
 EllipseMaskItem::EllipseMaskItem(ohkl::sptrDataSet data, ohkl::AABB* aabb)
-    : MaskItem(aabb), _data(data), _from(0, 0), _to(0, 0), _selected(false)
+    : MaskItem(aabb), _data(data), _from(0, 0), _to(0, 0)
 {
     _pen.setWidth(1);
     _pen.setCosmetic(true);
