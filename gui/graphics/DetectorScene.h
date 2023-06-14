@@ -23,6 +23,7 @@
 #include "gui/graphics/DataSetGraphics.h"
 #include "gui/graphics/DetectorSceneParams.h"
 #include "gui/graphics/PeakCollectionGraphics.h"
+#include "gui/graphics_items/CircleGraphic.h"
 #include "gui/graphics_items/CrosshairGraphic.h"
 #include "gui/graphics_items/PeakCenterGraphic.h"
 #include "gui/models/ColorMap.h"
@@ -76,6 +77,8 @@ class DetectorScene : public QGraphicsScene {
     void clearPixmapItems();
     //! Remove masks
     void clearMasks();
+    //! Remove circles
+    void clearCircles();
 
     //! Get pointer to a PeakCollectionGraphics object
     PeakCollectionGraphics* peakCollectionGraphics(std::size_t idx) const;
@@ -102,6 +105,8 @@ class DetectorScene : public QGraphicsScene {
     int intensity() { return _params.intensity; };
     //! Set up the direct beam crosshair
     void addBeamSetter(const QPointF& pos, int size);
+    //! Add a circle of given position and radius
+    CircleGraphic* addCircle(const QPointF& pos, int radius);
     //! Remove the beam crosshair from the scene
     void removeBeamSetter();
     //! Show/hide the beam setter crosshair

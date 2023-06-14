@@ -61,6 +61,8 @@ class RegionData {
     double dataMax() const;
     //! Return the maximum value of the profile data
     double profileMax() const;
+    //! Return the number of profiles used in the mean profile
+    int nProfiles() const { return _n_profiles; };
 
     IntegrationRegion* integrationRegion() const;
     unsigned int xmin() const;
@@ -72,6 +74,7 @@ class RegionData {
     unsigned int cols() const;
     unsigned int rows() const;
 
+
  private:
     IntegrationRegion* _integration_region;
     std::vector<Eigen::MatrixXi> _data;
@@ -79,6 +82,8 @@ class RegionData {
     std::vector<Eigen::MatrixXd> _profile_data;
     Profile3D _profile;
     std::vector<int> _index;
+
+    int _n_profiles;
 
     unsigned int _xmin;
     unsigned int _xmax;

@@ -25,6 +25,7 @@
 #include "gui/MainWin.h"
 #include "gui/graphics/PeakCollectionGraphics.h"
 #include "gui/graphics_items/BoxMaskItem.h"
+#include "gui/graphics_items/CircleGraphic.h"
 #include "gui/graphics_items/CrosshairGraphic.h"
 #include "gui/graphics_items/EllipseMaskItem.h"
 #include "gui/graphics_items/MaskItem.h"
@@ -106,6 +107,14 @@ void DetectorScene::addBeamSetter(const QPointF& pos, int size)
     _beam_pos_setter->setLinewidth(2);
     setBeamSetterPos(pos);
     addItem(_beam_pos_setter);
+}
+
+CircleGraphic* DetectorScene::addCircle(const QPointF &pos, int radius)
+{
+    clearCircles();
+    CircleGraphic* circle = new CircleGraphic(pos, radius);
+    addItem(circle);
+    return circle;
 }
 
 void DetectorScene::removeBeamSetter()
@@ -193,6 +202,8 @@ void DetectorScene::clearPeakItems()
         if (dynamic_cast<PeakCenterGraphic*>(item) != nullptr) // Remove 3rd party centers
             removeItem(item);
         if (dynamic_cast<DirectBeamGraphic*>(item) != nullptr) // Remove direct beam position``
+            removeItem(item);
+        if (dynamic_cast<CircleGraphic*>(item) != nullptr) // Remove circle around peak
             removeItem(item);
     }
 }
@@ -776,6 +787,15 @@ void DetectorScene::clearMasks()
         return;
     for (auto item : items())
         if (dynamic_cast<MaskItem*>(item) != nullptr)
+            removeItem(item);
+}
+
+void DetectorScene::clearCircles()
+{
+    if (!_currentData)
+        return;
+    for (auto item : items())
+        if (dynamic_cast<CircleGraphic*>(item) != nullptr)
             removeItem(item);
 }
 

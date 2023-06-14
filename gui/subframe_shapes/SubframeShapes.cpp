@@ -27,6 +27,7 @@
 #include "gui/dialogs/ListNameDialog.h"
 #include "gui/frames/ProgressView.h"
 #include "gui/graphics/DetectorScene.h"
+#include "gui/graphics_items/CircleGraphic.h"
 #include "gui/models/ColorMap.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
@@ -589,8 +590,19 @@ void SubframeShapes::computeProfile()
 
     ohkl::RegionData* region_data = region.getRegion();
     region_data->buildProfile(model, _params->neighbour_range_pixels, _params->neighbour_range_frames);
+    QPointF pos = {_current_peak->shape().center()[0], _current_peak->shape().center()[1]};
+    auto* circle = _detector_widget->scene()->addCircle(pos, _params->neighbour_range_pixels);
 
     regionData2Image(region_data);
+
+    for (auto item : _profile_view->scene()->items())
+        if (dynamic_cast<QGraphicsTextItem*>(item) != nullptr)
+            _profile_view->scene()->removeItem(item);
+
+    int nprofiles = region_data->nProfiles();
+    std::ostringstream oss;
+    oss << nprofiles << " shapes";
+    circle->setLabel(QString::fromStdString(oss.str()));
 }
 
 void SubframeShapes::regionData2Image(ohkl::RegionData* region_data)

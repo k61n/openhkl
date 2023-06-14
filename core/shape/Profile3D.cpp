@@ -23,7 +23,7 @@ Profile3D::Profile3D(const AABB& aabb, const Eigen::Vector3i& shape)
 {
 }
 
-Profile3D::Profile3D() : _shape(0, 0, 0), _profile()
+Profile3D::Profile3D() : _shape(0, 0, 0), _profile(), _n_failures(0), _n_profiles(0)
 {
     auto zero = Eigen::Vector3d(0, 0, 0);
     _aabb.setLower(zero);
@@ -31,7 +31,13 @@ Profile3D::Profile3D() : _shape(0, 0, 0), _profile()
 }
 
 Profile3D::Profile3D(const AABB& aabb, int nx, int ny, int nz)
-    : _aabb(aabb), _dx(), _shape(nx, ny, nz), _count(0), _profile(nx * ny * nz, 0.0)
+    : _aabb(aabb)
+    , _dx()
+    , _shape(nx, ny, nz)
+    , _count(0)
+    , _profile(nx * ny * nz, 0.0)
+    , _n_failures(0)
+    , _n_profiles(0)
 {
     if (nx < 1 || ny < 1 || nz < 1)
         throw std::runtime_error("Profile3D: size must be positive!");
@@ -176,6 +182,7 @@ void Profile3D::addProfile(const Profile3D& other, double weight)
     for (size_t i = 0; i < _profile.size(); ++i)
         _profile[i] += weight * other._profile[i];
     _count += other._count;
+    ++_n_profiles;
 }
 
 Ellipsoid Profile3D::ellipsoid() const
