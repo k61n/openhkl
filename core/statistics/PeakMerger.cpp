@@ -16,7 +16,9 @@
 
 #include "base/utils/Logger.h"
 #include "core/data/DataSet.h"
+#include "core/experiment/DataQuality.h"
 #include "core/shape/PeakCollection.h"
+#include "core/statistics/MergedPeakCollection.h"
 #include "core/statistics/RotationSlice.h"
 #include "tables/crystal/SpaceGroup.h"
 
@@ -86,6 +88,13 @@ void PeakMerger::mergePeaks()
     _sum_merged_data->setDRange(_params->d_min, _params->d_max);
     _profile_merged_data->setDRange(_params->d_min, _params->d_max);
     ResolutionShell resolution_shell{_params->d_min, _params->d_max, _params->n_shells};
+
+    // For computing maximum possible completeness
+    MergedPeakCollection merged_all(_space_group, _peak_collections, _params->friedel);
+    merged_all.setDRange(_params->d_min, _params->d_max);
+    DataQuality quality;
+    quality.computeQuality(merged_all, true);
+    _max_completeness = quality.Completeness;
 
     // Sort the peaks by resolution shell (concentric shells in d)
     for (PeakCollection* collection : _peak_collections) {

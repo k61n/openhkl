@@ -60,6 +60,28 @@ MergedPeakCollection::MergedPeakCollection(SpaceGroup space_group, bool friedel,
 {
 }
 
+MergedPeakCollection::MergedPeakCollection(
+    SpaceGroup space_group, std::vector<PeakCollection*> peak_collections, bool friedel)
+    : _group(space_group)
+    , _friedel(friedel)
+    , _merged_peak_set()
+{
+    ohklLog(Level::Info,
+            "MergedPeakCollection::MergedPeakCollection: merging peaks for max completeness");
+    _peak_collections = peak_collections;
+    for (int i = 0; i < _peak_collections.size(); ++i) {
+        if (_peak_collections[i] == nullptr)
+            continue;
+        ohklLog(
+            Level::Info, "MergedPeakCollection::MergedPeakCollection: peak collection ",
+            _peak_collections[i]->name());
+        std::vector<Peak3D*> peaks = _peak_collections[i]->getPeakList();
+        for (int j = 0; j < peaks.size(); ++j)
+            addAny(peaks[j]);
+    }
+
+}
+
 void MergedPeakCollection::addPeak(Peak3D* peak)
 {
     auto c = peak->shape().center();
@@ -84,6 +106,24 @@ void MergedPeakCollection::addPeak(Peak3D* peak)
         MergeFlag flag = merged.addPeak(peak);
         if (flag == MergeFlag::Inequivalent)
             ++_nInequivalent;
+        _merged_peak_set.erase(it);
+        _merged_peak_set.emplace(std::move(merged));
+        return;
+    }
+    _merged_peak_set.emplace(std::move(new_peak));
+}
+
+void MergedPeakCollection::addAny(Peak3D* peak)
+{
+    MergedPeak new_peak(_group, _sum_intensity, _friedel);
+
+    MergeFlag flag = new_peak.addAny(peak);
+
+    auto it = _merged_peak_set.find(new_peak);
+
+    if (it != _merged_peak_set.end()) { // Found this peak in the set already
+        MergedPeak merged(*it);
+        merged.addAny(peak);
         _merged_peak_set.erase(it);
         _merged_peak_set.emplace(std::move(merged));
         return;

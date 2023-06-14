@@ -765,11 +765,13 @@ void SubframeMergedPeaks::refreshGraph(int column)
         profile_yvals.push_back(profile_val);
     }
 
-    QPen pen1, pen2;
+    QPen pen1, pen2, pen3;
     pen1.setColor(QColor("black"));
     pen1.setWidth(2.0);
     pen2.setColor(QColor("red"));
     pen2.setWidth(2.0);
+    pen3.setColor(QColor("blue"));
+    pen3.setWidth(2.0);
 
     _statistics_plot->addGraph();
     _statistics_plot->graph(0)->setPen(pen1);
@@ -789,6 +791,33 @@ void SubframeMergedPeaks::refreshGraph(int column)
     font.setStyleStrategy(QFont::NoAntialias);
     _statistics_plot->xAxis->setTickLabelFont(font);
     _statistics_plot->yAxis->setTickLabelFont(font);
+
+    // Overall and maximum completeness
+    if (column == 13) {
+        auto* merger = gSession->currentProject()->experiment()->peakMerger();
+        QVector<double> sum_overall_compl;
+        QVector<double> profile_overall_compl;
+        QVector<double> max_compl;
+        for (int i = 0; i < nshells; ++i) {
+            sum_overall_compl.push_back(merger->sumOverallQuality()->shells[0].Completeness);
+            profile_overall_compl.push_back(merger->profileOverallQuality()->shells[0].Completeness);
+            max_compl.push_back(merger->maxCompleteness());
+        }
+        std::ostringstream oss;
+        oss << "Maximum completeness (" << merger->maxCompleteness() << ")";
+        _statistics_plot->addGraph();
+        _statistics_plot->graph(2)->setPen(pen1);
+        _statistics_plot->graph(2)->addData(xvals, sum_overall_compl);
+        _statistics_plot->graph(2)->setName("Sum overall completeness");
+        _statistics_plot->addGraph();
+        _statistics_plot->graph(3)->setPen(pen2);
+        _statistics_plot->graph(3)->addData(xvals, profile_overall_compl);
+        _statistics_plot->graph(3)->setName("Profile overall completeness");
+        _statistics_plot->addGraph();
+        _statistics_plot->graph(4)->setPen(pen3);
+        _statistics_plot->graph(4)->addData(xvals, max_compl);
+        _statistics_plot->graph(4)->setName(QString::fromStdString(oss.str()));
+    }
 
     _statistics_plot->setInteractions(
         QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectAxes | QCP::iSelectLegend
