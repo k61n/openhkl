@@ -26,7 +26,14 @@ namespace ohkl {
 RegionData::RegionData(
     IntegrationRegion* region, unsigned int x1, unsigned int x2, unsigned int y1, unsigned int y2,
     unsigned int z1, unsigned int z2)
-    : _integration_region(region), _xmin(x1), _xmax(x2), _ymin(y1), _ymax(y2), _zmin(z1), _zmax(z2)
+    : _integration_region(region)
+    , _n_profiles(0)
+    , _xmin(x1)
+    , _xmax(x2)
+    , _ymin(y1)
+    , _ymax(y2)
+    , _zmin(z1)
+    , _zmax(z2)
 {
 }
 
@@ -100,6 +107,8 @@ void RegionData::buildProfile(ShapeModel* shapes, double radius, double nframes)
     DetectorEvent center =
         {peak->shape().center()[0], peak->shape().center()[1], peak->shape().center()[2]};
     auto profile = shapes->meanProfile(center, radius, nframes);
+    if (profile)
+        _n_profiles = profile.value().nProfiles();
 
     const auto& events = _integration_region->peakData().events();
     std::vector<double> profile_counts;

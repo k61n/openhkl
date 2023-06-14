@@ -66,6 +66,8 @@ class Profile3D {
     const AABB& aabb() const;
     //! Returns the shape of the underlying data
     const Eigen::Vector3i& shape() const;
+    //! Return the number of profiles used to construct this one (via meanProfile)
+    int nProfiles() const { return _n_profiles; };
 
  private:
     AABB _aabb;
@@ -74,6 +76,7 @@ class Profile3D {
     size_t _count;
     std::vector<double> _profile;
     int _n_failures;
+    int _n_profiles;
 };
 
 /*! @}*/
