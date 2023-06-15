@@ -477,7 +477,7 @@ void PeakFilter::filterRejectionFlag(PeakCollection* peak_collection) const
 {
     int ncaught = 0;
     for (Peak3D* peak : peak_collection->getPeakList()) {
-        if (peak->isRejectedFor(_filter_params->rejection_flag)) {
+        if (peak->rejectionFlag() == _filter_params->rejection_flag) {
             peak->caughtYou(true);
             ++ncaught;
         } else
