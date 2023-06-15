@@ -44,6 +44,19 @@ MergeFlag MergedPeak::addPeak(Peak3D* peak)
             return MergeFlag::Invalid;
     }
 
+    auto flag = addAny(peak);
+    if (flag != MergeFlag::Added)
+        return flag;
+
+    if (_sum_intensity)
+        _intensity += peak->correctedSumIntensity();
+    else
+        _intensity += peak->correctedProfileIntensity();
+    return flag;
+}
+
+MergeFlag MergedPeak::addAny(Peak3D *peak)
+{
     const UnitCell* cell = peak->unitCell();
     const ReciprocalVector q = peak->q();
 
@@ -55,12 +68,8 @@ MergeFlag MergedPeak::addPeak(Peak3D* peak)
         if (!_grp.isEquivalent(_hkl, hkl, _friedel))
             return MergeFlag::Inequivalent;
     }
-    // add peak to list
+
     _peaks.push_back(peak);
-    if (_sum_intensity)
-        _intensity += peak->correctedSumIntensity();
-    else
-        _intensity += peak->correctedProfileIntensity();
     return MergeFlag::Added;
 }
 

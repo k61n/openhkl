@@ -18,6 +18,7 @@
 #include "core/data/DataTypes.h"
 #include "core/shape/PeakCollection.h"
 #include "core/statistics/MergedPeak.h"
+#include "tables/crystal/SpaceGroup.h"
 #include "tables/crystal/UnitCell.h"
 
 #include <set>
@@ -40,9 +41,14 @@ class MergedPeakCollection {
         bool sum_intensity, int fmin = -1, int fmax = -1);
     MergedPeakCollection(
         SpaceGroup space_group, bool friedel, bool sum_intensity, int fmin = -1, int fmax = -1);
+    //! For computing maximum possible completeness
+    MergedPeakCollection(
+        SpaceGroup space_group, std::vector<PeakCollection*> peak_collections, bool friedel);
     //! Add a peak to the data set. It will be automatically merged correctly
     //! according to the space group symmetry.
     void addPeak(Peak3D* peak);
+    //! Add a peak regardless of rejection status, do not track intensity
+    void addAny(Peak3D* peak);
     //! Add a peak collection (without processing the peaks)
     void addPeakCollection(PeakCollection* peaks);
     //! Return the set of merged peaks.

@@ -35,6 +35,8 @@ class MergedPeak {
 
     //! Add a peak to the merged peak.
     MergeFlag addPeak(Peak3D* peak);
+    //! Add a peak regardless of RejectionFlag, do not sum intensity
+    MergeFlag addAny(Peak3D* peak);
 
     //! Returns a representative Miller index of the peak.
     MillerIndex index() const;
