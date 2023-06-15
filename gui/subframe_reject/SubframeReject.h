@@ -28,12 +28,14 @@
 #include <QGroupBox>
 #include <QHBoxLayout>
 #include <QPushButton>
+#include <QRadioButton>
 #include <QRandomGenerator>
 #include <QSizePolicy>
 #include <QSplitter>
 #include <QTableWidget>
 #include <QVBoxLayout>
 #include <QWidget>
+#include <qobjectdefs.h>
 
 class PeakComboBox;
 class PlotPanel;
@@ -65,8 +67,15 @@ class SubframeReject : public QWidget {
     void updateXRange(double xmin, double xmax);
     //! Set the vertical range in the control widget
     void updateYRange(double ymin, double ymax);
+    //! Update plot on x range spins changed
+    void onXRangeSpinsChanged();
     //! When a peak is selected via the table
     void onPeakTableSelection();
+    //! Refresh the plot
+    void refreshPlot();
+
+ signals:
+    void xSpinsChanged(int xmin, int xmax);
 
  private:
     //! Select dataset, peak collection
@@ -106,6 +115,8 @@ class SubframeReject : public QWidget {
     //! Reject outliers in given data field
     void rejectOutliers();
 
+    //! Update plot after adjusting x range spins
+
     QVBoxLayout* _left_layout;
     QSplitter* _right_element;
 
@@ -121,6 +132,8 @@ class SubframeReject : public QWidget {
 
     // histogram generation
     QComboBox* _histo_combo;
+    QRadioButton* _sum_radio;
+    QRadioButton* _profile_radio;
     SafeSpinBox* _n_bins;
     SafeSpinBox* _freq_min;
     SafeSpinBox* _freq_max;

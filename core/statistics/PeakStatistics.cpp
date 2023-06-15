@@ -41,6 +41,8 @@ void PeakStatistics::setPeakCollection(PeakCollection* peaks, PeakHistogramType 
     std::sort(_peak_data.rbegin(), _peak_data.rend()); // descending
     _min_value = _peak_data.back().first;
     _max_value = _peak_data.front().first;
+    if (_max_value < _min_value + 1)
+        _max_value = _min_value + 1;
 }
 
 void PeakStatistics::_initHistogram(std::size_t nbins)

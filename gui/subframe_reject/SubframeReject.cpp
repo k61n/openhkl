@@ -50,6 +50,7 @@
 #include <QMessageBox>
 #include <QScrollBar>
 #include <QSpacerItem>
+#include <qradiobutton.h>
 
 SubframeReject::SubframeReject() : QWidget()
 {
@@ -79,14 +80,13 @@ SubframeReject::SubframeReject() : QWidget()
         _peak_view_widget, &PeakViewWidget::settingsChanged, _detector_widget,
         &DetectorWidget::refresh);
     connect(_peak_combo, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [=]() {
-        updateStatistics();
-        computeHistogram();
+        refreshPlot();
         _plot_widget->sxplot()->resetZoom();
     });
-    connect(_histo_combo, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [=]() {
-        updateStatistics();
-        computeHistogram();
-    });
+    connect(
+        _histo_combo, QOverload<int>::of(&QComboBox::currentIndexChanged), this,
+        &SubframeReject::refreshPlot);
+    connect(_sum_radio, &QRadioButton::toggled, this, &SubframeReject::refreshPlot);
 
     auto propertyScrollArea = new PropertyScrollArea(this);
     propertyScrollArea->setContentLayout(_left_layout);
@@ -141,6 +141,10 @@ void SubframeReject::setHistogramUp()
     for (const auto& [type, description] : _peak_stats.getHistoStrings())
         _histo_combo->addItem(QString::fromStdString(description));
 
+    _sum_radio = new QRadioButton("Sum intensities", histo_spoiler);
+    _profile_radio= new QRadioButton("Profile intensities", histo_spoiler);
+    filler.addWidget(_sum_radio, 1);
+    filler.addWidget(_profile_radio, 1);
     _n_bins = filler.addSpinBox("Number of bins", "Number of histogram bins");
     std::tie(_freq_min, _freq_max) =
         filler.addSpinBoxPair("Frequency range", "Maximum and minimum frequecies for histogram");
@@ -152,6 +156,8 @@ void SubframeReject::setHistogramUp()
         filler.addDoubleSpinBox("Threshold", "Threshold for peak rejection in standard deviations");
     _reject_outliers =
         filler.addButton("Reject outliers", "Reject peaks outside specified threshold");
+
+    _sum_radio->setChecked(true);
 
     _n_bins->setMaximum(10000);
     _x_min->setMaximum(10000);
@@ -170,12 +176,16 @@ void SubframeReject::setHistogramUp()
     _freq_max->setValue(1000);
     _sigma_factor->setValue(3);
 
-    connect(_log_freq, &QCheckBox::stateChanged, this, [=]() {
-        updateStatistics();
-        computeHistogram();
-    });
+    connect(_log_freq, &QCheckBox::stateChanged, this, &SubframeReject::refreshPlot);
     connect(_plot_histogram, &QPushButton::clicked, this, &SubframeReject::computeHistogram);
     connect(_reject_outliers, &QPushButton::clicked, this, &SubframeReject::rejectOutliers);
+    connect(
+        _x_min, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
+        &SubframeReject::onXRangeSpinsChanged);
+    connect(
+        _x_max, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
+        &SubframeReject::onXRangeSpinsChanged);
+    connect(this, &SubframeReject::xSpinsChanged, this, &SubframeReject::filterSelection);
 
     _left_layout->addWidget(histo_spoiler);
 }
@@ -371,6 +381,7 @@ void SubframeReject::updateStatistics()
     ohkl::PeakHistogramType type =
         static_cast<ohkl::PeakHistogramType>(_histo_combo->currentIndex());
     _peak_stats.setPeakCollection(peaks, type);
+    _peak_stats.setSumIntensities(_sum_radio->isChecked());
     updatePlotRange();
 }
 
@@ -485,6 +496,11 @@ void SubframeReject::updateYRange(double ymin, double ymax)
     _freq_max->setValue(ymax);
 }
 
+void SubframeReject::onXRangeSpinsChanged()
+{
+    emit xSpinsChanged(_x_min->value(), _x_max->value());
+}
+
 void SubframeReject::onPeakTableSelection()
 {
     for (std::size_t idx = 0; idx < _selected_graphics.size(); ++idx)
@@ -547,4 +563,10 @@ void SubframeReject::rejectOutliers()
 DetectorWidget* SubframeReject::detectorWidget()
 {
     return _detector_widget;
+}
+
+void SubframeReject::refreshPlot()
+{
+    updatePlotRange();
+    computeHistogram();
 }

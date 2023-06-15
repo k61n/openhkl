@@ -89,8 +89,6 @@ SubframeFilterPeaks::SubframeFilterPeaks()
     connect(
         _peak_view_widget, &PeakViewWidget::settingsChanged, _detector_widget,
         &DetectorWidget::refresh);
-    connect(_sum_radio_1, &QRadioButton::toggled, this, &SubframeFilterPeaks::syncRadios);
-    connect(_sum_radio_2, &QRadioButton::toggled, this, &SubframeFilterPeaks::syncRadios);
 }
 
 void SubframeFilterPeaks::setInputUp()
@@ -522,14 +520,4 @@ void SubframeFilterPeaks::toggleUnsafeWidgets()
 DetectorWidget* SubframeFilterPeaks::detectorWidget()
 {
     return _detector_widget;
-}
-
-void SubframeFilterPeaks::syncRadios(bool flag)
-{
-    QSignalBlocker blocker1(_sum_radio_1);
-    QSignalBlocker blocker2(_sum_radio_2);
-    _sum_radio_1->setChecked(flag);
-    _sum_radio_2->setChecked(flag);
-    _profile_radio_1->setChecked(!flag);
-    _profile_radio_2->setChecked(!flag);
 }

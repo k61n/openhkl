@@ -318,7 +318,7 @@ void MtzExporter::buildMtzSet()
         throw std::runtime_error("MtzExporter::buildMtzSet unable to create dataset in mtz export");
 }
 
-CMtz::MTZCOL* MtzExporter::CreateMtzCol(
+CMtz::MTZCOL* MtzExporter:: CreateMtzCol(
     std::string name, std::string label, int grp, int set_id, int active, int src)
 {
     std::string grpname = _merged ? "MergedPeakData" : "UnmergedPeakData";
@@ -371,7 +371,9 @@ void MtzExporter::buildMtzCols()
     CreateMtzCol("H", "H", grp++, 0, 1, 0);
     CreateMtzCol("K", "H", grp++, 0, 1, 0);
     CreateMtzCol("L", "H", grp++, 0, 1, 0);
-    CreateMtzCol("IMean", "J", grp++, 0, 1, 0);
+    CreateMtzCol("M/ISYM", "Y", grp++, 0, 1, 0);
+    CreateMtzCol("BATCH", "B", grp++, 0, 1, 0);
+    CreateMtzCol("I", "J", grp++, 0, 1, 0);
     CreateMtzCol("SIGI", "Q", grp++, 0, 1, 0);
 
     if (!_merged) // only if we are processing unmerged data
@@ -408,9 +410,11 @@ void MtzExporter::buildMtzCols()
                 _mtz_cols[0]->ref[idx] = hkl.h();
                 _mtz_cols[1]->ref[idx] = hkl.k();
                 _mtz_cols[2]->ref[idx] = hkl.l();
-                _mtz_cols[3]->ref[idx] = intensity.value();
-                _mtz_cols[4]->ref[idx] = intensity.sigma();
-                _mtz_cols[5]->ref[idx] = unmerged_peak->shape().center()[2];
+                _mtz_cols[3]->ref[idx] = 1;
+                _mtz_cols[4]->ref[idx] = 1;
+                _mtz_cols[5]->ref[idx] = intensity.value();
+                _mtz_cols[6]->ref[idx] = intensity.sigma();
+                _mtz_cols[7]->ref[idx] = unmerged_peak->shape().center()[2];
                 idx++;
             }
         }

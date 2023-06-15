@@ -63,6 +63,8 @@ class PeakStatistics {
     gsl_histogram* computeHistogram(std::size_t nbins);
     //! Determine whether the histogram exists
     bool hasHistogram() const { return _current_histogram != nullptr; };
+    //! Set sum (true) or profile integrated intensities
+    void setSumIntensities(bool flag) { _sum_intensities = flag; };
 
     //! Compute statistics
     std::pair<double, double> computeStatistics();

@@ -72,13 +72,14 @@ void PeakFilter::filterSignificance(PeakCollection* peak_collection) const
         collection_vector.push_back(peak_collection);
         const std::vector<Peak3D*> filtered_peaks = peak_collection->getFilteredPeakList();
 
-        MergedPeakCollection merged(cell->spaceGroup(), collection_vector, true, true);
+        MergedPeakCollection merged(
+            cell->spaceGroup(), collection_vector, true, _filter_params->sum_intensities);
         for (const auto& peak : filtered_peaks)
             merged.addPeak(peak);
 
         for (const auto& merged_peak : merged.mergedPeakSet()) {
             if (merged_peak.pValue()
-                > _filter_params->significance) { // TODO: modify for profile
+                > _filter_params->significance) {
                 for (const auto& m : merged_peak.peaks())
                     m->rejectYou(true);
             }
@@ -476,7 +477,7 @@ void PeakFilter::filterRejectionFlag(PeakCollection* peak_collection) const
 {
     int ncaught = 0;
     for (Peak3D* peak : peak_collection->getPeakList()) {
-        if (peak->rejectionFlag() == _filter_params->rejection_flag) {
+        if (peak->isRejectedFor(_filter_params->rejection_flag)) {
             peak->caughtYou(true);
             ++ncaught;
         } else

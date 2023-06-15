@@ -58,8 +58,6 @@ class SubframeFilterPeaks : public QWidget {
     void grabFilterParameters();
 
  public slots:
-    //! Synchronise radio buttons
-    void syncRadios(bool flag);
 
  private:
     //! Build the input
