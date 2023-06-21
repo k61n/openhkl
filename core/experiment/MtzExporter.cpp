@@ -371,13 +371,13 @@ void MtzExporter::buildMtzCols()
     CreateMtzCol("H", "H", grp++, 0, 1, 0);
     CreateMtzCol("K", "H", grp++, 0, 1, 0);
     CreateMtzCol("L", "H", grp++, 0, 1, 0);
-    CreateMtzCol("M/ISYM", "Y", grp++, 0, 1, 0);
-    CreateMtzCol("BATCH", "B", grp++, 0, 1, 0);
+    if (!_merged) { // only if we are processing unmerged data
+        CreateMtzCol("M/ISYM", "Y", grp++, 0, 1, 0);
+        CreateMtzCol("BATCH", "B", grp++, 0, 1, 0);
+    }
     CreateMtzCol("I", "J", grp++, 0, 1, 0);
     CreateMtzCol("SIGI", "Q", grp++, 0, 1, 0);
 
-    if (!_merged) // only if we are processing unmerged data
-        CreateMtzCol("Frame", "R", grp++, 0, 1, 0);
 
     /*
      *   Filling MtzCols with data
@@ -398,9 +398,10 @@ void MtzExporter::buildMtzCols()
     } else { /* UNMERGED DATA */
         for (auto& peak : peaks) {
             for (auto unmerged_peak : peak.peaks()) {
+                int m_isym = 1;
                 const UnitCell& cell = *(unmerged_peak->unitCell());
                 const ReciprocalVector& q = unmerged_peak->q();
-                const MillerIndex hkl(q, cell);
+                const MillerIndex hkl = unmerged_peak->hkl();
                 Intensity intensity;
                 if (_sum_intensities)
                     intensity = unmerged_peak->correctedSumIntensity();
@@ -414,7 +415,6 @@ void MtzExporter::buildMtzCols()
                 _mtz_cols[4]->ref[idx] = 1;
                 _mtz_cols[5]->ref[idx] = intensity.value();
                 _mtz_cols[6]->ref[idx] = intensity.sigma();
-                _mtz_cols[7]->ref[idx] = unmerged_peak->shape().center()[2];
                 idx++;
             }
         }
@@ -445,7 +445,7 @@ void MtzExporter::buildMtzData()
     buildMtzSet();
     buildMtzCols();
     buildMNF();
-    buildBatch();
+    // buildBatch();
     buildHistory();
 
     MtzAddHistory(_mtz_data, (const char(*)[80])_comment.c_str(), 1);
