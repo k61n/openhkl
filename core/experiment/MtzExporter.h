@@ -35,11 +35,9 @@ class PeakMerger;
 
 class MtzExporter {
  public:
-    //! Constructor
     MtzExporter(
         MergedPeakCollection* merged_data, sptrDataSet data, sptrUnitCell cell, bool merged,
         bool sum_intensities, std::string comment);
-    //! Destructor
     ~MtzExporter();
     //! Builds whole MtzData structure from ohkl data
     void buildMtzData();
@@ -49,23 +47,23 @@ class MtzExporter {
     void addHistory(std::string line);
 
  private:
-    //! Build the MtzSet datastructure(s)
-    void buildMtzSet();
-    //! Build the MtzCol datastructure(s)
-    void buildMtzCols();
-    //! Build the Mtz main structure
+    //! Build top level Mtz structure
     void buildMtz();
+    //! Build MtzSet data set structure(s)
+    void buildMtzSet();
+    //! Build columns for reflections
+    void buildMtzCols();
     //! Build Mtz Xtal Structure (Crystall)
     void buildXTAL();
-    //! Build History structure
+    //! Build history structure
     void buildHistory();
     //! Build Mtz SymmetryInfo structure
     void buildSyminfo();
     //! Build Mtz MNF structure (missing refelction)
     void buildMNF();
-    //! Building Mtz Batch strucutre
-    void buildBatch();
-    //! Handles the details of creating MTZCol
+    //! Building Mtz batch structures (N.B. batch = image in this context)
+    void buildBatches();
+    //! Create a column for the reflection table
     CMtz::MTZCOL* CreateMtzCol(
         std::string name, std::string label, int grp, int set_id, int active, int src);
 
@@ -89,13 +87,11 @@ class MtzExporter {
     // MTZ -> SymInfo
     // declared in 3rdparty/ccp4/mtzdata.h"
 
-    /* main mtz data structure */
-    CMtz::MTZ* _mtz_data;
+    // main mtz data structure
+    CMtz::MTZ* _mtz;
 
-    // handles for sub structures
     CMtz::MTZXTAL* _mtz_xtal;
     std::vector<CMtz::MTZCOL*> _mtz_cols;
-    std::vector<CMtz::MTZSET*> _mtz_sets;
 };
 }
 #endif // OHKL_MTZEXPORTER_H
