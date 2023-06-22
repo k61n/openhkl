@@ -34,9 +34,8 @@ class Detector;
 class DetectorEvent;
 class Diffractometer;
 class InstrumentStateSet;
-struct RawDataReaderParameters;
+struct DataReaderParameters;
 struct tif_file_metadata;
-struct TiffDataReaderParameters;
 
 enum class BitDepth { u8b = 8, u16b = 16, u32b = 32 };
 
@@ -116,11 +115,8 @@ class DataSet {
 
     //! Add a data file for reading data. Reading frames will be done only upon request.
     void addDataFile(const std::string& filename, const std::string& extension);
-    //! Set the parameters for the raw-data reader.
-    void setRawReaderParameters(const RawDataReaderParameters& params);
-
-    //! Set the parameters for a tif data reader
-    void setTiffReaderParameters(const TiffDataReaderParameters& params);
+    //! Set the parameters for the image (raw or tiff) reader
+    void setImageReaderParameters(const DataReaderParameters& params);
 
     //! Add a raw file to be read as a single detector image frame. Reading frames will be done only
     //! upon request.

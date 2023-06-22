@@ -260,12 +260,6 @@ class Experiment {
     //! Get a pointer to the integrator module
     Integrator* integrator();
 
-    //! Container for metadata for reading raw data files
-    RawDataReaderParameters data_params;
-
-    //! Container for metadata for reading tiff files
-    TiffDataReaderParameters tiff_params;
-
     //! Generate automatic name for PeakCollection
     std::string generatePeakCollectionName();
 

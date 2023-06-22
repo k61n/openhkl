@@ -125,45 +125,37 @@ void DataSet::addDataFile(const std::string& filename, const std::string& extens
 
     setReader(datafmt, filename);
 }
-void DataSet::setTiffReaderParameters(const TiffDataReaderParameters& params)
+void DataSet::setImageReaderParameters(const DataReaderParameters& params)
 {
     if (_dataformat == DataFormat::Unknown)
-        _dataformat = DataFormat::TIFF;
+        _dataformat = params.format;
 
-    if (_dataformat != DataFormat::TIFF)
+    if (_dataformat != DataFormat::TIFF && _dataformat != DataFormat::RAW)
         throw std::runtime_error(
-            "DataSet '" + _name + "': Cannot set raw parameters since data format is not Tiff.");
+            "DataSet '" + _name +
+            "': Cannot set data reader parameters since data format is not raw or tiff.");
 
     if (!_reader)
-        setReader(DataFormat::TIFF);
+        setReader(_dataformat);
 
-    TiffDataReader& tiffreader = *static_cast<TiffDataReader*>(_reader.get());
-    tiffreader.setParameters(params);
+    switch(_dataformat) {
+    case DataFormat::RAW: {
+        RawDataReader& rawreader = *static_cast<RawDataReader*>(_reader.get());
+        rawreader.setParameters(params);
+        break;
+    }
+    case DataFormat::TIFF: {
+        TiffDataReader& tiffreader = *static_cast<TiffDataReader*>(_reader.get());
+        tiffreader.setParameters(params);
+        break;
+    }
+    }
 
     ohklLog(
         Level::Info,
-        "DataSet '" + _name + "': TiffDataReaderParameters set."); // TODO: log parameter details
+        "DataSet '" + _name + "': DataReaderParameters set.");
 }
-void DataSet::setRawReaderParameters(const RawDataReaderParameters& params)
-{
-    // if data-format is not set, then set it to raw.
-    if (_dataformat == DataFormat::Unknown)
-        _dataformat = DataFormat::RAW;
 
-    // prevent mixing data formats
-    if (_dataformat != DataFormat::RAW)
-        throw std::runtime_error(
-            "DataSet '" + _name + "': Cannot set raw parameters since data format is not raw.");
-
-    if (!_reader)
-        setReader(DataFormat::RAW);
-
-    RawDataReader& rawreader = *static_cast<RawDataReader*>(_reader.get());
-    rawreader.setParameters(params);
-
-    ohklLog(Level::Info, "DataSet '" + _name + "': RawDataReader parameters set.");
-    params.log(Level::Info);
-}
 void DataSet::addTiffFrame(const std::string& tiffilename)
 {
     if (!_reader)

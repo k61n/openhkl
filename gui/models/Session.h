@@ -84,6 +84,9 @@ class Session {
     int _currentProject = -1;
     int _selectedData = -1;
 
+    // Name of YAML file to read DataReaderParameters from
+    const QString _yml_file = "OpenHKL.yml";
+
     // for updating other combos
     DataComboBox* _data_combo;
     CellComboBox* _cell_combo;

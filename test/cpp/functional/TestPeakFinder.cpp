@@ -52,10 +52,10 @@ TEST_CASE("test/data/TestPeakFinder.cpp", "")
     const ohkl::sptrDataSet data =
         std::make_shared<ohkl::DataSet>(ohkl::kw_datasetDefaultName, experiment.getDiffractometer());
 
-    ohkl::RawDataReaderParameters data_params;
+    ohkl::DataReaderParameters data_params;
     data_params.wavelength = 2.669;
     data_params.delta_omega = 0.3;
-    data->setRawReaderParameters(data_params);
+    data->setImageReaderParameters(data_params);
     for (const auto& file : filenames)
         data->addRawFrame(file);
     data->finishRead();

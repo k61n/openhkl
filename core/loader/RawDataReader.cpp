@@ -39,13 +39,6 @@
 
 namespace ohkl {
 
-void RawDataReaderParameters::log(const Level& level) const
-{
-    DataReaderParameters::log(level);
-    ohklLog(level, "RawDataReaderParameters::log:");
-    ohklLog(level, "row_major       = ", row_major);
-}
-
 RawDataReader::RawDataReader()
     // NOTE: RawDataReader needs a list of frame files which should be given later
     : IDataReader("::NO-FILENAME::"), _parameters(), _length(0), _data()
@@ -113,12 +106,12 @@ void RawDataReader::open() { }
 
 void RawDataReader::close() { }
 
-const RawDataReaderParameters& RawDataReader::parameters() const
+const DataReaderParameters& RawDataReader::parameters() const
 {
     return _parameters;
 }
 
-void RawDataReader::setParameters(const RawDataReaderParameters& parameters)
+void RawDataReader::setParameters(const DataReaderParameters& parameters)
 {
     _parameters = parameters;
 

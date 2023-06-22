@@ -26,11 +26,6 @@
 #include <vector>
 
 namespace ohkl {
-struct TiffDataReaderParameters : DataReaderParameters {
-    int rebin_size = 1; //! Side of square grid over which to average during rebinning
-
-    void log(const Level& level) const;
-};
 
 /*
     struct to hold Tiff Tags with meta data for an opened Tiff file
@@ -67,7 +62,7 @@ class TiffDataReader : public IDataReader {
     //! access data
     Eigen::MatrixXi data(size_t frame) override final;
     //! set Parameters
-    void setParameters(const TiffDataReaderParameters& parameters);
+    void setParameters(const DataReaderParameters& parameters);
     //! Read Tags from Tiff file. Will throw error if necessary tag is not available
     void readTags(TIFF*);
     //! this method is scanning a given tiff file for its meta data tags without loading data
@@ -79,7 +74,7 @@ class TiffDataReader : public IDataReader {
 
  private:
     std::vector<std::string> _filenames;
-    TiffDataReaderParameters _parameters;
+    DataReaderParameters _parameters;
 
     TiffMetadata _tiff_meta_data;
 

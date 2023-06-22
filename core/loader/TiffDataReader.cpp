@@ -33,13 +33,6 @@
 
 namespace ohkl {
 
-void TiffDataReaderParameters::log(const Level& level) const
-{
-    DataReaderParameters::log(level);
-    ohklLog(level, "TiffDataReaderParameters::log:");
-    ohklLog(level, "rebin_size   = ", rebin_size);
-}
-
 void TiffMetadata::log(const Level& level) const
 {
     ohklLog(level, "TiffMetadata::log:");
@@ -237,7 +230,7 @@ Eigen::MatrixXi TiffDataReader::data(size_t frame)
 }
 
 
-void TiffDataReader::setParameters(const TiffDataReaderParameters& parameters)
+void TiffDataReader::setParameters(const DataReaderParameters& parameters)
 {
     _parameters = parameters;
     _parameters.log(Level::Info);

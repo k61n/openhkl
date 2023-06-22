@@ -14,8 +14,10 @@
 
 #include "gui/dialogs/ImageReaderDialog.h"
 
+#include "core/data/DataTypes.h"
 #include "core/detector/Detector.h"
 #include "core/experiment/Experiment.h"
+#include "core/loader/IDataReader.h"
 #include "gui/dialogs/ConfirmOverwriteDialog.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
@@ -185,7 +187,7 @@ int ImageReaderDialog::bytesPerPixel()
 {
     if (_tiff_mode)
         // this values is saved in the tif files and has already been loaded
-        return ((ohkl::TiffDataReaderParameters*)_parameters0)->bytes_per_pixel;
+        return ((ohkl::DataReaderParameters*)_parameters0)->bytes_per_pixel;
 
     // For raw files
     switch (_dataFormat->currentIndex()) {
@@ -222,54 +224,16 @@ void ImageReaderDialog::setSingleImageMode()
     _omega->setEnabled(false);
 }
 
-ohkl::RawDataReaderParameters ImageReaderDialog::rawParameters()
+ohkl::DataReaderParameters ImageReaderDialog::dataReaderParameters()
 {
-    if (_tiff_mode)
-        throw std::runtime_error("Unable to return valid RawDataReaderParameters");
-
-    ohkl::RawDataReaderParameters parameters;
+    ohkl::DataReaderParameters parameters;
     parameters.dataset_name = _datasetName->text().toStdString();
     parameters.wavelength = _wavelength->value();
     parameters.delta_omega = _omega->value();
     parameters.delta_chi = _chi->value();
     parameters.delta_phi = _phi->value();
-    parameters.row_major = rowMajor();
     parameters.swap_endian = _swapEndianness->isChecked();
     parameters.bytes_per_pixel = bytesPerPixel();
-    if (_set_baseline_and_gain->isChecked()) {
-        parameters.baseline = _baseline->value();
-        parameters.gain = _gain->value();
-    } else {
-        parameters.baseline = 0.0;
-        parameters.gain = 1.0;
-    }
-
-    return parameters;
-}
-
-ohkl::TiffDataReaderParameters ImageReaderDialog::tiffParameters()
-{
-    if (!_tiff_mode)
-        throw std::runtime_error("Unable to return valid TiffDataReaderParameters");
-
-    ohkl::TiffDataReaderParameters parameters;
-    parameters.dataset_name = _datasetName->text().toStdString();
-    parameters.wavelength = _wavelength->value();
-    parameters.delta_omega = _omega->value();
-    parameters.delta_chi = _chi->value();
-    parameters.delta_phi = _phi->value();
-    parameters.bytes_per_pixel= bytesPerPixel();
-    parameters.cols = _img_res.first;
-    parameters.rows = _img_res.second;
-
-    // for processing tiff files this needs to be false!
-    parameters.swap_endian = false;
-
-    switch(_rebin_size->currentIndex()) {
-    case 0: parameters.rebin_size = 1; break;
-    case 1: parameters.rebin_size = 2; break;
-    case 2: parameters.rebin_size = 4; break;
-    }
 
     if (_set_baseline_and_gain->isChecked()) {
         parameters.baseline = _baseline->value();
@@ -279,13 +243,27 @@ ohkl::TiffDataReaderParameters ImageReaderDialog::tiffParameters()
         parameters.gain = 1.0;
     }
 
-    auto detector = gSession->currentProject()->experiment()->getDiffractometer()->detector();
-    auto idx = _image_resolution->currentIndex();
-    detector->selectDetectorResolution(idx);
+    if (_tiff_mode) {
+        parameters.format = ohkl::DataFormat::TIFF;
+        parameters.cols = _img_res.first;
+        parameters.rows = _img_res.second;
+        switch (_rebin_size->currentIndex()) {
+            case 0: parameters.rebin_size = 1; break;
+            case 1: parameters.rebin_size = 2; break;
+            case 2: parameters.rebin_size = 4; break;
+        }
 
-    if (parameters.rebin_size != 1) {
-        detector->setNCols(detector->nCols() / parameters.rebin_size);
-        detector->setNRows(detector->nRows() / parameters.rebin_size);
+        auto detector = gSession->currentProject()->experiment()->getDiffractometer()->detector();
+        auto idx = _image_resolution->currentIndex();
+        detector->selectDetectorResolution(idx);
+
+        if (parameters.rebin_size != 1) {
+            detector->setNCols(detector->nCols() / parameters.rebin_size);
+            detector->setNRows(detector->nRows() / parameters.rebin_size);
+        }
+    } else {
+        parameters.format = ohkl::DataFormat::RAW;
+        parameters.row_major = rowMajor();
     }
 
     return parameters;

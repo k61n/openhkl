@@ -24,12 +24,6 @@
 
 namespace ohkl {
 
-struct RawDataReaderParameters : public DataReaderParameters {
-    bool row_major = true;
-
-    void log(const Level& level) const;
-};
-
 //! Class for reading binary raw image files
 class RawDataReader : public IDataReader {
  public:
@@ -59,8 +53,8 @@ class RawDataReader : public IDataReader {
     //! Read a single frame
     Eigen::MatrixXi data(size_t frame) final;
 
-    const RawDataReaderParameters& parameters() const;
-    void setParameters(const RawDataReaderParameters& parameters);
+    const DataReaderParameters& parameters() const;
+    void setParameters(const DataReaderParameters& parameters);
 
     //! Swap enddianness of the data
     void swapEndian();
@@ -71,7 +65,7 @@ class RawDataReader : public IDataReader {
  private:
     std::vector<std::string> _filenames;
 
-    RawDataReaderParameters _parameters;
+    DataReaderParameters _parameters;
 
     std::size_t _length = 0;
 
