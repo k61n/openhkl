@@ -47,7 +47,7 @@ void DataReaderParameters::loadFromYAML(std::string file)
 {
     ohklLog(Level::Info, "DataReaderParameters::loadFromYAML");
     ExperimentYAML reader(file);
-    reader.setDataReaderParameters(this);
+    reader.grabDataReaderParameters(this);
 }
 
 IDataReader::IDataReader(const std::string& filename) : _isOpened(false), _filename(filename) { }

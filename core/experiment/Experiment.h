@@ -30,6 +30,7 @@
 #include "core/raw/DataKeys.h"
 #include "core/shape/PeakFilter.h"
 #include "core/shape/Predictor.h"
+#include "core/shape/ShapeModel.h"
 #include "core/statistics/MergedPeakCollection.h"
 #include "core/statistics/PeakMerger.h"
 #include "core/statistics/ResolutionShell.h"
@@ -71,6 +72,18 @@ class Experiment {
     void setName(const std::string& name);
     //! Default d min to lambda/2
     void setDefaultDMin();
+
+    //! Read saved experiment parameters from yaml
+    void readFromYaml(const std::string& filename);
+    //! Save the parameters of the experiment to yaml
+    void saveToYaml(const std::string& filename);
+
+    //! set ShapeModel parameters
+    void setShapeParameters(std::shared_ptr<ShapeModelParameters> params) {
+        _shape_params = params;
+    };
+    //! get pointer to ShapeModel parameters
+    std::shared_ptr<ShapeModelParameters> shapeParameters() const { return _shape_params; };
 
     // Data handler
     //! Get a pointer to the diffractometer contained in the DataHandler object
@@ -290,6 +303,9 @@ class Experiment {
     std::unique_ptr<Refiner> _refiner;
     std::unique_ptr<Integrator> _integrator;
     std::unique_ptr<PeakMerger> _peak_merger;
+
+    // ShapeModel parameters, since there is no experiment-level container
+    std::shared_ptr<ShapeModelParameters> _shape_params;
 
     bool _strategy;
 };

@@ -20,6 +20,7 @@
 #include "gui/graphics/DetectorScene.h"
 #include "gui/graphics/DetectorView.h"
 #include "gui/graphics_items/PlottableItem.h"
+#include "gui/models/Session.h"
 #include "gui/subframe_experiment/SubframeExperiment.h"
 #include "gui/subframe_filter/SubframeFilterPeaks.h"
 #include "gui/subframe_find/SubframeFindPeaks.h"
@@ -168,6 +169,7 @@ void MainWin::closeEvent(QCloseEvent* event)
 {
     saveSettings();
     home->saveSettings();
+    gSession->writeYaml();
     delete triggers;
     delete menus_;
     gGui = nullptr;

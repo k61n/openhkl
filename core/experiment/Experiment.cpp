@@ -21,6 +21,7 @@
 #include "core/experiment/DataHandler.h"
 #include "core/experiment/ExperimentExporter.h"
 #include "core/experiment/ExperimentImporter.h"
+#include "core/experiment/ExperimentYAML.h"
 #include "core/experiment/InstrumentStateHandler.h"
 #include "core/experiment/MtzExporter.h"
 #include "core/experiment/PeakFinder2D.h"
@@ -40,6 +41,7 @@
 #include "core/peak/PeakCoordinateSystem.h"
 #include "core/raw/DataKeys.h"
 #include "core/raw/MetaData.h"
+#include "core/shape/ShapeModel.h"
 #include "core/statistics/CC.h"
 #include "core/statistics/RFactor.h"
 #include "manifest.h"
@@ -78,6 +80,8 @@ Experiment::Experiment(const std::string& name, const std::string& diffractomete
     _integrator = std::make_unique<Integrator>(_data_handler);
     _peak_merger = std::make_unique<PeakMerger>();
 
+    _shape_params = std::make_shared<ShapeModelParameters>();
+
     _strategy = false;
 }
 
@@ -99,6 +103,29 @@ void Experiment::setDefaultDMin()
     _auto_indexer->parameters()->d_min = d_min;
     _peak_filter->parameters()->d_min = d_min;
     _peak_merger->parameters()->d_min = d_min;
+}
+
+void Experiment::readFromYaml(const std::string& filename)
+{
+    ExperimentYAML yaml(filename);
+    yaml.grabPeakFinderParameters(_peak_finder->parameters());
+    yaml.grabAutoindexerParameters(_auto_indexer->parameters());
+    yaml.grabShapeParameters(_shape_params.get());
+    yaml.grabPredictorParameters(_predictor->parameters());
+    yaml.grabIntegrationParameters(_integrator->parameters());
+    yaml.grabMergeParameters(_peak_merger->parameters());
+}
+
+void Experiment::saveToYaml(const std::string& filename)
+{
+    ExperimentYAML yaml(filename);
+    yaml.setPeakFinderParameters(_peak_finder->parameters());
+    yaml.setAutoindexerParameters(_auto_indexer->parameters());
+    yaml.setShapeParameters(_shape_params.get());
+    yaml.setPredictorParameters(_predictor->parameters());
+    yaml.setIntegrationParameters(_integrator->parameters());
+    yaml.setMergeParameters(_peak_merger->parameters());
+    yaml.writeFile(filename);
 }
 
 bool Experiment::acceptFoundPeaks(const std::string& name)

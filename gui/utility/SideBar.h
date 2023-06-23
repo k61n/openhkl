@@ -34,6 +34,9 @@ class SideBar : public QWidget {
 
     void refreshCurrent();
 
+ public slots:
+    void onSubframeChanged();
+
  signals:
     void subframeChanged();
 

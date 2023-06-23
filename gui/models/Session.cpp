@@ -21,13 +21,13 @@
 #include "core/data/SingleFrame.h"
 #include "core/detector/Detector.h"
 #include "core/experiment/Experiment.h"
+#include "core/experiment/ExperimentYAML.h"
 #include "core/loader/IDataReader.h"
 #include "core/loader/RawDataReader.h"
 #include "core/loader/TiffDataReader.h"
 #include "core/raw/DataKeys.h"
 #include "core/raw/MetaData.h"
 #include "gui/MainWin.h"
-#include "gui/connect/Sentinel.h"
 #include "gui/dialogs/DataNameDialog.h"
 #include "gui/dialogs/ImageReaderDialog.h"
 #include "gui/models/Project.h"
@@ -54,6 +54,7 @@
 #include <QMessageBox>
 #include <QSettings>
 #include <QStringList>
+#include <qfileinfo.h>
 #include <stdexcept>
 
 Session* gSession;
@@ -274,6 +275,8 @@ void Session::loadData(ohkl::DataFormat format)
 
     QFileInfo info(filenames.at(0));
     loadDirectory = info.absolutePath();
+    currentProject()->setDirectory(loadDirectory);
+    currentProject()->readYaml();
     qset.setValue("data", loadDirectory);
     std::string dataset1_name; // name of the first dataset (to be set by the user)
 
@@ -330,6 +333,14 @@ void Session::removeData()
     onDataChanged();
 }
 
+void Session::writeYaml()
+{
+    if (hasProject()) {
+        for (auto& project : _projects)
+            project->writeYaml();
+    }
+}
+
 bool Session::loadRawData(bool single_file /* = false */)
 {
     if (_currentProject < 0)
@@ -347,9 +358,13 @@ bool Session::loadRawData(bool single_file /* = false */)
 
         // Get metadata from readme file, then edit them in dialog.
         const QStringList& extant_dataset_names = currentProject()->getDataNames();
+
         ohkl::DataReaderParameters parameters;
-        QString yml_path = QDir(path).filePath(_yml_file);
-        parameters.loadFromYAML(yml_path.toStdString());
+        QString yml_file = QString::fromStdString(currentProject()->experiment()->name() + ".yml");
+        QString yml_path = QDir(path).filePath(yml_file);
+        QFileInfo info(yml_path);
+        if (info.exists() && info.isFile())
+            parameters.loadFromYAML(yml_path.toStdString());
         ImageReaderDialog dialog(filenames, &parameters, false);
         dialog.setWindowTitle("Raw data parameters");
         if (single_file)
@@ -358,6 +373,7 @@ bool Session::loadRawData(bool single_file /* = false */)
         if (!dialog.exec())
             return false;
 
+        currentProject()->setDirectory(path);
         ohkl::Experiment* exp = currentProject()->experiment();
         parameters = dialog.dataReaderParameters();
 
@@ -373,6 +389,8 @@ bool Session::loadRawData(bool single_file /* = false */)
             dataset->setImageReaderParameters(parameters);
             dataset->addRawFrame(filenames[0].toStdString());
             dataset->finishRead();
+            parameters.cols = dataset->nCols();
+            parameters.rows = dataset->nRows();
             exp->addData(dataset);
 
         } else {
@@ -382,9 +400,14 @@ bool Session::loadRawData(bool single_file /* = false */)
             for (const auto& filename : filenames)
                 dataset->addRawFrame(filename.toStdString());
             dataset->finishRead();
+            parameters.cols = dataset->nCols();
+            parameters.rows = dataset->nRows();
             exp->addData(dataset);
         }
 
+        ohkl::ExperimentYAML yaml(yml_path.toStdString());
+        yaml.setDataReaderParameters(&parameters);
+        yaml.writeFile(yml_path.toStdString());
         onDataChanged();
     } catch (std::exception& e) {
         QMessageBox::critical(nullptr, "Error", QString(e.what()));
@@ -415,11 +438,12 @@ bool Session::loadTiffData(bool single_file /* = false */)
 
         std::string ext = ""; // let's store the used file extension for later
 
-        // Get metadata from readme file, then edit them in dialog.
         const QStringList& extant_dataset_names = currentProject()->getDataNames();
-        QString yml_path = QDir(path).filePath(_yml_file);
-
-        params.loadFromYAML(yml_path.toStdString());
+        QString yml_file = QString::fromStdString(currentProject()->experiment()->name() + ".yml");
+        QString yml_path = QDir(path).filePath(yml_file);
+        QFileInfo info(yml_path);
+        if (info.exists() && info.isFile())
+            params.loadFromYAML(yml_path.toStdString());
         ImageReaderDialog dialog(
             filenames, static_cast<ohkl::DataReaderParameters*>(&params),  true);
 
@@ -430,6 +454,7 @@ bool Session::loadTiffData(bool single_file /* = false */)
         if (!dialog.exec())
             return false;
 
+        currentProject()->setDirectory(path);
         params = dialog.dataReaderParameters();
         detector->setBaseline(params.baseline);
         detector->setGain(params.gain);
@@ -561,6 +586,11 @@ void Session::loadExperimentFromFile(QString filename)
         ohkl::ohklLog(
             ohkl::Level::Debug, "Session: Generated PeakModels for Project created from file '",
             filename.toStdString(), "'");
+
+        QFileInfo info(filename);
+        QString path = info.absolutePath();
+        project_ptr->setDirectory(path);
+        project_ptr->readYaml();
 
     } catch (const std::exception& ex) {
         const std::string msg{

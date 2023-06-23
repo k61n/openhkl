@@ -66,6 +66,8 @@ class Session {
     bool loadTiffData(bool single_file = false);
     void removeData();
 
+    void writeYaml();
+
     void onDataChanged();
     void onExperimentChanged();
     void onPeaksChanged();
@@ -83,9 +85,6 @@ class Session {
     std::vector<std::unique_ptr<Project>> _projects;
     int _currentProject = -1;
     int _selectedData = -1;
-
-    // Name of YAML file to read DataReaderParameters from
-    const QString _yml_file = "OpenHKL.yml";
 
     // for updating other combos
     DataComboBox* _data_combo;

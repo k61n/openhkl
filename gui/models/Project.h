@@ -49,6 +49,10 @@ class Project {
     void changeInstrument(const QString& instrumentname);
     bool saved() const { return _saved; };
     unsigned int id() const { return _id; };
+    QString directory() const { return _directory; };
+    void setDirectory(const QString& dir) { _directory = dir; };
+    void writeYaml() const;
+    void readYaml();
 
     std::vector<ohkl::Peak3D*> getPeaks(
         const QString& peakListName, int upperindex = -1, int lowerindex = -1) const;
@@ -98,6 +102,8 @@ class Project {
 
     // Current save file name
     QString _file_name;
+    // Project directory
+    QString _directory;
     unsigned int _id;
 
     static unsigned int _last_id;

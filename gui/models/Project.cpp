@@ -21,8 +21,10 @@
 #include "gui/models/PeakCollectionModel.h"
 
 #include <QDebug>
+#include <QDir>
 #include <QStringList>
 
+#include <qfileinfo.h>
 #include <vector>
 
 unsigned int Project::_last_id = 0;
@@ -39,6 +41,7 @@ const ohkl::Experiment* Project::experiment() const
 {
     return _experiment.get();
 }
+
 ohkl::Experiment* Project::experiment()
 {
     return _experiment.get();
@@ -51,6 +54,26 @@ QStringList Project::getDataNames() const
         ret.push_back(QString::fromStdString(key));
     return ret;
 }
+
+void Project::writeYaml() const
+{
+    if (_directory.isEmpty())
+        return;
+
+    QString filename = QString::fromStdString(_experiment->name()) + ".yml";
+    QString path = QDir(_directory).filePath(filename);
+    _experiment->saveToYaml(path.toStdString());
+}
+
+void Project::readYaml()
+{
+    QString filename = QString::fromStdString(_experiment->name()) + ".yml";
+    QString path = QDir(_directory).filePath(filename);
+    QFileInfo info(path);
+    if (info.exists() && info.isFile())
+        _experiment->readFromYaml(path.toStdString());
+}
+
 
 // TODO: move logic to core
 ohkl::sptrDataSet Project::getData(int index) const

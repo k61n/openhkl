@@ -16,21 +16,41 @@
 #define OHKL_CORE_EXPERIMENT_EXPERIMENTYAML_H
 
 #include "base/utils/Logger.h"
-#include "core/loader/IDataReader.h"
 
 #include <yaml-cpp/yaml.h>
 
-#include <optional>
+#include <string>
 
 namespace ohkl {
 
-class IDataReader;
+struct DataReaderParameters;
+struct IndexerParameters;
+struct IntegrationParameters;
+struct MergeParameters;
+struct PeakFinderParameters;
+struct PredictionParameters;
+struct ShapeModelParameters;
 
 class ExperimentYAML {
  public:
     ExperimentYAML(const std::string& filename);
 
-    void setDataReaderParameters(DataReaderParameters* params) const;
+    void grabDataReaderParameters(DataReaderParameters* params) const;
+    void setDataReaderParameters(DataReaderParameters* params);
+    void grabIntegrationParameters(IntegrationParameters* params);
+    void setIntegrationParameters(IntegrationParameters* params);
+    void grabPeakFinderParameters(PeakFinderParameters* params);
+    void setPeakFinderParameters(PeakFinderParameters* params);
+    void grabAutoindexerParameters(IndexerParameters* params);
+    void setAutoindexerParameters(IndexerParameters* params);
+    void grabShapeParameters(ShapeModelParameters* params);
+    void setShapeParameters(ShapeModelParameters* params);
+    void grabPredictorParameters(PredictionParameters* params);
+    void setPredictorParameters(PredictionParameters* params);
+    void grabMergeParameters(MergeParameters* params);
+    void setMergeParameters(MergeParameters* params);
+
+    void writeFile(const std::string& filename);
 
  private:
     YAML::Node _node;
