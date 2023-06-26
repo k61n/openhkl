@@ -20,6 +20,7 @@
 #include "core/experiment/Experiment.h"
 #include "core/experiment/PeakFinder.h"
 #include "core/integration/IIntegrator.h"
+#include "core/peak/IntegrationRegion.h"
 #include "core/peak/Peak3D.h"
 #include "gui/MainWin.h" // gGui
 #include "gui/connect/Sentinel.h"
@@ -199,9 +200,8 @@ void SubframeFindPeaks::setIntegrateUp()
 
     _integration_region_type = f.addCombo("Integration region type");
     for (int i = 0; i < static_cast<int>(ohkl::RegionType::Count); ++i)
-        for (const auto& [key, val] : ohkl::regionTypeDescription)
-            if (i == static_cast<int>(key))
-                _integration_region_type->addItem(QString::fromStdString(val));
+        _integration_region_type->addItem(
+            QString::fromStdString(ohkl::regionTypeDescription.at(static_cast<ohkl::RegionType>(i))));
 
     _peak_end = f.addDoubleSpinBox(
         "Peak end", "(" + QString(QChar(0x03C3)) + ") - scaling factor for peak region");
@@ -435,10 +435,11 @@ void SubframeFindPeaks::grabIntegrationParameters()
 {
     auto* params = gSession->currentProject()->experiment()->integrator()->parameters();
 
-    for (auto it = ohkl::regionTypeDescription.begin(); it != ohkl::regionTypeDescription.end();
-         ++it)
-        if (it->first == params->region_type)
-            _integration_region_type->setCurrentText(QString::fromStdString(it->second));
+    QSignalBlocker blocker1(_integration_region_type);
+    QSignalBlocker blocker2(_peak_end);
+    QSignalBlocker blocker3(_bkg_begin);
+    QSignalBlocker blocker4(_bkg_end);
+    _integration_region_type->setCurrentIndex(static_cast<int>(params->region_type));
 
     if (params->region_type == ohkl::RegionType::VariableEllipsoid) {
         _peak_end->setValue(params->peak_end);

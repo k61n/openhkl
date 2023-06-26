@@ -417,6 +417,11 @@ void SubframeShapes::grabShapeParameters()
     if (!gSession->currentProject()->hasPeakCollection())
         return;
 
+    QSignalBlocker blocker1(_integration_region_type);
+    QSignalBlocker blocker2(_peak_end);
+    QSignalBlocker blocker3(_bkg_begin);
+    QSignalBlocker blocker4(_bkg_end);
+
     _peak_combo->currentPeakCollection()->computeSigmas();
 
     _min_d->setValue(_params->d_min);
@@ -441,11 +446,7 @@ void SubframeShapes::grabShapeParameters()
     _sigma_m->setValue(_peak_combo->currentPeakCollection()->sigmaM());
     _sigma_d->setValue(_peak_combo->currentPeakCollection()->sigmaD());
     _interpolation_combo->setCurrentIndex(static_cast<int>(_params->interpolation));
-
-    for (auto it = ohkl::regionTypeDescription.begin(); it != ohkl::regionTypeDescription.end();
-         ++it)
-        if (it->first == _params->region_type)
-            _integration_region_type->setCurrentText(QString::fromStdString(it->second));
+    _integration_region_type->setCurrentIndex(static_cast<int>(_params->region_type));
 }
 
 void SubframeShapes::setShapeParameters()

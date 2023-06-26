@@ -37,7 +37,7 @@ ExperimentYAML::ExperimentYAML(const std::string& filename)
 {
     try {
         _node = YAML::LoadFile(filename);
-        if (_node["Experiment"])
+        if (!_node["Experiment"])
             _node["Experiment"] = YAML::Null;
 
     } catch (const YAML::Exception& e) {
@@ -273,12 +273,12 @@ void ExperimentYAML::grabShapeParameters(ShapeModelParameters* params)
     params->d_min = getNode<double>(branch, "d_min");
     params->d_max = getNode<double>(branch, "d_max");
     params->strength_min = getNode<double>(branch, "strength_min");
-    params->kabsch_coords = getNode<double>(branch, "kabsch_coords");
-    params->nbins_x = getNode<double>(branch, "nbins_x");
-    params->nbins_y = getNode<double>(branch, "nbins_y");
-    params->nbins_z = getNode<double>(branch, "nbins_z");
-    params->n_subdiv = getNode<double>(branch, "n_subdiv");
-    params->min_n_neighbors = getNode<double>(branch, "min_n_neighbors");
+    params->kabsch_coords = getNode<bool>(branch, "kabsch_coords");
+    params->nbins_x = getNode<int>(branch, "nbins_x");
+    params->nbins_y = getNode<int>(branch, "nbins_y");
+    params->nbins_z = getNode<int>(branch, "nbins_z");
+    params->n_subdiv = getNode<int>(branch, "n_subdiv");
+    params->min_n_neighbors = getNode<int>(branch, "min_n_neighbors");
     params->sigma_m = getNode<double>(branch, "sigma_m");
     params->sigma_d = getNode<double>(branch, "sigma_d");
 }
@@ -340,10 +340,10 @@ void ExperimentYAML::grabMergeParameters(MergeParameters* params)
 
     params->d_min = getNode<double>(branch, "d_min");
     params->d_max = getNode<double>(branch, "d_max");
-    params->frame_min = getNode<double>(branch, "frame_min");
-    params->frame_max = getNode<double>(branch, "frame_max");
-    params->n_shells = getNode<double>(branch, "n_shells");
-    params->friedel = getNode<double>(branch, "friedel");
+    params->frame_min = getNode<int>(branch, "frame_min");
+    params->frame_max = getNode<int>(branch, "frame_max");
+    params->n_shells = getNode<int>(branch, "n_shells");
+    params->friedel = getNode<bool>(branch, "friedel");
     params->scale = getNode<double>(branch, "scale");
 }
 

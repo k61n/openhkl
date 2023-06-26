@@ -156,6 +156,8 @@ class SubframeIntegrate : public QWidget {
 
     std::shared_ptr<ohkl::ShapeModelParameters> _shape_params;
 
+    QVector<QWidget*> _widgets;
+
     const std::map<ohkl::IntegratorType, std::string> _integrator_strings{
         {ohkl::IntegratorType::PixelSum, "Pixel sum integrator"},
         {ohkl::IntegratorType::Gaussian, "Gaussian integrator"},

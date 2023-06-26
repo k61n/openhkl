@@ -107,6 +107,7 @@ void Experiment::setDefaultDMin()
 
 void Experiment::readFromYaml(const std::string& filename)
 {
+    ohklLog(Level::Info, "Experiment::readFromYaml:  ", filename);
     ExperimentYAML yaml(filename);
     yaml.grabPeakFinderParameters(_peak_finder->parameters());
     yaml.grabAutoindexerParameters(_auto_indexer->parameters());
@@ -118,6 +119,7 @@ void Experiment::readFromYaml(const std::string& filename)
 
 void Experiment::saveToYaml(const std::string& filename)
 {
+    ohklLog(Level::Info, "Experiment::saveToYaml:  ", filename);
     ExperimentYAML yaml(filename);
     yaml.setPeakFinderParameters(_peak_finder->parameters());
     yaml.setAutoindexerParameters(_auto_indexer->parameters());
