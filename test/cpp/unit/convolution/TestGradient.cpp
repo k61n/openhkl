@@ -13,6 +13,7 @@
 //  ***********************************************************************************************
 
 #include "core/data/DataSet.h"
+#include "core/data/DataTypes.h"
 #include "core/data/ImageGradient.h"
 #include "core/experiment/Experiment.h"
 #include "core/loader/RawDataReader.h"
@@ -30,6 +31,7 @@ TEST_CASE("test/peak_find/TestGradient.cpp", "")
         ohkl::kw_datasetDefaultName, experiment.getDiffractometer());
     ohkl::DataReaderParameters data_params;
 
+    data_params.format = ohkl::DataFormat::RAW;
     data_params.wavelength = 2.669;
     data_params.delta_omega = 0.3;
     data->setImageReaderParameters(data_params);
