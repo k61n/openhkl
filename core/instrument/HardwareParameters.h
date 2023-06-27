@@ -21,10 +21,10 @@
 
 namespace ohkl {
 
+//! Return a YAML::Node with the detector information
 YAML::Node findResource(const std::string& instrumentName);
 
-std::set<std::string> getInstrumentNames(const std::string&);
-
+//! Map of instrument names {name, description}
 const std::map<std::string, std::string> instruments = {
     {"BioDiff", "BioDiff"},
     {"D9", "D9"},

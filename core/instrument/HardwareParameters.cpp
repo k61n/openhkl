@@ -25,12 +25,4 @@ YAML::Node findResource(const std::string& instrumentName)
     return YAML::LoadFile(path);
 }
 
-std::set<std::string> getInstrumentNames(const std::string& /* resourceType */)
-{
-    std::set<std::string> ret;
-    for (auto it = instruments.begin(); it != instruments.end(); ++it)
-        ret.insert(it->first);
-    return ret;
-}
-
 } // namespace ohkl
