@@ -81,8 +81,7 @@ class ExperimentYAML {
     YAML::Node _node;
 
     //! Read an arbitrary type node, check whether it exists
-    template <typename T>
-    T getNode(const YAML::Node& node, const std::string& key) const
+    template <typename T> T getNode(const YAML::Node& node, const std::string& key) const
     {
         if (node[key])
             return node[key].as<T>();
@@ -94,7 +93,6 @@ class ExperimentYAML {
 };
 
 } // namespace ohkl
-
 
 
 #endif // OHKL_CORE_EXPERIMENT_EXPERIMENTYAML_H

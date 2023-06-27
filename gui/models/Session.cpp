@@ -80,21 +80,21 @@ std::pair<QString, QStringList> askFileNames(ohkl::DataFormat fmt)
 
     QStringList qfilenames;
     QString loadDirectory;
-    switch(fmt) {
-    case ohkl::DataFormat::RAW: {
-        loadDirectory = qset.value("data_raw", QDir::homePath()).toString();
-        qfilenames = QFileDialog::getOpenFileNames(
-            gGui, "Import raw data", loadDirectory, "Image files (*.raw);; All files (*.* *)");
-        break;
-    }
-    case ohkl::DataFormat::TIFF: {
-        loadDirectory = qset.value("data_tiff", QDir::homePath()).toString();
-        qfilenames = QFileDialog::getOpenFileNames(
-            gGui, "Import tiff data", loadDirectory, "Image files (*.tif *.tiff);; All files (*.* *)");
-        break;
-    }
-    default:
-        throw std::runtime_error("askFileNames: Invalid DataFormat");
+    switch (fmt) {
+        case ohkl::DataFormat::RAW: {
+            loadDirectory = qset.value("data_raw", QDir::homePath()).toString();
+            qfilenames = QFileDialog::getOpenFileNames(
+                gGui, "Import raw data", loadDirectory, "Image files (*.raw);; All files (*.* *)");
+            break;
+        }
+        case ohkl::DataFormat::TIFF: {
+            loadDirectory = qset.value("data_tiff", QDir::homePath()).toString();
+            qfilenames = QFileDialog::getOpenFileNames(
+                gGui, "Import tiff data", loadDirectory,
+                "Image files (*.tif *.tiff);; All files (*.* *)");
+            break;
+        }
+        default: throw std::runtime_error("askFileNames: Invalid DataFormat");
     }
 
     if (qfilenames.empty())
@@ -113,17 +113,15 @@ std::pair<QString, QStringList> askFileNames(ohkl::DataFormat fmt)
     QFileInfo info(qfilenames.at(0));
     loadDirectory = info.absolutePath();
     switch (fmt) {
-    case ohkl::DataFormat::RAW: {
-        qset.setValue("data_raw", loadDirectory);
-        break;
-    }
-    case ohkl::DataFormat::TIFF: {
-        qset.setValue("data_tiff", loadDirectory);
-        break;
-    }
-    default:
-        throw std::runtime_error("askFileNames: Invalid DataFormat");
-
+        case ohkl::DataFormat::RAW: {
+            qset.setValue("data_raw", loadDirectory);
+            break;
+        }
+        case ohkl::DataFormat::TIFF: {
+            qset.setValue("data_tiff", loadDirectory);
+            break;
+        }
+        default: throw std::runtime_error("askFileNames: Invalid DataFormat");
     }
     return {loadDirectory, qfilenames};
 }
@@ -445,7 +443,7 @@ bool Session::loadTiffData(bool single_file /* = false */)
         if (info.exists() && info.isFile())
             params.loadFromYAML(yml_path.toStdString());
         ImageReaderDialog dialog(
-            filenames, static_cast<ohkl::DataReaderParameters*>(&params),  true);
+            filenames, static_cast<ohkl::DataReaderParameters*>(&params), true);
 
         dialog.setWindowTitle("Tiff data parameters");
         if (single_file)
@@ -460,8 +458,8 @@ bool Session::loadTiffData(bool single_file /* = false */)
         detector->setGain(params.gain);
 
         if (single_file) {
-            const std::shared_ptr<ohkl::DataSet> dataset{std::make_shared<ohkl::SingleFrame>(
-                params.dataset_name, exp->getDiffractometer())};
+            const std::shared_ptr<ohkl::DataSet> dataset{
+                std::make_shared<ohkl::SingleFrame>(params.dataset_name, exp->getDiffractometer())};
             dataset->setImageReaderParameters(params);
             dataset->addTiffFrame(filenames[0].toStdString());
             dataset->finishRead();

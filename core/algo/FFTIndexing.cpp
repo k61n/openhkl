@@ -27,7 +27,7 @@
 #include "base/utils/Units.h"
 #include "core/algo/FFTIndexing.h"
 
-//#define RANDOMISE_FFTINDEXING_SPHERE
+// #define RANDOMISE_FFTINDEXING_SPHERE
 
 
 namespace ohkl {

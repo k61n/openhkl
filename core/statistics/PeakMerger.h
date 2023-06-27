@@ -86,7 +86,7 @@ class PeakMerger {
     //! Get the overall profile integrated quality statistics
     DataResolution* profileOverallQuality();
     //! Get the maximum possible completeness
-    double maxCompleteness() const { return _max_completeness; }; 
+    double maxCompleteness() const { return _max_completeness; };
 
     //! Return a string containing a summary of statistics
     std::string summary();

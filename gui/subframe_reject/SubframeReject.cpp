@@ -142,7 +142,7 @@ void SubframeReject::setHistogramUp()
         _histo_combo->addItem(QString::fromStdString(description));
 
     _sum_radio = new QRadioButton("Sum intensities", histo_spoiler);
-    _profile_radio= new QRadioButton("Profile intensities", histo_spoiler);
+    _profile_radio = new QRadioButton("Profile intensities", histo_spoiler);
     filler.addWidget(_sum_radio, 1);
     filler.addWidget(_profile_radio, 1);
     _n_bins = filler.addSpinBox("Number of bins", "Number of histogram bins");

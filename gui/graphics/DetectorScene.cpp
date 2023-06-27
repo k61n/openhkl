@@ -109,7 +109,7 @@ void DetectorScene::addBeamSetter(const QPointF& pos, int size)
     addItem(_beam_pos_setter);
 }
 
-CircleGraphic* DetectorScene::addCircle(const QPointF &pos, int radius)
+CircleGraphic* DetectorScene::addCircle(const QPointF& pos, int radius)
 {
     clearCircles();
     CircleGraphic* circle = new CircleGraphic(pos, radius);
@@ -894,7 +894,7 @@ bool DetectorScene::isDrag(const QPointF& current)
     if (_clicked && !_dragged)
         return false;
     if (_clicked && _dragged) { // Check if dragged a tiny amount
-        QPointF diff = _clickPos - current; 
+        QPointF diff = _clickPos - current;
         if (diff.manhattanLength() <= 2)
             return false;
     }

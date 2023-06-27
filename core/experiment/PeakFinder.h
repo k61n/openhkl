@@ -108,10 +108,7 @@ class PeakFinder {
     //! Set the convolver flavour for peak/background convolution
     void setConvolver(const Convolver& convolver);
     //! Get the convolver
-    ohkl::Convolver* convolver() const
-    {
-        return _convolver.get();
-    }
+    ohkl::Convolver* convolver() const { return _convolver.get(); }
 
  private:
     //! Remove blobs that do not meet the above criteria

@@ -14,12 +14,12 @@
 
 #include "core/statistics/CC.h"
 
-#include "core/statistics/MergedPeakCollection.h"
 #include "core/statistics/MergedPeak.h"
+#include "core/statistics/MergedPeakCollection.h"
 
 namespace ohkl {
 
-CC::CC(bool sum_intensity) : _CChalf(0), _CCstar(0), _sum_intensity(sum_intensity) { };
+CC::CC(bool sum_intensity) : _CChalf(0), _CCstar(0), _sum_intensity(sum_intensity){};
 
 void CC::calculate(MergedPeakCollection* data)
 {

@@ -55,7 +55,7 @@ MergeFlag MergedPeak::addPeak(Peak3D* peak)
     return flag;
 }
 
-MergeFlag MergedPeak::addAny(Peak3D *peak)
+MergeFlag MergedPeak::addAny(Peak3D* peak)
 {
     const UnitCell* cell = peak->unitCell();
     const ReciprocalVector q = peak->q();

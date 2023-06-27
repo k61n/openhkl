@@ -257,7 +257,9 @@ void SubframeHome::setRightLayout(QHBoxLayout* main_layout)
     main_layout->addLayout(right);
 
     connect(_add_data, QOverload<int>::of(&QComboBox::activated), this, &SubframeHome::addDataSet);
-    connect(_add_single_image, QOverload<int>::of(&QComboBox::activated), this, &SubframeHome::addSingleImage);
+    connect(
+        _add_single_image, QOverload<int>::of(&QComboBox::activated), this,
+        &SubframeHome::addSingleImage);
     connect(
         _dataset_table, &QWidget::customContextMenuRequested, this,
         &SubframeHome::setContextMenuDatasetTable);
@@ -826,27 +828,27 @@ void SubframeHome::setContextMenuUnitCellTable(QPoint pos)
 void SubframeHome::addDataSet(int index)
 {
     QSignalBlocker blocker(_add_data);
-    switch(index) {
-    case 1: {
-        gSession->loadTiffData(false);
-        gGui->sideBar()->refreshCurrent();
-        _add_data->setCurrentIndex(0);
-        break;
-    }
-    case 2: {
-        gSession->loadRawData(false);
-        gGui->sideBar()->refreshCurrent();
-        _add_data->setCurrentIndex(0);
-        break;
-    }
-    case 3: {
-        gSession->loadData(ohkl::DataFormat::NEXUS);
-        gGui->sideBar()->refreshCurrent();
-        _add_data->setCurrentIndex(0);
-        break;
-    }
-    default: {
-    }
+    switch (index) {
+        case 1: {
+            gSession->loadTiffData(false);
+            gGui->sideBar()->refreshCurrent();
+            _add_data->setCurrentIndex(0);
+            break;
+        }
+        case 2: {
+            gSession->loadRawData(false);
+            gGui->sideBar()->refreshCurrent();
+            _add_data->setCurrentIndex(0);
+            break;
+        }
+        case 3: {
+            gSession->loadData(ohkl::DataFormat::NEXUS);
+            gGui->sideBar()->refreshCurrent();
+            _add_data->setCurrentIndex(0);
+            break;
+        }
+        default: {
+        }
     }
 }
 

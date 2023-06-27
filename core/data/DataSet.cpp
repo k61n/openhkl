@@ -132,28 +132,26 @@ void DataSet::setImageReaderParameters(const DataReaderParameters& params)
 
     if (_dataformat != DataFormat::TIFF && _dataformat != DataFormat::RAW)
         throw std::runtime_error(
-            "DataSet '" + _name +
-            "': Cannot set data reader parameters since data format is not raw or tiff.");
+            "DataSet '" + _name
+            + "': Cannot set data reader parameters since data format is not raw or tiff.");
 
     if (!_reader)
         setReader(_dataformat);
 
-    switch(_dataformat) {
-    case DataFormat::RAW: {
-        RawDataReader& rawreader = *static_cast<RawDataReader*>(_reader.get());
-        rawreader.setParameters(params);
-        break;
-    }
-    case DataFormat::TIFF: {
-        TiffDataReader& tiffreader = *static_cast<TiffDataReader*>(_reader.get());
-        tiffreader.setParameters(params);
-        break;
-    }
+    switch (_dataformat) {
+        case DataFormat::RAW: {
+            RawDataReader& rawreader = *static_cast<RawDataReader*>(_reader.get());
+            rawreader.setParameters(params);
+            break;
+        }
+        case DataFormat::TIFF: {
+            TiffDataReader& tiffreader = *static_cast<TiffDataReader*>(_reader.get());
+            tiffreader.setParameters(params);
+            break;
+        }
     }
 
-    ohklLog(
-        Level::Info,
-        "DataSet '" + _name + "': DataReaderParameters set.");
+    ohklLog(Level::Info, "DataSet '" + _name + "': DataReaderParameters set.");
 }
 
 void DataSet::addTiffFrame(const std::string& tiffilename)
@@ -237,7 +235,7 @@ void DataSet::addMask(IMask* mask)
     _metadata.add<int>(ohkl::at_nMasks, _masks.size());
 }
 
-void DataSet::addBoxMask(const AABB &aabb)
+void DataSet::addBoxMask(const AABB& aabb)
 {
     addMask(new BoxMask(aabb));
 }

@@ -36,7 +36,8 @@ class ImageReaderDialog : public QDialog {
  public:
     //! Constructor in case or processing Raw files
     ImageReaderDialog(
-        const QStringList& filenames, ohkl::DataReaderParameters* parameters0, bool tiff_format = false);
+        const QStringList& filenames, ohkl::DataReaderParameters* parameters0,
+        bool tiff_format = false);
     //! Disable widgets that are relevant for multiple images only
     void setSingleImageMode();
     //! Return a copy of the DataReaderParameters object

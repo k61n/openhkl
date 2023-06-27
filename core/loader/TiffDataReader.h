@@ -52,9 +52,9 @@ class TiffDataReader : public IDataReader {
     //! Destructor
     ~TiffDataReader() = default;
     //! Open method from abstract base class
-    void open() override {};
+    void open() override{};
     //! Close method from abstract base class
-    void close() override {};
+    void close() override{};
     //! add a frame/file to the TiffDataReader
     void addFrame(const std::string& filename);
     //! initRead

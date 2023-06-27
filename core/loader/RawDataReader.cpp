@@ -137,8 +137,9 @@ void RawDataReader::setParameters(const DataReaderParameters& parameters)
             _dataset_out->metadata().add<int>(ohkl::at_bitDepth, 32);
             break;
         }
-        default: throw std::runtime_error(
-            "bytes_per_pixel unsupported: " + std::to_string(_parameters.bytes_per_pixel));
+        default:
+            throw std::runtime_error(
+                "bytes_per_pixel unsupported: " + std::to_string(_parameters.bytes_per_pixel));
     }
 
     _data.resize(_parameters.bytes_per_pixel * nrows * ncols);
@@ -188,8 +189,9 @@ Eigen::MatrixXi RawDataReader::data(size_t frame)
         case 1: return matrixFromData<uint8_t>().cast<int>();
         case 2: return matrixFromData<uint16_t>().cast<int>();
         case 4: return matrixFromData<uint32_t>().cast<int>();
-        default: throw std::runtime_error(
-            "bytes_per_pixel unsupported: " + std::to_string(_parameters.bytes_per_pixel));
+        default:
+            throw std::runtime_error(
+                "bytes_per_pixel unsupported: " + std::to_string(_parameters.bytes_per_pixel));
     }
 }
 

@@ -138,8 +138,8 @@ void SubframeFindPeaks::setBlobUp()
         "Merging scale",
         "(" + QString(QChar(0x03C3)) + ") - blob scaling factor to detect collisions");
 
-    std::tie(_min_size_spin, _max_size_spin) =
-        f.addSpinBoxPair("Blob size range", "(counts) - only blobs containing counts in this range will be kept");
+    std::tie(_min_size_spin, _max_size_spin) = f.addSpinBoxPair(
+        "Blob size range", "(counts) - only blobs containing counts in this range will be kept");
 
     _max_width_spin = f.addSpinBox(
         "Maximum width", "(frames) - blob is discarded if it spans more frames than this value");
@@ -200,8 +200,8 @@ void SubframeFindPeaks::setIntegrateUp()
 
     _integration_region_type = f.addCombo("Integration region type");
     for (int i = 0; i < static_cast<int>(ohkl::RegionType::Count); ++i)
-        _integration_region_type->addItem(
-            QString::fromStdString(ohkl::regionTypeDescription.at(static_cast<ohkl::RegionType>(i))));
+        _integration_region_type->addItem(QString::fromStdString(
+            ohkl::regionTypeDescription.at(static_cast<ohkl::RegionType>(i))));
 
     _peak_end = f.addDoubleSpinBox(
         "Peak end", "(" + QString(QChar(0x03C3)) + ") - scaling factor for peak region");
@@ -253,8 +253,8 @@ void SubframeFindPeaks::setPreviewUp()
         _bkg_begin, &QDoubleSpinBox::setValue);
 
     connect(
-        _peak_view_widget->set1.bkgEnd, qOverload<double>(&QDoubleSpinBox::valueChanged),
-        _bkg_end, &QDoubleSpinBox::setValue);
+        _peak_view_widget->set1.bkgEnd, qOverload<double>(&QDoubleSpinBox::valueChanged), _bkg_end,
+        &QDoubleSpinBox::setValue);
 
     connect(
         _peak_view_widget->set1.regionType, &QComboBox::currentTextChanged,

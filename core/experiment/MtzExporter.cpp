@@ -28,8 +28,8 @@
 
 namespace ohkl {
 MtzExporter::MtzExporter(
-    MergedPeakCollection* merged_data, sptrDataSet data, sptrUnitCell cell, bool merged, bool sum_intensities,
-    std::string comment)
+    MergedPeakCollection* merged_data, sptrDataSet data, sptrUnitCell cell, bool merged,
+    bool sum_intensities, std::string comment)
     : _merged_data(merged_data)
     , _ohkl_data(data)
     , _ohkl_cell(cell.get())
@@ -318,7 +318,7 @@ void MtzExporter::buildMtzSet()
         throw std::runtime_error("MtzExporter::buildMtzSet unable to create dataset in mtz export");
 }
 
-CMtz::MTZCOL* MtzExporter:: CreateMtzCol(
+CMtz::MTZCOL* MtzExporter::CreateMtzCol(
     std::string name, std::string label, int grp, int set_id, int active, int src)
 {
     std::string grpname = _merged ? "MergedPeakData" : "UnmergedPeakData";

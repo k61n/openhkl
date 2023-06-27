@@ -104,8 +104,8 @@ unsigned int RegionData::getRegionDataIndex(unsigned int frame_index)
 void RegionData::buildProfile(ShapeModel* shapes, double radius, double nframes)
 {
     Peak3D* peak = _integration_region->peak();
-    DetectorEvent center =
-        {peak->shape().center()[0], peak->shape().center()[1], peak->shape().center()[2]};
+    DetectorEvent center = {
+        peak->shape().center()[0], peak->shape().center()[1], peak->shape().center()[2]};
     auto profile = shapes->meanProfile(center, radius, nframes);
     if (profile)
         _n_profiles = profile.value().nProfiles();

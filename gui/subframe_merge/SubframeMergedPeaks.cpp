@@ -20,8 +20,8 @@
 #include "core/peak/Peak3D.h"
 #include "core/shape/PeakCollection.h"
 #include "core/statistics/CC.h"
-#include "core/statistics/MergedPeakCollection.h"
 #include "core/statistics/MergedPeak.h"
+#include "core/statistics/MergedPeakCollection.h"
 #include "core/statistics/PeakExporter.h"
 #include "core/statistics/PeakMerger.h"
 #include "core/statistics/RFactor.h"
@@ -591,7 +591,8 @@ void SubframeMergedPeaks::refreshDShellTable()
 
     merger->computeQuality();
     updateShellModel(_sum_shell_model, merger->sumShellQuality(), merger->sumOverallQuality());
-    updateShellModel(_profile_shell_model, merger->profileShellQuality(), merger->profileOverallQuality());
+    updateShellModel(
+        _profile_shell_model, merger->profileShellQuality(), merger->profileOverallQuality());
 }
 
 void SubframeMergedPeaks::updateShellModel(
@@ -657,7 +658,8 @@ void SubframeMergedPeaks::refreshMergedTable()
     updateMergedModel(_profile_merged_model, _profile_merged_data);
 }
 
-void SubframeMergedPeaks::updateMergedModel(QStandardItemModel* model, ohkl::MergedPeakCollection* merged_data)
+void SubframeMergedPeaks::updateMergedModel(
+    QStandardItemModel* model, ohkl::MergedPeakCollection* merged_data)
 {
     for (const ohkl::MergedPeak& peak : merged_data->mergedPeakSet()) {
 
@@ -757,8 +759,7 @@ void SubframeMergedPeaks::refreshGraph(int column)
     QVector<double> profile_yvals;
     for (int i = 0; i < nshells; ++i) {
         xvals.push_back(double(i));
-        double sum_val =
-            _sum_shell_model->item(i, column)->data(Qt::DisplayRole).value<double>();
+        double sum_val = _sum_shell_model->item(i, column)->data(Qt::DisplayRole).value<double>();
         double profile_val =
             _profile_shell_model->item(i, column)->data(Qt::DisplayRole).value<double>();
         sum_yvals.push_back(sum_val);
@@ -800,7 +801,8 @@ void SubframeMergedPeaks::refreshGraph(int column)
         QVector<double> max_compl;
         for (int i = 0; i < nshells; ++i) {
             sum_overall_compl.push_back(merger->sumOverallQuality()->shells[0].Completeness);
-            profile_overall_compl.push_back(merger->profileOverallQuality()->shells[0].Completeness);
+            profile_overall_compl.push_back(
+                merger->profileOverallQuality()->shells[0].Completeness);
             max_compl.push_back(merger->maxCompleteness());
         }
         std::ostringstream oss;
@@ -911,7 +913,8 @@ void SubframeMergedPeaks::savePeaks(bool merged)
 
     std::string comment = "";
     bool success = _exporter.exportPeaks(
-        fmt, filename.toStdString(), merged_data, data, cell, merged, sum_intensity, scale, comment);
+        fmt, filename.toStdString(), merged_data, data, cell, merged, sum_intensity, scale,
+        comment);
     if (!success)
         QMessageBox::critical(this, "Error", "Peak export unsuccessful");
 

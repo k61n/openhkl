@@ -43,7 +43,6 @@ ExperimentYAML::ExperimentYAML(const std::string& filename)
     } catch (const YAML::Exception& e) {
         _node["Experiment"] = YAML::Null;
     }
-
 }
 
 void ExperimentYAML::grabDataReaderParameters(DataReaderParameters* params) const
@@ -67,7 +66,7 @@ void ExperimentYAML::grabDataReaderParameters(DataReaderParameters* params) cons
     else {
         if (format == "raw")
             params->format = DataFormat::RAW;
-        if (format== "tiff")
+        if (format == "tiff")
             params->format = DataFormat::TIFF;
     }
 
@@ -130,7 +129,7 @@ void ExperimentYAML::grabIntegrationParameters(IntegrationParameters* params)
     params->fit_cov = getNode<bool>(branch, "fit_cov");
     params->integrator_type = static_cast<IntegratorType>(getNode<int>(branch, "integrator_type"));
     params->region_type = static_cast<RegionType>(getNode<int>(branch, "region_type"));
-    params->gradient_type= static_cast<GradientKernel>(getNode<int>(branch, "gradient_type"));
+    params->gradient_type = static_cast<GradientKernel>(getNode<int>(branch, "gradient_type"));
     params->use_gradient = getNode<bool>(branch, "use_gradient");
     params->fft_gradient = getNode<bool>(branch, "fft_gradient");
     params->skip_masked = getNode<bool>(branch, "skip_masked");

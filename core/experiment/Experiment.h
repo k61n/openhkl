@@ -79,7 +79,8 @@ class Experiment {
     void saveToYaml(const std::string& filename);
 
     //! set ShapeModel parameters
-    void setShapeParameters(std::shared_ptr<ShapeModelParameters> params) {
+    void setShapeParameters(std::shared_ptr<ShapeModelParameters> params)
+    {
         _shape_params = params;
     };
     //! get pointer to ShapeModel parameters

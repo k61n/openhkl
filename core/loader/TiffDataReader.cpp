@@ -28,8 +28,8 @@
 #include "core/instrument/Source.h"
 #include "core/raw/DataKeys.h"
 
-#include <opencv2/opencv.hpp>
 #include <opencv2/core/eigen.hpp>
+#include <opencv2/opencv.hpp>
 
 namespace ohkl {
 
@@ -48,7 +48,8 @@ void TiffMetadata::log(const Level& level) const
 TiffDataReader::TiffDataReader() : IDataReader("::NO-FILENAME::"), _tiff(nullptr) { }
 
 // only used when we need to read file resolutions of files before creating DataSet
-std::vector<std::pair<int, int>> TiffDataReader::readFileResolutions(std::vector<std::string> filenames)
+std::vector<std::pair<int, int>> TiffDataReader::readFileResolutions(
+    std::vector<std::string> filenames)
 {
     std::vector<std::pair<int, int>> res;
     for (auto& fname : filenames) {

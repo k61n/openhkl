@@ -32,8 +32,7 @@
 
 ImageReaderDialog::ImageReaderDialog(
     const QStringList& filenames, ohkl::DataReaderParameters* parameters0, bool tiff_format)
-    : _parameters0{parameters0}
-    , _tiff_mode(tiff_format)
+    : _parameters0{parameters0}, _tiff_mode(tiff_format)
 {
     setModal(true);
 
@@ -142,15 +141,16 @@ ImageReaderDialog::ImageReaderDialog(
     _image_resolution->setEnabled(false);
     if (_tiff_mode) {
         switch (_bytes_per_pixel) {
-        case 2: _dataFormat->setCurrentIndex(0); break;
-        case 4: _dataFormat->setCurrentIndex(1); break;
-        default: throw std::runtime_error(
-            "ImageReaderDialog::ImageReaderDialog: invalid tiff bytes_per_pixel");
+            case 2: _dataFormat->setCurrentIndex(0); break;
+            case 4: _dataFormat->setCurrentIndex(1); break;
+            default:
+                throw std::runtime_error(
+                    "ImageReaderDialog::ImageReaderDialog: invalid tiff bytes_per_pixel");
         }
         bool valid_resolution = false;
         for (int idx = 0; idx < resolutions.size(); ++idx) {
-            if (_img_res.first == resolutions[idx].first &&
-                _img_res.second == resolutions[idx].second) {
+            if (_img_res.first == resolutions[idx].first
+                && _img_res.second == resolutions[idx].second) {
                 _image_resolution->setCurrentIndex(idx);
                 valid_resolution = true;
                 break;
@@ -201,7 +201,8 @@ int ImageReaderDialog::bytesPerPixel()
 
 void ImageReaderDialog::verify()
 {
-    bool dialog_accepted = true;;
+    bool dialog_accepted = true;
+    ;
     // check wavelength
     const double eps = 1e-8;
     const double waveln = _wavelength->value();

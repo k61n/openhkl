@@ -2,7 +2,7 @@
 
 #include <limits>
 
-//#define QSPINBOX_QSBDEBUG
+// #define QSPINBOX_QSBDEBUG
 #ifdef QSPINBOX_QSBDEBUG
 #define QSBDEBUG qDebug
 #else

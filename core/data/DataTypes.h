@@ -24,7 +24,7 @@ class DataSet;
 using sptrDataSet = std::shared_ptr<DataSet>;
 using DataList = std::vector<sptrDataSet>;
 
-enum class DataFormat { Unknown = -1, OHKL = 0, TIFF, RAW, NEXUS};
+enum class DataFormat { Unknown = -1, OHKL = 0, TIFF, RAW, NEXUS };
 
 } // namespace ohkl
 

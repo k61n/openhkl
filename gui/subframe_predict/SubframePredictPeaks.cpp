@@ -182,9 +182,8 @@ void SubframePredictPeaks::setParametersUp()
     GridFiller f(para_box, true);
 
     _cell_combo = f.addCellCombo("Unit cell:");
-    std::tie(_d_min, _d_max) =
-        f.addDoubleSpinBoxPair("Resolution (d) range",
-                               "(\u212B)  - minimum and maximum resolution for peak prediction");
+    std::tie(_d_min, _d_max) = f.addDoubleSpinBoxPair(
+        "Resolution (d) range", "(\u212B)  - minimum and maximum resolution for peak prediction");
     _predict_button = f.addButton("Predict");
     _predict_button->setEnabled(false);
 
