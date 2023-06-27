@@ -2,7 +2,7 @@
 //
 //  OpenHKL: data reduction for single crystal diffraction
 //
-//! @file      core/instrument/HardwareParameters.h from core/resources/Resources.h.in
+//! @file      InstrumentParameters.h
 //! @brief     Declares functions that relate to resource files
 //!
 //! @homepage  https://openhkl.org
@@ -12,20 +12,24 @@
 //
 //  ***********************************************************************************************
 
-#ifndef OHKL_CORE_INSTRUMENT_HARDWAREPARAMETERS_H
-#define OHKL_CORE_INSTRUMENT_HARDWAREPARAMETERS_H
+#ifndef OHKL_CORE_INSTRUMENT_INSTRUMENTPARAMETERS_H
+#define OHKL_CORE_INSTRUMENT_INSTRUMENTPARAMETERS_H
+
+#define INSTRUMENT_RESOURCE_DIR "@INSTRUMENT_RESOURCE_DIR@"
 
 #include <yaml-cpp/yaml.h>
 
 #include <map>
+#include <stdexcept>
 
 namespace ohkl {
 
-//! Return a YAML::Node with the detector information
-YAML::Node findResource(const std::string& instrumentName);
+namespace Instrument {
+
+static const std::string resource_dir = INSTRUMENT_RESOURCE_DIR;
 
 //! Map of instrument names {name, description}
-const std::map<std::string, std::string> instruments = {
+static const std::map<std::string, std::string> instrument_list = {
     {"BioDiff", "BioDiff"},
     {"D9", "D9"},
     {"D9_lifting arm", "D9 lifting arm"},
@@ -36,6 +40,17 @@ const std::map<std::string, std::string> instruments = {
     {"I16", "I16"},
 };
 
+//! Return a YAML::Node with the detector information
+inline YAML::Node findResource(const std::string& instrumentName)
+{
+    if (!instrument_list.count(instrumentName))
+        throw std::runtime_error("findResource: unable to find instrument " + instrumentName);
+    std::string path = resource_dir + "/" + instrumentName + ".yml";
+    return YAML::LoadFile(path);
+}
+
+}// namespace Instrument
+
 } // namespace ohkl
 
-#endif // OHKL_CORE_INSTRUMENT_HARDWAREPARAMETERS_H
+#endif // OHKL_CORE_INSTRUMENT_INSTRUMENTPARAMETERS_H

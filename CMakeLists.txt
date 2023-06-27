@@ -241,11 +241,14 @@ if(OHKL_TIDY)
     set(CMAKE_CXX_CLANG_TIDY "clang-tidy") # has effect only if compiler is clang; uses .clang-tidy
 endif()
 
+set(INSTRUMENT_RESOURCE_DIR "${CMAKE_BINARY_DIR}/data/instruments")
 configure_file("manifest.h.in" "${CMAKE_BINARY_DIR}/manifest.h")
+configure_file("InstrumentParameters.h.in" "${CMAKE_BINARY_DIR}/InstrumentParameters.h")
 
 add_subdirectory(base)
 add_subdirectory(tables)
 add_subdirectory(core)
+add_subdirectory(data/instruments)
 
 if(BUILD_OHKL_GUI)
     add_subdirectory(gui)
