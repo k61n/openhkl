@@ -31,30 +31,56 @@ struct PeakFinderParameters;
 struct PredictionParameters;
 struct ShapeModelParameters;
 
+
+/*! \addtogroup python_api
+ *  @{*/
+
+/*! \brief Read and write yml file containing experiment parameters
+ *
+ *  Implements yaml parser for yml file containing experiment parameters (NOT)
+ *  data or reduced data). Mainly for GUI purposes, but may have other uses.
+ */
 class ExperimentYAML {
  public:
     ExperimentYAML(const std::string& filename);
 
+    //! Get parameters from data reader
     void grabDataReaderParameters(DataReaderParameters* params) const;
+    //! Set data reader parameters
     void setDataReaderParameters(DataReaderParameters* params);
+    //! Get parameters from integrator
     void grabIntegrationParameters(IntegrationParameters* params);
+    //! Set integrator parameters
     void setIntegrationParameters(IntegrationParameters* params);
+    //! Get parameters from integrator
     void grabPeakFinderParameters(PeakFinderParameters* params);
+    //! Set peak finder parameters
     void setPeakFinderParameters(PeakFinderParameters* params);
+    //! Get parameters from indexer
     void grabAutoindexerParameters(IndexerParameters* params);
+    //! Set indexer parameters
     void setAutoindexerParameters(IndexerParameters* params);
+    //! Get parameters from shape model
     void grabShapeParameters(ShapeModelParameters* params);
+    //! Set shape model parameters
     void setShapeParameters(ShapeModelParameters* params);
+    //! Get parameters from predictor
     void grabPredictorParameters(PredictionParameters* params);
+    //! Set shape model parameters
     void setPredictorParameters(PredictionParameters* params);
+    //! Get parameters from merger
     void grabMergeParameters(MergeParameters* params);
+    //! Set merger parameters
     void setMergeParameters(MergeParameters* params);
 
+    //! Write the yml file
     void writeFile(const std::string& filename);
 
  private:
+    //! The root yml node
     YAML::Node _node;
 
+    //! Read an arbitrary type node, check whether it exists
     template <typename T>
     T getNode(const YAML::Node& node, const std::string& key) const
     {
