@@ -47,7 +47,8 @@ PeakExporter::PeakExporter() : _sum_intensities(true)
     };
 }
 
-bool PeakExporter::saveToShelXUnmerged(const std::string& filename, MergedPeakCollection* mergedData)
+bool PeakExporter::saveToShelXUnmerged(
+    const std::string& filename, MergedPeakCollection* mergedData)
 {
     std::vector<Peak3D*> peak_vector;
     for (const MergedPeak& peak : mergedData->mergedPeakSet()) {
@@ -93,7 +94,8 @@ bool PeakExporter::saveToShelXMerged(const std::string& filename, MergedPeakColl
     return true;
 }
 
-bool PeakExporter::saveToFullProfUnmerged(const std::string& filename, MergedPeakCollection* mergedData)
+bool PeakExporter::saveToFullProfUnmerged(
+    const std::string& filename, MergedPeakCollection* mergedData)
 {
     std::fstream file(filename, std::ios::out);
     if (!file.is_open())
@@ -130,7 +132,8 @@ bool PeakExporter::saveToFullProfUnmerged(const std::string& filename, MergedPea
     return true;
 }
 
-bool PeakExporter::saveToFullProfMerged(const std::string& filename, MergedPeakCollection* mergedData)
+bool PeakExporter::saveToFullProfMerged(
+    const std::string& filename, MergedPeakCollection* mergedData)
 {
     std::fstream file(filename, std::ios::out);
     if (!file.is_open())
@@ -269,7 +272,8 @@ bool PeakExporter::saveToSCAMerged(
     return true;
 }
 
-bool PeakExporter::saveToShellX(const std::string filename, MergedPeakCollection* merged_data, bool merged)
+bool PeakExporter::saveToShellX(
+    const std::string filename, MergedPeakCollection* merged_data, bool merged)
 {
     if (merged)
         return saveToShelXMerged(filename, merged_data);
@@ -277,7 +281,8 @@ bool PeakExporter::saveToShellX(const std::string filename, MergedPeakCollection
         return saveToShelXUnmerged(filename, merged_data);
 }
 
-bool PeakExporter::saveToFullProf(const std::string filename, MergedPeakCollection* merged_data, bool merged)
+bool PeakExporter::saveToFullProf(
+    const std::string filename, MergedPeakCollection* merged_data, bool merged)
 {
     if (merged)
         return saveToFullProfMerged(filename, merged_data);
@@ -296,8 +301,9 @@ bool PeakExporter::saveToSCA(
 }
 
 bool PeakExporter::exportPeaks(
-    ExportFormat fmt, const std::string& filename, MergedPeakCollection* merged_data, sptrDataSet data,
-    sptrUnitCell cell, bool merged, bool sum_intensity, double scale, std::string comment)
+    ExportFormat fmt, const std::string& filename, MergedPeakCollection* merged_data,
+    sptrDataSet data, sptrUnitCell cell, bool merged, bool sum_intensity, double scale,
+    std::string comment)
 {
     _sum_intensities = sum_intensity;
     switch (fmt) {

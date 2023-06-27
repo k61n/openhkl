@@ -66,6 +66,8 @@ class Session {
     bool loadTiffData(bool single_file = false);
     void removeData();
 
+    void writeYaml();
+
     void onDataChanged();
     void onExperimentChanged();
     void onPeaksChanged();

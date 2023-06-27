@@ -75,13 +75,12 @@ SubframeIntegrate::SubframeIntegrate() : QWidget()
         _peak_view_widget, &PeakViewWidget::settingsChanged, _detector_widget,
         &DetectorWidget::refresh);
     connect(
-        _integrator_combo,
-        static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+        _integrator_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
         this, &SubframeIntegrate::toggleUnsafeWidgets);
     connect(
         _integration_region_type,
-        static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
-        _detector_widget, &DetectorWidget::refresh);
+        static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), _detector_widget,
+        &DetectorWidget::refresh);
     connect(
         _gradient_kernel, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
         this, &SubframeIntegrate::onGradientSettingsChanged);
@@ -190,6 +189,13 @@ void SubframeIntegrate::grabIntegrationParameters()
     auto* integrator = expt->integrator();
     auto* params = integrator->parameters();
 
+    QSignalBlocker blocker1(_integration_region_type);
+    QSignalBlocker blocker2(_peak_end);
+    QSignalBlocker blocker3(_bkg_begin);
+    QSignalBlocker blocker4(_bkg_end);
+    QSignalBlocker blocker5(_integrator_combo);
+
+    _integration_region_type->setCurrentIndex(static_cast<int>(params->region_type));
     if (params->region_type == ohkl::RegionType::VariableEllipsoid) {
         _peak_end->setValue(params->peak_end);
         _bkg_begin->setValue(params->bkg_begin);
@@ -213,13 +219,7 @@ void SubframeIntegrate::grabIntegrationParameters()
     _remove_masked->setChecked(params->skip_masked);
     _remove_overlaps->setChecked(params->remove_overlaps);
     _use_max_strength->setChecked(params->use_max_strength);
-
     _integrator_combo->setCurrentIndex(static_cast<int>(params->integrator_type));
-
-    for (auto it = ohkl::regionTypeDescription.begin(); it != ohkl::regionTypeDescription.end();
-         ++it)
-        if (it->first == params->region_type)
-            _integration_region_type->setCurrentText(QString::fromStdString(it->second));
 }
 
 void SubframeIntegrate::setIntegrationParameters()
@@ -256,11 +256,7 @@ void SubframeIntegrate::setIntegrationParameters()
     params->skip_masked = _remove_masked->isChecked();
     params->remove_overlaps = _remove_overlaps->isChecked();
     params->use_max_strength = _use_max_strength->isChecked();
-
-    for (auto it = ohkl::regionTypeDescription.begin(); it != ohkl::regionTypeDescription.end();
-         ++it)
-        if (it->second == _integration_region_type->currentText().toStdString())
-            params->region_type = it->first;
+    params->region_type = static_cast<ohkl::RegionType>(_integration_region_type->currentIndex());
 }
 
 void SubframeIntegrate::setIntegrationRegionUp()
@@ -270,9 +266,8 @@ void SubframeIntegrate::setIntegrationRegionUp()
 
     _integration_region_type = f.addCombo("Integration region type");
     for (int i = 0; i < static_cast<int>(ohkl::RegionType::Count); ++i)
-        for (const auto& [key, val] : ohkl::regionTypeDescription)
-            if (i == static_cast<int>(key))
-                _integration_region_type->addItem(QString::fromStdString(val));
+        _integration_region_type->addItem(QString::fromStdString(
+            ohkl::regionTypeDescription.at(static_cast<ohkl::RegionType>(i))));
 
     _peak_end = f.addDoubleSpinBox(
         "Peak end", "(" + QString(QChar(0x03C3)) + ") - scaling factor for peak region");
@@ -393,7 +388,8 @@ void SubframeIntegrate::setIntegrateUp()
 
     // -- Initialize controls
     for (std::size_t idx = 0; idx < static_cast<int>(ohkl::IntegratorType::Count); ++idx) {
-        const std::string integrator_type = _integrator_strings.at(static_cast<ohkl::IntegratorType>(idx));
+        const std::string integrator_type =
+            _integrator_strings.at(static_cast<ohkl::IntegratorType>(idx));
         _integrator_combo->addItem(QString::fromStdString(integrator_type));
     }
 

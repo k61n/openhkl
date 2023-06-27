@@ -40,8 +40,8 @@ void ShapeModelParameters::log(const Level& level) const
 {
     IntegrationParameters::log(level);
     ohklLog(level, "Shape Collection parameters:");
-    ohklLog(level, "d_min     = ", d_min);
-    ohklLog(level, "d_max     = ", d_max);
+    ohklLog(level, "d_min                  = ", d_min);
+    ohklLog(level, "d_max                  = ", d_max);
     ohklLog(level, "strength_min           = ", strength_min);
     ohklLog(level, "kabsch_coords          = ", kabsch_coords);
     ohklLog(level, "nbins_x                = ", nbins_x);

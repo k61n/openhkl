@@ -28,17 +28,10 @@
 #include "core/instrument/Source.h"
 #include "core/raw/DataKeys.h"
 
-#include <opencv2/opencv.hpp>
 #include <opencv2/core/eigen.hpp>
+#include <opencv2/opencv.hpp>
 
 namespace ohkl {
-
-void TiffDataReaderParameters::log(const Level& level) const
-{
-    DataReaderParameters::log(level);
-    ohklLog(level, "TiffDataReaderParameters::log:");
-    ohklLog(level, "rebin_size   = ", rebin_size);
-}
 
 void TiffMetadata::log(const Level& level) const
 {
@@ -55,7 +48,8 @@ void TiffMetadata::log(const Level& level) const
 TiffDataReader::TiffDataReader() : IDataReader("::NO-FILENAME::"), _tiff(nullptr) { }
 
 // only used when we need to read file resolutions of files before creating DataSet
-std::vector<std::pair<int, int>> TiffDataReader::readFileResolutions(std::vector<std::string> filenames)
+std::vector<std::pair<int, int>> TiffDataReader::readFileResolutions(
+    std::vector<std::string> filenames)
 {
     std::vector<std::pair<int, int>> res;
     for (auto& fname : filenames) {
@@ -237,7 +231,7 @@ Eigen::MatrixXi TiffDataReader::data(size_t frame)
 }
 
 
-void TiffDataReader::setParameters(const TiffDataReaderParameters& parameters)
+void TiffDataReader::setParameters(const DataReaderParameters& parameters)
 {
     _parameters = parameters;
     _parameters.log(Level::Info);

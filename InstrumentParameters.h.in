@@ -1,0 +1,56 @@
+//  ***********************************************************************************************
+//
+//  OpenHKL: data reduction for single crystal diffraction
+//
+//! @file      InstrumentParameters.h
+//! @brief     Declares functions that relate to resource files
+//!
+//! @homepage  https://openhkl.org
+//! @license   GNU General Public License v3 or higher (see COPYING)
+//! @copyright Institut Laue-Langevin and Forschungszentrum Jülich GmbH 2016-
+//! @authors   see CITATION, MAINTAINER
+//
+//  ***********************************************************************************************
+
+#ifndef OHKL_CORE_INSTRUMENT_INSTRUMENTPARAMETERS_H
+#define OHKL_CORE_INSTRUMENT_INSTRUMENTPARAMETERS_H
+
+#define INSTRUMENT_RESOURCE_DIR "@INSTRUMENT_RESOURCE_DIR@"
+
+#include <yaml-cpp/yaml.h>
+
+#include <map>
+#include <stdexcept>
+
+namespace ohkl {
+
+namespace Instrument {
+
+static const std::string resource_dir = INSTRUMENT_RESOURCE_DIR;
+
+//! Map of instrument names {name, description}
+static const std::map<std::string, std::string> instrument_list = {
+    {"BioDiff", "BioDiff"},
+    {"D9", "D9"},
+    {"D9_lifting arm", "D9 lifting arm"},
+    {"D9_large", "D9 large"},
+    {"D9_large_lifting_arm", "D9 large lifting arm"},
+    {"D10", "D10"},
+    {"D19", "D19"},
+    {"I16", "I16"},
+};
+
+//! Return a YAML::Node with the detector information
+inline YAML::Node findResource(const std::string& instrumentName)
+{
+    if (!instrument_list.count(instrumentName))
+        throw std::runtime_error("findResource: unable to find instrument " + instrumentName);
+    std::string path = resource_dir + "/" + instrumentName + ".yml";
+    return YAML::LoadFile(path);
+}
+
+}// namespace Instrument
+
+} // namespace ohkl
+
+#endif // OHKL_CORE_INSTRUMENT_INSTRUMENTPARAMETERS_H

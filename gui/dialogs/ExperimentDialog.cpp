@@ -14,8 +14,8 @@
 
 #include "gui/dialogs/ExperimentDialog.h"
 
+#include "InstrumentParameters.h"
 #include "base/utils/Path.h"
-#include "core/instrument/HardwareParameters.h"
 #include "gui/MainWin.h"
 
 #include <QDialogButtonBox>
@@ -23,28 +23,6 @@
 #include <QGridLayout>
 #include <QHBoxLayout>
 #include <QLabel>
-
-namespace {
-QStringList allInstrumentNames()
-{
-    std::set<std::string> resources_name = ohkl::getResourcesName("instruments");
-
-    QDir diffractometersDirectory(QString::fromStdString(ohkl::applicationDataPath()));
-    diffractometersDirectory.cd("instruments");
-
-    QStringList user_diffractometer_files =
-        diffractometersDirectory.entryList({"*.yml"}, QDir::Files, QDir::Name);
-    for (QString& diffractometer : user_diffractometer_files)
-        resources_name.insert(QFileInfo(diffractometer).baseName().toStdString());
-
-    QStringList list;
-    for (const std::string& res : resources_name)
-        list.push_back(QString::fromStdString(res));
-
-    return list;
-}
-
-} // namespace
 
 ExperimentDialog::ExperimentDialog(QString exp_name)
 {
@@ -59,7 +37,10 @@ ExperimentDialog::ExperimentDialog(QString exp_name)
     QHBoxLayout* horizontalLayout_2 = new QHBoxLayout;
     horizontalLayout_2->addWidget(new QLabel("Instrument:"));
     instruments = new QComboBox();
-    instruments->addItems(allInstrumentNames());
+
+    for (auto&& [key, value] : ohkl::Instrument::instrument_list)
+        instruments->addItem(QString::fromStdString(value), QString::fromStdString(key));
+
     instruments->setInsertPolicy(QComboBox::InsertAlphabetically);
     horizontalLayout_2->addWidget(instruments);
     gridLayout->addLayout(horizontalLayout_2, 0, 1, 1, 1);
@@ -83,5 +64,5 @@ QString ExperimentDialog::experimentName()
 
 QString ExperimentDialog::instrumentName()
 {
-    return instruments->currentText();
+    return instruments->currentData().toString();
 }

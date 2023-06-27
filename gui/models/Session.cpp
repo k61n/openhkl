@@ -21,13 +21,13 @@
 #include "core/data/SingleFrame.h"
 #include "core/detector/Detector.h"
 #include "core/experiment/Experiment.h"
+#include "core/experiment/ExperimentYAML.h"
 #include "core/loader/IDataReader.h"
 #include "core/loader/RawDataReader.h"
 #include "core/loader/TiffDataReader.h"
 #include "core/raw/DataKeys.h"
 #include "core/raw/MetaData.h"
 #include "gui/MainWin.h"
-#include "gui/connect/Sentinel.h"
 #include "gui/dialogs/DataNameDialog.h"
 #include "gui/dialogs/ImageReaderDialog.h"
 #include "gui/models/Project.h"
@@ -54,6 +54,7 @@
 #include <QMessageBox>
 #include <QSettings>
 #include <QStringList>
+#include <qfileinfo.h>
 #include <stdexcept>
 
 Session* gSession;
@@ -72,28 +73,28 @@ std::string askDataName(const std::string dataname0, const QStringList* const da
 }
 
 //! Opens a dialog to choose a list of raw files
-QStringList askFileNames(ohkl::DataFormat fmt)
+std::pair<QString, QStringList> askFileNames(ohkl::DataFormat fmt)
 {
     QSettings qset = gGui->qSettings();
     qset.beginGroup("RecentDirectories");
 
     QStringList qfilenames;
     QString loadDirectory;
-    switch(fmt) {
-    case ohkl::DataFormat::RAW: {
-        loadDirectory = qset.value("data_raw", QDir::homePath()).toString();
-        qfilenames = QFileDialog::getOpenFileNames(
-            gGui, "Import raw data", loadDirectory, "Image files (*.raw);; All files (*.* *)");
-        break;
-    }
-    case ohkl::DataFormat::TIFF: {
-        loadDirectory = qset.value("data_tiff", QDir::homePath()).toString();
-        qfilenames = QFileDialog::getOpenFileNames(
-            gGui, "Import tiff data", loadDirectory, "Image files (*.tif *.tiff);; All files (*.* *)");
-        break;
-    }
-    default:
-        throw std::runtime_error("askFileNames: Invalid DataFormat");
+    switch (fmt) {
+        case ohkl::DataFormat::RAW: {
+            loadDirectory = qset.value("data_raw", QDir::homePath()).toString();
+            qfilenames = QFileDialog::getOpenFileNames(
+                gGui, "Import raw data", loadDirectory, "Image files (*.raw);; All files (*.* *)");
+            break;
+        }
+        case ohkl::DataFormat::TIFF: {
+            loadDirectory = qset.value("data_tiff", QDir::homePath()).toString();
+            qfilenames = QFileDialog::getOpenFileNames(
+                gGui, "Import tiff data", loadDirectory,
+                "Image files (*.tif *.tiff);; All files (*.* *)");
+            break;
+        }
+        default: throw std::runtime_error("askFileNames: Invalid DataFormat");
     }
 
     if (qfilenames.empty())
@@ -112,19 +113,17 @@ QStringList askFileNames(ohkl::DataFormat fmt)
     QFileInfo info(qfilenames.at(0));
     loadDirectory = info.absolutePath();
     switch (fmt) {
-    case ohkl::DataFormat::RAW: {
-        qset.setValue("data_raw", loadDirectory);
-        break;
+        case ohkl::DataFormat::RAW: {
+            qset.setValue("data_raw", loadDirectory);
+            break;
+        }
+        case ohkl::DataFormat::TIFF: {
+            qset.setValue("data_tiff", loadDirectory);
+            break;
+        }
+        default: throw std::runtime_error("askFileNames: Invalid DataFormat");
     }
-    case ohkl::DataFormat::TIFF: {
-        qset.setValue("data_tiff", loadDirectory);
-        break;
-    }
-    default:
-        throw std::runtime_error("askFileNames: Invalid DataFormat");
-
-    }
-    return qfilenames;
+    return {loadDirectory, qfilenames};
 }
 
 } // namespace
@@ -274,6 +273,8 @@ void Session::loadData(ohkl::DataFormat format)
 
     QFileInfo info(filenames.at(0));
     loadDirectory = info.absolutePath();
+    currentProject()->setDirectory(loadDirectory);
+    currentProject()->readYaml();
     qset.setValue("data", loadDirectory);
     std::string dataset1_name; // name of the first dataset (to be set by the user)
 
@@ -330,6 +331,14 @@ void Session::removeData()
     onDataChanged();
 }
 
+void Session::writeYaml()
+{
+    if (hasProject()) {
+        for (auto& project : _projects)
+            project->writeYaml();
+    }
+}
+
 bool Session::loadRawData(bool single_file /* = false */)
 {
     if (_currentProject < 0)
@@ -337,7 +346,9 @@ bool Session::loadRawData(bool single_file /* = false */)
 
     try {
         // Get input filenames from dialog.
-        QStringList filenames = askFileNames(ohkl::DataFormat::RAW);
+        QStringList filenames;
+        QString path;
+        std::tie(path, filenames) = askFileNames(ohkl::DataFormat::RAW);
         if (filenames.empty())
             return false;
         if (single_file && filenames.size() > 1)
@@ -345,8 +356,13 @@ bool Session::loadRawData(bool single_file /* = false */)
 
         // Get metadata from readme file, then edit them in dialog.
         const QStringList& extant_dataset_names = currentProject()->getDataNames();
-        ohkl::RawDataReaderParameters parameters;
-        parameters.LoadDataFromFile(filenames.at(0).toStdString());
+
+        ohkl::DataReaderParameters parameters;
+        QString yml_file = QString::fromStdString(currentProject()->experiment()->name() + ".yml");
+        QString yml_path = QDir(path).filePath(yml_file);
+        QFileInfo info(yml_path);
+        if (info.exists() && info.isFile())
+            parameters.loadFromYAML(yml_path.toStdString());
         ImageReaderDialog dialog(filenames, &parameters, false);
         dialog.setWindowTitle("Raw data parameters");
         if (single_file)
@@ -355,8 +371,9 @@ bool Session::loadRawData(bool single_file /* = false */)
         if (!dialog.exec())
             return false;
 
+        currentProject()->setDirectory(path);
         ohkl::Experiment* exp = currentProject()->experiment();
-        parameters = dialog.rawParameters();
+        parameters = dialog.dataReaderParameters();
 
         // Transfer metadata to diffractometer.
         ohkl::Detector* detector = exp->getDiffractometer()->detector();
@@ -367,21 +384,28 @@ bool Session::loadRawData(bool single_file /* = false */)
         if (single_file) {
             const std::shared_ptr<ohkl::DataSet> dataset{std::make_shared<ohkl::SingleFrame>(
                 parameters.dataset_name, exp->getDiffractometer())};
-            dataset->setRawReaderParameters(parameters);
+            dataset->setImageReaderParameters(parameters);
             dataset->addRawFrame(filenames[0].toStdString());
             dataset->finishRead();
+            parameters.cols = dataset->nCols();
+            parameters.rows = dataset->nRows();
             exp->addData(dataset);
 
         } else {
             const std::shared_ptr<ohkl::DataSet> dataset{
                 std::make_shared<ohkl::DataSet>(parameters.dataset_name, exp->getDiffractometer())};
-            dataset->setRawReaderParameters(parameters);
+            dataset->setImageReaderParameters(parameters);
             for (const auto& filename : filenames)
                 dataset->addRawFrame(filename.toStdString());
             dataset->finishRead();
+            parameters.cols = dataset->nCols();
+            parameters.rows = dataset->nRows();
             exp->addData(dataset);
         }
 
+        ohkl::ExperimentYAML yaml(yml_path.toStdString());
+        yaml.setDataReaderParameters(&parameters);
+        yaml.writeFile(yml_path.toStdString());
         onDataChanged();
     } catch (std::exception& e) {
         QMessageBox::critical(nullptr, "Error", QString(e.what()));
@@ -398,11 +422,13 @@ bool Session::loadTiffData(bool single_file /* = false */)
 
     ohkl::Experiment* exp = currentProject()->experiment();
     ohkl::Detector* detector = exp->getDiffractometer()->detector();
-    ohkl::TiffDataReaderParameters params;
+    ohkl::DataReaderParameters params;
 
     try {
         // Get input filenames from dialog.
-        QStringList filenames = askFileNames(ohkl::DataFormat::TIFF);
+        QStringList filenames;
+        QString path;
+        std::tie(path, filenames) = askFileNames(ohkl::DataFormat::TIFF);
         if (filenames.empty())
             return false;
         if (single_file && filenames.size() > 1)
@@ -410,12 +436,14 @@ bool Session::loadTiffData(bool single_file /* = false */)
 
         std::string ext = ""; // let's store the used file extension for later
 
-        // Get metadata from readme file, then edit them in dialog.
         const QStringList& extant_dataset_names = currentProject()->getDataNames();
-
-        params.LoadDataFromFile(filenames.at(0).toStdString());
+        QString yml_file = QString::fromStdString(currentProject()->experiment()->name() + ".yml");
+        QString yml_path = QDir(path).filePath(yml_file);
+        QFileInfo info(yml_path);
+        if (info.exists() && info.isFile())
+            params.loadFromYAML(yml_path.toStdString());
         ImageReaderDialog dialog(
-            filenames, static_cast<ohkl::DataReaderParameters*>(&params),  true);
+            filenames, static_cast<ohkl::DataReaderParameters*>(&params), true);
 
         dialog.setWindowTitle("Tiff data parameters");
         if (single_file)
@@ -424,21 +452,22 @@ bool Session::loadTiffData(bool single_file /* = false */)
         if (!dialog.exec())
             return false;
 
-        params = dialog.tiffParameters();
+        currentProject()->setDirectory(path);
+        params = dialog.dataReaderParameters();
         detector->setBaseline(params.baseline);
         detector->setGain(params.gain);
 
         if (single_file) {
-            const std::shared_ptr<ohkl::DataSet> dataset{std::make_shared<ohkl::SingleFrame>(
-                params.dataset_name, exp->getDiffractometer())};
-            dataset->setTiffReaderParameters(params);
+            const std::shared_ptr<ohkl::DataSet> dataset{
+                std::make_shared<ohkl::SingleFrame>(params.dataset_name, exp->getDiffractometer())};
+            dataset->setImageReaderParameters(params);
             dataset->addTiffFrame(filenames[0].toStdString());
             dataset->finishRead();
             exp->addData(dataset);
         } else {
             const std::shared_ptr<ohkl::DataSet> dataset{
                 std::make_shared<ohkl::DataSet>(params.dataset_name, exp->getDiffractometer())};
-            dataset->setTiffReaderParameters(params);
+            dataset->setImageReaderParameters(params);
             for (const auto& filename : filenames)
                 dataset->addTiffFrame(filename.toStdString());
             dataset->finishRead();
@@ -555,6 +584,11 @@ void Session::loadExperimentFromFile(QString filename)
         ohkl::ohklLog(
             ohkl::Level::Debug, "Session: Generated PeakModels for Project created from file '",
             filename.toStdString(), "'");
+
+        QFileInfo info(filename);
+        QString path = info.absolutePath();
+        project_ptr->setDirectory(path);
+        project_ptr->readYaml();
 
     } catch (const std::exception& ex) {
         const std::string msg{

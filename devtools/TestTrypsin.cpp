@@ -90,7 +90,7 @@ TEST_CASE("test/data/TestTrypsin.cpp", "")
     std::cout << "Loading images" << std::endl;
     const ohkl::sptrDataSet new_data = std::make_shared<ohkl::DataSet>(
         data_name, experiment.getDiffractometer());
-    ohkl::RawDataReaderParameters data_params;
+    ohkl::DataReaderParameters data_params;
     data_params.wavelength = 2.67;
     data_params.delta_omega = 0.4;
     new_data->setRawReaderParameters(data_params);

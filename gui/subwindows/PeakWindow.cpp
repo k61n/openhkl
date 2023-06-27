@@ -234,8 +234,8 @@ void PeakWindow::drawFrame(QGraphicsView* view, std::size_t frame_index)
     try {
         QGraphicsPixmapItem* image =
             view->scene()->addPixmap(QPixmap::fromImage(_colormap->matToImage(
-                _region_data->frame(frame_index).transpose().cast<double>(), rect, _params.max_intensity,
-                _logarithmic)));
+                _region_data->frame(frame_index).transpose().cast<double>(), rect,
+                _params.max_intensity, _logarithmic)));
         image->setZValue(-2);
     } catch (std::range_error& e) {
         return;

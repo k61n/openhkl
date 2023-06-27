@@ -84,6 +84,7 @@ void Axis::setAxis(const Eigen::Vector3d& axis)
     // Normalize the axis
     _axis.normalize();
 }
+
 const Eigen::Vector3d& Axis::axis() const
 {
     return _axis;

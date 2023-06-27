@@ -78,8 +78,7 @@ void PeakFilter::filterSignificance(PeakCollection* peak_collection) const
             merged.addPeak(peak);
 
         for (const auto& merged_peak : merged.mergedPeakSet()) {
-            if (merged_peak.pValue()
-                > _filter_params->significance) {
+            if (merged_peak.pValue() > _filter_params->significance) {
                 for (const auto& m : merged_peak.peaks())
                     m->rejectYou(true);
             }

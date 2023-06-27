@@ -268,7 +268,7 @@ void PeakCollection::buildShapeModel(const ShapeModelParameters& params)
     _shape_model->build(this, _data);
 }
 
-    void PeakCollection::setUnitCell(const sptrUnitCell& cell, bool setPeaks)
+void PeakCollection::setUnitCell(const sptrUnitCell& cell, bool setPeaks)
 {
     _cell = cell;
     if (!setPeaks)

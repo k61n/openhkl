@@ -70,45 +70,45 @@ class SubframeHome : public QWidget {
     //! Setup ContextMenu on UnitCell table
     void setContextMenuUnitCellTable(QPoint pos);
 
-public slots:
-   //! Add a DataSet to the current experiment
-   void addDataSet(int index);
-   //! Add a single image to the current strategy experiment
-   void addSingleImage(int index);
+ public slots:
+    //! Add a DataSet to the current experiment
+    void addDataSet(int index);
+    //! Add a single image to the current strategy experiment
+    void addSingleImage(int index);
 
-private:
-   //! Set the left layout
-   void setLeftLayout(QHBoxLayout* main_layout);
-   //! Set the right layout
-   void setRightLayout(QHBoxLayout* main_layout);
+ private:
+    //! Set the left layout
+    void setLeftLayout(QHBoxLayout* main_layout);
+    //! Set the right layout
+    void setRightLayout(QHBoxLayout* main_layout);
 
-   //! Switch the current experiment through the model index
-   void switchCurrentExperiment(const QModelIndex& index);
-   //! Update the current list
-   void updateLastLoadedList(QString name, QString file_path);
-   //! Update the current list widget
-   void updateLastLoadedWidget();
-   //! Load the clicked item
-   void loadSelectedItem(QListWidgetItem* item);
+    //! Switch the current experiment through the model index
+    void switchCurrentExperiment(const QModelIndex& index);
+    //! Update the current list
+    void updateLastLoadedList(QString name, QString file_path);
+    //! Update the current list widget
+    void updateLastLoadedWidget();
+    //! Load the clicked item
+    void loadSelectedItem(QListWidgetItem* item);
 
-   QPushButton* _new_exp;
-   QPushButton* _new_strategy;
-   QPushButton* _old_exp;
-   QPushButton* _save_current;
-   QPushButton* _save_all;
-   QPushButton* _remove_current;
-   QComboBox* _add_data;
-   QComboBox* _add_single_image;
+    QPushButton* _new_exp;
+    QPushButton* _new_strategy;
+    QPushButton* _old_exp;
+    QPushButton* _save_current;
+    QPushButton* _save_all;
+    QPushButton* _remove_current;
+    QComboBox* _add_data;
+    QComboBox* _add_single_image;
 
-   ExperimentTableView* _open_experiments_view;
-   std::unique_ptr<ExperimentModel> _open_experiments_model;
+    ExperimentTableView* _open_experiments_view;
+    std::unique_ptr<ExperimentModel> _open_experiments_model;
 
-   QList<QPair<QString, QString>> _last_experiments;
-   QListWidget* _last_import_widget;
+    QList<QPair<QString, QString>> _last_experiments;
+    QListWidget* _last_import_widget;
 
-   QTableWidget* _dataset_table;
-   QTableWidget* _peak_collections_table;
-   QTableWidget* _unitcell_table;
+    QTableWidget* _dataset_table;
+    QTableWidget* _peak_collections_table;
+    QTableWidget* _unitcell_table;
 };
 
 #endif // OHKL_GUI_SUBFRAME_HOME_SUBFRAMEHOME_H

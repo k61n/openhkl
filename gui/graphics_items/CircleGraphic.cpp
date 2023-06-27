@@ -98,7 +98,7 @@ void CircleGraphic::show(bool s)
     redraw();
 }
 
-void CircleGraphic::setLabel(const QString &text)
+void CircleGraphic::setLabel(const QString& text)
 {
     _label->setPlainText(text);
     _label->setTextWidth(-1);

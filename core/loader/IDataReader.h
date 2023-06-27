@@ -15,6 +15,7 @@
 #ifndef OHKL_CORE_RAW_IDATAREADER_H
 #define OHKL_CORE_RAW_IDATAREADER_H
 
+#include "core/data/DataTypes.h"
 #include "core/instrument/InstrumentState.h"
 #include "core/instrument/InstrumentStateSet.h"
 #include "core/raw/MetaData.h"
@@ -32,6 +33,7 @@ class DataSet;
 
 //! Minimal meta data set
 struct DataReaderParameters {
+    DataFormat format = DataFormat::Unknown;
     int rows = -1;
     int cols = -1;
     std::string dataset_name = kw_datasetDefaultName;
@@ -43,9 +45,11 @@ struct DataReaderParameters {
     double baseline = 0.0;
     double gain = 1.0;
     std::size_t bytes_per_pixel = 2;
+    bool row_major = true; // raw
+    int rebin_size = 1; // tiff
 
     void log(const Level& level) const;
-    void LoadDataFromFile(std::string file);
+    void loadFromYAML(std::string file);
 };
 
 class IDataReader {

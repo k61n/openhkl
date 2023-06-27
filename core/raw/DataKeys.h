@@ -148,7 +148,7 @@ const std::string ax_omega{"omega"};
 const std::string ax_chi{"chi"};
 const std::string ax_phi{"phi"};
 
-//-- YAML keywords
+//-- Detector YAML keywords
 const std::string ym_instrument{"instrument"};
 const std::string ym_monochromator{"monochromator"};
 const std::string ym_instrumentName{"name"};

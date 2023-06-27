@@ -26,7 +26,7 @@
 #include <QLineEdit>
 #include <QString>
 
-#include "core/loader/RawDataReader.h" // RawDataReaderParameters
+#include "core/loader/IDataReader.h" // DataReaderParameters
 #include "gui/utility/SafeSpinBox.h"
 
 #include <string>
@@ -36,13 +36,12 @@ class ImageReaderDialog : public QDialog {
  public:
     //! Constructor in case or processing Raw files
     ImageReaderDialog(
-        const QStringList& filenames, ohkl::DataReaderParameters* parameters0, bool tiff_format = false);
+        const QStringList& filenames, ohkl::DataReaderParameters* parameters0,
+        bool tiff_format = false);
     //! Disable widgets that are relevant for multiple images only
     void setSingleImageMode();
-    //! Return a copy of raw parameters
-    ohkl::RawDataReaderParameters rawParameters();
-    //! Return a copy of tif parameters
-    ohkl::TiffDataReaderParameters tiffParameters();
+    //! Return a copy of the DataReaderParameters object
+    ohkl::DataReaderParameters dataReaderParameters();
     //! Allows to select Detector resolution
     void selectDetectorResolution();
 

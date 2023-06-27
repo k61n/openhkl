@@ -14,11 +14,11 @@
 
 #include "core/instrument/Diffractometer.h"
 
+#include "InstrumentParameters.h"
 #include "base/utils/Path.h"
 #include "core/detector/Detector.h"
 #include "core/detector/DetectorFactory.h"
 #include "core/gonio/Gonio.h"
-#include "core/instrument/HardwareParameters.h"
 #include "core/instrument/Sample.h"
 #include "core/instrument/Source.h"
 #include "core/raw/DataKeys.h"
@@ -27,7 +27,7 @@ namespace ohkl {
 
 Diffractometer* Diffractometer::create(const std::string& name)
 {
-    YAML::Node instrumentDefinition = findResource(name);
+    YAML::Node instrumentDefinition = Instrument::findResource(name);
 
     Diffractometer* diffractometer;
     try {

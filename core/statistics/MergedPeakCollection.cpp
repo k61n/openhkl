@@ -22,8 +22,8 @@
 namespace ohkl {
 
 MergedPeakCollection::MergedPeakCollection(
-    SpaceGroup space_group, std::vector<PeakCollection*> peak_collections,
-    bool friedel, bool sum_intensity, int fmin, int fmax)
+    SpaceGroup space_group, std::vector<PeakCollection*> peak_collections, bool friedel,
+    bool sum_intensity, int fmin, int fmax)
     : _group(space_group)
     , _friedel(friedel)
     , _merged_peak_set()
@@ -37,20 +37,30 @@ MergedPeakCollection::MergedPeakCollection(
         if (_peak_collections[i] == nullptr)
             continue;
         ohklLog(
-            Level::Info, "MergedPeakCollection::MergedPeakCollection: peak collection ", _peak_collections[i]->name());
+            Level::Info, "MergedPeakCollection::MergedPeakCollection: peak collection ",
+            _peak_collections[i]->name());
         std::vector<Peak3D*> peaks = _peak_collections[i]->getPeakList();
         for (int j = 0; j < peaks.size(); ++j)
             addPeak(peaks[j]);
     }
     if (_nInvalid > 0) {
-        ohklLog(Level::Info, "MergedPeakCollection::MergedPeakCollection: ", totalSize(), " observed peaks");
-        ohklLog(Level::Info, "MergedPeakCollection::MergedPeakCollection: ", _nInvalid, " disabled peaks");
-        ohklLog(Level::Info, "MergedPeakCollection::MergedPeakCollection: ", _nInequivalent, " inequivalent peaks");
-        ohklLog(Level::Info, "MergedPeakCollection::MergedPeakCollection: ", nUnique(), " symmetry-unique peaks");
+        ohklLog(
+            Level::Info, "MergedPeakCollection::MergedPeakCollection: ", totalSize(),
+            " observed peaks");
+        ohklLog(
+            Level::Info, "MergedPeakCollection::MergedPeakCollection: ", _nInvalid,
+            " disabled peaks");
+        ohklLog(
+            Level::Info, "MergedPeakCollection::MergedPeakCollection: ", _nInequivalent,
+            " inequivalent peaks");
+        ohklLog(
+            Level::Info, "MergedPeakCollection::MergedPeakCollection: ", nUnique(),
+            " symmetry-unique peaks");
     }
 }
 
-MergedPeakCollection::MergedPeakCollection(SpaceGroup space_group, bool friedel, bool sum_intensity, int fmin, int fmax)
+MergedPeakCollection::MergedPeakCollection(
+    SpaceGroup space_group, bool friedel, bool sum_intensity, int fmin, int fmax)
     : _group(space_group)
     , _friedel(friedel)
     , _merged_peak_set()
@@ -62,12 +72,11 @@ MergedPeakCollection::MergedPeakCollection(SpaceGroup space_group, bool friedel,
 
 MergedPeakCollection::MergedPeakCollection(
     SpaceGroup space_group, std::vector<PeakCollection*> peak_collections, bool friedel)
-    : _group(space_group)
-    , _friedel(friedel)
-    , _merged_peak_set()
+    : _group(space_group), _friedel(friedel), _merged_peak_set()
 {
-    ohklLog(Level::Info,
-            "MergedPeakCollection::MergedPeakCollection: merging peaks for max completeness");
+    ohklLog(
+        Level::Info,
+        "MergedPeakCollection::MergedPeakCollection: merging peaks for max completeness");
     _peak_collections = peak_collections;
     for (int i = 0; i < _peak_collections.size(); ++i) {
         if (_peak_collections[i] == nullptr)
@@ -79,7 +88,6 @@ MergedPeakCollection::MergedPeakCollection(
         for (int j = 0; j < peaks.size(); ++j)
             addAny(peaks[j]);
     }
-
 }
 
 void MergedPeakCollection::addPeak(Peak3D* peak)
@@ -167,7 +175,8 @@ void MergedPeakCollection::setDRange(const double d_min, const double d_max)
     double lambda = _peak_collections[0]->data()->wavelength();
     sptrUnitCell cell = _peak_collections[0]->unitCell();
     _max_peaks = cell->maxPeaks(d_min, d_max, lambda);
-    ohklLog(Level::Info, "MergedPeakCollection::setDRange: ", _max_peaks, " maximum possible peaks");
+    ohklLog(
+        Level::Info, "MergedPeakCollection::setDRange: ", _max_peaks, " maximum possible peaks");
 }
 
 void MergedPeakCollection::setDRange(
@@ -177,7 +186,8 @@ void MergedPeakCollection::setDRange(
     _d_max = d_max;
     double lambda = data->wavelength();
     _max_peaks = cell->maxPeaks(d_min, d_max, lambda);
-    ohklLog(Level::Info, "MergedPeakCollection::setDRange: ", _max_peaks, " maximum possible peaks");
+    ohklLog(
+        Level::Info, "MergedPeakCollection::setDRange: ", _max_peaks, " maximum possible peaks");
 }
 
 double MergedPeakCollection::dMin() const

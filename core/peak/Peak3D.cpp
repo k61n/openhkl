@@ -436,7 +436,7 @@ RejectionFlag Peak3D::rejectionFlag() const
     return _rejection_flag;
 }
 
-    RejectionFlag Peak3D::sumRejectionFlag() const
+RejectionFlag Peak3D::sumRejectionFlag() const
 {
     if (_sum_integration_flag == RejectionFlag::NotRejected)
         return _rejection_flag;
@@ -452,9 +452,12 @@ RejectionFlag Peak3D::profileRejectionFlag() const
 
 bool Peak3D::isRejectedFor(const RejectionFlag& flag) const
 {
-    if (_rejection_flag == flag) return true;
-    if (_sum_integration_flag == flag) return true;
-    if (_profile_integration_flag == flag) return true;
+    if (_rejection_flag == flag)
+        return true;
+    if (_sum_integration_flag == flag)
+        return true;
+    if (_profile_integration_flag == flag)
+        return true;
     return false;
 }
 

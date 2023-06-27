@@ -39,13 +39,6 @@
 
 namespace ohkl {
 
-void RawDataReaderParameters::log(const Level& level) const
-{
-    DataReaderParameters::log(level);
-    ohklLog(level, "RawDataReaderParameters::log:");
-    ohklLog(level, "row_major       = ", row_major);
-}
-
 RawDataReader::RawDataReader()
     // NOTE: RawDataReader needs a list of frame files which should be given later
     : IDataReader("::NO-FILENAME::"), _parameters(), _length(0), _data()
@@ -113,12 +106,12 @@ void RawDataReader::open() { }
 
 void RawDataReader::close() { }
 
-const RawDataReaderParameters& RawDataReader::parameters() const
+const DataReaderParameters& RawDataReader::parameters() const
 {
     return _parameters;
 }
 
-void RawDataReader::setParameters(const RawDataReaderParameters& parameters)
+void RawDataReader::setParameters(const DataReaderParameters& parameters)
 {
     _parameters = parameters;
 
@@ -144,8 +137,9 @@ void RawDataReader::setParameters(const RawDataReaderParameters& parameters)
             _dataset_out->metadata().add<int>(ohkl::at_bitDepth, 32);
             break;
         }
-        default: throw std::runtime_error(
-            "bytes_per_pixel unsupported: " + std::to_string(_parameters.bytes_per_pixel));
+        default:
+            throw std::runtime_error(
+                "bytes_per_pixel unsupported: " + std::to_string(_parameters.bytes_per_pixel));
     }
 
     _data.resize(_parameters.bytes_per_pixel * nrows * ncols);
@@ -195,8 +189,9 @@ Eigen::MatrixXi RawDataReader::data(size_t frame)
         case 1: return matrixFromData<uint8_t>().cast<int>();
         case 2: return matrixFromData<uint16_t>().cast<int>();
         case 4: return matrixFromData<uint32_t>().cast<int>();
-        default: throw std::runtime_error(
-            "bytes_per_pixel unsupported: " + std::to_string(_parameters.bytes_per_pixel));
+        default:
+            throw std::runtime_error(
+                "bytes_per_pixel unsupported: " + std::to_string(_parameters.bytes_per_pixel));
     }
 }
 

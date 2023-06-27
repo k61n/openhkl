@@ -139,9 +139,8 @@ void SubframeShapes::setInputUp()
     _min_strength = f.addDoubleSpinBox(
         ("Minimum I/" + QString(QChar(0x03C3))),
         "Minimum strength (I/\u03C3) of peak to include in average");
-    std::tie(_min_d, _max_d) =
-        f.addDoubleSpinBoxPair("Resolution (d) range",
-                               "(\u212B) - resolution range for peaks to include in model");
+    std::tie(_min_d, _max_d) = f.addDoubleSpinBoxPair(
+        "Resolution (d) range", "(\u212B) - resolution range for peaks to include in model");
 
 
     _integration_region_type = f.addCombo("Integration region type");
@@ -199,8 +198,8 @@ void SubframeShapes::setInputUp()
         _peak_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
         &SubframeShapes::grabShapeParameters);
     connect(
-        _peak_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
-        this, &SubframeShapes::refreshPeakTable);
+        _peak_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
+        &SubframeShapes::refreshPeakTable);
     connect(
         _show_single_region, &QCheckBox::stateChanged, this, &SubframeShapes::onRegionModeChanged);
 
@@ -306,8 +305,8 @@ void SubframeShapes::setComputeShapesUp()
 
     connect(_assign_peak_shapes, &QPushButton::clicked, this, &SubframeShapes::assignPeakShapes);
     connect(
-        _shape_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
-        this, [=](){ _detector_widget->scene()->clearPixmapItems(); });
+        _shape_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
+        [=]() { _detector_widget->scene()->clearPixmapItems(); });
 }
 
 void SubframeShapes::setShapePreviewUp()
@@ -408,6 +407,7 @@ void SubframeShapes::refreshAll()
     _predicted_combo->refresh();
     refreshPeakTable();
     _detector_widget->refresh();
+    _params = gSession->currentProject()->experiment()->shapeParameters();
     grabShapeParameters();
 }
 
@@ -415,6 +415,11 @@ void SubframeShapes::grabShapeParameters()
 {
     if (!gSession->currentProject()->hasPeakCollection())
         return;
+
+    QSignalBlocker blocker1(_integration_region_type);
+    QSignalBlocker blocker2(_peak_end);
+    QSignalBlocker blocker3(_bkg_begin);
+    QSignalBlocker blocker4(_bkg_end);
 
     _peak_combo->currentPeakCollection()->computeSigmas();
 
@@ -440,11 +445,7 @@ void SubframeShapes::grabShapeParameters()
     _sigma_m->setValue(_peak_combo->currentPeakCollection()->sigmaM());
     _sigma_d->setValue(_peak_combo->currentPeakCollection()->sigmaD());
     _interpolation_combo->setCurrentIndex(static_cast<int>(_params->interpolation));
-
-    for (auto it = ohkl::regionTypeDescription.begin(); it != ohkl::regionTypeDescription.end();
-         ++it)
-        if (it->first == _params->region_type)
-            _integration_region_type->setCurrentText(QString::fromStdString(it->second));
+    _integration_region_type->setCurrentIndex(static_cast<int>(_params->region_type));
 }
 
 void SubframeShapes::setShapeParameters()
@@ -586,10 +587,12 @@ void SubframeShapes::computeProfile()
         bkg_end = 1.0;
     }
     // construct the integration region
-    ohkl::IntegrationRegion region(_current_peak, peak_end, bkg_begin, bkg_end, _params->region_type);
+    ohkl::IntegrationRegion region(
+        _current_peak, peak_end, bkg_begin, bkg_end, _params->region_type);
 
     ohkl::RegionData* region_data = region.getRegion();
-    region_data->buildProfile(model, _params->neighbour_range_pixels, _params->neighbour_range_frames);
+    region_data->buildProfile(
+        model, _params->neighbour_range_pixels, _params->neighbour_range_frames);
     QPointF pos = {_current_peak->shape().center()[0], _current_peak->shape().center()[1]};
     auto* circle = _detector_widget->scene()->addCircle(pos, _params->neighbour_range_pixels);
 
@@ -656,7 +659,8 @@ void SubframeShapes::regionData2Image(ohkl::RegionData* region_data)
     QPen pen(QColor(0, 0, 0), 1);
     pen.setCosmetic(true);
     for (int idx = 0; idx <= nframes; ++idx) {
-        QGraphicsLineItem* line = _image_view->scene()->addLine(ncols * idx, 0, ncols * idx, nrows, pen);
+        QGraphicsLineItem* line =
+            _image_view->scene()->addLine(ncols * idx, 0, ncols * idx, nrows, pen);
         line->setZValue(20);
         line = _profile_view->scene()->addLine(ncols * idx, 0, ncols * idx, nrows, pen);
         line->setZValue(20);
@@ -702,9 +706,8 @@ void SubframeShapes::saveShapes()
         return;
 
     std::string suggestion = gSession->currentProject()->experiment()->generateShapeModelName();
-    std::unique_ptr<ListNameDialog> dlg =
-        std::make_unique<ListNameDialog>(
-            QString::fromStdString(suggestion), QString("Shape model"), QString ("New shape model"));
+    std::unique_ptr<ListNameDialog> dlg = std::make_unique<ListNameDialog>(
+        QString::fromStdString(suggestion), QString("Shape model"), QString("New shape model"));
     dlg->exec();
     if (dlg->listName().isEmpty())
         return;
@@ -767,8 +770,8 @@ void SubframeShapes::toggleUnsafeWidgets()
     if (_shape_model)
         _save_shapes->setEnabled(true);
 
-    if (gSession->currentProject()->hasShapeModel() &&
-        gSession->currentProject()->hasPeakCollection()) {
+    if (gSession->currentProject()->hasShapeModel()
+        && gSession->currentProject()->hasPeakCollection()) {
         _calculate_mean_profile->setEnabled(true);
         _assign_peak_shapes->setEnabled(true);
     }

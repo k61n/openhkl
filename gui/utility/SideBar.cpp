@@ -93,6 +93,7 @@ SideBar::SideBar(QWidget* parent)
     connect(integrator, &QAction::triggered, this, &SideBar::onIntegrator);
     connect(rejector, &QAction::triggered, this, &SideBar::onReject);
     connect(info, &QAction::triggered, this, &SideBar::onMerger);
+    connect(this, &SideBar::subframeChanged, this, &SideBar::onSubframeChanged);
 }
 
 
@@ -334,4 +335,10 @@ void SideBar::refreshAll()
 void SideBar::refreshCurrent()
 {
     mCheckedAction->trigger();
+}
+
+void SideBar::onSubframeChanged()
+{
+    if (gSession->hasProject())
+        gSession->currentProject()->writeYaml();
 }
