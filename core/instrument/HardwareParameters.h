@@ -17,11 +17,24 @@
 
 #include <yaml-cpp/yaml.h>
 
+#include <map>
+
 namespace ohkl {
 
 YAML::Node findResource(const std::string& instrumentName);
 
-std::set<std::string> getResourcesName(const std::string&);
+std::set<std::string> getInstrumentNames(const std::string&);
+
+const std::map<std::string, std::string> instruments = {
+    {"BioDiff", "BioDiff"},
+    {"D9", "D9"},
+    {"D9_lifting arm", "D9 lifting arm"},
+    {"D9_large", "D9 large"},
+    {"D9_large_lifting_arm", "D9 large lifting arm"},
+    {"D10", "D10"},
+    {"D19", "D19"},
+    {"I16", "I16"},
+};
 
 } // namespace ohkl
 

@@ -13,61 +13,22 @@
 //  ***********************************************************************************************
 
 #include "core/instrument/HardwareParameters.h"
-
-#include <map>
-
-namespace {
-
-std::map<std::string, const char*> database = {
-    {
-        "BioDiff",
-#include "data/instruments/BioDiff.yml2c"
-    },
-    {
-        "D9",
-#include "data/instruments/D9.yml2c"
-    },
-    {
-        "D10",
-#include "data/instruments/D10.yml2c"
-    },
-    {
-        "D19",
-#include "data/instruments/D19.yml2c"
-    },
-    {
-        "D9_large",
-#include "data/instruments/D9_large.yml2c"
-    },
-    {
-        "D9_lifting_arm",
-#include "data/instruments/D9_lifting_arm.yml2c"
-    },
-    {
-        "D9_large_lifting_arm",
-#include "data/instruments/D9_large_lifting_arm.yml2c"
-    },
-    {
-        "I16",
-#include "data/instruments/I16.yml2c"
-    },
-};
-
-
-} // namespace
+#include <stdexcept>
 
 namespace ohkl {
 
 YAML::Node findResource(const std::string& instrumentName)
 {
+    if (!instruments.count(instrumentName))
+        throw std::runtime_error("findResource: unable to find instrument " + instrumentName);
     std::string path = "data/instruments/" + instrumentName + ".yml";
     return YAML::LoadFile(path);
 }
 
-std::set<std::string> getResourcesName(const std::string& /* resourceType */)
+std::set<std::string> getInstrumentNames(const std::string& /* resourceType */)
 {
     std::set<std::string> ret;
-    for (auto it = database.begin(); it != database.end(); ++it)
+    for (auto it = instruments.begin(); it != instruments.end(); ++it)
         ret.insert(it->first);
     return ret;
 }
