@@ -1,0 +1,77 @@
+instrument:
+    name: BioDiff
+    detector:
+        type: cylindrical
+        name: banana
+        sample_distance:
+            value: 199.0
+            units: mm
+        angular_width:
+            value: 360.0
+            units: deg
+        height:
+            value: 0.44824
+            units: m
+        row_min: 0
+        col_min: 0
+        nrows: [900, 1800, 3600]
+        ncols: [2500, 5000, 10000]
+        data_ordering: TopLeftRowMajor
+        gain: 7.0
+        baseline: 227.0
+        goniometer:
+            name: detector-gonio
+            axis:
+                - name: 2theta(gamma)
+                  type: rotation
+                  direction: [0.0,0.0,1.0]
+                  clockwise: true
+                  physical: true
+
+                - name: 2theta(nu)
+                  type: rotation
+                  direction: [1.0,0.0,0.0]
+                  clockwise: true
+                  physical: false
+    sample:
+        name: sample
+        goniometer:
+            name: sample-gonio
+            axis:
+                - name: omega
+                  type: rotation
+                  direction: [0.0,0.0,1.0]
+                  clockwise: true
+                  physical: true
+
+                - name: chi
+                  type: rotation
+                  direction: [0.0,1.0,0.0]
+                  clockwise: false
+                  physical: true
+
+                - name: phi
+                  type: rotation
+                  direction: [0.0,0.0,1.0]
+                  clockwise: true
+                  physical: true
+    source:
+        name: monochromatic source
+        monochromator:
+            name: mono
+            width:
+                value: 1.0
+                units: mm
+            height:
+                value: 1.0
+                units: mm
+            wavelength:
+                value: 2.6734
+                units: ang
+            fwhm:
+                value: 0.00901
+                units: ang
+            offset_x:
+                value: -1.0
+            offset_y:
+                value: -2.0

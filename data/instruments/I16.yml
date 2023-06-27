@@ -1,0 +1,82 @@
+instrument:
+    name: I16
+    detector:
+        name: Pilatus 10k
+        type: flat
+        sample_distance:
+            value: 488.0
+            units: mm
+        width:
+            value: 64.0
+            units: mm
+        height:
+           value: 64.0
+           units: mm
+        nrows: [195, 0, 0]
+        ncols: [487, 0, 0]
+        row_min: 0
+        col_min: 0
+        data_ordering: TopLeftColMajor
+
+        goniometer:
+            name: delta-arm
+            axis:
+                - name: delta-arm
+                  type: rotation
+                  direction: [1.0,0.0,0.0]
+                  clockwise: false
+                  physical: true
+
+                - name: gamma-arm
+                  type: rotation
+                  direction: [0.0,0.0,1.0]
+                  clockwise: false
+                  physical: true
+    sample:
+        name: sample
+        goniometer:
+            name: kappa-goniometer
+            axis:
+                - name: phi
+                  type: rotation
+                  direction: [1.0,0.0,0.0]
+                  clockwise: false
+                  physical: true
+
+                - name: chi
+                  type: rotation
+                  direction: [0.0,1.0,0.0]
+                  clockwise: false
+                  physical: true
+
+                - name: eta
+                  type: rotation
+                  direction: [1.0,0.0,0.0]
+                  clockwise: false
+                  physical: true
+
+                - name: mu
+                  type: rotation
+                  direction: [0.0,0.0,1.0]
+                  clockwise: false
+                  physical: true
+    source:
+        name: monochromatic source
+        monochromator:
+            name: Cu(220)
+            width:
+                value: 60.0
+                units: mm
+            height:
+                value: 80.0
+                units: mm
+            wavelength:
+                value: 1.24
+                units: ang
+            fwhm:
+                value: 0.00901
+                units: ang
+            offset_x:
+                value: 0.0
+            offset_y:
+                value: 0.0

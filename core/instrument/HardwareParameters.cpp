@@ -53,13 +53,15 @@ std::map<std::string, const char*> database = {
     },
 };
 
+
 } // namespace
 
 namespace ohkl {
 
 YAML::Node findResource(const std::string& instrumentName)
 {
-    return YAML::Load(database.at(instrumentName));
+    std::string path = "data/instruments/" + instrumentName + ".yml";
+    return YAML::LoadFile(path);
 }
 
 std::set<std::string> getResourcesName(const std::string& /* resourceType */)
