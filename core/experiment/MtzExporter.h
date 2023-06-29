@@ -37,38 +37,22 @@ class MtzExporter {
  public:
     MtzExporter(
         MergedPeakCollection* merged_data, sptrDataSet data, sptrUnitCell cell, bool merged,
-        bool sum_intensities, std::string comment);
+        bool sum_intensities);
     ~MtzExporter();
-    //! Builds whole MtzData structure from ohkl data
-    void buildMtzData();
     //! Export build MtzData to file
-    bool exportToFile(std::string filename);
+    bool writeToFile(std::string filename);
     //! add History
     void addHistory(std::string line);
 
  private:
-    //! Build top level Mtz structure
-    void buildMtz();
-    //! Build MtzSet data set structure(s)
-    void buildMtzSet();
     //! Build columns for reflections
-    void buildMtzCols();
-    //! Build Mtz Xtal Structure (Crystall)
-    void buildXTAL();
-    //! Build history structure
-    void buildHistory();
+    void populateColumns(CMtz::MTZCOL** columns, int ncol);
     //! Build Mtz SymmetryInfo structure
-    void buildSyminfo();
-    //! Build Mtz MNF structure (missing refelction)
-    void buildMNF();
+    void buildSymInfo();
     //! Building Mtz batch structures (N.B. batch = image in this context)
-    void buildBatches();
-    //! Create a column for the reflection table
-    CMtz::MTZCOL* CreateMtzCol(
-        std::string name, std::string label, int grp, int set_id, int active, int src);
+    void buildBatches(CMtz::MTZSET* mtz_set);
 
  private:
-    // ohkl data structures
     MergedPeakCollection* _merged_data;
     sptrDataSet _ohkl_data;
     UnitCell* _ohkl_cell;
@@ -78,7 +62,6 @@ class MtzExporter {
     bool _sum_intensities;
 
     std::vector<std::string> _history;
-    std::string _comment;
     std::string _peakcollection_name;
 
     // The necessary Mtz data structures
@@ -89,9 +72,6 @@ class MtzExporter {
 
     // main mtz data structure
     CMtz::MTZ* _mtz;
-
-    CMtz::MTZXTAL* _mtz_xtal;
-    std::vector<CMtz::MTZCOL*> _mtz_cols;
 };
 }
 #endif // OHKL_MTZEXPORTER_H

@@ -23,7 +23,6 @@
 #include "core/experiment/ExperimentImporter.h"
 #include "core/experiment/ExperimentYAML.h"
 #include "core/experiment/InstrumentStateHandler.h"
-#include "core/experiment/MtzExporter.h"
 #include "core/experiment/PeakFinder2D.h"
 #include "core/experiment/PeakHandler.h"
 #include "core/experiment/ShapeHandler.h"

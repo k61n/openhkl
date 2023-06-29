@@ -308,8 +308,8 @@ bool PeakExporter::exportPeaks(
     _sum_intensities = sum_intensity;
     switch (fmt) {
         case ExportFormat::Mtz: {
-            MtzExporter exporter(merged_data, data, cell, merged, _sum_intensities, comment);
-            return exporter.exportToFile(filename);
+            MtzExporter exporter(merged_data, data, cell, merged, _sum_intensities);
+            return exporter.writeToFile(filename);
         }
         case ExportFormat::Phenix: {
             return saveToSCA(filename, merged_data, cell, merged, scale);
