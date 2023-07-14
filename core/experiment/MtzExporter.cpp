@@ -23,6 +23,7 @@
 #include "core/statistics/PeakMerger.h"
 #include "mtzdata.h"
 
+#include <Eigen/src/Core/Matrix.h>
 #include <Eigen/src/Geometry/Quaternion.h>
 #include <functional>
 #include <regex>
@@ -62,6 +63,30 @@ void MtzExporter::buildBatches(CMtz::MTZSET* mtz_set)
     CMtz::MTZBAT* batch;
     CMtz::MTZBAT* previous_batch;
 
+    const auto& sample_gonio = _ohkl_data->diffractometer()->sample().gonio();
+    size_t n_sample_gonio_axes = sample_gonio.nAxes();
+
+    int omega_idx = -1, phi_idx = -1, chi_idx = -1;
+    for (size_t i = 0; i < n_sample_gonio_axes; ++i) {
+        const std::string axis_name = sample_gonio.axis(i).name();
+        omega_idx = axis_name == ohkl::ax_omega ? int(i) : omega_idx;
+        chi_idx = axis_name == ohkl::ax_chi ? int(i) : chi_idx;
+        phi_idx = axis_name == ohkl::ax_phi ? int(i) : phi_idx;
+    }
+
+    Eigen::Vector3d axis1, axis2, axis3;
+    axis1 = sample_gonio.axis(0).axis();
+    if (n_sample_gonio_axes > 1)
+        axis2 = sample_gonio.axis(1).axis();
+    if (n_sample_gonio_axes > 2)
+        axis3 = sample_gonio.axis(2).axis();
+
+    const std::vector<std::vector<double>>& sample_states =
+        _ohkl_data->diffractometer()->sampleStates;
+
+    double fwhm =
+        _ohkl_data->diffractometer()->source().selectedMonochromator().fullWidthHalfMaximum();
+
     for (std::size_t frame = 0; frame < nframes; ++frame) {
         batch = CMtz::MtzMallocBatch();
 
@@ -90,7 +115,6 @@ void MtzExporter::buildBatches(CMtz::MTZSET* mtz_set)
         batch->ncryst = 0;
         batch->lcrflg = 0; // mosacity 0 = isotropic, 1 = anisotropic
         batch->ldtype = 2; // type of  data: 2d (1), 3d(2)
-        batch->jsaxs = 1; // goniostat scan axis number
         batch->nbscal = 0; // number of batch scales & Bfactors 0 if unset)
         batch->lbmflg = 0; // flag for beam info alambd(0), delcor, divhd, divvd(1)
         batch->ndet = 1; // Number of detectors
@@ -119,17 +143,6 @@ void MtzExporter::buildBatches(CMtz::MTZSET* mtz_set)
         for (int i = 0; i < 12; i++)
             batch->crydat[i] = 0;
 
-        // datum values of goniostat axes
-        for (int i = 0; i < 3; i++)
-            batch->datum[i] = 0;
-
-        batch->phistt = 0; // relative to datum
-        batch->phiend = 0; // rel;ative to datum
-
-        // Rotation axis in lab frame
-        for (int i = 0; i < 3; i++)
-            batch->scanax[i] = 0;
-
         // start and stop time
         batch->time1 = 0;
         batch->time2 = 0;
@@ -139,16 +152,33 @@ void MtzExporter::buildBatches(CMtz::MTZSET* mtz_set)
         batch->bbfac = 1;
         batch->sdbfac = 1;
 
-        batch->phirange = 0; // Phi range
-
-        // vector 1,2,3, source and idealied source vector
-        for (int i = 0; i < 3; i++) {
-            batch->e1[i] = 0;
-            batch->e2[i] = 0;
-            batch->e3[i] = 0;
-            batch->source[i] = 0;
-            batch->so[i] = 0;
+        for (int i = 0; i < 3; ++i) {
+            batch->e1[i] = axis1[i];
+            if (n_sample_gonio_axes > 1)
+                batch->e2[i] = axis2[i];
+            if (n_sample_gonio_axes > 2)
+                batch->e3[i] = axis3[i];
         }
+
+        // Rotation axis in lab frame
+        batch->jsaxs = phi_idx; // goniostat scan axis number
+        for (int i = 0; i < 3; i++)
+            batch->scanax[i] = sample_gonio.axis(phi_idx).axis()[i];
+
+        // Source (wave) vector
+        Eigen::RowVector3d ni =
+            _ohkl_data->diffractometer()->source().selectedMonochromator().ki().rowVector();
+        ni.normalize();
+        for (int i = 0; i < 3; i++) {
+            batch->source[i] = ni[i]; // idealised
+            batch->so[i] = ni[i]; // including tilt
+        }
+
+        // datum values of goniostat axes
+        for (int i = 0; i < 3; i++)
+            batch->datum[i] = sample_states[frame][i] / deg;
+
+        batch->phirange = sample_states[sample_states.size() - 1][phi_idx] / deg;
 
         batch->alambd = _ohkl_data->wavelength(); // wavelength
 
@@ -157,8 +187,8 @@ void MtzExporter::buildBatches(CMtz::MTZSET* mtz_set)
         batch->delcor = 0;
 
         // Beam divergence (FWHM)
-        batch->divhd = 0.0;
-        batch->divvd = 0.0;
+        batch->divhd = fwhm;
+        batch->divvd = fwhm;
 
         // xtal to detector distance
         batch->dx[0] = 0;
@@ -168,8 +198,6 @@ void MtzExporter::buildBatches(CMtz::MTZSET* mtz_set)
         batch->theta[0] = 0;
         batch->theta[1] = 0;
 
-        float* buf;
-        char* charbuf;
         batch->next = nullptr;
     }
 
