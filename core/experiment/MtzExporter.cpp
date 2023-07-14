@@ -31,7 +31,6 @@
 #include <string.h>
 #include <string>
 #include <vector>
-#include <iostream>
 
 namespace ohkl {
 MtzExporter::MtzExporter(
