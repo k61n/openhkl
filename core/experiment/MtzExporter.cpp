@@ -292,7 +292,6 @@ void MtzExporter::populateColumns(CMtz::MTZCOL** columns, int ncol)
 
     _mtz->nref = irefl;
     _mtz->nref_filein = irefl;
-
 }
 
 bool MtzExporter::writeToFile(std::string filename)
@@ -322,10 +321,10 @@ bool MtzExporter::writeToFile(std::string filename)
     CMtz::MTZXTAL* base_xtal = MtzAddXtal(_mtz, "HKL_base", "HKL_base", cell);
     CMtz::MTZSET* base_set = MtzAddDataset(_mtz, base_xtal, "HKL_base", 0.0);
 
-    CMtz::MTZXTAL* xtal = MtzAddXtal(
-        _mtz, _ohkl_cell->name().c_str(), _ohkl_data->name().c_str(), cell);
-    CMtz::MTZSET* mtz_set = MtzAddDataset(
-        _mtz, xtal, _ohkl_data->name().c_str(), _ohkl_data->wavelength());
+    CMtz::MTZXTAL* xtal =
+        MtzAddXtal(_mtz, _ohkl_cell->name().c_str(), _ohkl_data->name().c_str(), cell);
+    CMtz::MTZSET* mtz_set =
+        MtzAddDataset(_mtz, xtal, _ohkl_data->name().c_str(), _ohkl_data->wavelength());
 
     int ncol;
     if (_merged)
