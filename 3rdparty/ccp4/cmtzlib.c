@@ -1805,10 +1805,6 @@ int ccp4_lhprt(const MTZ *mtz, int iprint) {
      to file, we probably want to know the resolution limits for these. In this case,
      mtz->resmax_out and mtz->resmin_out have been set and we use those. Otherwise, 
      we use the resolution limits of the crystals in memory. */
-
-  printf(" ccp4_lhprt: mtz->nxtal = %d \n", mtz->nxtal);
-  printf(" ccp4_lhprt: resmin_out = %f \n", 1.0 / sqrt(mtz->resmin_out));
-  printf(" ccp4_lhprt: resmax_out = %f \n", 1.0 / sqrt(mtz->resmax_out));
   if (mtz->resmax_out > 0.0001) {
     maxres = mtz->resmax_out;
     minres = mtz->resmin_out;
@@ -2481,7 +2477,6 @@ int ccp4_lwrefl(MTZ *mtz, const float adata[], MTZCOL *lookup[],
 { int i,j,k,l,icol,ind[3],ind_xtal,ind_set,ind_col[3];
   float refldata[MCOLUMNS],res;
   double coefhkl[6];
-  printf("ccpt4_lwrefl");
 
   /* if this is extra reflection, check memory for in-memory mode */
   if (mtz->refs_in_memory && iref > mtz->nref) {
@@ -2560,20 +2555,15 @@ int ccp4_lwrefl(MTZ *mtz, const float adata[], MTZCOL *lookup[],
      }
 
      for (i = 0; i < mtz->nxtal; ++i) {
-         printf(" ccp4_lwrefl: cell[0] = %f \n", mtz->xtal[i]->cell[0]);
-         if (mtz->xtal[i]->cell[0] > 0.001) {
-             MtzHklcoeffs(mtz->xtal[i]->cell, coefhkl);
-             res = MtzInd2reso(ind, coefhkl);
-             if (res > 0.0) {
-                 if (res > mtz->xtal[i]->resmax)
-                     mtz->xtal[i]->resmax = res;
-                 if (res < mtz->xtal[i]->resmin)
-                     mtz->xtal[i]->resmin = res;
-                 if (res > mtz->resmax_out)
-                     mtz->resmax_out = res;
-                 if (res < mtz->resmin_out)
-                     mtz->resmin_out = res;
-             }
+      if (mtz->xtal[i]->cell[0] > 0.001) {
+       MtzHklcoeffs(mtz->xtal[i]->cell, coefhkl);
+       res = MtzInd2reso(ind, coefhkl);
+       if (res > 0.0) {
+         if (res > mtz->xtal[i]->resmax) mtz->xtal[i]->resmax = res;
+         if (res < mtz->xtal[i]->resmin) mtz->xtal[i]->resmin = res;
+         if (res > mtz->resmax_out) mtz->resmax_out = res;
+         if (res < mtz->resmin_out) mtz->resmin_out = res;
+       }
       }
      }
   }
@@ -2589,7 +2579,7 @@ int MtzPut(MTZ *mtz, const char *logname)
 
 { char hdrrec[81],symline[81],spgname[MAXSPGNAMELENGTH+3];
  CCP4File *fileout;
- int i, j, k, l, hdrst, icol, numbat, isort[5], debug=1;
+ int i, j, k, l, hdrst, icol, numbat, isort[5], debug=0;
  int ind[3],ind_xtal,ind_set,ind_col[3],length,glob_cell_written=0;
  double coefhkl[6];
  float res,refldata[MCOLUMNS];
@@ -2756,10 +2746,6 @@ int MtzPut(MTZ *mtz, const char *logname)
       }
    }
   }
- }
- if (debug) {
-    printf(" MtzPut: resmin_out = %f \n", 1.0 / sqrt(mtz->resmin_out));
-    printf(" MtzPut: resmax_out = %f \n", 1.0 / sqrt(mtz->resmax_out));
  }
  /* print enough digits to retain precision. C. Flensburg 20080227 */
  sprintf(hdrrec,"RESO %-20.16f %-20.16f",mtz->resmin_out,mtz->resmax_out);
