@@ -17,6 +17,7 @@
 #include "base/utils/Logger.h"
 #include "core/data/DataSet.h"
 #include "core/data/DataTypes.h"
+#include "tables/crystal/MillerIndex.h"
 #include "tables/crystal/UnitCell.h"
 
 namespace ohkl {
@@ -99,6 +100,9 @@ void MergedPeakCollection::addPeak(Peak3D* peak)
             return;
     }
 
+    if (peak->hkl() == MillerIndex(0, 0, 0))
+        return;
+
     MergedPeak new_peak(_group, _sum_intensity, _friedel);
 
     MergeFlag flag = new_peak.addPeak(peak);
@@ -123,6 +127,9 @@ void MergedPeakCollection::addPeak(Peak3D* peak)
 
 void MergedPeakCollection::addAny(Peak3D* peak)
 {
+    if (peak->hkl() == MillerIndex(0, 0, 0))
+        return;
+
     MergedPeak new_peak(_group, _sum_intensity, _friedel);
 
     MergeFlag flag = new_peak.addAny(peak);

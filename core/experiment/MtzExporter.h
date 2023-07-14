@@ -35,42 +35,24 @@ class PeakMerger;
 
 class MtzExporter {
  public:
-    //! Constructor
     MtzExporter(
         MergedPeakCollection* merged_data, sptrDataSet data, sptrUnitCell cell, bool merged,
-        bool sum_intensities, std::string comment);
-    //! Destructor
+        bool sum_intensities);
     ~MtzExporter();
-    //! Builds whole MtzData structure from ohkl data
-    void buildMtzData();
     //! Export build MtzData to file
-    bool exportToFile(std::string filename);
+    bool writeToFile(std::string filename);
     //! add History
     void addHistory(std::string line);
 
  private:
-    //! Build the MtzSet datastructure(s)
-    void buildMtzSet();
-    //! Build the MtzCol datastructure(s)
-    void buildMtzCols();
-    //! Build the Mtz main structure
-    void buildMtz();
-    //! Build Mtz Xtal Structure (Crystall)
-    void buildXTAL();
-    //! Build History structure
-    void buildHistory();
+    //! Build columns for reflections
+    void populateColumns(CMtz::MTZCOL** columns, int ncol);
     //! Build Mtz SymmetryInfo structure
-    void buildSyminfo();
-    //! Build Mtz MNF structure (missing refelction)
-    void buildMNF();
-    //! Building Mtz Batch strucutre
-    void buildBatch();
-    //! Handles the details of creating MTZCol
-    CMtz::MTZCOL* CreateMtzCol(
-        std::string name, std::string label, int grp, int set_id, int active, int src);
+    void buildSymInfo();
+    //! Building Mtz batch structures (N.B. batch = image in this context)
+    void buildBatches(CMtz::MTZSET* mtz_set);
 
  private:
-    // ohkl data structures
     MergedPeakCollection* _merged_data;
     sptrDataSet _ohkl_data;
     UnitCell* _ohkl_cell;
@@ -80,7 +62,6 @@ class MtzExporter {
     bool _sum_intensities;
 
     std::vector<std::string> _history;
-    std::string _comment;
     std::string _peakcollection_name;
 
     // The necessary Mtz data structures
@@ -89,13 +70,8 @@ class MtzExporter {
     // MTZ -> SymInfo
     // declared in 3rdparty/ccp4/mtzdata.h"
 
-    /* main mtz data structure */
-    CMtz::MTZ* _mtz_data;
-
-    // handles for sub structures
-    CMtz::MTZXTAL* _mtz_xtal;
-    std::vector<CMtz::MTZCOL*> _mtz_cols;
-    std::vector<CMtz::MTZSET*> _mtz_sets;
+    // main mtz data structure
+    CMtz::MTZ* _mtz;
 };
 }
 #endif // OHKL_MTZEXPORTER_H

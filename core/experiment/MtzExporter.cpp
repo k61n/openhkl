@@ -14,14 +14,20 @@
 
 #include "MtzExporter.h"
 
+#include "base/utils/Units.h"
+#include "cmtzlib.h"
 #include "core/data/DataTypes.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/shape/PeakCollection.h"
 #include "core/statistics/MergedPeakCollection.h"
 #include "core/statistics/PeakMerger.h"
+#include "mtzdata.h"
 
+#include <Eigen/src/Core/Matrix.h>
+#include <Eigen/src/Geometry/Quaternion.h>
 #include <functional>
 #include <regex>
+#include <stdexcept>
 #include <string.h>
 #include <string>
 #include <vector>
@@ -29,461 +35,327 @@
 namespace ohkl {
 MtzExporter::MtzExporter(
     MergedPeakCollection* merged_data, sptrDataSet data, sptrUnitCell cell, bool merged,
-    bool sum_intensities, std::string comment)
+    bool sum_intensities)
     : _merged_data(merged_data)
     , _ohkl_data(data)
     , _ohkl_cell(cell.get())
     , _merged(merged)
     , _sum_intensities(sum_intensities)
-    , _comment(comment)
-    , _mtz_data(nullptr)
-    , _mtz_xtal(nullptr)
+    , _mtz(nullptr)
 {
-    _mtz_sets.clear();
-    _mtz_cols.clear();
 }
 
 MtzExporter::~MtzExporter()
 {
-    if (_mtz_data != nullptr)
-        delete _mtz_data;
-    for (auto& e : _mtz_cols) {
-        if (e != nullptr) {
-            delete[] e->ref; // cleans up ref array in each col
-            delete e;
+    // delete _mtz;
+    CMtz::MtzFree(_mtz);
+}
+
+void MtzExporter::buildBatches(CMtz::MTZSET* mtz_set)
+{
+    int nframes = _ohkl_data->nFrames();
+
+    auto gonio = _ohkl_data->diffractometer()->sample().gonio(); // Sample 3-axis gonio
+    // auto gonio = _ohkl_data->diffractometer()->detector()->gonio(); // Detector 2-axis gonio
+    auto& instrument_states = _ohkl_data->instrumentStates();
+
+    CMtz::MTZBAT* batch;
+    CMtz::MTZBAT* previous_batch;
+
+    const auto& sample_gonio = _ohkl_data->diffractometer()->sample().gonio();
+    size_t n_sample_gonio_axes = sample_gonio.nAxes();
+
+    int omega_idx = -1, phi_idx = -1, chi_idx = -1;
+    for (size_t i = 0; i < n_sample_gonio_axes; ++i) {
+        const std::string axis_name = sample_gonio.axis(i).name();
+        omega_idx = axis_name == ohkl::ax_omega ? int(i) : omega_idx;
+        chi_idx = axis_name == ohkl::ax_chi ? int(i) : chi_idx;
+        phi_idx = axis_name == ohkl::ax_phi ? int(i) : phi_idx;
+    }
+
+    Eigen::Vector3d axis1, axis2, axis3;
+    axis1 = sample_gonio.axis(0).axis();
+    if (n_sample_gonio_axes > 1)
+        axis2 = sample_gonio.axis(1).axis();
+    if (n_sample_gonio_axes > 2)
+        axis3 = sample_gonio.axis(2).axis();
+
+    const std::vector<std::vector<double>>& sample_states =
+        _ohkl_data->diffractometer()->sampleStates;
+
+    double fwhm =
+        _ohkl_data->diffractometer()->source().selectedMonochromator().fullWidthHalfMaximum();
+
+    for (std::size_t frame = 0; frame < nframes; ++frame) {
+        batch = CMtz::MtzMallocBatch();
+
+        if (frame == 0)
+            _mtz->batch = batch;
+        else
+            previous_batch->next = batch;
+        previous_batch = batch;
+
+        std::string name = std::to_string(frame);
+        // IMPORTANT - Aimless hash table can only take positive non-zero integer as a key!
+        // We must start indexing from 1!
+        batch->num = frame + 1;
+
+        batch->ngonax = gonio.nAxes();
+        for (int i = 0; i < gonio.nAxes(); i++)
+            strncpy(batch->gonlab[i], gonio.axis(i).name().c_str(), 9);
+
+        batch->iortyp = 0; // this values needs to be 0 according to mtz documentation
+
+        for (int i = 0; i < 6; i++)
+            batch->lbcell[i] = 0; // refinement flags
+
+        batch->misflg = 0; // phixyz 0,1,2
+        batch->jumpax = 0; // reciprocal axis close to rotation
+        batch->ncryst = 0;
+        batch->lcrflg = 0; // mosacity 0 = isotropic, 1 = anisotropic
+        batch->ldtype = 2; // type of  data: 2d (1), 3d(2)
+        batch->nbscal = 0; // number of batch scales & Bfactors 0 if unset)
+        batch->lbmflg = 0; // flag for beam info alambd(0), delcor, divhd, divvd(1)
+        batch->ndet = 1; // Number of detectors
+        batch->nbsetid = mtz_set->setid; // id of this dataset
+
+        // cell dimensions
+        batch->cell[0] = _ohkl_cell->character().a;
+        batch->cell[1] = _ohkl_cell->character().b;
+        batch->cell[2] = _ohkl_cell->character().c;
+        batch->cell[3] = _ohkl_cell->character().alpha / deg;
+        batch->cell[4] = _ohkl_cell->character().beta / deg;
+        batch->cell[5] = _ohkl_cell->character().gamma / deg;
+
+        // Orientation Matrix
+        Eigen::Quaterniond quat = instrument_states[frame].sampleOrientationOffset;
+        auto orientation = quat.toRotationMatrix();
+        for (int i = 0; i < 9; ++i)
+            batch->umat[i] = orientation(i % 3, i / 3); // om(x,y) or om(y,x) ?????
+
+        // Missetting angles at beginning and end of oscillation
+        for (int i = 0; i < 2; i++)
+            for (int j = 0; j < 3; j++)
+                batch->phixyz[i][j] = 0;
+
+        // Mosacity
+        for (int i = 0; i < 12; i++)
+            batch->crydat[i] = 0;
+
+        // start and stop time
+        batch->time1 = 0;
+        batch->time2 = 0;
+
+        // Batch scale, factor and temperature
+        batch->bscale = 1;
+        batch->bbfac = 1;
+        batch->sdbfac = 1;
+
+        for (int i = 0; i < 3; ++i) {
+            batch->e1[i] = axis1[i];
+            if (n_sample_gonio_axes > 1)
+                batch->e2[i] = axis2[i];
+            if (n_sample_gonio_axes > 2)
+                batch->e3[i] = axis3[i];
         }
-    }
-    _mtz_cols.clear();
 
-    // CMtz::MtzFreeBatch(_mtz_batch);
-}
+        // Rotation axis in lab frame
+        batch->jsaxs = phi_idx; // goniostat scan axis number
+        for (int i = 0; i < 3; i++)
+            batch->scanax[i] = sample_gonio.axis(phi_idx).axis()[i];
 
-void MtzExporter::buildMtz()
-{
-    /* top level structure */
-    _mtz_data = new CMtz::MTZ();
+        // Source (wave) vector
+        Eigen::RowVector3d ni =
+            _ohkl_data->diffractometer()->source().selectedMonochromator().ki().rowVector();
+        ni.normalize();
+        for (int i = 0; i < 3; i++) {
+            batch->source[i] = ni[i]; // idealised
+            batch->so[i] = ni[i]; // including tilt
+        }
 
-    strncpy(_mtz_data->title, "OpenHKLProjectExport\0", 21);
+        // datum values of goniostat axes
+        for (int i = 0; i < 3; i++)
+            batch->datum[i] = sample_states[frame][i] / deg;
 
-    /* xtal ptr needs to be prepaired before calling lib method */
-    //_mtz_data->nxtal = 1; // the system will keep this updated automatically
-    _mtz_data->xtal = new CMtz::MTZXTAL*[1]; // but we need to crate this structure or we will
-                                             // encounter crashes along the way
-    _mtz_data->xtal[0] = new CMtz::MTZXTAL();
+        batch->phirange = sample_states[sample_states.size() - 1][phi_idx] / deg;
 
-    // Keep reflections in memory
-    _mtz_data->refs_in_memory = 1;
-    _mtz_data->nref_filein = 1;
+        batch->alambd = _ohkl_data->wavelength(); // wavelength
 
-    /*
-        This is an additional place to store any kind of information
-        There are no rules to this at all
-        At first we keep ignoring it. maybe later some ohkl information ?
-    */
-    _mtz_data->xml = nullptr;
-}
+        // Dispersion
+        batch->delamb = 0;
+        batch->delcor = 0;
 
-void MtzExporter::buildMNF()
-{
-    // we don't use this right now
-    strncpy(_mtz_data->mnf.amnf, "", 0);
-    _mtz_data->mnf.fmnf = 0;
-}
+        // Beam divergence (FWHM)
+        batch->divhd = fwhm;
+        batch->divvd = fwhm;
 
-void MtzExporter::buildBatch()
-{
-    /*
-     *  Note:
-     *  Not every field is modified - only as much as it works
-     *
-     */
+        // xtal to detector distance
+        batch->dx[0] = 0;
+        batch->dx[1] = 0;
 
-    /* Retrieving ohkl data */
-    // Sample gonio
-    auto gonio = _ohkl_data->diffractometer()->sample().gonio(); // three axis
+        // detector tilt angle
+        batch->theta[0] = 0;
+        batch->theta[1] = 0;
 
-    // Detector gonio
-    // auto gonio = _ohkl_data->diffractometer()->detector()->gonio(); // two axis
-
-    auto omatrix = _ohkl_cell->orientation();
-
-    /* Building Mtz Batch */
-    _mtz_data->batch = CMtz::MtzMallocBatch();
-
-    // We use one batch for the start
-    _mtz_data->batch->num = 1;
-
-    // labels and names
-    strncpy(_mtz_data->batch->title, "BATCH01\0", 8); // later maybe we want more batches ?
-
-    /* Getting axes Information */
-    _mtz_data->batch->ngonax = gonio.nAxes();
-    for (int i = 0; i < gonio.nAxes(); i++)
-        strncpy(_mtz_data->batch->gonlab[i], gonio.axis(i).name().c_str(), 9);
-
-    // this values needs to be 0 according to documentation of mtz file format
-    _mtz_data->batch->iortyp = 0;
-
-    // refinement flags .. needs documentation
-    for (int i = 0; i < 6; i++)
-        _mtz_data->batch->lbcell[i] = 0;
-
-    // phixyz 0,1,2
-    _mtz_data->batch->misflg = 0;
-
-    // reciprocal axis closes to rotation
-    _mtz_data->batch->jumpax = 0;
-
-    // crystal number
-    // to which this batch is refering to .. I assume
-    // only one crystal -> one batch -> at least for now
-    _mtz_data->batch->ncryst = 1;
-
-    // mosacity 0 = isotropic, 1 = anisotropic
-    _mtz_data->batch->lcrflg = 0;
-
-    // type of  data: 2d (1), 3d(2)
-    _mtz_data->batch->ldtype = 2; //?????
-
-    /**< goniostat scan axis number */
-    _mtz_data->batch->jsaxs = 1;
-
-    /**< number of batch scales & Bfactors 0 if unset) */
-    _mtz_data->batch->nbscal = 0;
-
-    // flag for beam info
-    // alambd(0), delcor, divhd, divvd(1)
-    _mtz_data->batch->lbmflg = 0;
-
-    /* Number of detectors - stays at 1 for then start */
-    _mtz_data->batch->ndet = 1;
-
-    /* id of this dataset */
-    _mtz_data->batch->nbsetid = 1;
-
-    // cell dimensions
-    // this information has been written twice to the file then
-    // in older mtz file version there was a third instance of cell information
-    // but this seemed to have been removed
-    _mtz_data->batch->cell[0] = _ohkl_cell->character().a;
-    _mtz_data->batch->cell[1] = _ohkl_cell->character().b;
-    _mtz_data->batch->cell[2] = _ohkl_cell->character().c;
-    _mtz_data->batch->cell[3] = 180.0 / M_PI * _ohkl_cell->character().alpha;
-    _mtz_data->batch->cell[4] = 180.0 / M_PI * _ohkl_cell->character().beta;
-    _mtz_data->batch->cell[5] = 180.0 / M_PI * _ohkl_cell->character().gamma;
-
-    /* Writing Orientaion Matrix */
-    for (int i = 0; i < 9; ++i)
-        _mtz_data->batch->umat[i] = omatrix(i % 3, i / 3); // om(x,y) or om(y,x) ?????
-
-    /* Misseeting angles */
-    // we keep this at zero for the beginning
-    for (int i = 0; i < 2; i++)
-        for (int j = 0; j < 3; j++)
-            _mtz_data->batch->phixyz[i][j] = 0;
-
-    /* Mosacity */
-    // keeps this at zero for now
-    for (int i = 0; i < 12; i++)
-        _mtz_data->batch->crydat[i] = 0;
-
-    /* datum values of goniostat axes */
-    for (int i = 0; i < 3; i++)
-        _mtz_data->batch->datum[i] = 0;
-
-    _mtz_data->batch->phistt = 0; // relative to datum
-    _mtz_data->batch->phiend = 0; // rel;ative to datum
-
-    /* Rotation axis in lab frame */
-    for (int i = 0; i < 3; i++)
-        _mtz_data->batch->scanax[i] = 0;
-
-    /* start and stop time */
-    _mtz_data->batch->time1 = 0;
-    _mtz_data->batch->time2 = 0;
-
-    /* Batch scale, factor and temperature */
-    _mtz_data->batch->bscale = 1;
-    _mtz_data->batch->bbfac = 1;
-    _mtz_data->batch->sdbfac = 1;
-
-    /* Phi range */
-    _mtz_data->batch->phirange = 0;
-
-    /* vector 1,2,3, source and idealied source vector */
-    // keep this at zero
-    for (int i = 0; i < 3; i++) {
-        _mtz_data->batch->e1[i] = 0;
-        _mtz_data->batch->e2[i] = 0;
-        _mtz_data->batch->e3[i] = 0;
-        _mtz_data->batch->source[i] = 0;
-        _mtz_data->batch->so[i] = 0;
+        batch->next = nullptr;
     }
 
-    /* Setting wavelength */
-    _mtz_data->batch->alambd = _ohkl_data->wavelength();
-
-    /* Dispersion */
-    _mtz_data->batch->delamb = 0;
-    _mtz_data->batch->delcor = 0;
-
-    /* Beam divergence */
-    _mtz_data->batch->divhd = 0.0; // FWHM
-    _mtz_data->batch->divvd = 0.0; // FWHM
-
-    /* xtal to detector distance */
-    _mtz_data->batch->dx[0] = 0;
-    _mtz_data->batch->dx[1] = 0;
-
-    /* detector tilt angle */
-    _mtz_data->batch->theta[0] = 0;
-    _mtz_data->batch->theta[1] = 0;
-
-    // set next batch ptr to nullptr
-    // last node needs as always be set to nullptr
-    _mtz_data->batch->next = NULL;
-
-    // only for one batch for now
-    _mtz_data->n_orig_bat = 1;
+    _mtz->n_orig_bat = nframes;
 }
 
-void MtzExporter::buildSyminfo()
+void MtzExporter::buildSymInfo()
 {
-    // Extracting SpaceGrp symbol
-    // remove whitespaces
-    // this doesnt seemd to be directly processed by phenix
+    // Extracting SpaceGrp symbol, remove whitespaces
     std::string symbol = _ohkl_cell->spaceGroup().symbol();
     std::regex r("\\s+");
     symbol = std::regex_replace(symbol, r, "");
 
     SymOpList symops = _ohkl_cell->spaceGroup().groupElements();
 
-    /* Bulding symgrp */
-    _mtz_data->mtzsymm.spcgrp = _ohkl_cell->spaceGroup().id();
-    strncpy(_mtz_data->mtzsymm.spcgrpname, symbol.c_str(), symbol.size());
-    _mtz_data->mtzsymm.nsym = symops.size();
+    _mtz->mtzsymm.spcgrp = _ohkl_cell->spaceGroup().id();
+    strncpy(_mtz->mtzsymm.spcgrpname, symbol.c_str(), symbol.size());
+    _mtz->mtzsymm.nsym = symops.size();
 
-    /*
-        Filling symmetry operation array
-        From what I can tell by example files this is just affineTransformation matix form SzmOp
-        Phenix uses this to figure out the spacegrp ?
-    */
+    // Filling symmetry operation array
+    // From what I can tell by example files this is just affineTransformation matix form SymOp
+    // Phenix uses this to figure out the space group?
     int n = 0;
     for (auto& e : symops) {
         auto m = e.getMatrix();
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++)
-                _mtz_data->mtzsymm.sym[n][i][j] = m(i, j);
+                _mtz->mtzsymm.sym[n][i][j] = m(i, j);
         }
         ++n;
     }
 
-    _mtz_data->mtzsymm.nsymp = symops.size();
+    _mtz->mtzsymm.nsymp = symops.size();
     ;
-    _mtz_data->mtzsymm.symtyp = symbol.c_str()[0];
-    strncpy(_mtz_data->mtzsymm.pgname, "PntGrName\0", 10);
-    _mtz_data->mtzsymm.spg_confidence = _ohkl_cell->spaceGroup().bravaisType();
+    _mtz->mtzsymm.symtyp = symbol.c_str()[0];
+    strncpy(_mtz->mtzsymm.pgname, "PntGrName\0", 10);
+    _mtz->mtzsymm.spg_confidence = _ohkl_cell->spaceGroup().bravaisType();
 }
 
-void MtzExporter::buildXTAL()
+void MtzExporter::populateColumns(CMtz::MTZCOL** columns, int ncol)
 {
-    /* getting cell information */
-    float cell[6];
-    cell[0] = _ohkl_cell->character().a;
-    cell[1] = _ohkl_cell->character().b;
-    cell[2] = _ohkl_cell->character().c;
-    cell[3] = 180.0 / M_PI * _ohkl_cell->character().alpha;
-    cell[4] = 180.0 / M_PI * _ohkl_cell->character().beta;
-    cell[5] = 180.0 / M_PI * _ohkl_cell->character().gamma;
+    MergedPeakSet peaks = _merged_data->mergedPeakSet();
 
-    /* GENERATE XTAL STRUCTURE */
-    _mtz_xtal = MtzAddXtal(_mtz_data, _ohkl_data->name().c_str(), _ohkl_cell->name().c_str(), cell);
-}
+    int npeaks;
+    if (_merged)
+        npeaks = _merged_data->nUnique();
+    else
+        npeaks = _merged_data->totalSize();
 
-void MtzExporter::buildMtzSet()
-{
-    if (!_mtz_data)
-        throw std::runtime_error("MtzExporter::buildMtzSet invalid _mtz structure");
-
-    if (!_mtz_xtal)
-        throw std::runtime_error("MtzExporter::buildMtzSet invalid _mtz xtal");
-
-    if (!_ohkl_data)
-        throw std::runtime_error("MtzExporter::buildMtzSet invalid ohkl data");
-
-    /* GENERATE MTZ SETS */
-    std::string name = "DATASET01";
-    auto ptr = MtzAddDataset(_mtz_data, _mtz_xtal, name.c_str(), _ohkl_data->wavelength());
-    if (!ptr)
-        throw std::runtime_error("MtzExporter::buildMtzSet unable to create dataset in mtz export");
-}
-
-CMtz::MTZCOL* MtzExporter::CreateMtzCol(
-    std::string name, std::string label, int grp, int set_id, int active, int src)
-{
-    std::string grpname = _merged ? "MergedPeakData" : "UnmergedPeakData";
-
-    CMtz::MTZCOL* ptr = nullptr;
-    ptr = MtzAddColumn(_mtz_data, _mtz_xtal->set[set_id], name.c_str(), label.c_str());
-    if (ptr != nullptr) {
-        auto nPeaks = _merged_data->totalSize();
-        strncpy(ptr->grpname, grpname.c_str(), grpname.size());
-        ptr->active = active;
-        ptr->source = src;
-        ptr->min = nPeaks;
-        ptr->max = nPeaks;
-        ptr->grpposn = grp;
-        ptr->ref = new float[nPeaks];
-        _mtz_cols.emplace_back(ptr);
-    }
-    return ptr;
-}
-
-void MtzExporter::buildMtzCols()
-{
-    if (!_mtz_data)
-        throw std::runtime_error("Error MtzExporter::buildMtzColData Invalid Mtz data structures");
-
-    int grp = 0; // grp idx, counter variable
-    MergedPeakSet peaks;
-    peaks = _merged_data->mergedPeakSet();
-
-    /*
-        This part needs to be extended later
-        for this time being we only save the following information from selected dataset
-            H, K, L, IMEAN, SIGMA
-            for unmerged Data als Frame numbers will be included (wished by a.ostermann)
-        as individual Cols (5/6 in total)
-        Names and Labels are fixed and cannot be changed freely -> documentation
-
-        see https://www.ccp4.ac.uk/html/mtzformat.html
-
-        * CREATING MTZ DATA COLS
-
-        CreateMtzCol(
-            NAME
-            LABEL
-            GRP_ID
-            SET_ID
-            ACTIVE
-            SRC
-    */
-    CreateMtzCol("H", "H", grp++, 0, 1, 0);
-    CreateMtzCol("K", "H", grp++, 0, 1, 0);
-    CreateMtzCol("L", "H", grp++, 0, 1, 0);
-    CreateMtzCol("M/ISYM", "Y", grp++, 0, 1, 0);
-    CreateMtzCol("BATCH", "B", grp++, 0, 1, 0);
-    CreateMtzCol("I", "J", grp++, 0, 1, 0);
-    CreateMtzCol("SIGI", "Q", grp++, 0, 1, 0);
-
-    if (!_merged) // only if we are processing unmerged data
-        CreateMtzCol("Frame", "R", grp++, 0, 1, 0);
-
-    /*
-     *   Filling MtzCols with data
-     */
-    int idx = 0;
-    if (_merged) { /* MERGED DATA */
+    float adata[ncol];
+    int irefl = 0;
+    if (_merged) {
         for (const MergedPeak& peak : peaks) {
             const auto hkl = peak.index();
             Intensity intensity = peak.intensity();
 
-            _mtz_cols[0]->ref[idx] = hkl.h();
-            _mtz_cols[1]->ref[idx] = hkl.k();
-            _mtz_cols[2]->ref[idx] = hkl.l();
-            _mtz_cols[3]->ref[idx] = intensity.value();
-            _mtz_cols[4]->ref[idx] = intensity.sigma();
-            idx++;
+            adata[0] = hkl.h();
+            adata[1] = hkl.k();
+            adata[2] = hkl.l();
+            adata[3] = intensity.value();
+            adata[4] = intensity.sigma();
+            CMtz::ccp4_lwrefl(_mtz, adata, columns, ncol, irefl + 1);
+            irefl++;
         }
-    } else { /* UNMERGED DATA */
+    } else {
         for (auto& peak : peaks) {
             for (auto unmerged_peak : peak.peaks()) {
+                int m_isym = 1;
                 const UnitCell& cell = *(unmerged_peak->unitCell());
                 const ReciprocalVector& q = unmerged_peak->q();
-                const MillerIndex hkl(q, cell);
+                const MillerIndex hkl = unmerged_peak->hkl();
+                double frame = unmerged_peak->shape().center()[2];
                 Intensity intensity;
                 if (_sum_intensities)
                     intensity = unmerged_peak->correctedSumIntensity();
                 else
                     intensity = unmerged_peak->correctedProfileIntensity();
 
-                _mtz_cols[0]->ref[idx] = hkl.h();
-                _mtz_cols[1]->ref[idx] = hkl.k();
-                _mtz_cols[2]->ref[idx] = hkl.l();
-                _mtz_cols[3]->ref[idx] = 1;
-                _mtz_cols[4]->ref[idx] = 1;
-                _mtz_cols[5]->ref[idx] = intensity.value();
-                _mtz_cols[6]->ref[idx] = intensity.sigma();
-                _mtz_cols[7]->ref[idx] = unmerged_peak->shape().center()[2];
-                idx++;
+                adata[0] = hkl.h();
+                adata[1] = hkl.k();
+                adata[2] = hkl.l();
+                adata[3] = m_isym;
+                adata[4] = std::round(frame);
+                adata[5] = intensity.value();
+                adata[6] = intensity.sigma();
+                CMtz::ccp4_lwrefl(_mtz, adata, columns, ncol, irefl + 1);
+                irefl++;
             }
         }
     }
 
-    // unsure about this .. better would be more one value in each col
-    _mtz_data->ncol_read = _mtz_cols.size();
+    _mtz->ncol_read = ncol;
 
-    // needs to right value or it wont workj
-    _mtz_data->nref = idx;
-    _mtz_data->nref_filein = idx;
-
-    /* SORT ORDER */
-    // Let"s ignore this for now
-    /*_mtz_data->order[0] = _mtz_cols.at(0);
-    _mtz_data->order[1] = _mtz_cols.at(1);
-    _mtz_data->order[2] = _mtz_cols.at(2);
-    _mtz_data->order[3] = _mtz_cols.at(3);
-    _mtz_data->order[4] = _mtz_cols.at(4);*/
+    _mtz->nref = irefl;
+    _mtz->nref_filein = irefl;
 }
 
-void MtzExporter::buildMtzData()
+bool MtzExporter::writeToFile(std::string filename)
 {
-    ohklLog(Level::Debug, "Building Mtz data structure'");
-    buildMtz();
-    buildSyminfo();
-    buildXTAL();
-    buildMtzSet();
-    buildMtzCols();
-    buildMNF();
-    buildBatch();
-    buildHistory();
+    ohklLog(Level::Info, "MtzExporter::writeToFile");
 
-    MtzAddHistory(_mtz_data, (const char(*)[80])_comment.c_str(), 1);
-}
+    _mtz = CMtz::MtzMalloc(0, nullptr);
+    CMtz::ccp4_lwtitl(_mtz, _ohkl_data->name().c_str(), 0);
 
-void MtzExporter::buildHistory()
-{
-    /* File History */
-    // Important for saving data processing steps of OHKL into other programs ?
-    // maybe reverse order?
-    for (auto& e : _history)
-        MtzAddHistory(_mtz_data, (const char(*)[80])e.c_str(), 1);
-}
+    _mtz->refs_in_memory = 0; // Keep reflections in memory
+    _mtz->fileout = CMtz::MtzOpenForWrite(filename.c_str());
+    if (!_mtz->fileout)
+        throw std::runtime_error("MtzExporter::writeToFile: can't open file " + filename);
 
-void MtzExporter::addHistory(std::string line)
-{
-    _history.push_back(line);
-}
+    buildSymInfo();
 
-bool MtzExporter::exportToFile(std::string filename)
-{
-    ohklLog(Level::Debug, "Export OpenHKL project to Mtz file ... '");
+    float cell[6];
+    cell[0] = _ohkl_cell->character().a;
+    cell[1] = _ohkl_cell->character().b;
+    cell[2] = _ohkl_cell->character().c;
+    cell[3] = _ohkl_cell->character().alpha / deg;
+    cell[4] = _ohkl_cell->character().beta / deg;
+    cell[5] = _ohkl_cell->character().gamma / deg;
 
-    /* Check and build Mtz data structure if needed */
-    if (!_mtz_data)
-        buildMtzData();
 
-    /* Print out mtz data structure */
-    // ccp4_lhprt(_mtz_data, 4);
-    // ccp4_lhprt_adv(_mtz_data, 4);
+    // Add base set and crystal explicitly
+    CMtz::MTZXTAL* base_xtal = MtzAddXtal(_mtz, "HKL_base", "HKL_base", cell);
+    CMtz::MTZSET* base_set = MtzAddDataset(_mtz, base_xtal, "HKL_base", 0.0);
 
-    /* saving mtz file */
-    if (CMtz::MtzPut(_mtz_data, filename.c_str()) == 1)
-        ohklLog(Level::Info, "Project has been succesfully exported to '" + filename + "'");
-    else {
-        ohklLog(Level::Error, "Project export to '" + filename + " failed '");
-        return false;
+    CMtz::MTZXTAL* xtal =
+        MtzAddXtal(_mtz, _ohkl_cell->name().c_str(), _ohkl_data->name().c_str(), cell);
+    CMtz::MTZSET* mtz_set =
+        MtzAddDataset(_mtz, xtal, _ohkl_data->name().c_str(), _ohkl_data->wavelength());
+
+    int ncol;
+    if (_merged)
+        ncol = 5;
+    else
+        ncol = 7;
+
+    CMtz::MTZCOL* mtz_cols[ncol];
+
+    int col = 0;
+    // Columns belong to base set
+    mtz_cols[col++] = CMtz::MtzAddColumn(_mtz, base_set, "H", "H");
+    mtz_cols[col++] = CMtz::MtzAddColumn(_mtz, base_set, "K", "H");
+    mtz_cols[col++] = CMtz::MtzAddColumn(_mtz, base_set, "L", "H");
+    if (!_merged) { // only if we are processing unmerged data
+        mtz_cols[col++] = CMtz::MtzAddColumn(_mtz, base_set, "M/ISYM", "Y");
+        mtz_cols[col++] = CMtz::MtzAddColumn(_mtz, base_set, "BATCH", "B");
     }
+    mtz_cols[col++] = CMtz::MtzAddColumn(_mtz, base_set, "I", "J");
+    mtz_cols[col++] = CMtz::MtzAddColumn(_mtz, base_set, "SIGI", "Q");
+
+    populateColumns(mtz_cols, ncol);
+    CMtz::MtzSetSortOrder(_mtz, mtz_cols);
+
+    buildBatches(mtz_set);
+
+    // CMtz::ccp4_lhprt_adv(_mtz, 2);
+    if (!CMtz::MtzPut(_mtz, " "))
+        throw std::runtime_error("MtzExporter::writeToFile: Can't write to file " + filename);
+
+    // CMtz::MtzFree(_mtz);
 
     return true;
 }
