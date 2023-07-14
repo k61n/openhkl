@@ -47,8 +47,8 @@ MtzExporter::MtzExporter(
 
 MtzExporter::~MtzExporter()
 {
-    if (_mtz != nullptr)
-        delete _mtz;
+    // delete _mtz;
+    CMtz::MtzFree(_mtz);
 }
 
 void MtzExporter::buildBatches(CMtz::MTZSET* mtz_set)
@@ -57,16 +57,7 @@ void MtzExporter::buildBatches(CMtz::MTZSET* mtz_set)
 
     auto gonio = _ohkl_data->diffractometer()->sample().gonio(); // Sample 3-axis gonio
     // auto gonio = _ohkl_data->diffractometer()->detector()->gonio(); // Detector 2-axis gonio
-    Eigen::Matrix3d initial_ub = _ohkl_cell->orientation();
     auto& instrument_states = _ohkl_data->instrumentStates();
-    Eigen::VectorXd initial_parameters(6);
-    initial_parameters[0] = _ohkl_cell->character().a;
-    initial_parameters[1] = _ohkl_cell->character().b;
-    initial_parameters[2] = _ohkl_cell->character().c;
-    initial_parameters[3] = _ohkl_cell->character().alpha / deg;
-    initial_parameters[4] = _ohkl_cell->character().beta / deg;
-    initial_parameters[5] = _ohkl_cell->character().gamma / deg;
-
 
     CMtz::MTZBAT* batch;
     CMtz::MTZBAT* previous_batch;
@@ -81,9 +72,9 @@ void MtzExporter::buildBatches(CMtz::MTZSET* mtz_set)
         previous_batch = batch;
 
         std::string name = std::to_string(frame);
+        // IMPORTANT - Aimless hash table can only take positive non-zero integer as a key!
+        // We must start indexing from 1!
         batch->num = frame + 1;
-        // strncpy(batch->title, name.c_str(), 4);
-        strncpy(batch->title, "BATCH\0", 6);
 
         batch->ngonax = gonio.nAxes();
         for (int i = 0; i < gonio.nAxes(); i++)
@@ -115,13 +106,9 @@ void MtzExporter::buildBatches(CMtz::MTZSET* mtz_set)
 
         // Orientation Matrix
         Eigen::Quaterniond quat = instrument_states[frame].sampleOrientationOffset;
-        Eigen::Vector3d offset = {quat.x(), quat.y(), quat.z()};
-        UnitCell cell(*_ohkl_cell);
-        cell.updateParameters(initial_ub, offset, initial_parameters);
-        for (int i = 0; i < 9; ++i) {
-            auto ubmatrix = cell.orientation();
-            batch->umat[i] = ubmatrix(i % 3, i / 3); // om(x,y) or om(y,x) ?????
-        }
+        auto orientation = quat.toRotationMatrix();
+        for (int i = 0; i < 9; ++i)
+            batch->umat[i] = orientation(i % 3, i / 3); // om(x,y) or om(y,x) ?????
 
         // Missetting angles at beginning and end of oscillation
         for (int i = 0; i < 2; i++)
@@ -183,7 +170,6 @@ void MtzExporter::buildBatches(CMtz::MTZSET* mtz_set)
 
         float* buf;
         char* charbuf;
-        // CMtz::ccp4_lrbat(batch, buf, charbuf, 2);
         batch->next = nullptr;
     }
 
@@ -192,25 +178,20 @@ void MtzExporter::buildBatches(CMtz::MTZSET* mtz_set)
 
 void MtzExporter::buildSymInfo()
 {
-    // Extracting SpaceGrp symbol
-    // remove whitespaces
-    // this doesnt seemd to be directly processed by phenix
+    // Extracting SpaceGrp symbol, remove whitespaces
     std::string symbol = _ohkl_cell->spaceGroup().symbol();
     std::regex r("\\s+");
     symbol = std::regex_replace(symbol, r, "");
 
     SymOpList symops = _ohkl_cell->spaceGroup().groupElements();
 
-    /* Bulding symgrp */
     _mtz->mtzsymm.spcgrp = _ohkl_cell->spaceGroup().id();
     strncpy(_mtz->mtzsymm.spcgrpname, symbol.c_str(), symbol.size());
     _mtz->mtzsymm.nsym = symops.size();
 
-    /*
-        Filling symmetry operation array
-        From what I can tell by example files this is just affineTransformation matix form SzmOp
-        Phenix uses this to figure out the spacegrp ?
-    */
+    // Filling symmetry operation array
+    // From what I can tell by example files this is just affineTransformation matix form SymOp
+    // Phenix uses this to figure out the space group?
     int n = 0;
     for (auto& e : symops) {
         auto m = e.getMatrix();
@@ -294,10 +275,6 @@ bool MtzExporter::writeToFile(std::string filename)
     _mtz = CMtz::MtzMalloc(0, nullptr);
     CMtz::ccp4_lwtitl(_mtz, _ohkl_data->name().c_str(), 0);
 
-    // xtal ptr needs to be prepaired before calling lib method
-    // _mtz->xtal = new CMtz::MTZXTAL*[1];
-    // _mtz->xtal[0] = new CMtz::MTZXTAL();
-
     _mtz->refs_in_memory = 0; // Keep reflections in memory
     _mtz->fileout = CMtz::MtzOpenForWrite(filename.c_str());
     if (!_mtz->fileout)
@@ -318,8 +295,6 @@ bool MtzExporter::writeToFile(std::string filename)
     CMtz::MTZXTAL* base_xtal = MtzAddXtal(_mtz, "HKL_base", "HKL_base", cell);
     CMtz::MTZSET* base_set = MtzAddDataset(_mtz, base_xtal, "HKL_base", 0.0);
 
-    // Add actual data
-    // CMtz::MTZXTAL* xtal = MtzAddXtal(_mtz, _ohkl_cell->name().c_str(),  cell);
     CMtz::MTZXTAL* xtal = MtzAddXtal(
         _mtz, _ohkl_cell->name().c_str(), _ohkl_data->name().c_str(), cell);
     CMtz::MTZSET* mtz_set = MtzAddDataset(
@@ -334,6 +309,7 @@ bool MtzExporter::writeToFile(std::string filename)
     CMtz::MTZCOL* mtz_cols[ncol];
 
     int col = 0;
+    // Columns belong to base set
     mtz_cols[col++] = CMtz::MtzAddColumn(_mtz, base_set, "H", "H");
     mtz_cols[col++] = CMtz::MtzAddColumn(_mtz, base_set, "K", "H");
     mtz_cols[col++] = CMtz::MtzAddColumn(_mtz, base_set, "L", "H");
@@ -349,7 +325,7 @@ bool MtzExporter::writeToFile(std::string filename)
 
     buildBatches(mtz_set);
 
-    CMtz::ccp4_lhprt_adv(_mtz, 2);
+    // CMtz::ccp4_lhprt_adv(_mtz, 2);
     if (!CMtz::MtzPut(_mtz, " "))
         throw std::runtime_error("MtzExporter::writeToFile: Can't write to file " + filename);
 
