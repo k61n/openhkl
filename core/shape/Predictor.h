@@ -59,6 +59,7 @@ struct StrategyParameters : public PredictionParameters {
 class Predictor {
  public:
     Predictor();
+    ~Predictor();
 
     //! Predict peaks give a unit cell
     void predictPeaks(const sptrDataSet data, const sptrUnitCell unit_cell);

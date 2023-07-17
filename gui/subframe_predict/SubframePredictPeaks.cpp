@@ -457,9 +457,6 @@ void SubframePredictPeaks::runPrediction()
 
         _peak_collection.populate(predicted_peaks);
         _peak_collection.setData(data);
-        for (ohkl::Peak3D* peak : predicted_peaks)
-            delete peak;
-        predicted_peaks.clear();
 
         _peak_collection_item.setPeakCollection(&_peak_collection);
         _peak_collection_model.setRoot(&_peak_collection_item);
