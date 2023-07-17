@@ -21,6 +21,7 @@
 #include "core/experiment/MtzExporter.h"
 #include "core/raw/DataKeys.h"
 #include "core/statistics/CC.h"
+#include "core/statistics/MergedPeak.h"
 #include "core/statistics/RFactor.h"
 #include "tables/crystal/MillerIndex.h"
 #include "tables/crystal/UnitCell.h"
@@ -34,6 +35,21 @@
 #include <iomanip>
 
 // TODO URGENT: lots of code duplication here, needs through cleanup
+
+namespace {
+
+// Comparison operators for sorting peaks by d (descending)
+bool peakGreaterThan(ohkl::Peak3D* p1, ohkl::Peak3D* p2)
+{
+    return p1->d() > p2->d();
+}
+
+bool mergedPeakGreaterThan(ohkl::MergedPeak* p1, ohkl::MergedPeak* p2)
+{
+    return p1->peaks()[0]->d() > p2->peaks()[0]->d();
+}
+
+}
 
 namespace ohkl {
 
@@ -55,6 +71,7 @@ bool PeakExporter::saveToShelXUnmerged(
         for (auto* unmerged_peak : peak.peaks())
             peak_vector.push_back(unmerged_peak);
     }
+    std::sort(peak_vector.begin(), peak_vector.end(), &peakGreaterThan);
 
     std::fstream file(filename, std::ios::out);
     if (!file.is_open())
@@ -79,11 +96,16 @@ bool PeakExporter::saveToShelXUnmerged(
 
 bool PeakExporter::saveToShelXMerged(const std::string& filename, MergedPeakCollection* mergedData)
 {
+    std::vector<MergedPeak*> merged_peaks;
+    for (auto it = mergedData->mergedPeakSet().begin(); it != mergedData->mergedPeakSet().end(); ++it)
+        merged_peaks.emplace_back(const_cast<MergedPeak*>(&(*it)));
+    std::sort(merged_peaks.begin(), merged_peaks.end(), &mergedPeakGreaterThan);
+
     std::fstream file(filename, std::ios::out);
-    for (const MergedPeak& peak : mergedData->mergedPeakSet()) {
-        const auto hkl = peak.index();
-        const double intensity = peak.intensity().value();
-        const double sigma = peak.intensity().sigma();
+    for (const MergedPeak* peak : merged_peaks) {
+        const auto hkl = peak->index();
+        const double intensity = peak->intensity().value();
+        const double sigma = peak->intensity().sigma();
 
         file << std::fixed << std::setw(4) << hkl[0] << std::fixed << std::setw(4) << hkl[1]
              << std::fixed << std::setw(4) << hkl[2] << std::fixed << std::setw(14)
@@ -109,6 +131,7 @@ bool PeakExporter::saveToFullProfUnmerged(
         for (auto* unmerged_peak : peak.peaks())
             peak_vector.push_back(unmerged_peak);
     }
+    std::sort(peak_vector.begin(), peak_vector.end(), &peakGreaterThan);
 
     std::shared_ptr<DataSet> data = peak_vector.at(0)->dataSet();
     double wavelength = data->metadata().key<double>(at_wavelength);
@@ -142,20 +165,21 @@ bool PeakExporter::saveToFullProfMerged(
     file << "TITLE File written by ...\n";
     file << "(3i4,2F14.4,i5,4f8.2)\n";
 
-    std::vector<Peak3D*> peak_vector;
-    for (const MergedPeak& peak : mergedData->mergedPeakSet()) {
-        for (auto* unmerged_peak : peak.peaks())
-            peak_vector.push_back(unmerged_peak);
-    }
-    std::shared_ptr<DataSet> data = peak_vector[0]->dataSet();
+    std::vector<MergedPeak*> merged_peaks;
+    for (auto it = mergedData->mergedPeakSet().begin(); it != mergedData->mergedPeakSet().end();
+         ++it)
+        merged_peaks.emplace_back(const_cast<MergedPeak*>(&(*it)));
+    std::sort(merged_peaks.begin(), merged_peaks.end(), &mergedPeakGreaterThan);
+
+    std::shared_ptr<DataSet> data = merged_peaks[0]->peaks()[0]->dataSet();
     double wavelength = data->metadata().key<double>(at_wavelength);
     file << std::fixed << std::setw(8) << std::setprecision(3) << wavelength;
     file << " 0 0" << std::endl;
 
-    for (const MergedPeak& peak : mergedData->mergedPeakSet()) {
-        const auto hkl = peak.index();
-        const double intensity = peak.intensity().value();
-        const double sigma = peak.intensity().sigma();
+    for (MergedPeak* peak : merged_peaks) {
+        const auto hkl = peak->index();
+        const double intensity = peak->intensity().value();
+        const double sigma = peak->intensity().sigma();
 
         file << std::fixed << std::setw(4) << hkl[0] << std::fixed << std::setw(4) << hkl[1]
              << std::fixed << std::setw(4) << hkl[2] << std::fixed << std::setw(14)
@@ -180,6 +204,7 @@ bool PeakExporter::saveToSCAUnmerged(
         for (auto* unmerged_peak : peak.peaks())
             peak_vector.push_back(unmerged_peak);
     }
+    std::sort(peak_vector.begin(), peak_vector.end(), &peakGreaterThan);
     const UnitCellCharacter character = cell->character();
     std::string symbol = cell->spaceGroup().symbol();
     std::for_each(symbol.begin(), symbol.end(), [](char& c) { c = ::tolower(c); });
@@ -228,11 +253,12 @@ bool PeakExporter::saveToSCAMerged(
     if (!file.is_open())
         return false;
 
-    std::vector<const Peak3D*> peak_vector;
-    for (const MergedPeak& peak : mergedData->mergedPeakSet()) {
-        for (const Peak3D* unmerged_peak : peak.peaks())
-            peak_vector.push_back(unmerged_peak);
-    }
+    std::vector<MergedPeak*> merged_peaks;
+    for (auto it = mergedData->mergedPeakSet().begin(); it != mergedData->mergedPeakSet().end();
+         ++it)
+        merged_peaks.emplace_back(const_cast<MergedPeak*>(&(*it)));
+    std::sort(merged_peaks.begin(), merged_peaks.end(), &mergedPeakGreaterThan);
+
     const UnitCellCharacter character = cell->character();
     std::string symbol = cell->spaceGroup().symbol();
     std::for_each(symbol.begin(), symbol.end(), [](char& c) { c = ::tolower(c); });
@@ -246,10 +272,10 @@ bool PeakExporter::saveToSCAMerged(
          << std::setprecision(3) << character.beta / deg << std::fixed << std::setw(10)
          << std::setprecision(3) << character.gamma / deg << " " << symbol << std::endl;
 
-    for (const MergedPeak& peak : mergedData->mergedPeakSet()) {
-        const auto hkl = peak.index();
-        const double intensity = peak.intensity().value() * scale;
-        const double sigma_intensity = peak.intensity().sigma() * scale;
+    for (MergedPeak* peak : merged_peaks) {
+        const auto hkl = peak->index();
+        const double intensity = peak->intensity().value() * scale;
+        const double sigma_intensity = peak->intensity().sigma() * scale;
 
         file << std::fixed << std::setw(4) << hkl(0) << std::fixed << std::setw(4) << hkl(1)
              << std::fixed << std::setw(4) << hkl(2) << " " << std::setprecision(1);
