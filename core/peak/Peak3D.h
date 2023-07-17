@@ -181,6 +181,8 @@ class Peak3D {
         const RegionType& regionType);
     //! Return the q vector of the peak, transformed into sample coordinates.
     ReciprocalVector q() const;
+    //! Resolution (A) of this peak
+    double d() const;
     //! Return q vector in cases where we do *not* want to interpolate the InstrumentState
     //! (e.g. when indexing a single frame)
     ReciprocalVector q(const InstrumentState& state) const;

@@ -280,6 +280,14 @@ ReciprocalVector Peak3D::q() const
     return q(state);
 }
 
+double Peak3D::d() const
+{
+    double modq = q().rowVector().norm();
+    if (modq < _sigma2_eps)
+        return 0.0;
+    return 1.0 / modq;
+}
+
 ReciprocalVector Peak3D::q(const InstrumentState& state) const
 {
     const auto* detector = _data->diffractometer()->detector();
