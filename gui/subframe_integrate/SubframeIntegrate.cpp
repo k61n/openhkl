@@ -24,6 +24,7 @@
 #include "gui/MainWin.h" // gGui
 #include "gui/frames/ProgressView.h"
 #include "gui/graphics/DetectorScene.h"
+#include "gui/items/PeakItem.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
 #include "gui/subwindows/DetectorWindow.h"
@@ -146,10 +147,14 @@ void SubframeIntegrate::setPeakTableUp()
 
     _peak_table = new PeakTableView(this);
     _peak_collection_model.setRoot(&_peak_collection_item);
-    _peak_table->setModel(&_peak_collection_model);
+    _sort_proxy_model.setSourceModel(&_peak_collection_model);
+    _peak_table->setModel(&_sort_proxy_model);
+    // _peak_table->setModel(&_peak_collection_model);
     _peak_table->resizeColumnsToContents();
     _peak_table->setColumnHidden(PeakColumn::Enabled, true);
     _peak_table->setColumnHidden(PeakColumn::Count, true);
+
+    _peak_table->sortByColumn(PeakColumn::d, Qt::DescendingOrder);
 
     peak_grid->addWidget(_peak_table, 0, 0, 0, 0);
 

@@ -30,6 +30,7 @@
 #include <QPushButton>
 #include <QRandomGenerator>
 #include <QSizePolicy>
+#include <QSortFilterProxyModel>
 #include <QSplitter>
 #include <QTableWidget>
 #include <QVBoxLayout>
@@ -150,6 +151,7 @@ class SubframeIntegrate : public QWidget {
     ohkl::PeakCollection* _peak_collection;
     PeakCollectionItem _peak_collection_item;
     PeakCollectionModel _peak_collection_model;
+    QSortFilterProxyModel _sort_proxy_model;
 
     std::map<ohkl::Peak3D*, ohkl::RejectionFlag> _overlap_saved_flags;
     std::map<ohkl::Peak3D*, ohkl::RejectionFlag> _mask_saved_flags;
