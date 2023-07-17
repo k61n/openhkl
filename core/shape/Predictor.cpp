@@ -56,6 +56,13 @@ Predictor::Predictor() : _handler(nullptr)
     _strategy_params = std::make_unique<StrategyParameters>();
 }
 
+Predictor::~Predictor()
+{
+    for (ohkl::Peak3D* peak : _predicted_peaks)
+        delete peak;
+    _predicted_peaks.clear();
+}
+
 std::vector<Peak3D*> Predictor::buildPeaksFromMillerIndices(
     sptrDataSet data, const std::vector<MillerIndex>& hkls, const sptrUnitCell unit_cell,
     sptrProgressHandler handler)
@@ -100,6 +107,8 @@ std::vector<Peak3D*> Predictor::buildPeaksFromMillerIndices(
 void Predictor::predictPeaks(const sptrDataSet data, const sptrUnitCell unit_cell)
 {
     _params->log(Level::Info);
+    for (ohkl::Peak3D* peak : _predicted_peaks)
+        delete peak;
     _predicted_peaks.clear();
 
     // Generate the Miller indices found in the [dmin,dmax] shell
