@@ -147,9 +147,7 @@ void SubframeIntegrate::setPeakTableUp()
 
     _peak_table = new PeakTableView(this);
     _peak_collection_model.setRoot(&_peak_collection_item);
-    _sort_proxy_model.setSourceModel(&_peak_collection_model);
-    _peak_table->setModel(&_sort_proxy_model);
-    // _peak_table->setModel(&_peak_collection_model);
+    _peak_table->setModel(&_peak_collection_model);
     _peak_table->resizeColumnsToContents();
     _peak_table->setColumnHidden(PeakColumn::Enabled, true);
     _peak_table->setColumnHidden(PeakColumn::Count, true);
