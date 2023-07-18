@@ -354,19 +354,23 @@ void SubframeExperiment::importMasks()
 {
     QSettings settings = gGui->qSettings();
     settings.beginGroup("RecentDirectories");
-    QString loadDirectory = settings.value("masks", QDir::homePath()).toString() + "/mask.yml";
+    QString loadDirectory = settings.value("masks", QDir::homePath()).toString();
+    settings.setValue("masks", loadDirectory);
 
-    std::string file_path =
-        QFileDialog::getOpenFileName(this, "Import masks from file", loadDirectory, "YAML (*.yml)")
-            .toStdString();
+    QString file_path =
+        QFileDialog::getOpenFileName(this, "Import masks from file", loadDirectory, "YAML (*.yml)");
 
-    if (file_path.empty())
+    if (file_path.isEmpty())
         return;
 
     ohkl::MaskImporter importer(
-        file_path, _data_combo->currentData()->nFrames()); // TODO: update nframes
+        file_path.toStdString(), _data_combo->currentData()->nFrames()); // TODO: update nframes
     for (auto* mask : importer.getMasks())
         _data_combo->currentData()->addMask(mask);
+
+    QFileInfo info(file_path);
+    loadDirectory = info.absolutePath();
+    settings.setValue("masks", loadDirectory);
 
     _detector_widget->scene()->loadMasksFromData();
     toggleUnsafeWidgets();
@@ -376,18 +380,20 @@ void SubframeExperiment::exportMasks()
 {
     QSettings settings = gGui->qSettings();
     settings.beginGroup("RecentDirectories");
-    QString loadDirectory =
-        settings.value("experiment", QDir::homePath()).toString() + "/masks.yml";
+    QString loadDirectory = settings.value("experiment", QDir::homePath()).toString();
 
-    std::string file_path =
-        QFileDialog::getSaveFileName(this, "Export maks to ", loadDirectory, "YAML (*.yml)")
-            .toStdString();
+    QString file_path =
+        QFileDialog::getSaveFileName(this, "Export maks to ", loadDirectory, "YAML (*.yml)");
 
-    if (file_path.empty())
+    if (file_path.isEmpty())
         return;
 
     ohkl::MaskExporter exporter(_data_combo->currentData()->masks());
-    exporter.exportToFile(file_path);
+    exporter.exportToFile(file_path.toStdString());
+
+    QFileInfo info(file_path);
+    loadDirectory = info.absolutePath();
+    settings.setValue("masks", loadDirectory);
 
     toggleUnsafeWidgets();
 }
