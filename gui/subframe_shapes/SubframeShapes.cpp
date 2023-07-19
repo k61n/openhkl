@@ -197,9 +197,8 @@ void SubframeShapes::setInputUp()
     connect(
         _peak_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
         &SubframeShapes::grabShapeParameters);
-    connect(
-        _peak_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
-        &SubframeShapes::refreshPeakTable);
+    connect(_peak_combo, &QComboBox::currentTextChanged, this, &SubframeShapes::refreshPeakTable);
+    connect(_data_combo, &QComboBox::currentTextChanged, this, &SubframeShapes::refreshPeakTable);
     connect(
         _show_single_region, &QCheckBox::stateChanged, this, &SubframeShapes::onRegionModeChanged);
 

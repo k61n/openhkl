@@ -15,6 +15,7 @@
 #ifndef OHKL_GUI_MODELS_SESSION_H
 #define OHKL_GUI_MODELS_SESSION_H
 
+#include "core/data/DataTypes.h"
 #include "core/raw/DataKeys.h"
 
 #include <QString>

@@ -24,6 +24,7 @@
 #include "gui/models/Meta.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
+#include "gui/utility/DataComboBox.h"
 #include "gui/utility/GridFiller.h"
 #include "gui/utility/PeakComboBox.h"
 #include "gui/utility/PropertyScrollArea.h"
@@ -98,9 +99,7 @@ void SubframeFilterPeaks::setInputUp()
 
     _peak_combo = f.addPeakCombo(ComboType::PeakCollection, "Peak collection");
 
-    connect(
-        _peak_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
-        &SubframeFilterPeaks::refreshAll);
+    connect(_peak_combo, &QComboBox::currentTextChanged, this, &SubframeFilterPeaks::refreshAll);
 
     _left_layout->addWidget(input_box);
 }
@@ -309,9 +308,8 @@ void SubframeFilterPeaks::setFigureUp()
     connect(
         _detector_widget->scene(), &DetectorScene::signalSelectedPeakItemChanged, this,
         &SubframeFilterPeaks::changeSelected);
-    connect(
-        _peak_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
-        &SubframeFilterPeaks::refreshPeakTable);
+    connect(_peak_combo, &QComboBox::currentTextChanged, this, &SubframeFilterPeaks::refreshPeakTable);
+    connect(_detector_widget->dataCombo(), &QComboBox::currentTextChanged, this, &SubframeFilterPeaks::refreshPeakTable);
 
     _right_element->addWidget(figure_group);
 }

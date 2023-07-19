@@ -54,7 +54,6 @@
 #include <QMessageBox>
 #include <QSettings>
 #include <QStringList>
-#include <qfileinfo.h>
 #include <stdexcept>
 
 Session* gSession;
@@ -485,6 +484,7 @@ bool Session::loadTiffData(bool single_file /* = false */)
 
 void Session::onDataChanged()
 {
+    QSignalBlocker blocker(_data_combo);
     DataList data = currentProject()->experiment()->getAllData();
     _data_combo->clearAll();
     _data_combo->addDataSets(data);
@@ -502,8 +502,9 @@ void Session::onDataChanged()
                               .selectedMonochromator()
                               .yOffset();
         _beam_setter_widget->onBeamPosChanged({x_offset, y_offset});
+
+        onPeaksChanged();
     }
-    onPeaksChanged();
 }
 
 void Session::onExperimentChanged()
@@ -527,7 +528,7 @@ void Session::onExperimentChanged()
 
 void Session::onPeaksChanged()
 {
-    PeakList peaks = currentProject()->experiment()->getPeakCollections();
+    PeakList peaks = currentProject()->experiment()->getPeakCollections(currentProject()->currentData());
     // gGui->onPeaksChanged();
     _peak_combo->clearAll();
     _peak_combo->addPeakCollections(peaks);

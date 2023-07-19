@@ -24,6 +24,7 @@
 #include "gui/models/Session.h"
 #include "gui/utility/CellComboBox.h"
 #include "gui/utility/ColorButton.h"
+#include "gui/utility/DataComboBox.h"
 #include "gui/utility/GridFiller.h"
 #include "gui/utility/PeakComboBox.h"
 #include "gui/utility/PropertyScrollArea.h"
@@ -137,12 +138,10 @@ void DetectorWindow::setInputUp()
         _exp_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
         &DetectorWindow::refreshAll);
 
+    connect(_peak_combo_1, &QComboBox::currentTextChanged, this, &DetectorWindow::refreshPeakTable);
+    connect(_peak_combo_2, &QComboBox::currentTextChanged, this, &DetectorWindow::refreshPeakTable);
     connect(
-        _peak_combo_1, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
-        &DetectorWindow::refreshPeakTable);
-
-    connect(
-        _peak_combo_2, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
+        _detector_widget->dataCombo(), &QComboBox::currentTextChanged, this,
         &DetectorWindow::refreshPeakTable);
 
     connect(

@@ -13,6 +13,8 @@
 //  ***********************************************************************************************
 
 #include "gui/utility/DataComboBox.h"
+#include "gui/models/Project.h"
+#include "gui/models/Session.h"
 
 #include <QSignalBlocker>
 
@@ -22,9 +24,7 @@ QVector<DataComboBox*> DataComboBox::_all_combos;
 DataComboBox::DataComboBox(QWidget* parent) : QComboBox(parent), _current_index(0)
 {
     _all_combos.push_back(this);
-    connect(
-        this, QOverload<int>::of(&QComboBox::currentIndexChanged), this,
-        &DataComboBox::onDataChanged);
+    connect(this, &QComboBox::currentTextChanged, this, &DataComboBox::onDataChanged);
 }
 
 DataComboBox::~DataComboBox()
@@ -46,6 +46,7 @@ void DataComboBox::addDataSets(const DataList& data_list)
 {
     for (auto data : data_list)
         addDataSet(data);
+    gSession->currentProject()->setCurrentData(currentData());
 }
 
 //! Clear all elements
@@ -91,5 +92,7 @@ void DataComboBox::onDataChanged(int index)
         old_data->clearBuffer();
         new_data->initBuffer(true);
         _current_index = index;
+        gSession->currentProject()->setCurrentData(new_data);
     }
+    gSession->onDataChanged();
 }

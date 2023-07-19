@@ -184,7 +184,7 @@ class Experiment {
     //! Get a vector of unit cells in the experiment
     std::vector<sptrUnitCell> getSptrUnitCells();
     //! get a vector of pointers to peak collections
-    std::vector<PeakCollection*> getPeakCollections();
+    std::vector<PeakCollection*> getPeakCollections(sptrDataSet data = nullptr);
 
     // ShapeHandler
     //! Add a shape model

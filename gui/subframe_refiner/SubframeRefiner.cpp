@@ -96,15 +96,17 @@ SubframeRefiner::SubframeRefiner()
     _detector_widget->linkPeakModel(&_refined_model, _peak_view_widget_2, 1);
     detector_tab->setLayout(_detector_widget);
 
-    connect(
-        _peak_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
-        _detector_widget, &DetectorWidget::refresh);
-    connect(
-        _predicted_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+    connect(_peak_combo, &QComboBox::currentTextChanged, this, &SubframeRefiner::refreshAll);
+    connect(_data_combo, &QComboBox::currentTextChanged, this, &SubframeRefiner::refreshAll);
+    connect(_predicted_combo, &QComboBox::currentTextChanged,
         this, [=]() {
             updatePeaks();
             _detector_widget->refresh();
         });
+    connect(_data_combo, &QComboBox::currentTextChanged, this, [=]() {
+        updatePeaks();
+        _detector_widget->refresh();
+    });
     connect(
         _data_combo, QOverload<int>::of(&QComboBox::currentIndexChanged),
         _detector_widget->dataCombo(), &QComboBox::setCurrentIndex);

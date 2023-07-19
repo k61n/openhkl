@@ -127,9 +127,8 @@ void SubframeAutoIndexer::setInputUp()
     _data_combo = f.addDataCombo("Data set");
     _peak_combo = f.addPeakCombo(ComboType::FoundPeaks, "Peak collection");
 
-    connect(
-        _peak_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
-        &SubframeAutoIndexer::refreshPeakTable);
+    connect(_peak_combo, &QComboBox::currentTextChanged, this, &SubframeAutoIndexer::refreshPeakTable);
+    connect(_data_combo, &QComboBox::currentTextChanged, this, &SubframeAutoIndexer::refreshPeakTable);
 
     _left_layout->addWidget(input_box);
 }

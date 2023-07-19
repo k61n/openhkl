@@ -183,6 +183,16 @@ std::vector<PeakCollection*> PeakHandler::getPeakCollections()
     return collections;
 }
 
+std::vector<PeakCollection*> PeakHandler::getPeakCollections(sptrDataSet data)
+{
+    std::vector<PeakCollection*> collections;
+    for (const auto& [name, ptr] : _peak_collections) {
+        if (ptr->data() == data)
+            collections.push_back(ptr.get());
+    }
+    return collections;
+}
+
 void PeakHandler::setLastIndex(unsigned int last_index)
 {
     _last_index = last_index;

@@ -18,6 +18,7 @@
 #include "base/utils/Path.h" // tempFilename
 #include "base/utils/Units.h"
 #include "core/data/DataSet.h"
+#include "core/data/DataTypes.h"
 #include "core/experiment/DataHandler.h"
 #include "core/experiment/ExperimentExporter.h"
 #include "core/experiment/ExperimentImporter.h"
@@ -629,9 +630,12 @@ std::vector<sptrUnitCell> Experiment::getSptrUnitCells()
     return _cell_handler->getSptrUnitCells();
 }
 
-std::vector<PeakCollection*> Experiment::getPeakCollections()
+std::vector<PeakCollection*> Experiment::getPeakCollections(sptrDataSet data)
 {
-    return _peak_handler->getPeakCollections();
+    if (data)
+        return _peak_handler->getPeakCollections(data);
+    else 
+        return _peak_handler->getPeakCollections();
 }
 
 bool Experiment::addShapeModel(const std::string& name, const ShapeModel& shapes)

@@ -19,6 +19,7 @@
 #include <vector>
 
 #include "core/data/DataSet.h"
+#include "core/data/DataTypes.h"
 #include "core/shape/PeakCollection.h"
 
 namespace ohkl {
@@ -75,6 +76,8 @@ class PeakHandler {
     std::string generateName();
     //! Get a vector of pointers to peak collections
     std::vector<PeakCollection*> getPeakCollections();
+    //! Get a vector of pointers to peak collections associated with the given DataSet
+    std::vector<PeakCollection*> getPeakCollections(sptrDataSet data);
     //! Set the last index for naming peak collections
     void setLastIndex(unsigned int last_index);
 

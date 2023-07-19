@@ -31,6 +31,7 @@ unsigned int Project::_last_id = 0;
 
 Project::Project(QString name, QString instrument, bool strategy)
     : _experiment{new ohkl::Experiment{name.toStdString(), instrument.toStdString()}}
+    , _current_data(nullptr)
     , _strategy(strategy)
     , _id(++_last_id)
 {

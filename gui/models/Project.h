@@ -15,6 +15,7 @@
 #ifndef OHKL_GUI_MODELS_SESSIONEXPERIMENT_H
 #define OHKL_GUI_MODELS_SESSIONEXPERIMENT_H
 
+#include "core/data/DataTypes.h"
 #include <QStringList>
 #include <memory>
 #include <string>
@@ -77,6 +78,8 @@ class Project {
     void saveToFile(QString path);
     void saveAs(QString /*path*/) const { return; };
 
+    void setCurrentData(ohkl::sptrDataSet data) { _current_data = data; };
+    ohkl::sptrDataSet currentData() const { return _current_data; };
     QString currentFileName() const;
     void setCurrentFileName(const QString& name);
 
@@ -93,6 +96,8 @@ class Project {
 
     std::vector<PeakCollectionModel*> _peak_collection_models;
     std::vector<PeakCollectionItem*> _peak_collection_items;
+
+    ohkl::sptrDataSet _current_data;
 
     bool _strategy;
 
