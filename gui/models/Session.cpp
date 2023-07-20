@@ -490,21 +490,21 @@ void Session::onDataChanged()
     _data_combo->addDataSets(data);
     _data_combo->refreshAll();
 
-    if (gSession->currentProject()->hasDataSet()) {
-        double x_offset = _data_combo->currentData()
-                              ->diffractometer()
-                              ->source()
-                              .selectedMonochromator()
-                              .xOffset();
-        double y_offset = _data_combo->currentData()
-                              ->diffractometer()
-                              ->source()
-                              .selectedMonochromator()
-                              .yOffset();
-        _beam_setter_widget->onBeamPosChanged({x_offset, y_offset});
+    if (!gSession->currentProject()->hasDataSet())
+        return;
 
-        onPeaksChanged();
-    }
+    double x_offset = _data_combo->currentData()
+                            ->diffractometer()
+                            ->source()
+                            .selectedMonochromator()
+                            .xOffset();
+    double y_offset = _data_combo->currentData()
+                            ->diffractometer()
+                            ->source()
+                            .selectedMonochromator()
+                            .yOffset();
+    _beam_setter_widget->onBeamPosChanged({x_offset, y_offset});
+    onPeaksChanged();
 }
 
 void Session::onExperimentChanged()
@@ -528,8 +528,9 @@ void Session::onExperimentChanged()
 
 void Session::onPeaksChanged()
 {
-    PeakList peaks = currentProject()->experiment()->getPeakCollections(currentProject()->currentData());
-    // gGui->onPeaksChanged();
+    PeakList peaks =
+        currentProject()->experiment()->getPeakCollections(currentProject()->currentData());
+
     _peak_combo->clearAll();
     _peak_combo->addPeakCollections(peaks);
     _peak_combo->refreshAll();

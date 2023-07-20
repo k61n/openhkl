@@ -24,7 +24,6 @@
 #include <QDir>
 #include <QStringList>
 
-#include <qfileinfo.h>
 #include <vector>
 
 unsigned int Project::_last_id = 0;

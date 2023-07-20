@@ -16,6 +16,7 @@
 #define OHKL_GUI_MODELS_SESSIONEXPERIMENT_H
 
 #include "core/data/DataTypes.h"
+
 #include <QStringList>
 #include <memory>
 #include <string>

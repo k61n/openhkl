@@ -24,7 +24,9 @@ QVector<DataComboBox*> DataComboBox::_all_combos;
 DataComboBox::DataComboBox(QWidget* parent) : QComboBox(parent), _current_index(0)
 {
     _all_combos.push_back(this);
-    connect(this, &QComboBox::currentTextChanged, this, &DataComboBox::onDataChanged);
+    connect(
+        this, QOverload<int>::of(&QComboBox::currentIndexChanged), this,
+        &DataComboBox::onDataChanged);
 }
 
 DataComboBox::~DataComboBox()
@@ -44,9 +46,12 @@ void DataComboBox::addDataSet(const ohkl::sptrDataSet& data)
 
 void DataComboBox::addDataSets(const DataList& data_list)
 {
+    QSignalBlocker blocker(this);
     for (auto data : data_list)
         addDataSet(data);
-    gSession->currentProject()->setCurrentData(currentData());
+    if (gSession->currentProject()->hasDataSet())
+        if (!gSession->currentProject()->currentData())
+            gSession->currentProject()->setCurrentData(currentData());
 }
 
 //! Clear all elements
@@ -86,13 +91,14 @@ void DataComboBox::refreshAll()
 
 void DataComboBox::onDataChanged(int index)
 {
-    if (index != _current_index) {
-        auto old_data = _data_sets.at(_current_index);
-        auto new_data = _data_sets.at(index);
-        old_data->clearBuffer();
-        new_data->initBuffer(true);
-        _current_index = index;
-        gSession->currentProject()->setCurrentData(new_data);
-    }
+    if (!gSession->currentProject()->hasDataSet() || index == _current_index)
+        return;
+
+    auto old_data = _data_sets.at(_current_index);
+    auto new_data = _data_sets.at(index);
+    old_data->clearBuffer();
+    new_data->initBuffer(true);
+    _current_index = index;
+    gSession->currentProject()->setCurrentData(currentData());
     gSession->onDataChanged();
 }
