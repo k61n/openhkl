@@ -540,8 +540,11 @@ void Session::onPeaksChanged()
     _predicted_peak_combo->clearAll();
     _predicted_peak_combo->addPeakCollections(peaks);
     _predicted_peak_combo->refreshAll();
+
+    PeakList all_peaks = currentProject()->experiment()->getPeakCollections();
+
     _integrated_peak_combo->clearAll();
-    _integrated_peak_combo->addPeakCollections(peaks);
+    _integrated_peak_combo->addPeakCollections(all_peaks);
     _integrated_peak_combo->refreshAll();
 }
 
