@@ -140,8 +140,8 @@ void SubframeRefiner::setInputUp()
     auto input_box = new Spoiler("Input");
     GridFiller f(input_box, true);
 
-    _peak_combo = f.addPeakCombo(ComboType::FoundPeaks, "Peaks");
     _data_combo = f.addDataCombo("Data set");
+    _peak_combo = f.addPeakCombo(ComboType::FoundPeaks, "Peaks");
     _cell_combo = f.addCellCombo("Unit cell");
     _batch_cell_check = f.addCheckBox(
         "Use refined cells", "Use unit cells generated per batch during previous refinement", 1);

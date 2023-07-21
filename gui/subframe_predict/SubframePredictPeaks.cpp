@@ -41,6 +41,7 @@
 #include "gui/subframe_refiner/SubframeRefiner.h"
 #include "gui/utility/CellComboBox.h"
 #include "gui/utility/ColorButton.h"
+#include "gui/utility/DataComboBox.h"
 #include "gui/utility/GridFiller.h"
 #include "gui/utility/PeakComboBox.h"
 #include "gui/utility/PropertyScrollArea.h"
@@ -86,9 +87,9 @@ SubframePredictPeaks::SubframePredictPeaks()
 
     _right_element->addWidget(figure_group);
 
+    setParametersUp();
     setAdjustBeamUp();
     setRefineKiUp();
-    setParametersUp();
     setShapeModelUp();
     setPreviewUp();
     setSaveUp();
@@ -111,6 +112,12 @@ SubframePredictPeaks::SubframePredictPeaks()
 
     _shape_params = std::make_shared<ohkl::ShapeModelParameters>();
 
+    connect(
+        _data_combo, QOverload<int>::of(&QComboBox::currentIndexChanged),
+        _detector_widget->dataCombo(), &QComboBox::setCurrentIndex);
+    connect(
+        _detector_widget->dataCombo(), QOverload<int>::of(&QComboBox::currentIndexChanged),
+        _data_combo, &QComboBox::setCurrentIndex);
     connect(
         _detector_widget->scene(), &DetectorScene::signalSelectedPeakItemChanged, this,
         &SubframePredictPeaks::changeSelected);
@@ -181,6 +188,7 @@ void SubframePredictPeaks::setParametersUp()
     Spoiler* para_box = new Spoiler("Predict peaks");
     GridFiller f(para_box, true);
 
+    _data_combo = f.addDataCombo("Data set:");
     _cell_combo = f.addCellCombo("Unit cell:");
     std::tie(_d_min, _d_max) = f.addDoubleSpinBoxPair(
         "Resolution (d) range", "(\u212B)  - minimum and maximum resolution for peak prediction");
@@ -298,7 +306,7 @@ void SubframePredictPeaks::refreshAll()
     if (!gSession->currentProject()->hasDataSet())
         return;
     refreshPeakTable();
-    const auto data = _detector_widget->currentData();
+    const auto data = _data_combo->currentData();
     if (data) {
         _n_batches_spin->setMaximum(data->nFrames());
         _beam_setter_widget->setSpinLimits(data->nCols(), data->nRows());
@@ -382,7 +390,7 @@ void SubframePredictPeaks::refineKi()
     gGui->setReady(false);
     auto expt = gSession->currentProject()->experiment();
     auto* peaks = _peak_combo->currentPeakCollection();
-    auto data = _detector_widget->currentData();
+    auto data = _data_combo->currentData();
     auto* detector = data->diffractometer()->detector();
     auto& states = data->instrumentStates();
     auto refiner = expt->refiner();
@@ -394,7 +402,6 @@ void SubframePredictPeaks::refineKi()
 
     // Manally adjust the direct beam position
     if (_beam_setter_widget->crosshairOn()->isChecked()) {
-        auto data = _detector_widget->currentData();
         emit gGui->sentinel->instrumentStatesChanged();
         data->adjustDirectBeam(_beam_setter_widget->xOffset(), _beam_setter_widget->yOffset());
     }
@@ -430,7 +437,7 @@ void SubframePredictPeaks::runPrediction()
 {
     gGui->setReady(false);
     // Manally adjust the direct beam position
-    auto data = _detector_widget->currentData();
+    auto data = _data_combo->currentData();
     if (_beam_setter_widget->crosshairOn()->isChecked()) {
         data->adjustDirectBeam(_beam_setter_widget->xOffset(), _beam_setter_widget->yOffset());
         emit gGui->sentinel->instrumentStatesChanged();
@@ -476,7 +483,7 @@ void SubframePredictPeaks::showDirectBeamEvents()
     if (_direct_beam->isChecked()) {
         _detector_widget->scene()->params()->directBeam = true;
 
-        const auto data = _detector_widget->currentData();
+        const auto data = _data_combo->currentData();
 
         _direct_beam_events.clear();
         const auto& states = data->instrumentStates();
@@ -524,7 +531,7 @@ void SubframePredictPeaks::accept()
     // suggest name to user
     auto* project = gSession->currentProject();
     auto* expt = project->experiment();
-    auto data = _detector_widget->currentData();
+    auto data = _data_combo->currentData();
     auto cell = _cell_combo->currentCell();
     std::string suggestion = expt->generatePeakCollectionName();
     std::unique_ptr<ListNameDialog> dlg(new ListNameDialog(QString::fromStdString(suggestion)));

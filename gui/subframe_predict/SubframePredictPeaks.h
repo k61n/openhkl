@@ -34,6 +34,7 @@
 #include <QWidget>
 
 class CellComboBox;
+class DataComboBox;
 class DetectorWidget;
 class DirectBeamWidget;
 class PeakComboBox;
@@ -137,6 +138,7 @@ class SubframePredictPeaks : public QWidget {
     Spoiler* _set_initial_ki;
     DirectBeamWidget* _beam_setter_widget;
 
+    DataComboBox* _data_combo;
     PeakComboBox* _peak_combo;
     SafeSpinBox* _n_batches_spin;
     SafeSpinBox* _max_iter_spin;

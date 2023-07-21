@@ -88,6 +88,12 @@ SubframeFilterPeaks::SubframeFilterPeaks()
     _right_element->setStretchFactor(1, 1);
 
     connect(
+        _data_combo, QOverload<int>::of(&QComboBox::currentIndexChanged),
+        _detector_widget->dataCombo(), &QComboBox::setCurrentIndex);
+    connect(
+        _detector_widget->dataCombo(), QOverload<int>::of(&QComboBox::currentIndexChanged),
+        _data_combo, &QComboBox::setCurrentIndex);
+    connect(
         _peak_view_widget, &PeakViewWidget::settingsChanged, _detector_widget,
         &DetectorWidget::refresh);
 }
@@ -97,9 +103,13 @@ void SubframeFilterPeaks::setInputUp()
     auto input_box = new Spoiler("Input");
     GridFiller f(input_box, true);
 
+    _data_combo = f.addDataCombo("Data set");
     _peak_combo = f.addPeakCombo(ComboType::PeakCollection, "Peak collection");
 
-    connect(_peak_combo, &QComboBox::currentTextChanged, this, &SubframeFilterPeaks::refreshAll);
+    connect(
+        _peak_combo, &QComboBox::currentTextChanged, this, &SubframeFilterPeaks::refreshPeakTable);
+    connect(
+        _data_combo, &QComboBox::currentTextChanged, this, &SubframeFilterPeaks::refreshPeakTable);
 
     _left_layout->addWidget(input_box);
 }

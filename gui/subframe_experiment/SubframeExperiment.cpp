@@ -229,8 +229,8 @@ void SubframeExperiment::setPreviewUp()
 
 void SubframeExperiment::setStrategyUp()
 {
-    setAdjustBeamUp();
     setPeakFinder2DUp();
+    setAdjustBeamUp();
     setIndexerUp();
     setPredictUp();
     setPreviewUp();

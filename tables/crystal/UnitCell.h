@@ -15,6 +15,7 @@
 #ifndef OHKL_TABLES_CRYSTAL_UNITCELL_H
 #define OHKL_TABLES_CRYSTAL_UNITCELL_H
 
+#include "core/data/DataTypes.h"
 #include "tables/crystal/NiggliCharacter.h"
 #include "tables/crystal/SpaceGroup.h"
 
@@ -87,6 +88,12 @@ class UnitCell {
     ~UnitCell() = default;
 
     UnitCell& operator=(const UnitCell& other);
+
+    //! Set the DataSet associated with this cell
+    void setData(sptrDataSet data) { _data = data; };
+
+    //! Get the DataSet associated with this cell
+    sptrDataSet data() const { return _data; };
 
     //! Sets lattice parameters
     void setParameters(double a, double b, double c, double alpha, double beta, double gamma);
@@ -292,6 +299,8 @@ class UnitCell {
     UnitCellCharacter _characterSigmas;
 
     unsigned int _id;
+
+    sptrDataSet _data;
 };
 
 //! Print to a stream

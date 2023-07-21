@@ -32,6 +32,7 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
+class DataComboBox;
 class DetectorWidget;
 class PeakComboBox;
 class PeakItemGraphic;
@@ -148,6 +149,7 @@ class SubframeFilterPeaks : public QWidget {
 
     QComboBox* _rejection_flag_combo;
 
+    DataComboBox* _data_combo;
     PeakComboBox* _peak_combo;
 
     QPushButton* _filter_button;

@@ -97,6 +97,7 @@ UnitCell::UnitCell()
     , _name("uc")
     , _indexingTolerance(0.2)
     , _id(0)
+    , _data(nullptr)
 {
 }
 
@@ -113,6 +114,7 @@ UnitCell::UnitCell(const UnitCell& other)
     , _niggli(other._niggli)
     , _characterSigmas(other._characterSigmas)
     , _id(0)
+    , _data(other._data)
 {
 }
 
@@ -136,6 +138,7 @@ UnitCell& UnitCell::operator=(const UnitCell& other)
         _indexingTolerance = other._indexingTolerance;
         _niggli = other._niggli;
         _characterSigmas = other._characterSigmas;
+        _data = other._data;
     }
     return *this;
 }
