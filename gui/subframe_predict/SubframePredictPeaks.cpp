@@ -292,8 +292,6 @@ void SubframePredictPeaks::refreshAll()
     if (!gSession->hasProject())
         return;
 
-    _cell_combo->refresh();
-    _peak_combo->refresh();
     grabRefinerParameters();
     grabPredictorParameters();
     grabShapeModelParameters();

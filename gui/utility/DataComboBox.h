@@ -52,6 +52,9 @@ class DataComboBox : public QComboBox {
     //! Refresh all combos of this type
     void refreshAll();
 
+    //! Set all data combos to the same DataSet
+    void syncAll();
+
  public slots:
     void onDataChanged(int index);
 

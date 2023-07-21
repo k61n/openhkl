@@ -401,9 +401,6 @@ void SubframeShapes::refreshAll()
     if (!gSession->hasProject())
         return;
 
-    _data_combo->refresh();
-    _peak_combo->refresh();
-    _predicted_combo->refresh();
     refreshPeakTable();
     _detector_widget->refresh();
     _params = gSession->currentProject()->experiment()->shapeParameters();

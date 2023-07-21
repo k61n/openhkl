@@ -13,8 +13,10 @@
 //  ***********************************************************************************************
 
 #include "gui/utility/DataComboBox.h"
+#include "gui/MainWin.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
+#include "gui/utility/SideBar.h"
 
 #include <QSignalBlocker>
 
@@ -89,6 +91,14 @@ void DataComboBox::refreshAll()
         combo->refresh();
 }
 
+void DataComboBox::syncAll()
+{
+    for (auto* combo : _all_combos) {
+        QSignalBlocker blocker(combo);
+        combo->setCurrentIndex(_current_index);
+    }
+}
+
 void DataComboBox::onDataChanged(int index)
 {
     if (!gSession->currentProject()->hasDataSet() || index == _current_index)
@@ -99,6 +109,7 @@ void DataComboBox::onDataChanged(int index)
     old_data->clearBuffer();
     new_data->initBuffer(true);
     _current_index = index;
+    syncAll();
     gSession->currentProject()->setCurrentData(currentData());
     gSession->onDataChanged();
 }

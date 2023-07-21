@@ -344,7 +344,6 @@ void SubframeFindPeaks::refreshAll()
     if (!gSession->hasProject())
         return;
 
-    _data_combo->refresh();
     _detector_widget->refresh();
     grabFinderParameters();
     if (gSession->currentProject()->hasDataSet()) {

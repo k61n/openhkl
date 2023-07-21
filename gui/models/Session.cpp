@@ -505,6 +505,7 @@ void Session::onDataChanged()
                             .yOffset();
     _beam_setter_widget->onBeamPosChanged({x_offset, y_offset});
     onPeaksChanged();
+    gGui->sideBar()->refreshCurrent();
 }
 
 void Session::onExperimentChanged()

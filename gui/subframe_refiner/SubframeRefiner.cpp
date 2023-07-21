@@ -191,12 +191,6 @@ void SubframeRefiner::refreshAll()
     if (!gSession->hasProject())
         return;
 
-    _data_combo->refresh();
-    _predicted_combo->refresh();
-    _peak_combo->refresh();
-    _cell_combo->refresh();
-
-
     updatePeaks();
     grabRefinerParameters();
     _detector_widget->refresh();

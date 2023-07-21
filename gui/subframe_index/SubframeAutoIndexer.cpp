@@ -304,8 +304,6 @@ void SubframeAutoIndexer::refreshAll()
     if (!gSession->currentProject()->hasDataSet())
         return;
 
-    _data_combo->refresh();
-    _peak_combo->refresh();
     refreshPeakTable();
     _detector_widget->refresh();
     _solution_table->setModel(nullptr);

@@ -129,8 +129,8 @@ void SubframeIntegrate::setFigureUp()
     connect(
         _detector_widget->scene(), &DetectorScene::signalSelectedPeakItemChanged, this,
         &SubframeIntegrate::changeSelected);
-    connect(_peak_combo, &QComboBox::currentTextChanged, this, &SubframeIntegrate::refreshAll);
-    connect(_data_combo, &QComboBox::currentTextChanged, this, &SubframeIntegrate::refreshAll);
+    connect(_peak_combo, &QComboBox::currentTextChanged, this, &SubframeIntegrate::refreshPeakTable);
+    connect(_data_combo, &QComboBox::currentTextChanged, this, &SubframeIntegrate::refreshPeakTable);
 
     _right_element->addWidget(figure_group);
 }
@@ -174,9 +174,7 @@ void SubframeIntegrate::refreshAll()
     if (!gSession->hasProject())
         return;
 
-    _data_combo->refresh();
     _detector_widget->refresh();
-    _peak_combo->refresh();
     refreshPeakTable();
     grabIntegrationParameters();
     toggleUnsafeWidgets();

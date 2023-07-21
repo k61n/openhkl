@@ -338,8 +338,6 @@ void SubframeFilterPeaks::refreshAll()
     if (!gSession->hasProject())
         return;
 
-    _peak_combo->refresh();
-    _unit_cell->refresh();
     _detector_widget->refresh();
     refreshPeakTable();
     grabFilterParameters();
