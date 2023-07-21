@@ -261,7 +261,7 @@ void Experiment::autoIndex(PeakCollection* peaks, sptrDataSet data)
     ohklLog(Level::Info, "Indexing using ", ncaught, " / ", npeaks, " peaks");
     _peak_handler->acceptFilter(collection_name, peaks, PeakCollectionType::INDEXING, data);
     PeakCollection* indexing_collection = getPeakCollection(collection_name);
-    _auto_indexer->autoIndex(indexing_collection);
+    _auto_indexer->autoIndex(indexing_collection, data);
     _peak_handler->removePeakCollection(collection_name);
 }
 
@@ -487,16 +487,17 @@ void Experiment::addUnitCell(const std::string& name, const UnitCell& unit_cell)
 }
 
 void Experiment::addUnitCell(
-    const std::string& name, double a, double b, double c, double alpha, double beta, double gamma)
+    const std::string& name, double a, double b, double c, double alpha, double beta, double gamma,
+    sptrDataSet data)
 {
-    _cell_handler->addUnitCell(name, a, b, c, alpha, beta, gamma);
+    _cell_handler->addUnitCell(name, a, b, c, alpha, beta, gamma, data);
 }
 
 void Experiment::addUnitCell(
     const std::string& name, double a, double b, double c, double alpha, double beta, double gamma,
-    const std::string& space_group)
+    const std::string& space_group, sptrDataSet data)
 {
-    _cell_handler->addUnitCell(name, a, b, c, alpha, beta, gamma, space_group);
+    _cell_handler->addUnitCell(name, a, b, c, alpha, beta, gamma, space_group, data);
 }
 
 bool Experiment::hasUnitCell(const std::string& name) const
@@ -553,9 +554,9 @@ void Experiment::assignUnitCell(PeakCollection* peaks, std::string name)
 }
 
 void Experiment::setReferenceCell(
-    double a, double b, double c, double alpha, double beta, double gamma)
+    double a, double b, double c, double alpha, double beta, double gamma, sptrDataSet data)
 {
-    _cell_handler->setReferenceCell(a, b, c, alpha, beta, gamma);
+    _cell_handler->setReferenceCell(a, b, c, alpha, beta, gamma, data);
 }
 
 std::vector<std::string> Experiment::getCompatibleSpaceGroups() const

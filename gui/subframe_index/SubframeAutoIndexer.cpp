@@ -448,7 +448,8 @@ void SubframeAutoIndexer::runAutoIndexer()
 
     _solutions.clear();
 
-    bool success = autoindexer->autoIndex(_peak_combo->currentPeakCollection());
+    bool success =
+        autoindexer->autoIndex(_peak_combo->currentPeakCollection(), _data_combo->currentData());
     if (!success) {
         gGui->statusBar()->showMessage("Indexing failed");
         return;

@@ -47,11 +47,11 @@ class UnitCellHandler {
     //! Add a unit cell to the experiment via cell parameters (skip autoindexing step)
     void addUnitCell(
         const std::string& name, double a, double b, double c, double alpha, double beta,
-        double gamma);
+        double gamma, sptrDataSet data);
     //! Add a user-defined unit cell to the experiment including space group
     void addUnitCell(
         const std::string& name, double a, double b, double c, double alpha, double beta,
-        double gamma, const std::string& space_group);
+        double gamma, const std::string& space_group, sptrDataSet data);
     //! Returns true if the experiment has a data
     bool hasUnitCell(const std::string& name) const;
     //! Get a list of loaded list names
@@ -68,7 +68,8 @@ class UnitCellHandler {
     void swapUnitCells(
         const std::string& old_cell, const std::string& new_cell, PeakHandler* peak_handler) const;
     //! Set the reference cell
-    void setReferenceCell(double a, double b, double c, double alpha, double beta, double gamma);
+    void setReferenceCell(
+        double a, double b, double c, double alpha, double beta, double gamma, sptrDataSet data);
     //! Get the number of peak lists
     int numUnitCells() const { return _unit_cells.size(); };
     //! Accept an autoindexer solution as the unit cell

@@ -226,24 +226,24 @@ void Actions::setupCell()
 
 void Actions::addCell()
 {
-    QStringList space_groups;
-    for (const auto& symbol : ohkl::SpaceGroup::symbols())
-        space_groups.push_back(QString::fromStdString(symbol));
-    std::unique_ptr<NewCellDialog> dlg(new NewCellDialog(space_groups));
-    dlg->exec();
+    // QStringList space_groups;
+    // for (const auto& symbol : ohkl::SpaceGroup::symbols())
+    //     space_groups.push_back(QString::fromStdString(symbol));
+    // std::unique_ptr<NewCellDialog> dlg(new NewCellDialog(space_groups));
+    // dlg->exec();
 
-    if (dlg->unitCellName().isEmpty())
-        return;
-    if (dlg->result() == QDialog::Rejected)
-        return;
+    // if (dlg->unitCellName().isEmpty())
+    //     return;
+    // if (dlg->result() == QDialog::Rejected)
+    //     return;
 
-    ohkl::Experiment* expt = gSession->currentProject()->experiment();
-    expt->addUnitCell(
-        dlg->unitCellName().toStdString(), dlg->a(), dlg->b(), dlg->c(), dlg->alpha(), dlg->beta(),
-        dlg->gamma(), dlg->spaceGroup().toStdString());
-    gSession->onUnitCellChanged();
-    auto cell_list = gSession->currentProject()->getUnitCellNames();
-    gGui->sideBar()->refreshCurrent();
+    // ohkl::Experiment* expt = gSession->currentProject()->experiment();
+    // expt->addUnitCell(
+    //     dlg->unitCellName().toStdString(), dlg->a(), dlg->b(), dlg->c(), dlg->alpha(), dlg->beta(),
+    //     dlg->gamma(), dlg->spaceGroup().toStdString());
+    // gSession->onUnitCellChanged();
+    // auto cell_list = gSession->currentProject()->getUnitCellNames();
+    // gGui->sideBar()->refreshCurrent();
 }
 
 void Actions::removeCell()

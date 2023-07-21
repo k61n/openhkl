@@ -144,11 +144,11 @@ class Experiment {
     //! Add a unit cell to the experiment via cell parameters (skip autoindexing step)
     void addUnitCell(
         const std::string& name, double a, double b, double c, double alpha, double beta,
-        double gamma);
+        double gamma, sptrDataSet data);
     //! Add a user-defined unit cell including space group
     void addUnitCell(
         const std::string& name, double a, double b, double c, double alpha, double beta,
-        double gamma, const std::string& space_group);
+        double gamma, const std::string& space_group, sptrDataSet data);
     //! Returns true if the experiment has a data
     bool hasUnitCell(const std::string& name) const;
     //! Get a list of loaded list names
@@ -172,7 +172,8 @@ class Experiment {
     //! Assign unit cell to a peak collection, compute Miller indices from q and cell
     void assignUnitCell(PeakCollection* peaks, std::string cellName = ohkl::kw_acceptedUnitcell);
     //! Set the reference cell
-    void setReferenceCell(double a, double b, double c, double alpha, double beta, double gamma);
+    void setReferenceCell(
+        double a, double b, double c, double alpha, double beta, double gamma, sptrDataSet data);
     //! Get space groups compatible with unit cell
     std::vector<std::string> getCompatibleSpaceGroups() const;
     //! Get the cell handler

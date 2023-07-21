@@ -72,8 +72,8 @@ TEST_CASE("test/crystal/TestGruberReductionCSV.cpp", "")
             continue; // unknown space group
         }
 
-        ohkl::UnitCell niggliCell(a, b, c, alpha, beta, gamma);
-        ohkl::UnitCell gruberCell(a, b, c, alpha, beta, gamma);
+        ohkl::UnitCell niggliCell(a, b, c, alpha, beta, gamma, nullptr);
+        ohkl::UnitCell gruberCell(a, b, c, alpha, beta, gamma, nullptr);
         ohkl::UnitCell cell;
 
         cell.setParameters(a, b, c, alpha, beta, gamma);

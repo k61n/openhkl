@@ -105,7 +105,7 @@ print(f'Autoindex: {n_caught}/{n_peaks} peaks caught by filter')
 
 # Autoindex the peaks
 autoindexer = expt.autoIndexer()
-expt.setReferenceCell(57.96, 65.12, 86.52, 90.0, 90.0, 90.0)
+expt.setReferenceCell(57.96, 65.12, 86.52, 90.0, 90.0, 90.0, data)
 autoindexer_params = ohkl.IndexerParameters()
 autoindexer_params.maxdim = 100.0
 autoindexer_params.nSolutions = 10

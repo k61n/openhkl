@@ -145,7 +145,7 @@ TEST_CASE("test/data/TestTrypsin.cpp", "")
               << std::endl;
 
     // Set the reference unit cell
-    experiment.setReferenceCell(54.9, 58.4, 67.3, 90, 90, 90);
+    experiment.setReferenceCell(54.9, 58.4, 67.3, 90, 90, 90, data);
     ohkl::SpaceGroup group{"P 21 21 21"};
     ohkl::sptrUnitCell ref_cell = experiment.getSptrUnitCell("reference");
     ref_cell->setSpaceGroup(group);

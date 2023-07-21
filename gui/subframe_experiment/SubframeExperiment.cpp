@@ -809,7 +809,7 @@ void SubframeExperiment::autoindex()
 
     const ohkl::InstrumentState& state =
         data->instrumentStates().at(_detector_widget->scene()->currentFrame());
-    indexer->autoIndex(peaks, &state, true);
+    indexer->autoIndex(peaks, data, &state, true);
 
     _solutions.clear();
     _solutions = indexer->solutions();

@@ -513,6 +513,9 @@ void ExperimentExporter::writeUnitCells(const std::vector<UnitCell*> unit_cells)
         const std::string unit_cell_name = unit_cell->name();
         writeAttribute(
             unit_cell_group, ohkl::at_unitCellName, unit_cell_name.data(), str80Type, metaSpace);
+        const std::string data_set_name = unit_cell->data()->name();
+        writeAttribute(
+            unit_cell_group, ohkl::at_datasetName, data_set_name.data(), str80Type, metaSpace);
         const double tolerance = unit_cell->indexingTolerance();
         writeAttribute(
             unit_cell_group, ohkl::at_indexingTol, &tolerance, H5::PredType::NATIVE_DOUBLE,

@@ -16,6 +16,7 @@
 #define OHKL_CORE_ALGO_AUTOINDEXER_H
 
 #include "base/utils/ProgressHandler.h"
+#include "core/data/DataTypes.h"
 #include "core/instrument/InstrumentState.h"
 #include "core/shape/PeakCollection.h"
 
@@ -98,11 +99,12 @@ class AutoIndexer {
     IndexerParameters* parameters();
     //! Perform the autoindexing, possibly for a single frame only
     bool autoIndex(
-        const std::vector<Peak3D*>& peaks, const InstrumentState* state = nullptr,
-        bool filter = true);
+        const std::vector<Peak3D*>& peaks, sptrDataSet data,
+        const InstrumentState* state = nullptr, bool filter = true);
     //! Autoindex by passing a peak collection (avoid SWIG memory leak)
     bool autoIndex(
-        PeakCollection* peaks, const InstrumentState* state = nullptr, bool filter = true);
+        PeakCollection* peaks, sptrDataSet data,
+        const InstrumentState* state = nullptr, bool filter = true);
     //! Return a list of the best solutions ordered by percentage of successfully indexed peaks
     const std::vector<RankedSolution>& solutions() const;
 
@@ -137,6 +139,7 @@ class AutoIndexer {
     //! Remove bad candidate unit cells
     void removeBad(double quality);
 
+    sptrDataSet _data;
     std::vector<Peak3D*> _filtered_peaks;
     std::unique_ptr<IndexerParameters> _params;
     std::vector<RankedSolution> _solutions;

@@ -78,11 +78,11 @@ class UnitCell {
     UnitCell();
 
     //! Create unit cell from a basis
-    UnitCell(const Eigen::Matrix3d& basis_, bool reciprocal = false);
+    UnitCell(const Eigen::Matrix3d& basis_, sptrDataSet data, bool reciprocal = false);
 
     //! Construct unitCell from lattice parameters, the A matrix is built with
     //! avector along x, bvector in the xy-plane.
-    UnitCell(double a, double b, double c, double alpha, double beta, double gamma);
+    UnitCell(double a, double b, double c, double alpha, double beta, double gamma, sptrDataSet data);
     UnitCell(const UnitCell& other);
 
     ~UnitCell() = default;

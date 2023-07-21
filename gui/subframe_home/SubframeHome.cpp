@@ -212,8 +212,8 @@ void SubframeHome::setRightLayout(QHBoxLayout* main_layout)
     _unitcell_table->setEditTriggers(QAbstractItemView::NoEditTriggers);
     _unitcell_table->setContextMenuPolicy(Qt::CustomContextMenu);
     _unitcell_table->setHorizontalHeaderLabels(QStringList{
-        "ID", "Name", "Space Group", "a", "b", "c", QChar(0xb1, 0x03), QChar(0xb2, 0x03),
-        QChar(0xb3, 0x03)});
+        "ID", "Name", "Data set", "Space Group", "a", "b", "c", QChar(0xb1, 0x03),
+        QChar(0xb2, 0x03), QChar(0xb3, 0x03)});
     _unitcell_table->resizeColumnsToContents();
     _unitcell_table->verticalHeader()->setVisible(false);
 
@@ -541,7 +541,7 @@ void SubframeHome::refreshTables() const
 
         if (ucell_names.size() > 0) {
             for (auto it = ucell_names.begin(); it != ucell_names.end(); ++it) {
-                auto data = gSession->currentProject()->experiment()->getUnitCell(*it);
+                auto cell = gSession->currentProject()->experiment()->getUnitCell(*it);
                 short n = std::distance(ucell_names.begin(), it);
 
                 if (n >= _unitcell_table->rowCount())
@@ -549,27 +549,29 @@ void SubframeHome::refreshTables() const
 
                 int col = 0;
                 _unitcell_table->setItem(
-                    n, col++, new QTableWidgetItem(QString::number(data->id())));
+                    n, col++, new QTableWidgetItem(QString::number(cell->id())));
                 _unitcell_table->setItem(
                     n, col++, new QTableWidgetItem(QString::fromStdString(*it)));
                 _unitcell_table->setItem(
-                    n, col++,
-                    new QTableWidgetItem(QString::fromStdString(data->spaceGroup().symbol())));
-                _unitcell_table->setItem(
-                    n, col++, new QTableWidgetItem(QString::number(data->character().a)));
-                _unitcell_table->setItem(
-                    n, col++, new QTableWidgetItem(QString::number(data->character().b)));
-                _unitcell_table->setItem(
-                    n, col++, new QTableWidgetItem(QString::number(data->character().c)));
+                    n, col++, new QTableWidgetItem(QString::fromStdString(cell->data()->name())));
                 _unitcell_table->setItem(
                     n, col++,
-                    new QTableWidgetItem(QString::number(data->character().alpha / ohkl::deg)));
+                    new QTableWidgetItem(QString::fromStdString(cell->spaceGroup().symbol())));
+                _unitcell_table->setItem(
+                    n, col++, new QTableWidgetItem(QString::number(cell->character().a)));
+                _unitcell_table->setItem(
+                    n, col++, new QTableWidgetItem(QString::number(cell->character().b)));
+                _unitcell_table->setItem(
+                    n, col++, new QTableWidgetItem(QString::number(cell->character().c)));
                 _unitcell_table->setItem(
                     n, col++,
-                    new QTableWidgetItem(QString::number(data->character().beta / ohkl::deg)));
+                    new QTableWidgetItem(QString::number(cell->character().alpha / ohkl::deg)));
                 _unitcell_table->setItem(
                     n, col++,
-                    new QTableWidgetItem(QString::number(data->character().gamma / ohkl::deg)));
+                    new QTableWidgetItem(QString::number(cell->character().beta / ohkl::deg)));
+                _unitcell_table->setItem(
+                    n, col++,
+                    new QTableWidgetItem(QString::number(cell->character().gamma / ohkl::deg)));
             }
             _unitcell_table->resizeColumnsToContents();
         }
