@@ -51,7 +51,10 @@
 // merger.svg: Merge by Muneer A.Safiah from the Noun Project
 
 SideBar::SideBar(QWidget* parent)
-    : QWidget(parent), mCheckedAction(nullptr), mOverAction(nullptr), _strategy(false)
+    : QWidget(parent)
+    , mCheckedAction(nullptr)
+    , mOverAction(nullptr)
+    , _strategy(false)
 {
     setMouseTracking(true);
 
@@ -245,79 +248,79 @@ QAction* SideBar::actionAt(const QPoint& at)
 
 void SideBar::onHome()
 {
-    gGui->_layout_stack->setCurrentIndex(0);
+    onSubframeChanged();
+    gGui->_layout_stack->setCurrentIndex(static_cast<int>(SubFrame::Home));
     gGui->home->refreshTables();
-    emit subframeChanged();
 }
 
 void SideBar::onExperiment()
 {
-    gGui->_layout_stack->setCurrentIndex(1);
+    onSubframeChanged();
+    gGui->_layout_stack->setCurrentIndex(static_cast<int>(SubFrame::Experiment));
     gGui->experiment->refreshAll();
-    emit subframeChanged();
 }
 
 void SideBar::onFindPeaks()
 {
-    gGui->_layout_stack->setCurrentIndex(2);
+    onSubframeChanged();
+    gGui->_layout_stack->setCurrentIndex(static_cast<int>(SubFrame::Find));
     gGui->finder->refreshAll();
-    emit subframeChanged();
 }
 
 void SideBar::onFilterPeaks()
 {
-    gGui->_layout_stack->setCurrentIndex(3);
+    onSubframeChanged();
+    gGui->_layout_stack->setCurrentIndex(static_cast<int>(SubFrame::Filter));
     gGui->filter->refreshAll();
-    emit subframeChanged();
 }
 
 void SideBar::onIndexer()
 {
-    gGui->_layout_stack->setCurrentIndex(4);
+    onSubframeChanged();
+    gGui->_layout_stack->setCurrentIndex(static_cast<int>(SubFrame::Index));
     gGui->indexer->refreshAll();
-    emit subframeChanged();
 }
 
 void SideBar::onShapes()
 {
-    gGui->_layout_stack->setCurrentIndex(5);
+    onSubframeChanged();
+    gGui->_layout_stack->setCurrentIndex(static_cast<int>(SubFrame::Shapes));
     gGui->shapes->refreshAll();
-    emit subframeChanged();
 }
 
 void SideBar::onPredictor()
 {
-    gGui->_layout_stack->setCurrentIndex(6);
+    onSubframeChanged();
+    gGui->_layout_stack->setCurrentIndex(static_cast<int>(SubFrame::Predict));
     gGui->predictor->refreshAll();
-    emit subframeChanged();
 }
 
 void SideBar::onRefiner()
 {
-    gGui->_layout_stack->setCurrentIndex(7);
+    onSubframeChanged();
+    gGui->_layout_stack->setCurrentIndex(static_cast<int>(SubFrame::Refine));
     gGui->refiner->refreshAll();
-    emit subframeChanged();
 }
 
 void SideBar::onIntegrator()
 {
-    gGui->_layout_stack->setCurrentIndex(8);
+    onSubframeChanged();
+    gGui->_layout_stack->setCurrentIndex(static_cast<int>(SubFrame::Integrate));
     gGui->integrator->refreshAll();
-    emit subframeChanged();
 }
 
 void SideBar::onReject()
 {
-    gGui->_layout_stack->setCurrentIndex(9);
+    onSubframeChanged();
+    gGui->_layout_stack->setCurrentIndex(static_cast<int>(SubFrame::Reject));
     gGui->rejector->refreshAll();
-    emit subframeChanged();
 }
 
 void SideBar::onMerger()
 {
-    gGui->_layout_stack->setCurrentIndex(10);
+    onSubframeChanged();
+    gGui->_layout_stack->setCurrentIndex(static_cast<int>(SubFrame::Merge));
     gGui->merger->refreshAll();
-    emit subframeChanged();
 }
 
 void SideBar::refreshAll()
@@ -339,6 +342,47 @@ void SideBar::refreshCurrent()
 
 void SideBar::onSubframeChanged()
 {
+    switch (static_cast<SubFrame>(gGui->_layout_stack->currentIndex())) {
+    case SubFrame::Experiment: {
+        gGui->experiment->setIndexerParameters();
+        gGui->experiment->setStrategyParameters();
+        break;
+    }
+    case SubFrame::Find: {
+        gGui->finder->setFinderParameters();
+        gGui->finder->setIntegrationParameters();
+        break;
+    }
+    case SubFrame::Filter: {
+        gGui->filter->setFilterParameters();
+        break;
+    }
+    case SubFrame::Index: {
+        gGui->indexer->setIndexerParameters();
+        break;
+    }
+    case SubFrame::Shapes: {
+        gGui->shapes->setShapeParameters();
+        break;
+    }
+    case SubFrame::Predict: {
+        gGui->predictor->setRefinerParameters();
+        gGui->predictor->setPredictorParameters();
+        gGui->predictor->setShapeModelParameters();
+        break;
+    }
+    case SubFrame::Refine: {
+        gGui->refiner->setRefinerParameters();
+        break;
+    }
+    case SubFrame::Integrate: {
+        gGui->integrator->setIntegrationParameters();
+        break;
+    }
+    // SubframeMergedPeaks does not need setMergeParameters because it is triggered on merging
+    }
+
     if (gSession->hasProject())
         gSession->currentProject()->writeYaml();
+
 }

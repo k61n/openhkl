@@ -166,9 +166,6 @@ void SubframePredictPeaks::setRefineKiUp()
     connect(
         _direct_beam, &QCheckBox::stateChanged, this, &SubframePredictPeaks::showDirectBeamEvents);
     connect(_refine_ki_button, &QPushButton::clicked, this, &SubframePredictPeaks::refineKi);
-    connect(
-        gGui->sideBar(), &SideBar::subframeChanged, this,
-        &SubframePredictPeaks::setRefinerParameters);
 
     _left_layout->addWidget(ki_box);
 }
@@ -202,12 +199,6 @@ void SubframePredictPeaks::setParametersUp()
     _d_max->setDecimals(2);
 
     connect(_predict_button, &QPushButton::clicked, this, &SubframePredictPeaks::runPrediction);
-    connect(
-        gGui->sideBar(), &SideBar::subframeChanged, this,
-        &SubframePredictPeaks::setPredictorParameters);
-    connect(
-        gGui->sideBar(), &SideBar::subframeChanged, this,
-        &SubframePredictPeaks::setShapeModelParameters);
 
     _left_layout->addWidget(para_box);
 }

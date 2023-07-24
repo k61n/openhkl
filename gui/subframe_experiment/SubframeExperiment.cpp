@@ -518,9 +518,6 @@ void SubframeExperiment::setIndexerUp()
 
     connect(_index_button, &QPushButton::clicked, this, &SubframeExperiment::autoindex);
     connect(_save_cell, &QPushButton::clicked, this, &SubframeExperiment::saveCell);
-    connect(
-        gGui->sideBar(), &SideBar::subframeChanged, this,
-        &SubframeExperiment::setIndexerParameters);
 
     _strategy_layout->addWidget(index_spoiler);
 }
@@ -571,9 +568,6 @@ void SubframeExperiment::setPredictUp()
     _predict_d_max->setValue(50);
 
     connect(_predict_button, &QPushButton::clicked, this, &SubframeExperiment::predict);
-    connect(
-        gGui->sideBar(), &SideBar::subframeChanged, this,
-        &SubframeExperiment::setStrategyParameters);
     connect(_save_peaks, &QPushButton::clicked, this, &SubframeExperiment::savePeaks);
 
     _strategy_layout->addWidget(predict_spoiler);
@@ -1258,6 +1252,7 @@ void SubframeExperiment::setUnitCell()
 void SubframeExperiment::refreshMaskTable()
 {
     _mask_table->clearContents();
+    _mask_table->setRowCount(0);
     if (!gSession->hasProject())
         return;
     if (!gSession->currentProject()->hasDataSet())

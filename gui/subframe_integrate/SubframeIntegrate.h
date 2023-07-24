@@ -60,6 +60,8 @@ class SubframeIntegrate : public QWidget {
     DetectorWidget* detectorWidget();
     //! Grab the refiner parameters
     void grabIntegrationParameters();
+    //! Set the refiner parameters
+    void setIntegrationParameters();
 
  public slots:
     void onGradientSettingsChanged();
@@ -70,8 +72,6 @@ class SubframeIntegrate : public QWidget {
  private:
     //! Select experiment, dataset, peak collection, unit cell
     void setInputUp();
-    //! Set the refiner parameters
-    void setIntegrationParameters();
 
     //! Update the unit cell list on experment change
     void updateUnitCellList();

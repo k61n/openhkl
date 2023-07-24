@@ -49,12 +49,12 @@ class SubframeMergedPeaks : public QWidget {
     void refreshAll();
     //! Get the merge parameters
     void grabMergeParameters();
+    //! Set the merge parameters
+    void setMergeParameters();
     //! Save unmerged/merged Peaks
     void savePeaks(bool merged);
 
  private:
-    //! Set the merge parameters
-    void setMergeParameters();
     //! Set up the GUI size policies
     void setSizePolicies();
     //! Set up widget for resolution shells

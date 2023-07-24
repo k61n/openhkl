@@ -87,6 +87,7 @@ class UnitCellHandler {
     void setLastIndex(unsigned int index);
     std::vector<UnitCell*> getUnitCells() const;
     std::vector<sptrUnitCell> getSptrUnitCells() const;
+    std::vector<sptrUnitCell> getSptrUnitCells(sptrDataSet data) const;
 
 
  private:

@@ -58,6 +58,11 @@ class SubframeShapes : public QWidget {
 
     //! Refresh all the inputs
     void refreshAll();
+    //! Grab the refiner parameters
+    void grabShapeParameters();
+    //! Set the refiner parameters
+    void setShapeParameters();
+
     //! detector view
     DetectorWidget* detectorWidget();
 
@@ -71,10 +76,6 @@ class SubframeShapes : public QWidget {
     void setInputUp();
     //! Select the peak to preview, generate mean covariance for selected peak or whole collection
     void setComputeShapesUp();
-    //! Grab the refiner parameters
-    void grabShapeParameters();
-    //! Set the refiner parameters
-    void setShapeParameters();
 
     //! Set up the peak view widget
     void setPreviewUp();

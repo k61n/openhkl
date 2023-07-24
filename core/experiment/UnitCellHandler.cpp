@@ -15,7 +15,6 @@
 #include "core/experiment/UnitCellHandler.h"
 #include "base/utils/Logger.h"
 #include "core/algo/AutoIndexer.h"
-#include "core/data/DataTypes.h"
 #include "core/experiment/PeakHandler.h"
 #include "core/raw/DataKeys.h"
 #include "core/shape/PeakCollection.h"
@@ -204,6 +203,15 @@ std::vector<sptrUnitCell> UnitCellHandler::getSptrUnitCells() const
     std::vector<sptrUnitCell> cells;
     for (auto cell : _unit_cells)
         cells.push_back(cell);
+    return cells;
+}
+
+std::vector<sptrUnitCell> UnitCellHandler::getSptrUnitCells(sptrDataSet data) const
+{
+    std::vector<sptrUnitCell> cells;
+    for (const auto& cell : _unit_cells)
+        if (cell->data() == data)
+            cells.push_back(cell);
     return cells;
 }
 

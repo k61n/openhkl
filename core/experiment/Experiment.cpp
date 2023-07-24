@@ -626,9 +626,12 @@ std::vector<UnitCell*> Experiment::getUnitCells()
     return _cell_handler->getUnitCells();
 }
 
-std::vector<sptrUnitCell> Experiment::getSptrUnitCells()
+std::vector<sptrUnitCell> Experiment::getSptrUnitCells(sptrDataSet data /* = nullptr */)
 {
-    return _cell_handler->getSptrUnitCells();
+    if (data)
+        return _cell_handler->getSptrUnitCells(data);
+    else
+        return _cell_handler->getSptrUnitCells();
 }
 
 std::vector<PeakCollection*> Experiment::getPeakCollections(sptrDataSet data)

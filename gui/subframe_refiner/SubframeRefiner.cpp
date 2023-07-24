@@ -180,8 +180,6 @@ void SubframeRefiner::setRefinerFlagsUp()
         _residual_combo->addItem(QString::fromStdString(key));
 
     connect(_refine_button, &QPushButton::clicked, this, &SubframeRefiner::refine);
-    connect(
-        gGui->sideBar(), &SideBar::subframeChanged, this, &SubframeRefiner::setRefinerParameters);
 
     _left_layout->addWidget(refiner_flags_box);
 }

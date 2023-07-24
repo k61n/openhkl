@@ -68,6 +68,13 @@ class SubframePredictPeaks : public QWidget {
     void grabRefinerParameters();
     //! Get shape collection parameters
     void grabShapeModelParameters();
+    //! Set refiner parameters
+    void setRefinerParameters();
+    //! Set prediction parameters
+    void setPredictorParameters();
+    //! Set shape collection parameters
+    void setShapeModelParameters();
+    //! Refine the incident wavevector
 
  private:
     //! Manually set the incident wavevector
@@ -87,13 +94,6 @@ class SubframePredictPeaks : public QWidget {
     //! Set the save button up
     void setSaveUp();
 
-    //! Set refiner parameters
-    void setRefinerParameters();
-    //! Set prediction parameters
-    void setPredictorParameters();
-    //! Set shape collection parameters
-    void setShapeModelParameters();
-    //! Refine the incident wavevector
     void refineKi();
     //! Refresh the found peaks list
     void refreshPeakTable();

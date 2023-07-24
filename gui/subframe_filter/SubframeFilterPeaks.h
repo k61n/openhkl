@@ -57,6 +57,8 @@ class SubframeFilterPeaks : public QWidget {
     DetectorWidget* detectorWidget();
     //! Grab the finder parameters
     void grabFilterParameters();
+    //! Set the filter parameters
+    void setFilterParameters();
 
  public slots:
 
@@ -93,9 +95,6 @@ class SubframeFilterPeaks : public QWidget {
     void accept();
     //! Disable unsafe widgets if no data loaded
     void toggleUnsafeWidgets();
-
-    //! Set the finder parameters
-    void setFilterParameters();
 
     //! Refresh the found peaks list
     void refreshPeakTable();

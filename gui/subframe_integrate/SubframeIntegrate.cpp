@@ -407,9 +407,6 @@ void SubframeIntegrate::setIntegrateUp()
     connect(
         _integrator_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
         this, &SubframeIntegrate::toggleUnsafeWidgets);
-    connect(
-        gGui->sideBar(), &SideBar::subframeChanged, this,
-        &SubframeIntegrate::setIntegrationParameters);
 
     _left_layout->addWidget(_integrate_box);
 }

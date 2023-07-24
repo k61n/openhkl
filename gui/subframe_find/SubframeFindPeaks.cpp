@@ -180,9 +180,6 @@ void SubframeFindPeaks::setBlobUp()
     connect(
         _threshold_check, &QCheckBox::stateChanged, this, &SubframeFindPeaks::showFilteredImage);
     connect(
-        gGui->sideBar(), &SideBar::subframeChanged, this,
-        &SubframeFindPeaks::setIntegrationParameters);
-    connect(
         _threshold_spin, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
         &SubframeFindPeaks::showFilteredImage);
     connect(
@@ -232,8 +229,6 @@ void SubframeFindPeaks::setIntegrateUp()
     _gradient_kernel->setCurrentIndex(1);
 
     connect(_integrate_button, &QPushButton::clicked, this, &SubframeFindPeaks::integrate);
-    connect(
-        gGui->sideBar(), &SideBar::subframeChanged, this, &SubframeFindPeaks::setFinderParameters);
 
     integration_para->setExpanded(true);
     _left_layout->addWidget(integration_para);

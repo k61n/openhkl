@@ -58,6 +58,8 @@ class SubframeRefiner : public QWidget {
     void refreshAll();
     //! Grab the refiner parameters
     void grabRefinerParameters();
+    //! Set the refiner parameters
+    void setRefinerParameters();
 
  private:
     //! Select experiment, dataset, peak collection, unit cell
@@ -70,9 +72,6 @@ class SubframeRefiner : public QWidget {
     void updatePeaks();
     //! Set up PeakViewWidgets
     void setPeakViewWidgetUp(PeakViewWidget* peak_widget, QString name);
-
-    //! Set the refiner parameters
-    void setRefinerParameters();
 
     //! set parameters for _n_batches spin box
     void setBatchesUp();

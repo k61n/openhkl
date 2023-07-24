@@ -505,7 +505,7 @@ void Session::onDataChanged()
                             .yOffset();
     _beam_setter_widget->onBeamPosChanged({x_offset, y_offset});
     onPeaksChanged();
-    gGui->sideBar()->refreshCurrent();
+    onUnitCellChanged();
 }
 
 void Session::onExperimentChanged()
@@ -547,12 +547,14 @@ void Session::onPeaksChanged()
     _integrated_peak_combo->clearAll();
     _integrated_peak_combo->addPeakCollections(all_peaks);
     _integrated_peak_combo->refreshAll();
+
+    gGui->sideBar()->refreshCurrent();
 }
 
 void Session::onUnitCellChanged()
 {
-    CellList cells = currentProject()->experiment()->getSptrUnitCells();
-    // gGui->onUnitCellChanged();
+    CellList cells = currentProject()->experiment()->getSptrUnitCells(currentProject()->currentData());
+
     _cell_combo->clearAll();
     _cell_combo->addCells(cells);
     _cell_combo->refreshAll();

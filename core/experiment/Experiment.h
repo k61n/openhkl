@@ -183,7 +183,7 @@ class Experiment {
     //! Get a vector of unit cells in the experiment
     std::vector<UnitCell*> getUnitCells();
     //! Get a vector of unit cells in the experiment
-    std::vector<sptrUnitCell> getSptrUnitCells();
+    std::vector<sptrUnitCell> getSptrUnitCells(sptrDataSet data = nullptr);
     //! get a vector of pointers to peak collections
     std::vector<PeakCollection*> getPeakCollections(sptrDataSet data = nullptr);
 

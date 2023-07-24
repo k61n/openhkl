@@ -305,9 +305,6 @@ void SubframeMergedPeaks::setDShellUp()
 
     connect(_save_shell, &QPushButton::clicked, this, &SubframeMergedPeaks::saveStatistics);
 
-    connect(
-        gGui->sideBar(), &SideBar::subframeChanged, this, &SubframeMergedPeaks::setMergeParameters);
-
     QWidget* down_widget = new QWidget();
     down_widget->setLayout(d_shell_down);
 

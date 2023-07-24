@@ -299,9 +299,6 @@ void SubframeFilterPeaks::setProceedUp()
 
     connect(_filter_button, &QPushButton::clicked, this, &SubframeFilterPeaks::filterPeaks);
     connect(_save_button, &QPushButton::clicked, this, &SubframeFilterPeaks::accept);
-    connect(
-        gGui->sideBar(), &SideBar::subframeChanged, this,
-        &SubframeFilterPeaks::setFilterParameters);
 }
 
 void SubframeFilterPeaks::setFigureUp()
