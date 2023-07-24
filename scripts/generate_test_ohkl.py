@@ -47,13 +47,14 @@ expt = ohkl.Experiment(name, detector)
 
 dataset = ohkl.DataSet("testdata", expt.getDiffractometer())
 # instrument and file parameters
-data_params = expt.data_params
+data_params = ohkl.DataReaderParameters()
 data_params.wavelength = 2.669
 data_params.delta_omega = 0.3
 data_params.row_major = True
 data_params.swap_endian = True
 data_params.bytes_per_pixel = 2
-dataset.setRawReaderParameters(data_params)
+data_params.data_format = ohkl.DataFormat_RAW
+dataset.setImageReaderParameters(data_params)
 for filename in files:
     shutil.copyfile(data_dir + filename, filename)
     dataset.addRawFrame(data_dir + filename)
@@ -113,7 +114,7 @@ autoindexer_params.nVertices = 10000
 autoindexer_params.subdiv = 30
 autoindexer_params.indexingTolerance = 0.2
 autoindexer_params.minUnitCellVolume = 10000.0
-autoindexer.autoIndex(filtered_peaks)
+autoindexer.autoIndex(filtered_peaks, data)
 reference_cell = expt.getReferenceCell()
 reference_cell.setSpaceGroup(ohkl.SpaceGroup("P 21 21 21"))
 print(autoindexer.solutionsToString())
