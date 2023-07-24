@@ -18,6 +18,7 @@
 #include <string>
 #include <vector>
 
+#include "core/data/DataTypes.h"
 #include "core/shape/ShapeModel.h"
 
 namespace ohkl {
@@ -55,6 +56,8 @@ class ShapeHandler {
     std::string generateName();
     //! Get a vector of pointers to shape models
     std::vector<ShapeModel*> getShapeModels();
+    //! Get a vector of pointers to shape models associated with the given DataSet
+    std::vector<ShapeModel*> getShapeModels(sptrDataSet data);
 
  private:
     //! Map of shape collections in Experiment

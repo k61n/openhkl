@@ -90,6 +90,8 @@ class ShapeModel {
     void setName(const std::string& name) { _name = name; };
     //! Get the name
     std::string name() { return _name; };
+    //! Get the associated DataSet
+    sptrDataSet data() const { return _data; };
 
     //! Add a reference peak to the collection
     bool addPeak(Peak3D* peak, Profile3D&& profile, Profile1D&& integrated_profile);
@@ -170,6 +172,9 @@ class ShapeModel {
 
     //! List of reference peak profiles
     std::map<Peak3D*, std::pair<Profile3D, Profile1D>> _profiles;
+
+    //! Associated DataSet
+    sptrDataSet _data;
 
     //! Components of the Cholesky factor of beam divergence covariance matrix
     std::array<double, 6> _choleskyD;

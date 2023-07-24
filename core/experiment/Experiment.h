@@ -205,7 +205,7 @@ class Experiment {
     //! Generate name for new shape model
     std::string generateShapeModelName();
     //! Get a vector of pointers to shape models
-    std::vector<ShapeModel*> getShapeModels();
+    std::vector<ShapeModel*> getShapeModels(sptrDataSet data = nullptr);
 
     // Instrument state handler
     //! Add a set of instrment states

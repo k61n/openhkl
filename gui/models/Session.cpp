@@ -506,6 +506,7 @@ void Session::onDataChanged()
     _beam_setter_widget->onBeamPosChanged({x_offset, y_offset});
     onPeaksChanged();
     onUnitCellChanged();
+    onShapesChanged();
 }
 
 void Session::onExperimentChanged()
@@ -562,7 +563,8 @@ void Session::onUnitCellChanged()
 
 void Session::onShapesChanged()
 {
-    ShapesList shape_list = currentProject()->experiment()->getShapeModels();
+    ShapesList shape_list =
+        currentProject()->experiment()->getShapeModels(currentProject()->currentData());
     _shape_combo->clearAll();
     _shape_combo->addShapeModels(shape_list);
     _shape_combo->refreshAll();

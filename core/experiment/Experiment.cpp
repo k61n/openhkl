@@ -682,9 +682,12 @@ std::string Experiment::generateShapeModelName()
     return _shape_handler->generateName();
 }
 
-std::vector<ShapeModel*> Experiment::getShapeModels()
+std::vector<ShapeModel*> Experiment::getShapeModels(sptrDataSet data)
 {
-    return _shape_handler->getShapeModels();
+    if (data)
+        return _shape_handler->getShapeModels(data);
+    else
+        return _shape_handler->getShapeModels();
 }
 
 } // namespace ohkl
