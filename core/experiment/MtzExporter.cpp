@@ -25,10 +25,10 @@
 
 #include <Eigen/src/Core/Matrix.h>
 #include <Eigen/src/Geometry/Quaternion.h>
+
 #include <functional>
 #include <regex>
 #include <stdexcept>
-#include <string.h>
 #include <string>
 #include <vector>
 
@@ -128,7 +128,7 @@ void MtzExporter::buildBatches(CMtz::MTZSET* mtz_set)
         batch->cell[5] = _ohkl_cell->character().gamma / deg;
 
         // Orientation Matrix
-        Eigen::Quaterniond quat = instrument_states[frame].sampleOrientationOffset;
+        Eigen::Quaterniond quat = instrument_states[0].sampleOrientationOffset;
         auto orientation = quat.toRotationMatrix();
         for (int i = 0; i < 9; ++i)
             batch->umat[i] = orientation(i % 3, i / 3); // om(x,y) or om(y,x) ?????
@@ -160,9 +160,9 @@ void MtzExporter::buildBatches(CMtz::MTZSET* mtz_set)
         }
 
         // Rotation axis in lab frame
-        batch->jsaxs = phi_idx; // goniostat scan axis number
+        batch->jsaxs = omega_idx; // goniostat scan axis number
         for (int i = 0; i < 3; i++)
-            batch->scanax[i] = sample_gonio.axis(phi_idx).axis()[i];
+            batch->scanax[i] = sample_gonio.axis(omega_idx).axis()[i];
 
         // Source (wave) vector
         Eigen::RowVector3d ni =
@@ -173,11 +173,20 @@ void MtzExporter::buildBatches(CMtz::MTZSET* mtz_set)
             batch->so[i] = ni[i]; // including tilt
         }
 
-        // datum values of goniostat axes
-        for (int i = 0; i < 3; i++)
-            batch->datum[i] = sample_states[frame][i] / deg;
+        // phi start and phi end angles
+        batch->phistt = sample_states[frame][omega_idx] / deg;
+        // batch->phistt = start;
+        if (frame < nframes - 1)
+            batch->phiend = batch->phistt +
+                (sample_states[frame + 1][omega_idx] - sample_states[frame][omega_idx]) / deg;
+        else
+            batch->phiend = sample_states[frame][omega_idx] + sample_states[frame - 1][omega_idx]
+                - sample_states[frame - 2][omega_idx];
 
-        batch->phirange = sample_states[sample_states.size() - 1][phi_idx] / deg;
+        // datum values of goniostat axes
+        for (int i = 0; i < 3; i++) batch->datum[i] = sample_states[frame][i] / deg;
+
+        batch->phirange = sample_states[sample_states.size() - 1][omega_idx] / deg;
 
         batch->alambd = _ohkl_data->wavelength(); // wavelength
 
