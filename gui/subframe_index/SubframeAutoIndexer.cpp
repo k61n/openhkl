@@ -559,7 +559,8 @@ void SubframeAutoIndexer::acceptSolution()
     if (_selected_unit_cell) {
         ohkl::Experiment* expt = gSession->currentProject()->experiment();
         QStringList collections =
-            gSession->currentProject()->getPeakCollectionNames(ohkl::PeakCollectionType::FOUND);
+            gSession->currentProject()->getPeakCollectionNames(
+                ohkl::PeakCollectionType::FOUND, _selected_unit_cell->data());
 
         QStringList space_groups;
         for (const std::string& name : _selected_unit_cell->compatibleSpaceGroups())

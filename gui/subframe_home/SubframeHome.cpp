@@ -517,130 +517,114 @@ void SubframeHome::refreshTables() const
     _open_experiments_view->clearSpans();
     _open_experiments_view->resizeColumnsToContents();
 
-    try {
-        auto b2s = [](bool a) { return !a ? QString("No") : QString("Yes"); };
-        auto Type2s = [](ohkl::PeakCollectionType t) {
-            switch (t) {
-                case ohkl::PeakCollectionType::FOUND: return QString("Found"); break;
-                case ohkl::PeakCollectionType::INDEXING: return QString("Indexing"); break;
-                case ohkl::PeakCollectionType::PREDICTED: return QString("Predicted"); break;
-                default: return QString("UNNANMED"); break;
-            }
-        };
-
-        if (!gSession->hasProject())
-            return;
-
-        ohkl::Experiment* expt = gSession->currentProject()->experiment();
-        if (expt == nullptr)
-            return;
-
-        std::vector<std::string> pcs_names = expt->getCollectionNames();
-
-        auto ucell_names = gSession->currentProject()->experiment()->getUnitCellNames();
-
-        if (ucell_names.size() > 0) {
-            for (auto it = ucell_names.begin(); it != ucell_names.end(); ++it) {
-                auto cell = gSession->currentProject()->experiment()->getUnitCell(*it);
-                short n = std::distance(ucell_names.begin(), it);
-
-                if (n >= _unitcell_table->rowCount())
-                    _unitcell_table->insertRow(_unitcell_table->rowCount());
-
-                int col = 0;
-                _unitcell_table->setItem(
-                    n, col++, new QTableWidgetItem(QString::number(cell->id())));
-                _unitcell_table->setItem(
-                    n, col++, new QTableWidgetItem(QString::fromStdString(*it)));
-                _unitcell_table->setItem(
-                    n, col++, new QTableWidgetItem(QString::fromStdString(cell->data()->name())));
-                _unitcell_table->setItem(
-                    n, col++,
-                    new QTableWidgetItem(QString::fromStdString(cell->spaceGroup().symbol())));
-                _unitcell_table->setItem(
-                    n, col++, new QTableWidgetItem(QString::number(cell->character().a)));
-                _unitcell_table->setItem(
-                    n, col++, new QTableWidgetItem(QString::number(cell->character().b)));
-                _unitcell_table->setItem(
-                    n, col++, new QTableWidgetItem(QString::number(cell->character().c)));
-                _unitcell_table->setItem(
-                    n, col++,
-                    new QTableWidgetItem(QString::number(cell->character().alpha / ohkl::deg)));
-                _unitcell_table->setItem(
-                    n, col++,
-                    new QTableWidgetItem(QString::number(cell->character().beta / ohkl::deg)));
-                _unitcell_table->setItem(
-                    n, col++,
-                    new QTableWidgetItem(QString::number(cell->character().gamma / ohkl::deg)));
-            }
-            _unitcell_table->resizeColumnsToContents();
+    auto b2s = [](bool a) { return !a ? QString("No") : QString("Yes"); };
+    auto Type2s = [](ohkl::PeakCollectionType t) {
+        switch (t) {
+            case ohkl::PeakCollectionType::FOUND: return QString("Found"); break;
+            case ohkl::PeakCollectionType::INDEXING: return QString("Indexing"); break;
+            case ohkl::PeakCollectionType::PREDICTED: return QString("Predicted"); break;
+            default: return QString("UNNANMED"); break;
         }
-        auto datasets = gSession->currentProject()->allData();
+    };
 
-        if (datasets.size() > 0) {
-            for (auto it = datasets.begin(); it != datasets.end(); ++it) {
-                short n = std::distance(datasets.begin(), it);
+    if (!gSession->hasProject())
+        return;
 
-                if (n >= _dataset_table->rowCount())
-                    _dataset_table->insertRow(_dataset_table->rowCount());
+    if (gSession->currentProject()->hasUnitCell()) {
+        int ncell = 0;
+        for (auto cell : gSession->currentProject()->experiment()->getUnitCells()) {
+            if (ncell >= _unitcell_table->rowCount())
+                _unitcell_table->insertRow(_unitcell_table->rowCount());
 
-                _dataset_table->setItem(
-                    n, 0, new QTableWidgetItem(QString::fromStdString(it->get()->name())));
-                _dataset_table->setItem(
-                    n, 1,
-                    new QTableWidgetItem(
-                        QString::fromStdString(it->get()->diffractometer()->name())));
-                _dataset_table->setItem(
-                    n, 2, new QTableWidgetItem(QString::number(it->get()->nFrames())));
-                _dataset_table->setItem(
-                    n, 3, new QTableWidgetItem(QString::number(it->get()->nCols())));
-                _dataset_table->setItem(
-                    n, 4, new QTableWidgetItem(QString::number(it->get()->nRows())));
-                _dataset_table->setItem(
-                    n, 5, new QTableWidgetItem(QString::number(it->get()->wavelength())));
-            }
-            _dataset_table->resizeColumnsToContents();
+            int col = 0;
+            _unitcell_table->setItem(
+                ncell++, col++, new QTableWidgetItem(QString::number(cell->id())));
+            _unitcell_table->setItem(
+                ncell++, col++, new QTableWidgetItem(QString::fromStdString(cell->name())));
+            _unitcell_table->setItem(
+                ncell++, col++, new QTableWidgetItem(QString::fromStdString(cell->data()->name())));
+            _unitcell_table->setItem(
+                ncell++, col++,
+                new QTableWidgetItem(QString::fromStdString(cell->spaceGroup().symbol())));
+            _unitcell_table->setItem(
+                ncell++, col++, new QTableWidgetItem(QString::number(cell->character().a)));
+            _unitcell_table->setItem(
+                ncell++, col++, new QTableWidgetItem(QString::number(cell->character().b)));
+            _unitcell_table->setItem(
+                ncell++, col++, new QTableWidgetItem(QString::number(cell->character().c)));
+            _unitcell_table->setItem(
+                ncell++, col++,
+                new QTableWidgetItem(QString::number(cell->character().alpha / ohkl::deg)));
+            _unitcell_table->setItem(
+                ncell++, col++,
+                new QTableWidgetItem(QString::number(cell->character().beta / ohkl::deg)));
+            _unitcell_table->setItem(
+                ncell++, col++,
+                new QTableWidgetItem(QString::number(cell->character().gamma / ohkl::deg)));
         }
-
-        if (!pcs_names.empty()) {
-            std::vector<std::string>::iterator it;
-            ohkl::PeakCollection* pc;
-
-            for (it = pcs_names.begin(); it != pcs_names.end(); it++) {
-                pc = gSession->currentProject()->experiment()->getPeakCollection(*it);
-
-                std::string cell_name = "None";
-                if (pc->unitCell())
-                    cell_name = pc->unitCell()->name();
-
-                short n = std::distance(pcs_names.begin(), it);
-
-                if (n >= _peak_collections_table->rowCount())
-                    _peak_collections_table->insertRow(_peak_collections_table->rowCount());
-
-                _peak_collections_table->setItem(
-                    n, 0, new QTableWidgetItem(QString((*it).c_str())));
-                _peak_collections_table->setItem(
-                    n, 1, new QTableWidgetItem(QString::fromStdString(pc->data()->name())));
-                _peak_collections_table->setItem(
-                    n, 2, new QTableWidgetItem(QString::fromStdString(cell_name)));
-                _peak_collections_table->setItem(
-                    n, 3, new QTableWidgetItem(QString::number(pc->numberOfPeaks())));
-                _peak_collections_table->setItem(
-                    n, 4, new QTableWidgetItem(QString::number(pc->numberOfValid())));
-                _peak_collections_table->setItem(
-                    n, 5, new QTableWidgetItem(QString::number(pc->numberOfInvalid())));
-                _peak_collections_table->setItem(n, 6, new QTableWidgetItem(b2s(pc->isIndexed())));
-                _peak_collections_table->setItem(
-                    n, 7, new QTableWidgetItem(b2s(pc->isIntegrated())));
-                _peak_collections_table->setItem(n, 8, new QTableWidgetItem(Type2s(pc->type())));
-            }
-            _peak_collections_table->resizeColumnsToContents();
-        }
-        gGui->refreshMenu();
-    } catch (const std::out_of_range& e) {
-    } catch (const std::exception& e) {
+        _unitcell_table->resizeColumnsToContents();
     }
+    auto datasets = gSession->currentProject()->allData();
+
+    int ndata = 0;
+    if (gSession->currentProject()->hasDataSet()) {
+        for (const auto& [key, data] : *(gSession->currentProject()->experiment()->getDataMap())) {
+
+            if (ndata >= _dataset_table->rowCount())
+                _dataset_table->insertRow(_dataset_table->rowCount());
+
+            int col = 0;
+            _dataset_table->setItem(
+                ndata++, col++, new QTableWidgetItem(QString::fromStdString(key)));
+            _dataset_table->setItem(
+                ndata++, col++,
+                new QTableWidgetItem(
+                    QString::fromStdString(data->diffractometer()->name())));
+            _dataset_table->setItem(
+                ndata++, col++, new QTableWidgetItem(QString::number(data->nFrames())));
+            _dataset_table->setItem(
+                ndata++, col++, new QTableWidgetItem(QString::number(data->nCols())));
+            _dataset_table->setItem(
+                ndata++, col++, new QTableWidgetItem(QString::number(data->nRows())));
+            _dataset_table->setItem(
+                ndata++, col++, new QTableWidgetItem(QString::number(data->wavelength())));
+        }
+        _dataset_table->resizeColumnsToContents();
+    }
+
+    if (gSession->currentProject()->hasPeakCollection()) {
+
+        int ncollection = 0;
+        for (auto* collection : gSession->currentProject()->experiment()->getPeakCollections()) {
+
+            std::string cell_name = "None";
+            if (collection->unitCell())
+                cell_name = collection->unitCell()->name();
+
+            if (ncollection >= _peak_collections_table->rowCount())
+                _peak_collections_table->insertRow(_peak_collections_table->rowCount());
+
+            int col = 0;
+            _peak_collections_table->setItem(
+                ncollection++, col++, new QTableWidgetItem(QString::fromStdString(collection->name())));
+            _peak_collections_table->setItem(
+                ncollection++, col++, new QTableWidgetItem(QString::fromStdString(collection->data()->name())));
+            _peak_collections_table->setItem(
+                ncollection++, col++, new QTableWidgetItem(QString::fromStdString(cell_name)));
+            _peak_collections_table->setItem(
+                ncollection++, col++, new QTableWidgetItem(QString::number(collection->numberOfPeaks())));
+            _peak_collections_table->setItem(
+                ncollection++, col++, new QTableWidgetItem(QString::number(collection->numberOfValid())));
+            _peak_collections_table->setItem(
+                ncollection++, col++, new QTableWidgetItem(QString::number(collection->numberOfInvalid())));
+            _peak_collections_table->setItem(ncollection++, col++, new QTableWidgetItem(b2s(collection->isIndexed())));
+            _peak_collections_table->setItem(
+                ncollection++, col++, new QTableWidgetItem(b2s(collection->isIntegrated())));
+            _peak_collections_table->setItem(ncollection, col++, new QTableWidgetItem(Type2s(collection->type())));
+        }
+        _peak_collections_table->resizeColumnsToContents();
+    }
+    gGui->refreshMenu();
 }
 
 void SubframeHome::clearTables()

@@ -59,8 +59,9 @@ class Project {
     std::vector<ohkl::Peak3D*> getPeaks(
         const QString& peakListName, int upperindex = -1, int lowerindex = -1) const;
 
-    QStringList getPeakListNames() const;
-    QStringList getPeakCollectionNames(ohkl::PeakCollectionType lt) const;
+    QStringList getPeakCollectionNames(ohkl::sptrDataSet data = nullptr) const;
+    QStringList getPeakCollectionNames(
+        ohkl::PeakCollectionType lt, ohkl::sptrDataSet data = nullptr) const;
 
     int numPeakCollections() const;
 

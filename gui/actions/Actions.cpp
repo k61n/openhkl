@@ -269,7 +269,7 @@ void Actions::removePeaks()
 {
     gGui->setReady(false);
     QString description{"Peak collection to remove"};
-    QStringList peaks_list = gSession->currentProject()->getPeakListNames();
+    QStringList peaks_list = gSession->currentProject()->getPeakCollectionNames();
     if (peaks_list.empty())
         return;
 
@@ -288,7 +288,6 @@ void Actions::removePeaks()
 
     gSession->currentProject()->removePeakModel(peaks_name);
     gSession->onPeaksChanged();
-    peaks_list = gSession->currentProject()->getPeakListNames();
 
     gGui->sideBar()->refreshCurrent();
     gGui->setReady(true);
@@ -300,7 +299,7 @@ void Actions::clonePeaks()
     QString description{"Peak collection to clone"};
     QString suggested_name = QString::fromStdString(
         gSession->currentProject()->experiment()->generatePeakCollectionName());
-    QStringList peaks_list = gSession->currentProject()->getPeakListNames();
+    QStringList peaks_list = gSession->currentProject()->getPeakCollectionNames();
 
     if (peaks_list.empty())
         return;
@@ -316,7 +315,6 @@ void Actions::clonePeaks()
     QString original = dlg->originalCollectionName();
     QString cloned = dlg->clonedCollectionName();
     gSession->currentProject()->clonePeakCollection(original, cloned);
-    peaks_list = gSession->currentProject()->getPeakListNames();
     gSession->onPeaksChanged();
     gGui->setReady(true);
 }

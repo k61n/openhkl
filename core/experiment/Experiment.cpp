@@ -454,16 +454,6 @@ void Experiment::removePeakCollection(const std::string& name)
     _peak_handler->removePeakCollection(name);
 }
 
-std::vector<std::string> Experiment::getCollectionNames() const
-{
-    return _peak_handler->getCollectionNames();
-}
-
-std::vector<std::string> Experiment::getCollectionNames(PeakCollectionType lt) const
-{
-    return _peak_handler->getCollectionNames(lt);
-}
-
 int Experiment::numPeakCollections() const
 {
     return _peak_handler->numPeakCollections();

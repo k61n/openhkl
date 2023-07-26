@@ -126,10 +126,6 @@ class Experiment {
     PeakCollection* getPeakCollection(const std::string name);
     //! Remove the named peak collection
     void removePeakCollection(const std::string& name);
-    //! Get a vector of peak collection names
-    std::vector<std::string> getCollectionNames() const;
-    //! Get a vector of peak collection names of a give PeakCollectionType
-    std::vector<std::string> getCollectionNames(PeakCollectionType lt) const;
     //! Get the number of peak collections
     int numPeakCollections() const;
     //! Create a new peak collection from peaks caught by a filter

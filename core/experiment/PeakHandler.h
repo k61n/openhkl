@@ -60,10 +60,6 @@ class PeakHandler {
     PeakCollection* getPeakCollection(const std::string name);
     // !Remove a peak collection from the experiment
     void removePeakCollection(const std::string& name);
-    //! Get a vector of peak collection names from the handler
-    std::vector<std::string> getCollectionNames() const;
-    //! Get a vector of peak collections with specific PeakCollectionTypes
-    std::vector<std::string> getCollectionNames(PeakCollectionType pct) const;
     //! Get the number of peak collections
     int numPeakCollections() const { return _peak_collections.size(); };
     //! Create a new collection of peaks caught by _peak_filter

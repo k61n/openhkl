@@ -1214,8 +1214,6 @@ void SubframeExperiment::saveCell()
 {
     if (_selected_unit_cell) {
         auto* expt = gSession->currentProject()->experiment();
-        QStringList collections =
-            gSession->currentProject()->getPeakCollectionNames(ohkl::PeakCollectionType::FOUND);
 
         QStringList space_groups;
         for (const std::string& name : _selected_unit_cell->compatibleSpaceGroups())

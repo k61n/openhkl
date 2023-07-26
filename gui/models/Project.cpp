@@ -15,7 +15,9 @@
 #include "gui/models/Project.h"
 
 #include "core/data/DataSet.h"
+#include "core/data/DataTypes.h"
 #include "core/experiment/Experiment.h"
+#include "core/peak/Peak3D.h"
 #include "gui/MainWin.h"
 #include "gui/items/PeakCollectionItem.h"
 #include "gui/models/PeakCollectionModel.h"
@@ -109,19 +111,23 @@ std::vector<ohkl::sptrDataSet> Project::allData() const
     return ret;
 }
 
-QStringList Project::getPeakListNames() const
+QStringList Project::getPeakCollectionNames(ohkl::sptrDataSet data /* = nullptr */) const
 {
+    auto collections = _experiment->getPeakCollections(data);
     QStringList ret;
-    for (const std::string& name : _experiment->getCollectionNames())
-        ret << QString::fromStdString(name);
+    for (auto* collection : collections)
+        ret.push_back(QString::fromStdString(collection->name()));
     return ret;
 }
 
-QStringList Project::getPeakCollectionNames(ohkl::PeakCollectionType lt) const
+QStringList Project::getPeakCollectionNames(
+    ohkl::PeakCollectionType lt, ohkl::sptrDataSet data /* = nullptr */) const
 {
+    auto collections = _experiment->getPeakCollections(data);
     QStringList ret;
-    for (const std::string& name : _experiment->getCollectionNames(lt))
-        ret << QString::fromStdString(name);
+    for (auto* collection : collections)
+        if (collection->type() == lt)
+            ret.push_back(QString::fromStdString(collection->name()));
     return ret;
 }
 
@@ -149,12 +155,10 @@ void Project::generatePeakModel(const QString& peakListName)
 void Project::generatePeakModels()
 {
     _peak_collection_models.clear();
-    const std::vector<std::string> names = _experiment->getCollectionNames();
+    auto peak_collections = _experiment->getPeakCollections();
 
-    for (const std::string& name : names) {
-        ohkl::PeakCollection* peak_collection = _experiment->getPeakCollection(name);
-
-        PeakCollectionItem* peak_collection_item = new PeakCollectionItem(peak_collection);
+    for (const auto*  collection : peak_collections) {
+        PeakCollectionItem* peak_collection_item = new PeakCollectionItem(collection);
         _peak_collection_items.push_back(peak_collection_item);
 
         PeakCollectionModel* peak_collection_model = new PeakCollectionModel();

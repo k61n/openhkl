@@ -123,13 +123,13 @@ void PeakProperties::setSizePolicies()
 
 void PeakProperties::refreshInput()
 {
-    _peak_list = gSession->currentProject()->getPeakListNames();
+    _peak_list = gSession->currentProject()->getPeakCollectionNames();
     _peak_list_combo->blockSignals(true);
     _peak_list_combo->clear();
     _peak_list_combo->addItems(_peak_list);
     _peak_list_combo->blockSignals(false);
 
-    if (!gSession->currentProject()->getPeakListNames().empty())
+    if (!gSession->currentProject()->hasPeakCollection())
         selectedPeaksChanged();
 }
 
