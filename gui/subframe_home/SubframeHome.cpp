@@ -208,7 +208,7 @@ void SubframeHome::setRightLayout(QHBoxLayout* main_layout)
     _peak_collections_table->verticalHeader()->setVisible(false);
     _peak_collections_table->setContextMenuPolicy(Qt::CustomContextMenu);
 
-    _unitcell_table = new QTableWidget(0, 9);
+    _unitcell_table = new QTableWidget(0, 10);
     _unitcell_table->setEditTriggers(QAbstractItemView::NoEditTriggers);
     _unitcell_table->setContextMenuPolicy(Qt::CustomContextMenu);
     _unitcell_table->setHorizontalHeaderLabels(QStringList{
@@ -538,25 +538,25 @@ void SubframeHome::refreshTables() const
 
             int col = 0;
             _unitcell_table->setItem(
-                ncell++, col++, new QTableWidgetItem(QString::number(cell->id())));
+                ncell, col++, new QTableWidgetItem(QString::number(cell->id())));
             _unitcell_table->setItem(
-                ncell++, col++, new QTableWidgetItem(QString::fromStdString(cell->name())));
+                ncell, col++, new QTableWidgetItem(QString::fromStdString(cell->name())));
             _unitcell_table->setItem(
-                ncell++, col++, new QTableWidgetItem(QString::fromStdString(cell->data()->name())));
+                ncell, col++, new QTableWidgetItem(QString::fromStdString(cell->data()->name())));
             _unitcell_table->setItem(
-                ncell++, col++,
+                ncell, col++,
                 new QTableWidgetItem(QString::fromStdString(cell->spaceGroup().symbol())));
             _unitcell_table->setItem(
-                ncell++, col++, new QTableWidgetItem(QString::number(cell->character().a)));
+                ncell, col++, new QTableWidgetItem(QString::number(cell->character().a)));
             _unitcell_table->setItem(
-                ncell++, col++, new QTableWidgetItem(QString::number(cell->character().b)));
+                ncell, col++, new QTableWidgetItem(QString::number(cell->character().b)));
             _unitcell_table->setItem(
-                ncell++, col++, new QTableWidgetItem(QString::number(cell->character().c)));
+                ncell, col++, new QTableWidgetItem(QString::number(cell->character().c)));
             _unitcell_table->setItem(
-                ncell++, col++,
+                ncell, col++,
                 new QTableWidgetItem(QString::number(cell->character().alpha / ohkl::deg)));
             _unitcell_table->setItem(
-                ncell++, col++,
+                ncell, col++,
                 new QTableWidgetItem(QString::number(cell->character().beta / ohkl::deg)));
             _unitcell_table->setItem(
                 ncell++, col++,
@@ -568,24 +568,25 @@ void SubframeHome::refreshTables() const
 
     int ndata = 0;
     if (gSession->currentProject()->hasDataSet()) {
-        for (const auto& [key, data] : *(gSession->currentProject()->experiment()->getDataMap())) {
+        for (const auto& data : gSession->currentProject()->experiment()->getAllData()) {
+        // for (const auto& [key, data] : *(gSession->currentProject()->experiment()->getDataMap())) {
 
             if (ndata >= _dataset_table->rowCount())
                 _dataset_table->insertRow(_dataset_table->rowCount());
 
             int col = 0;
             _dataset_table->setItem(
-                ndata++, col++, new QTableWidgetItem(QString::fromStdString(key)));
+                ndata, col++, new QTableWidgetItem(QString::fromStdString(data->name())));
             _dataset_table->setItem(
-                ndata++, col++,
+                ndata, col++,
                 new QTableWidgetItem(
                     QString::fromStdString(data->diffractometer()->name())));
             _dataset_table->setItem(
-                ndata++, col++, new QTableWidgetItem(QString::number(data->nFrames())));
+                ndata, col++, new QTableWidgetItem(QString::number(data->nFrames())));
             _dataset_table->setItem(
-                ndata++, col++, new QTableWidgetItem(QString::number(data->nCols())));
+                ndata, col++, new QTableWidgetItem(QString::number(data->nCols())));
             _dataset_table->setItem(
-                ndata++, col++, new QTableWidgetItem(QString::number(data->nRows())));
+                ndata, col++, new QTableWidgetItem(QString::number(data->nRows())));
             _dataset_table->setItem(
                 ndata++, col++, new QTableWidgetItem(QString::number(data->wavelength())));
         }
@@ -606,21 +607,21 @@ void SubframeHome::refreshTables() const
 
             int col = 0;
             _peak_collections_table->setItem(
-                ncollection++, col++, new QTableWidgetItem(QString::fromStdString(collection->name())));
+                ncollection, col++, new QTableWidgetItem(QString::fromStdString(collection->name())));
             _peak_collections_table->setItem(
-                ncollection++, col++, new QTableWidgetItem(QString::fromStdString(collection->data()->name())));
+                ncollection, col++, new QTableWidgetItem(QString::fromStdString(collection->data()->name())));
             _peak_collections_table->setItem(
-                ncollection++, col++, new QTableWidgetItem(QString::fromStdString(cell_name)));
+                ncollection, col++, new QTableWidgetItem(QString::fromStdString(cell_name)));
             _peak_collections_table->setItem(
-                ncollection++, col++, new QTableWidgetItem(QString::number(collection->numberOfPeaks())));
+                ncollection, col++, new QTableWidgetItem(QString::number(collection->numberOfPeaks())));
             _peak_collections_table->setItem(
-                ncollection++, col++, new QTableWidgetItem(QString::number(collection->numberOfValid())));
+                ncollection, col++, new QTableWidgetItem(QString::number(collection->numberOfValid())));
             _peak_collections_table->setItem(
-                ncollection++, col++, new QTableWidgetItem(QString::number(collection->numberOfInvalid())));
-            _peak_collections_table->setItem(ncollection++, col++, new QTableWidgetItem(b2s(collection->isIndexed())));
+                ncollection, col++, new QTableWidgetItem(QString::number(collection->numberOfInvalid())));
+            _peak_collections_table->setItem(ncollection, col++, new QTableWidgetItem(b2s(collection->isIndexed())));
             _peak_collections_table->setItem(
-                ncollection++, col++, new QTableWidgetItem(b2s(collection->isIntegrated())));
-            _peak_collections_table->setItem(ncollection, col++, new QTableWidgetItem(Type2s(collection->type())));
+                ncollection, col++, new QTableWidgetItem(b2s(collection->isIntegrated())));
+            _peak_collections_table->setItem(ncollection++, col++, new QTableWidgetItem(Type2s(collection->type())));
         }
         _peak_collections_table->resizeColumnsToContents();
     }
