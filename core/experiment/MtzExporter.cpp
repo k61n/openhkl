@@ -192,7 +192,7 @@ void MtzExporter::buildBatches(CMtz::MTZSET* mtz_set)
         for (int i = 0; i < 3; i++) batch->datum[i] = sample_states[frame][i] / deg;
 
         batch->phirange =
-            (sample_states[0][_omega_idx] - sample_states[sample_states.size() - 1][_omega_idx]) / deg;
+            (sample_states[1][_omega_idx] - sample_states[0][_omega_idx]) / deg;
 
         batch->alambd = _ohkl_data->wavelength(); // wavelength
 
