@@ -18,6 +18,7 @@
 #include "cmtzlib.h"
 #include "core/data/DataTypes.h"
 #include "core/instrument/Diffractometer.h"
+#include "core/instrument/InterpolatedState.h"
 #include "core/shape/PeakCollection.h"
 #include "core/statistics/MergedPeakCollection.h"
 #include "core/statistics/PeakMerger.h"
@@ -31,6 +32,7 @@
 #include <stdexcept>
 #include <string>
 #include <vector>
+#include <iostream>
 
 namespace ohkl {
 MtzExporter::MtzExporter(
@@ -272,25 +274,41 @@ void MtzExporter::populateColumns(CMtz::MTZCOL** columns, int ncol)
         }
     } else {
         for (auto& peak : peaks) {
+
+            InstrumentStateList states = _ohkl_data->instrumentStates();
+            const auto& sample_gonio = _ohkl_data->diffractometer()->sample().gonio();
+            size_t n_sample_gonio_axes = sample_gonio.nAxes();
+            int omega_idx = -1;
+            for (size_t i = 0; i < n_sample_gonio_axes; ++i)
+                const std::string axis_name = sample_gonio.axis(i).name();
+
             for (auto unmerged_peak : peak.peaks()) {
                 int m_isym = 1;
                 const UnitCell& cell = *(unmerged_peak->unitCell());
                 const ReciprocalVector& q = unmerged_peak->q();
                 const MillerIndex hkl = unmerged_peak->hkl();
                 double frame = unmerged_peak->shape().center()[2];
+                int frame_int = std::floor(frame);
+                const std::vector<std::vector<double>>& sample_states =
+                    _ohkl_data->diffractometer()->sampleStates;
+
                 Intensity intensity;
                 if (_sum_intensities)
                     intensity = unmerged_peak->correctedSumIntensity();
                 else
                     intensity = unmerged_peak->correctedProfileIntensity();
+                auto state = InterpolatedState::interpolate(states, frame);
+                double offset = sample_states[frame_int][omega_idx] / deg;
+                std::cout << frame << " " << offset << " " << offset + state.stepSize / deg << std::endl;
 
                 adata[0] = hkl.h();
                 adata[1] = hkl.k();
                 adata[2] = hkl.l();
                 adata[3] = m_isym;
                 adata[4] = std::round(frame);
-                adata[5] = intensity.value();
-                adata[6] = intensity.sigma();
+                adata[5] = offset + state.stepSize / deg;
+                adata[6] = intensity.value();
+                adata[7] = intensity.sigma();
                 CMtz::ccp4_lwrefl(_mtz, adata, columns, ncol, irefl + 1);
                 irefl++;
             }
@@ -301,7 +319,7 @@ void MtzExporter::populateColumns(CMtz::MTZCOL** columns, int ncol)
 
     _mtz->nref = irefl;
     _mtz->nref_filein = irefl;
-}
+    }
 
 bool MtzExporter::writeToFile(std::string filename)
 {
@@ -339,7 +357,7 @@ bool MtzExporter::writeToFile(std::string filename)
     if (_merged)
         ncol = 5;
     else
-        ncol = 7;
+        ncol = 8;
 
     CMtz::MTZCOL* mtz_cols[ncol];
 
@@ -351,6 +369,7 @@ bool MtzExporter::writeToFile(std::string filename)
     if (!_merged) { // only if we are processing unmerged data
         mtz_cols[col++] = CMtz::MtzAddColumn(_mtz, base_set, "M/ISYM", "Y");
         mtz_cols[col++] = CMtz::MtzAddColumn(_mtz, base_set, "BATCH", "B");
+        mtz_cols[col++] = CMtz::MtzAddColumn(_mtz, base_set, "ROT", "R");
     }
     mtz_cols[col++] = CMtz::MtzAddColumn(_mtz, base_set, "I", "J");
     mtz_cols[col++] = CMtz::MtzAddColumn(_mtz, base_set, "SIGI", "Q");
