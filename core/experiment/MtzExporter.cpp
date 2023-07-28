@@ -148,13 +148,8 @@ void MtzExporter::buildBatches(CMtz::MTZSET* mtz_set)
             batch->crydat[i] = 0;
 
         // start and stop time
-        batch->time1 = 0;
-        batch->time2 = 0;
-
-        // Batch scale, factor and temperature
-        batch->bscale = 1;
-        batch->bbfac = 1;
-        batch->sdbfac = 1;
+        // batch->time1 = 0;
+        // batch->time2 = 0;
 
         for (int i = 0; i < 3; ++i) {
             batch->e1[i] = axis1[i];
@@ -185,8 +180,9 @@ void MtzExporter::buildBatches(CMtz::MTZSET* mtz_set)
             batch->phiend = batch->phistt +
                 (sample_states[frame + 1][_omega_idx] - sample_states[frame][_omega_idx]) / deg;
         else
-            batch->phiend = sample_states[frame][_omega_idx] + sample_states[frame - 1][_omega_idx]
-                - sample_states[frame - 2][_omega_idx];
+            batch->phiend =
+                (sample_states[frame][_omega_idx] + sample_states[frame - 1][_omega_idx] -
+                 sample_states[frame - 2][_omega_idx]) / deg;
 
         // datum values of goniostat axes
         for (int i = 0; i < 3; i++) batch->datum[i] = sample_states[frame][i] / deg;
