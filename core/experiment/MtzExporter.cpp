@@ -18,6 +18,7 @@
 #include "cmtzlib.h"
 #include "core/data/DataTypes.h"
 #include "core/instrument/Diffractometer.h"
+#include "core/instrument/InterpolatedState.h"
 #include "core/shape/PeakCollection.h"
 #include "core/statistics/MergedPeakCollection.h"
 #include "core/statistics/PeakMerger.h"
@@ -25,10 +26,10 @@
 
 #include <Eigen/src/Core/Matrix.h>
 #include <Eigen/src/Geometry/Quaternion.h>
+
 #include <functional>
 #include <regex>
 #include <stdexcept>
-#include <string.h>
 #include <string>
 #include <vector>
 
@@ -43,6 +44,20 @@ MtzExporter::MtzExporter(
     , _sum_intensities(sum_intensities)
     , _mtz(nullptr)
 {
+    auto gonio = _ohkl_data->diffractometer()->sample().gonio(); // Sample 3-axis gonio
+    // auto gonio = _ohkl_data->diffractometer()->detector()->gonio(); // Detector 2-axis gonio
+    auto& instrument_states = _ohkl_data->instrumentStates();
+
+    const auto& sample_gonio = _ohkl_data->diffractometer()->sample().gonio();
+    size_t n_sample_gonio_axes = sample_gonio.nAxes();
+
+    _omega_idx = -1, _phi_idx = -1, _chi_idx = -1;
+    for (size_t i = 0; i < n_sample_gonio_axes; ++i) {
+        const std::string axis_name = sample_gonio.axis(i).name();
+        _omega_idx = axis_name == ohkl::ax_omega ? int(i) : _omega_idx;
+        _chi_idx = axis_name == ohkl::ax_chi ? int(i) : _chi_idx;
+        _phi_idx = axis_name == ohkl::ax_phi ? int(i) : _phi_idx;
+    }
 }
 
 MtzExporter::~MtzExporter()
@@ -55,23 +70,13 @@ void MtzExporter::buildBatches(CMtz::MTZSET* mtz_set)
 {
     int nframes = _ohkl_data->nFrames();
 
-    auto gonio = _ohkl_data->diffractometer()->sample().gonio(); // Sample 3-axis gonio
-    // auto gonio = _ohkl_data->diffractometer()->detector()->gonio(); // Detector 2-axis gonio
-    auto& instrument_states = _ohkl_data->instrumentStates();
-
     CMtz::MTZBAT* batch;
     CMtz::MTZBAT* previous_batch;
 
+    auto gonio = _ohkl_data->diffractometer()->sample().gonio(); // Sample 3-axis gonio
+    auto& instrument_states = _ohkl_data->instrumentStates();
     const auto& sample_gonio = _ohkl_data->diffractometer()->sample().gonio();
     size_t n_sample_gonio_axes = sample_gonio.nAxes();
-
-    int omega_idx = -1, phi_idx = -1, chi_idx = -1;
-    for (size_t i = 0; i < n_sample_gonio_axes; ++i) {
-        const std::string axis_name = sample_gonio.axis(i).name();
-        omega_idx = axis_name == ohkl::ax_omega ? int(i) : omega_idx;
-        chi_idx = axis_name == ohkl::ax_chi ? int(i) : chi_idx;
-        phi_idx = axis_name == ohkl::ax_phi ? int(i) : phi_idx;
-    }
 
     Eigen::Vector3d axis1, axis2, axis3;
     axis1 = sample_gonio.axis(0).axis();
@@ -128,7 +133,7 @@ void MtzExporter::buildBatches(CMtz::MTZSET* mtz_set)
         batch->cell[5] = _ohkl_cell->character().gamma / deg;
 
         // Orientation Matrix
-        Eigen::Quaterniond quat = instrument_states[frame].sampleOrientationOffset;
+        Eigen::Quaterniond quat = instrument_states[0].sampleOrientationOffset;
         auto orientation = quat.toRotationMatrix();
         for (int i = 0; i < 9; ++i)
             batch->umat[i] = orientation(i % 3, i / 3); // om(x,y) or om(y,x) ?????
@@ -143,13 +148,8 @@ void MtzExporter::buildBatches(CMtz::MTZSET* mtz_set)
             batch->crydat[i] = 0;
 
         // start and stop time
-        batch->time1 = 0;
-        batch->time2 = 0;
-
-        // Batch scale, factor and temperature
-        batch->bscale = 1;
-        batch->bbfac = 1;
-        batch->sdbfac = 1;
+        // batch->time1 = 0;
+        // batch->time2 = 0;
 
         for (int i = 0; i < 3; ++i) {
             batch->e1[i] = axis1[i];
@@ -160,9 +160,9 @@ void MtzExporter::buildBatches(CMtz::MTZSET* mtz_set)
         }
 
         // Rotation axis in lab frame
-        batch->jsaxs = phi_idx; // goniostat scan axis number
+        batch->jsaxs = _omega_idx; // goniostat scan axis number
         for (int i = 0; i < 3; i++)
-            batch->scanax[i] = sample_gonio.axis(phi_idx).axis()[i];
+            batch->scanax[i] = sample_gonio.axis(_omega_idx).axis()[i];
 
         // Source (wave) vector
         Eigen::RowVector3d ni =
@@ -173,11 +173,22 @@ void MtzExporter::buildBatches(CMtz::MTZSET* mtz_set)
             batch->so[i] = ni[i]; // including tilt
         }
 
-        // datum values of goniostat axes
-        for (int i = 0; i < 3; i++)
-            batch->datum[i] = sample_states[frame][i] / deg;
+        // phi start and phi end angles
+        batch->phistt = sample_states[frame][_omega_idx] / deg;
+        // batch->phistt = start;
+        if (frame < nframes - 1)
+            batch->phiend = batch->phistt +
+                (sample_states[frame + 1][_omega_idx] - sample_states[frame][_omega_idx]) / deg;
+        else
+            batch->phiend =
+                (sample_states[frame][_omega_idx] + sample_states[frame - 1][_omega_idx] -
+                 sample_states[frame - 2][_omega_idx]) / deg;
 
-        batch->phirange = sample_states[sample_states.size() - 1][phi_idx] / deg;
+        // datum values of goniostat axes
+        for (int i = 0; i < 3; i++) batch->datum[i] = sample_states[frame][i] / deg;
+
+        batch->phirange =
+            (sample_states[1][_omega_idx] - sample_states[0][_omega_idx]) / deg;
 
         batch->alambd = _ohkl_data->wavelength(); // wavelength
 
@@ -263,25 +274,33 @@ void MtzExporter::populateColumns(CMtz::MTZCOL** columns, int ncol)
         }
     } else {
         for (auto& peak : peaks) {
+            InstrumentStateList states = _ohkl_data->instrumentStates();
             for (auto unmerged_peak : peak.peaks()) {
                 int m_isym = 1;
                 const UnitCell& cell = *(unmerged_peak->unitCell());
                 const ReciprocalVector& q = unmerged_peak->q();
                 const MillerIndex hkl = unmerged_peak->hkl();
                 double frame = unmerged_peak->shape().center()[2];
+                int frame_int = std::floor(frame);
+                const std::vector<std::vector<double>>& sample_states =
+                    _ohkl_data->diffractometer()->sampleStates;
+
                 Intensity intensity;
                 if (_sum_intensities)
                     intensity = unmerged_peak->correctedSumIntensity();
                 else
                     intensity = unmerged_peak->correctedProfileIntensity();
+                auto state = InterpolatedState::interpolate(states, frame);
+                double offset = sample_states[frame_int][_omega_idx] / deg;
 
                 adata[0] = hkl.h();
                 adata[1] = hkl.k();
                 adata[2] = hkl.l();
                 adata[3] = m_isym;
                 adata[4] = std::round(frame);
-                adata[5] = intensity.value();
-                adata[6] = intensity.sigma();
+                adata[5] = offset;
+                adata[6] = intensity.value();
+                adata[7] = intensity.sigma();
                 CMtz::ccp4_lwrefl(_mtz, adata, columns, ncol, irefl + 1);
                 irefl++;
             }
@@ -292,7 +311,7 @@ void MtzExporter::populateColumns(CMtz::MTZCOL** columns, int ncol)
 
     _mtz->nref = irefl;
     _mtz->nref_filein = irefl;
-}
+    }
 
 bool MtzExporter::writeToFile(std::string filename)
 {
@@ -330,7 +349,7 @@ bool MtzExporter::writeToFile(std::string filename)
     if (_merged)
         ncol = 5;
     else
-        ncol = 7;
+        ncol = 8;
 
     CMtz::MTZCOL* mtz_cols[ncol];
 
@@ -342,6 +361,7 @@ bool MtzExporter::writeToFile(std::string filename)
     if (!_merged) { // only if we are processing unmerged data
         mtz_cols[col++] = CMtz::MtzAddColumn(_mtz, base_set, "M/ISYM", "Y");
         mtz_cols[col++] = CMtz::MtzAddColumn(_mtz, base_set, "BATCH", "B");
+        mtz_cols[col++] = CMtz::MtzAddColumn(_mtz, base_set, "ROT", "R");
     }
     mtz_cols[col++] = CMtz::MtzAddColumn(_mtz, base_set, "I", "J");
     mtz_cols[col++] = CMtz::MtzAddColumn(_mtz, base_set, "SIGI", "Q");

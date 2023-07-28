@@ -72,6 +72,10 @@ class MtzExporter {
 
     // main mtz data structure
     CMtz::MTZ* _mtz;
+
+    int _omega_idx;
+    int _chi_idx;
+    int _phi_idx;
 };
 }
 #endif // OHKL_MTZEXPORTER_H
