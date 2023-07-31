@@ -582,6 +582,12 @@ void SubframeMergedPeaks::refreshTables()
     refreshDShellTable();
     refreshMergedTable();
     refreshUnmergedTable();
+    _sum_shell_view->resizeColumnsToContents();
+    _profile_shell_view->resizeColumnsToContents();
+    _sum_merged_view->resizeColumnsToContents();
+    _profile_merged_view->resizeColumnsToContents();
+    _sum_unmerged_view->resizeColumnsToContents();
+    _profile_unmerged_view->resizeColumnsToContents();
     refreshGraph(_plottable_statistics->currentIndex());
 }
 
