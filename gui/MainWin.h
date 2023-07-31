@@ -38,7 +38,7 @@ class SideBar;
 class SubframeHome;
 class SubframeExperiment;
 class SubframeFindPeaks;
-class SubframeFilterPeaks;
+class SubframeFilter;
 class SubframeAutoIndexer;
 class SubframeMerge;
 class SubframeRefiner;
@@ -96,7 +96,7 @@ class MainWin : public QMainWindow {
     SubframeExperiment* experiment;
     SubframeHome* home;
     SubframeFindPeaks* finder;
-    SubframeFilterPeaks* filter;
+    SubframeFilter* filter;
     SubframeAutoIndexer* indexer;
     SubframeShapes* shapes;
     SubframePredict* predictor;

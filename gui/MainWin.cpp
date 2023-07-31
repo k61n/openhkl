@@ -22,7 +22,7 @@
 #include "gui/graphics_items/PlottableItem.h"
 #include "gui/models/Session.h"
 #include "gui/subframe_experiment/SubframeExperiment.h"
-#include "gui/subframe_filter/SubframeFilterPeaks.h"
+#include "gui/subframe_filter/SubframeFilter.h"
 #include "gui/subframe_find/SubframeFindPeaks.h"
 #include "gui/subframe_home/SubframeHome.h"
 #include "gui/subframe_index/SubframeAutoIndexer.h"
@@ -82,7 +82,7 @@ MainWin::MainWin()
     home = new SubframeHome;
     experiment = new SubframeExperiment;
     finder = new SubframeFindPeaks;
-    filter = new SubframeFilterPeaks;
+    filter = new SubframeFilter;
     indexer = new SubframeAutoIndexer;
     shapes = new SubframeShapes;
     predictor = new SubframePredict;

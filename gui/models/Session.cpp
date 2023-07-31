@@ -31,7 +31,7 @@
 #include "gui/dialogs/DataNameDialog.h"
 #include "gui/dialogs/ImageReaderDialog.h"
 #include "gui/models/Project.h"
-#include "gui/subframe_filter/SubframeFilterPeaks.h"
+#include "gui/subframe_filter/SubframeFilter.h"
 #include "gui/subframe_find/SubframeFindPeaks.h"
 #include "gui/subframe_index/SubframeAutoIndexer.h"
 #include "gui/subframe_integrate/SubframeIntegrate.h"

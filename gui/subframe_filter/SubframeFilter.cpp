@@ -2,8 +2,8 @@
 //
 //  OpenHKL: data reduction for single crystal diffraction
 //
-//! @file      gui/subframe_filter/SubframeFilterPeaks.cpp
-//! @brief     Implements class SubframeFilterPeaks
+//! @file      gui/subframe_filter/SubframeFilter.cpp
+//! @brief     Implements class SubframeFilter
 //!
 //! @homepage  https://openhkl.org
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "gui/subframe_filter/SubframeFilterPeaks.h"
+#include "gui/subframe_filter/SubframeFilter.h"
 
 #include "core/experiment/Experiment.h"
 #include "core/shape/PeakCollection.h"
@@ -50,7 +50,7 @@
 
 #include <sstream>
 
-SubframeFilterPeaks::SubframeFilterPeaks()
+SubframeFilter::SubframeFilter()
     : QWidget()
     , _peak_collection("temp", ohkl::PeakCollectionType::FOUND, nullptr)
     , _peak_collection_item()
@@ -98,7 +98,7 @@ SubframeFilterPeaks::SubframeFilterPeaks()
         &DetectorWidget::refresh);
 }
 
-void SubframeFilterPeaks::setInputUp()
+void SubframeFilter::setInputUp()
 {
     auto input_box = new Spoiler("Input");
     GridFiller f(input_box, true);
@@ -107,14 +107,14 @@ void SubframeFilterPeaks::setInputUp()
     _peak_combo = f.addPeakCombo(ComboType::PeakCollection, "Peak collection");
 
     connect(
-        _peak_combo, &QComboBox::currentTextChanged, this, &SubframeFilterPeaks::refreshPeakTable);
+        _peak_combo, &QComboBox::currentTextChanged, this, &SubframeFilter::refreshPeakTable);
     connect(
-        _data_combo, &QComboBox::currentTextChanged, this, &SubframeFilterPeaks::refreshPeakTable);
+        _data_combo, &QComboBox::currentTextChanged, this, &SubframeFilter::refreshPeakTable);
 
     _left_layout->addWidget(input_box);
 }
 
-void SubframeFilterPeaks::setStateUp()
+void SubframeFilter::setStateUp()
 {
     _state_box = new SpoilerCheck("Type of peak");
     GridFiller f(_state_box);
@@ -126,7 +126,7 @@ void SubframeFilterPeaks::setStateUp()
     _left_layout->addWidget(_state_box);
 }
 
-void SubframeFilterPeaks::setUnitCellUp()
+void SubframeFilter::setUnitCellUp()
 {
     _unit_cell_box = new SpoilerCheck("Peak indexed by given unit cell");
     GridFiller f(_unit_cell_box);
@@ -141,7 +141,7 @@ void SubframeFilterPeaks::setUnitCellUp()
     _left_layout->addWidget(_unit_cell_box);
 }
 
-void SubframeFilterPeaks::setStrengthUp()
+void SubframeFilter::setStrengthUp()
 {
     _strength_box = new SpoilerCheck("Strength (I/sigma)");
     GridFiller f(_strength_box);
@@ -167,7 +167,7 @@ void SubframeFilterPeaks::setStrengthUp()
     _left_layout->addWidget(_strength_box);
 }
 
-void SubframeFilterPeaks::setRangeUp()
+void SubframeFilter::setRangeUp()
 {
     _d_range_box = new SpoilerCheck("Resolution range");
     GridFiller f(_d_range_box);
@@ -185,7 +185,7 @@ void SubframeFilterPeaks::setRangeUp()
     _left_layout->addWidget(_d_range_box);
 }
 
-void SubframeFilterPeaks::setFrameRangeUp()
+void SubframeFilter::setFrameRangeUp()
 {
     _frame_range_box = new SpoilerCheck("Detector image range");
     GridFiller f(_frame_range_box);
@@ -203,7 +203,7 @@ void SubframeFilterPeaks::setFrameRangeUp()
     _left_layout->addWidget(_frame_range_box);
 }
 
-void SubframeFilterPeaks::setSparseUp()
+void SubframeFilter::setSparseUp()
 {
     _sparse_box = new SpoilerCheck("Sparse dataset");
     GridFiller f(_sparse_box);
@@ -215,7 +215,7 @@ void SubframeFilterPeaks::setSparseUp()
     _left_layout->addWidget(_sparse_box);
 }
 
-void SubframeFilterPeaks::setMergeUp()
+void SubframeFilter::setMergeUp()
 {
     _merge_box = new SpoilerCheck("Merged peak significance");
     GridFiller f(_merge_box);
@@ -234,7 +234,7 @@ void SubframeFilterPeaks::setMergeUp()
     _left_layout->addWidget(_merge_box);
 }
 
-void SubframeFilterPeaks::setOverlapUp()
+void SubframeFilter::setOverlapUp()
 {
     _overlap_box = new SpoilerCheck("Overlapping peaks");
     GridFiller f(_overlap_box);
@@ -254,7 +254,7 @@ void SubframeFilterPeaks::setOverlapUp()
     _left_layout->addWidget(_overlap_box);
 }
 
-void SubframeFilterPeaks::setRejectionFlagsUp()
+void SubframeFilter::setRejectionFlagsUp()
 {
     _rejection_flag_box = new SpoilerCheck("Rejection reason");
     GridFiller f(_rejection_flag_box);
@@ -266,7 +266,7 @@ void SubframeFilterPeaks::setRejectionFlagsUp()
     _left_layout->addWidget(_rejection_flag_box);
 }
 
-void SubframeFilterPeaks::setProceedUp()
+void SubframeFilter::setProceedUp()
 {
     _extinct_spacegroup = new QCheckBox("Remove extinct from spacegroup");
     _extinct_spacegroup->setChecked(false);
@@ -297,11 +297,11 @@ void SubframeFilterPeaks::setProceedUp()
     _save_button = new QPushButton("Create peak collection");
     _left_layout->addWidget(_save_button);
 
-    connect(_filter_button, &QPushButton::clicked, this, &SubframeFilterPeaks::filterPeaks);
-    connect(_save_button, &QPushButton::clicked, this, &SubframeFilterPeaks::accept);
+    connect(_filter_button, &QPushButton::clicked, this, &SubframeFilter::filterPeaks);
+    connect(_save_button, &QPushButton::clicked, this, &SubframeFilter::accept);
 }
 
-void SubframeFilterPeaks::setFigureUp()
+void SubframeFilter::setFigureUp()
 {
     QGroupBox* figure_group = new QGroupBox("Detector image");
     figure_group->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -311,17 +311,17 @@ void SubframeFilterPeaks::setFigureUp()
 
     connect(
         _detector_widget->scene(), &DetectorScene::signalUpdateDetectorScene, this,
-        &SubframeFilterPeaks::refreshPeakTable);
+        &SubframeFilter::refreshPeakTable);
     connect(
         _detector_widget->scene(), &DetectorScene::signalSelectedPeakItemChanged, this,
-        &SubframeFilterPeaks::changeSelected);
-    connect(_peak_combo, &QComboBox::currentTextChanged, this, &SubframeFilterPeaks::refreshPeakTable);
-    connect(_detector_widget->dataCombo(), &QComboBox::currentTextChanged, this, &SubframeFilterPeaks::refreshPeakTable);
+        &SubframeFilter::changeSelected);
+    connect(_peak_combo, &QComboBox::currentTextChanged, this, &SubframeFilter::refreshPeakTable);
+    connect(_detector_widget->dataCombo(), &QComboBox::currentTextChanged, this, &SubframeFilter::refreshPeakTable);
 
     _right_element->addWidget(figure_group);
 }
 
-void SubframeFilterPeaks::setPeakTableUp()
+void SubframeFilter::setPeakTableUp()
 {
     QGroupBox* peak_group = new QGroupBox("Peaks");
     QGridLayout* peak_grid = new QGridLayout(peak_group);
@@ -340,7 +340,7 @@ void SubframeFilterPeaks::setPeakTableUp()
     _right_element->addWidget(peak_group);
 }
 
-void SubframeFilterPeaks::refreshAll()
+void SubframeFilter::refreshAll()
 {
     if (!gSession->hasProject())
         return;
@@ -351,7 +351,7 @@ void SubframeFilterPeaks::refreshAll()
     toggleUnsafeWidgets();
 }
 
-void SubframeFilterPeaks::grabFilterParameters()
+void SubframeFilter::grabFilterParameters()
 {
     if (!gSession->hasProject())
         return;
@@ -387,7 +387,7 @@ void SubframeFilterPeaks::grabFilterParameters()
     _rejection_flag_box->setChecked(flags->rejection_flag);
 }
 
-void SubframeFilterPeaks::setFilterParameters()
+void SubframeFilter::setFilterParameters()
 {
     if (!gSession->hasProject())
         return;
@@ -433,7 +433,7 @@ void SubframeFilterPeaks::setFilterParameters()
         static_cast<ohkl::RejectionFlag>(_rejection_flag_combo->currentIndex());
 }
 
-void SubframeFilterPeaks::filterPeaks()
+void SubframeFilter::filterPeaks()
 {
     gGui->setReady(false);
     ohkl::PeakFilter* filter = gSession->currentProject()->experiment()->peakFilter();
@@ -452,7 +452,7 @@ void SubframeFilterPeaks::filterPeaks()
     gGui->setReady(true);
 }
 
-void SubframeFilterPeaks::accept()
+void SubframeFilter::accept()
 {
     ohkl::PeakCollection* collection = _peak_combo->currentPeakCollection();
     ohkl::sptrDataSet data = collection->data();
@@ -476,7 +476,7 @@ void SubframeFilterPeaks::accept()
     gSession->currentProject()->generatePeakModel(dlg->listName());
 }
 
-void SubframeFilterPeaks::refreshPeakTable()
+void SubframeFilter::refreshPeakTable()
 {
     if (!gSession->hasProject())
         return;
@@ -500,7 +500,7 @@ void SubframeFilterPeaks::refreshPeakTable()
     _detector_widget->refresh();
 }
 
-void SubframeFilterPeaks::changeSelected(PeakItemGraphic* peak_graphic)
+void SubframeFilter::changeSelected(PeakItemGraphic* peak_graphic)
 {
     int row = _peak_collection_item.returnRowOfVisualItem(peak_graphic);
     QModelIndex index = _peak_collection_model.index(row, 0);
@@ -508,7 +508,7 @@ void SubframeFilterPeaks::changeSelected(PeakItemGraphic* peak_graphic)
     _peak_table->scrollTo(index, QAbstractItemView::PositionAtTop);
 }
 
-void SubframeFilterPeaks::toggleUnsafeWidgets()
+void SubframeFilter::toggleUnsafeWidgets()
 {
     _filter_button->setEnabled(false);
     _save_button->setEnabled(false);
@@ -520,7 +520,7 @@ void SubframeFilterPeaks::toggleUnsafeWidgets()
     _save_button->setEnabled(gSession->currentProject()->hasPeakCollection());
 }
 
-DetectorWidget* SubframeFilterPeaks::detectorWidget()
+DetectorWidget* SubframeFilter::detectorWidget()
 {
     return _detector_widget;
 }

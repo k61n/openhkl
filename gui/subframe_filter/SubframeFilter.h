@@ -2,8 +2,8 @@
 //
 //  OpenHKL: data reduction for single crystal diffraction
 //
-//! @file      gui/subframe_filter/SubframeFilterPeaks.h
-//! @brief     Defines class SubframeFilterPeaks
+//! @file      gui/subframe_filter/SubframeFilter.h
+//! @brief     Defines class SubframeFilter
 //!
 //! @homepage  https://openhkl.org
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef OHKL_GUI_SUBFRAME_FILTER_SUBFRAMEFILTERPEAKS_H
-#define OHKL_GUI_SUBFRAME_FILTER_SUBFRAMEFILTERPEAKS_H
+#ifndef OHKL_GUI_SUBFRAME_FILTER_SUBFRAMEFILTER_H
+#define OHKL_GUI_SUBFRAME_FILTER_SUBFRAMEFILTER_H
 
 #include "gui/items/PeakCollectionItem.h"
 #include "gui/models/PeakCollectionModel.h"
@@ -43,10 +43,10 @@ class SafeDoubleSpinBox;
 class SpoilerCheck;
 
 //! Frame containing interface for filtering peak collections
-class SubframeFilterPeaks : public QWidget {
+class SubframeFilter : public QWidget {
     Q_OBJECT
  public:
-    SubframeFilterPeaks();
+    SubframeFilter();
 
  public:
     //! Run the filtering method
@@ -159,4 +159,4 @@ class SubframeFilterPeaks : public QWidget {
     PeakTableView* _peak_table;
 };
 
-#endif // OHKL_GUI_SUBFRAME_FILTER_SUBFRAMEFILTERPEAKS_H
+#endif // OHKL_GUI_SUBFRAME_FILTER_SUBFRAMEFILTER_H
