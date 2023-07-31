@@ -23,7 +23,7 @@
 #include "gui/subframe_home/SubframeHome.h"
 #include "gui/subframe_index/SubframeAutoIndexer.h"
 #include "gui/subframe_integrate/SubframeIntegrate.h"
-#include "gui/subframe_merge/SubframeMergedPeaks.h"
+#include "gui/subframe_merge/SubframeMerge.h"
 #include "gui/subframe_predict/SubframePredictPeaks.h"
 #include "gui/subframe_refiner/SubframeRefiner.h"
 #include "gui/subframe_reject/SubframeReject.h"
@@ -380,7 +380,7 @@ void SideBar::onSubframeChanged()
         gGui->integrator->setIntegrationParameters();
         break;
     }
-    // SubframeMergedPeaks does not need setMergeParameters because it is triggered on merging
+    // SubframeMerge does not need setMergeParameters because it is triggered on merging
     }
 
     if (gSession->hasProject())

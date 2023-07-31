@@ -40,7 +40,7 @@ class SubframeExperiment;
 class SubframeFindPeaks;
 class SubframeFilterPeaks;
 class SubframeAutoIndexer;
-class SubframeMergedPeaks;
+class SubframeMerge;
 class SubframeRefiner;
 class SubframeIntegrate;
 class SubframePredictPeaks;
@@ -103,7 +103,7 @@ class MainWin : public QMainWindow {
     SubframeRefiner* refiner;
     SubframeIntegrate* integrator;
     SubframeReject* rejector;
-    SubframeMergedPeaks* merger;
+    SubframeMerge* merger;
 
     // modeless detector dialog
     DetectorWindow* detector_window;

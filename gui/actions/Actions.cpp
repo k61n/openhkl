@@ -26,7 +26,7 @@
 #include "gui/models/Project.h"
 #include "gui/models/Session.h" //for gSession
 #include "gui/subframe_home/SubframeHome.h"
-#include "gui/subframe_merge/SubframeMergedPeaks.h"
+#include "gui/subframe_merge/SubframeMerge.h"
 #include "gui/subwindows/DetectorWindow.h"
 #include "gui/subwindows/LogWindow.h"
 #include "gui/subwindows/PeakWindow.h"

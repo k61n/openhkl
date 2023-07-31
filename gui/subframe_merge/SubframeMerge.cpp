@@ -2,8 +2,8 @@
 //
 //  OpenHKL: data reduction for single crystal diffraction
 //
-//! @file      gui/subframe_merge/SubframeMergedPeaks.cpp
-//! @brief     Implements class SubframeMergedPeaks
+//! @file      gui/subframe_merge/SubframeMerge.cpp
+//! @brief     Implements class SubframeMerge
 //!
 //! @homepage  https://openhkl.org
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "gui/subframe_merge/SubframeMergedPeaks.h"
+#include "gui/subframe_merge/SubframeMerge.h"
 
 #include "core/data/DataSet.h"
 #include "core/experiment/DataQuality.h"
@@ -50,7 +50,7 @@
 
 #include "gui/dialogs/PeakExportDialog.h"
 
-SubframeMergedPeaks::SubframeMergedPeaks()
+SubframeMerge::SubframeMerge()
 {
     _exporter = {};
     setSizePolicies();
@@ -94,13 +94,13 @@ SubframeMergedPeaks::SubframeMergedPeaks()
 
     connect(
         _peak_combo_1, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
-        &SubframeMergedPeaks::processMerge);
+        &SubframeMerge::processMerge);
     connect(
         _peak_combo_2, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
-        &SubframeMergedPeaks::processMerge);
+        &SubframeMerge::processMerge);
 }
 
-void SubframeMergedPeaks::grabMergeParameters()
+void SubframeMerge::grabMergeParameters()
 {
     QSignalBlocker blocker1(_d_min);
     QSignalBlocker blocker2(_d_max);
@@ -121,7 +121,7 @@ void SubframeMergedPeaks::grabMergeParameters()
     _intensity_rescale_unmerged->setValue(params->scale);
 }
 
-void SubframeMergedPeaks::setMergeParameters()
+void SubframeMerge::setMergeParameters()
 {
     if (!gSession->hasProject())
         return;
@@ -137,7 +137,7 @@ void SubframeMergedPeaks::setMergeParameters()
     params->scale = _intensity_rescale_merged->value();
 }
 
-void SubframeMergedPeaks::setSizePolicies()
+void SubframeMerge::setSizePolicies()
 {
     _size_policy_widgets = new QSizePolicy();
     _size_policy_widgets->setHorizontalPolicy(QSizePolicy::Preferred);
@@ -156,7 +156,7 @@ void SubframeMergedPeaks::setSizePolicies()
     _size_policy_fixed->setVerticalPolicy(QSizePolicy::Fixed);
 }
 
-void SubframeMergedPeaks::setDShellUp()
+void SubframeMerge::setDShellUp()
 {
     QVBoxLayout* shell_layout = new QVBoxLayout();
     _shell_tab->setLayout(shell_layout);
@@ -285,32 +285,32 @@ void SubframeMergedPeaks::setDShellUp()
 
     connect(
         _d_min, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this,
-        &SubframeMergedPeaks::processMerge);
+        &SubframeMerge::processMerge);
 
     connect(
         _d_max, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this,
-        &SubframeMergedPeaks::processMerge);
+        &SubframeMerge::processMerge);
 
     connect(
         _frame_min, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
-        &SubframeMergedPeaks::processMerge);
+        &SubframeMerge::processMerge);
 
     connect(
         _frame_max, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
-        &SubframeMergedPeaks::processMerge);
+        &SubframeMerge::processMerge);
 
     connect(
         _d_shells, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
-        &SubframeMergedPeaks::processMerge);
+        &SubframeMerge::processMerge);
 
-    connect(_friedel, &QCheckBox::clicked, this, &SubframeMergedPeaks::processMerge);
+    connect(_friedel, &QCheckBox::clicked, this, &SubframeMerge::processMerge);
 
     connect(
         _plottable_statistics,
         static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
-        &SubframeMergedPeaks::refreshGraph);
+        &SubframeMerge::refreshGraph);
 
-    connect(_save_shell, &QPushButton::clicked, this, &SubframeMergedPeaks::saveStatistics);
+    connect(_save_shell, &QPushButton::clicked, this, &SubframeMerge::saveStatistics);
 
     QWidget* down_widget = new QWidget();
     down_widget->setLayout(d_shell_down);
@@ -319,7 +319,7 @@ void SubframeMergedPeaks::setDShellUp()
     shell_layout->addWidget(down_widget);
 }
 
-void SubframeMergedPeaks::setMergedUp()
+void SubframeMerge::setMergedUp()
 {
     QVBoxLayout* merged_layout = new QVBoxLayout();
     _merged_tab->setLayout(merged_layout);
@@ -386,10 +386,10 @@ void SubframeMergedPeaks::setMergedUp()
     merged_layout->addWidget(_merged_tab_widget);
     merged_layout->addWidget(lower_widget);
 
-    connect(_save_merged, &QPushButton::clicked, this, &SubframeMergedPeaks::saveMergedPeaks);
+    connect(_save_merged, &QPushButton::clicked, this, &SubframeMerge::saveMergedPeaks);
 }
 
-void SubframeMergedPeaks::setUnmergedUp()
+void SubframeMerge::setUnmergedUp()
 {
     QVBoxLayout* unmerged_layout = new QVBoxLayout(_unmerged_tab);
     _unmerged_tab->setLayout(unmerged_layout);
@@ -453,10 +453,10 @@ void SubframeMergedPeaks::setUnmergedUp()
     unmerged_layout->addWidget(_unmerged_tab_widget);
     unmerged_layout->addWidget(lower_widget);
 
-    connect(_save_unmerged, &QPushButton::clicked, this, &SubframeMergedPeaks::saveUnmergedPeaks);
+    connect(_save_unmerged, &QPushButton::clicked, this, &SubframeMerge::saveUnmergedPeaks);
 }
 
-void SubframeMergedPeaks::refreshAll()
+void SubframeMerge::refreshAll()
 {
     if (!gSession->hasProject())
         return;
@@ -467,7 +467,7 @@ void SubframeMergedPeaks::refreshAll()
     toggleUnsafeWidgets();
 }
 
-void SubframeMergedPeaks::refreshPeakLists()
+void SubframeMerge::refreshPeakLists()
 {
     if (!gSession->currentProject()->hasPeakCollection())
         return;
@@ -481,7 +481,7 @@ void SubframeMergedPeaks::refreshPeakLists()
     _profile_unmerged_view->resizeColumnsToContents();
 }
 
-void SubframeMergedPeaks::refreshPeakCombos()
+void SubframeMerge::refreshPeakCombos()
 {
     QSignalBlocker blocker1(_peak_combo_1);
     QSignalBlocker blocker2(_peak_combo_2);
@@ -514,7 +514,7 @@ void SubframeMergedPeaks::refreshPeakCombos()
     }
 }
 
-void SubframeMergedPeaks::refreshSpaceGroupCombo()
+void SubframeMerge::refreshSpaceGroupCombo()
 {
     QSignalBlocker blocker(_space_group);
     auto* expt = gSession->currentProject()->experiment();
@@ -542,7 +542,7 @@ void SubframeMergedPeaks::refreshSpaceGroupCombo()
     _space_group->setCurrentIndex(0);
 }
 
-void SubframeMergedPeaks::processMerge()
+void SubframeMerge::processMerge()
 {
     gGui->setReady(false);
     auto* expt = gSession->currentProject()->experiment();
@@ -577,7 +577,7 @@ void SubframeMergedPeaks::processMerge()
     gGui->setReady(true);
 }
 
-void SubframeMergedPeaks::refreshTables()
+void SubframeMerge::refreshTables()
 {
     refreshDShellTable();
     refreshMergedTable();
@@ -591,7 +591,7 @@ void SubframeMergedPeaks::refreshTables()
     refreshGraph(_plottable_statistics->currentIndex());
 }
 
-void SubframeMergedPeaks::refreshDShellTable()
+void SubframeMerge::refreshDShellTable()
 {
     auto* expt = gSession->currentProject()->experiment();
     auto* merger = expt->peakMerger();
@@ -609,7 +609,7 @@ void SubframeMergedPeaks::refreshDShellTable()
         _profile_shell_model, merger->profileShellQuality(), merger->profileOverallQuality());
 }
 
-void SubframeMergedPeaks::updateShellModel(
+void SubframeMerge::updateShellModel(
     QStandardItemModel* model, ohkl::DataResolution* resolution, ohkl::DataResolution* overall)
 {
     model->removeRows(0, model->rowCount());
@@ -660,7 +660,7 @@ void SubframeMergedPeaks::updateShellModel(
     _profile_shell_view->resizeColumnsToContents();
 }
 
-void SubframeMergedPeaks::refreshMergedTable()
+void SubframeMerge::refreshMergedTable()
 {
     _sum_merged_model->removeRows(0, _sum_merged_model->rowCount());
     _profile_merged_model->removeRows(0, _profile_merged_model->rowCount());
@@ -672,7 +672,7 @@ void SubframeMergedPeaks::refreshMergedTable()
     updateMergedModel(_profile_merged_model, _profile_merged_data);
 }
 
-void SubframeMergedPeaks::updateMergedModel(
+void SubframeMerge::updateMergedModel(
     QStandardItemModel* model, ohkl::MergedPeakCollection* merged_data)
 {
     for (const ohkl::MergedPeak& peak : merged_data->mergedPeakSet()) {
@@ -705,7 +705,7 @@ void SubframeMergedPeaks::updateMergedModel(
     }
 }
 
-void SubframeMergedPeaks::refreshUnmergedTable()
+void SubframeMerge::refreshUnmergedTable()
 {
     _sum_unmerged_model->removeRows(0, _sum_unmerged_model->rowCount());
     _profile_unmerged_model->removeRows(0, _profile_unmerged_model->rowCount());
@@ -717,7 +717,7 @@ void SubframeMergedPeaks::refreshUnmergedTable()
     updateUnmergedModel(_profile_unmerged_model, _profile_merged_data, false);
 }
 
-void SubframeMergedPeaks::updateUnmergedModel(
+void SubframeMerge::updateUnmergedModel(
     QStandardItemModel* model, ohkl::MergedPeakCollection* merged_data, bool sum_intensity)
 {
     for (const ohkl::MergedPeak& peak : merged_data->mergedPeakSet()) {
@@ -756,7 +756,7 @@ void SubframeMergedPeaks::updateUnmergedModel(
     }
 }
 
-void SubframeMergedPeaks::refreshGraph(int column)
+void SubframeMerge::refreshGraph(int column)
 {
     _statistics_plot->clearGraphs();
 
@@ -842,7 +842,7 @@ void SubframeMergedPeaks::refreshGraph(int column)
     _statistics_plot->replot();
 }
 
-void SubframeMergedPeaks::saveStatistics()
+void SubframeMerge::saveStatistics()
 {
     QSettings settings = gGui->qSettings();
     settings.beginGroup("RecentDirectories");
@@ -863,7 +863,7 @@ void SubframeMergedPeaks::saveStatistics()
     merger->saveStatistics(filename.toStdString());
 }
 
-void SubframeMergedPeaks::savePeaks(bool merged)
+void SubframeMerge::savePeaks(bool merged)
 {
     QSettings settings = gGui->qSettings();
     settings.beginGroup("RecentDirectories");
@@ -936,17 +936,17 @@ void SubframeMergedPeaks::savePeaks(bool merged)
     settings.setValue("merged", info.absolutePath());
 }
 
-void SubframeMergedPeaks::saveMergedPeaks()
+void SubframeMerge::saveMergedPeaks()
 {
     savePeaks(true);
 }
 
-void SubframeMergedPeaks::saveUnmergedPeaks()
+void SubframeMerge::saveUnmergedPeaks()
 {
     savePeaks(false);
 }
 
-void SubframeMergedPeaks::toggleUnsafeWidgets()
+void SubframeMerge::toggleUnsafeWidgets()
 {
     _save_shell->setEnabled(false);
     _save_merged->setEnabled(false);
@@ -962,7 +962,7 @@ void SubframeMergedPeaks::toggleUnsafeWidgets()
     }
 }
 
-ohkl::sptrUnitCell SubframeMergedPeaks::singleBatchRefine()
+ohkl::sptrUnitCell SubframeMerge::singleBatchRefine()
 {
     auto expt = gSession->currentProject()->experiment();
     auto* peaks = _peak_combo_1->currentPeakCollection();

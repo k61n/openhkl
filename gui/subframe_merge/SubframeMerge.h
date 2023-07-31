@@ -2,7 +2,7 @@
 //
 //  OpenHKL: data reduction for single crystal diffraction
 //
-//! @file      gui/subframe_merge/SubframeMergedPeaks.h
+//! @file      gui/subframe_merge/SubframeMerge.h
 //! @brief     Defines class MergedPeakInformationFrame
 //!
 //! @homepage  https://openhkl.org
@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef OHKL_GUI_SUBFRAME_MERGE_SUBFRAMEMERGEDPEAKS_H
-#define OHKL_GUI_SUBFRAME_MERGE_SUBFRAMEMERGEDPEAKS_H
+#ifndef OHKL_GUI_SUBFRAME_MERGE_SUBFRAMEMERGE_H
+#define OHKL_GUI_SUBFRAME_MERGE_SUBFRAMEMERGE_H
 
 #include "core/data/DataTypes.h"
 #include "core/experiment/DataQuality.h"
@@ -42,9 +42,9 @@ class QStandardItemModel;
 class SXPlot;
 
 //! Frame containing interface to merge peak collections and compute quality staticstics
-class SubframeMergedPeaks : public QWidget {
+class SubframeMerge : public QWidget {
  public:
-    SubframeMergedPeaks();
+    SubframeMerge();
     //! Refresh all the panels
     void refreshAll();
     //! Get the merge parameters
@@ -166,4 +166,4 @@ class SubframeMergedPeaks : public QWidget {
     bool _frame_set;
 };
 
-#endif // OHKL_GUI_SUBFRAME_MERGE_SUBFRAMEMERGEDPEAKS_H
+#endif // OHKL_GUI_SUBFRAME_MERGE_SUBFRAMEMERGE_H

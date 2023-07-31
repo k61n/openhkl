@@ -35,7 +35,7 @@
 #include "gui/subframe_find/SubframeFindPeaks.h"
 #include "gui/subframe_index/SubframeAutoIndexer.h"
 #include "gui/subframe_integrate/SubframeIntegrate.h"
-#include "gui/subframe_merge/SubframeMergedPeaks.h"
+#include "gui/subframe_merge/SubframeMerge.h"
 #include "gui/subframe_predict/SubframePredictPeaks.h"
 #include "gui/subframe_refiner/SubframeRefiner.h"
 #include "gui/utility/CellComboBox.h"
