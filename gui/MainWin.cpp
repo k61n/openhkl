@@ -28,7 +28,7 @@
 #include "gui/subframe_index/SubframeAutoIndexer.h"
 #include "gui/subframe_integrate/SubframeIntegrate.h"
 #include "gui/subframe_merge/SubframeMerge.h"
-#include "gui/subframe_predict/SubframePredictPeaks.h"
+#include "gui/subframe_predict/SubframePredict.h"
 #include "gui/subframe_refiner/SubframeRefiner.h"
 #include "gui/subframe_reject/SubframeReject.h"
 #include "gui/subframe_shapes/SubframeShapes.h"
@@ -85,7 +85,7 @@ MainWin::MainWin()
     filter = new SubframeFilterPeaks;
     indexer = new SubframeAutoIndexer;
     shapes = new SubframeShapes;
-    predictor = new SubframePredictPeaks;
+    predictor = new SubframePredict;
     refiner = new SubframeRefiner;
     integrator = new SubframeIntegrate;
     rejector = new SubframeReject;

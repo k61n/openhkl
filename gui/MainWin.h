@@ -43,7 +43,7 @@ class SubframeAutoIndexer;
 class SubframeMerge;
 class SubframeRefiner;
 class SubframeIntegrate;
-class SubframePredictPeaks;
+class SubframePredict;
 class SubframeShapes;
 class SubframeReject;
 
@@ -99,7 +99,7 @@ class MainWin : public QMainWindow {
     SubframeFilterPeaks* filter;
     SubframeAutoIndexer* indexer;
     SubframeShapes* shapes;
-    SubframePredictPeaks* predictor;
+    SubframePredict* predictor;
     SubframeRefiner* refiner;
     SubframeIntegrate* integrator;
     SubframeReject* rejector;
