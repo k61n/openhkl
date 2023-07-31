@@ -117,8 +117,6 @@ void SubframeMerge::grabMergeParameters()
     _frame_max->setValue(params->frame_max + 1);
     _d_shells->setValue(params->n_shells);
     _friedel->setChecked(params->friedel);
-    _intensity_rescale_merged->setValue(params->scale);
-    _intensity_rescale_unmerged->setValue(params->scale);
 }
 
 void SubframeMerge::setMergeParameters()
@@ -134,7 +132,6 @@ void SubframeMerge::setMergeParameters()
     params->frame_max = _frame_max->value() - 1;
     params->n_shells = _d_shells->value();
     params->friedel = _friedel->isChecked();
-    params->scale = _intensity_rescale_merged->value();
 }
 
 void SubframeMerge::setSizePolicies()
@@ -236,6 +233,7 @@ void SubframeMerge::setDShellUp()
     _space_group = new QComboBox();
     _plottable_statistics = new QComboBox();
     _save_shell = new QPushButton("Save statistics");
+    _save_peaks = new QPushButton("Export peaks");
 
     _d_min->setValue(1.5);
     _d_min->setSingleStep(0.1);
@@ -277,6 +275,7 @@ void SubframeMerge::setDShellUp()
     d_shell_down_left->addWidget(_friedel, 5, 1, 1, 2);
     d_shell_down_left->addWidget(_plottable_statistics, 6, 1, 1, 3);
     d_shell_down_left->addWidget(_save_shell, 7, 0, 1, 3);
+    d_shell_down_left->addWidget(_save_peaks, 8, 0, 1, 3);
     d_shell_down->addLayout(d_shell_down_left);
 
     _statistics_plot = new SXPlot;
@@ -311,6 +310,8 @@ void SubframeMerge::setDShellUp()
         &SubframeMerge::refreshGraph);
 
     connect(_save_shell, &QPushButton::clicked, this, &SubframeMerge::saveStatistics);
+
+    connect(_save_peaks, &QPushButton::clicked, this, &SubframeMerge::saveMergedPeaks);
 
     QWidget* down_widget = new QWidget();
     down_widget->setLayout(d_shell_down);
@@ -355,29 +356,9 @@ void SubframeMerge::setMergedUp()
 
     QHBoxLayout* merged_row = new QHBoxLayout;
 
-    _merged_save_type = new QComboBox();
-    for (int idx = 0; idx < static_cast<int>(ohkl::ExportFormat::Count); ++idx) {
-        std::string text =
-            _exporter.exportFormatStrings()->at(static_cast<ohkl::ExportFormat>(idx));
-        _merged_save_type->addItem(QString::fromStdString(text));
-    }
-
-    _save_merged = new QPushButton("Save merged");
-
-    QLabel* label = new QLabel("Intensity scale factor");
-
-    _intensity_rescale_merged = new QDoubleSpinBox();
-    _intensity_rescale_merged->setValue(1);
-    _intensity_rescale_merged->setMaximum(1000000);
-    _intensity_rescale_merged->setMinimum(0.000001);
-    _intensity_rescale_merged->setDecimals(6);
-    _intensity_rescale_merged->setToolTip(
-        "Rescale intensities in output file by this factor (Phenix only)");
+    _save_merged = new QPushButton("Export merged peaks");
 
     merged_row->addStretch();
-    merged_row->addWidget(label);
-    merged_row->addWidget(_intensity_rescale_merged);
-    merged_row->addWidget(_merged_save_type);
     merged_row->addWidget(_save_merged);
 
     QWidget* lower_widget = new QWidget();
@@ -423,28 +404,9 @@ void SubframeMerge::setUnmergedUp()
     profile_layout->addWidget(_profile_unmerged_view);
 
     QHBoxLayout* unmerged_row = new QHBoxLayout;
-    _unmerged_save_type = new QComboBox();
-    for (int idx = 0; idx < static_cast<int>(ohkl::ExportFormat::Count); ++idx) {
-        std::string text =
-            _exporter.exportFormatStrings()->at(static_cast<ohkl::ExportFormat>(idx));
-        _unmerged_save_type->addItem(QString::fromStdString(text));
-    }
-    _save_unmerged = new QPushButton("Save unmerged");
-
-    QLabel* label = new QLabel("Intensity scale factor");
-
-    _intensity_rescale_unmerged = new QDoubleSpinBox();
-    _intensity_rescale_unmerged->setValue(1);
-    _intensity_rescale_unmerged->setMaximum(1000000);
-    _intensity_rescale_unmerged->setMinimum(0.000001);
-    _intensity_rescale_unmerged->setDecimals(6);
-    _intensity_rescale_unmerged->setToolTip(
-        "Rescale intensities in output file by this factor (Phenix only)");
+    _save_unmerged = new QPushButton("Export unmerged peaks");
 
     unmerged_row->addStretch();
-    unmerged_row->addWidget(label);
-    unmerged_row->addWidget(_intensity_rescale_unmerged);
-    unmerged_row->addWidget(_unmerged_save_type);
     unmerged_row->addWidget(_save_unmerged);
 
     QWidget* lower_widget = new QWidget();
@@ -583,6 +545,7 @@ void SubframeMerge::processMerge()
         _profile_merged_data_per_shell = merger->profileMergedPeakCollectionPerShell();
     }
     refreshTables();
+    toggleUnsafeWidgets();
     gGui->setReady(true);
 }
 
@@ -872,87 +835,23 @@ void SubframeMerge::saveStatistics()
     merger->saveStatistics(filename.toStdString());
 }
 
-void SubframeMerge::savePeaks(bool merged)
+void SubframeMerge::exportPeaks(bool merged)
 {
-    QSettings settings = gGui->qSettings();
-    settings.beginGroup("RecentDirectories");
-    QString loadDirectory = settings.value("merged", QDir::homePath()).toString();
-    QString filename;
-    auto* formats = _exporter.exportFormatStrings();
-
-    ohkl::ExportFormat fmt;
-    if (merged)
-        fmt = static_cast<ohkl::ExportFormat>(_merged_save_type->currentIndex());
-    else
-        fmt = static_cast<ohkl::ExportFormat>(_unmerged_save_type->currentIndex());
-
-    switch (fmt) {
-        case ohkl::ExportFormat::Mtz: {
-            filename = QFileDialog::getSaveFileName(
-                this, "Save peaks to CCP4 mtz", loadDirectory,
-                QString::fromStdString(formats->at(fmt)));
-            break;
-        }
-        case ohkl::ExportFormat::Phenix: {
-            filename = QFileDialog::getSaveFileName(
-                this, "Save peaks to Phenix sca", loadDirectory,
-                QString::fromStdString(formats->at(fmt)));
-            break;
-        }
-        case ohkl::ExportFormat::ShelX: {
-            filename = QFileDialog::getSaveFileName(
-                this, "Save peaks to ShelX", loadDirectory,
-                QString::fromStdString(formats->at(fmt)));
-            break;
-        }
-        case ohkl::ExportFormat::FullProf: {
-            filename = QFileDialog::getSaveFileName(
-                this, "Save peaks to FullProf", loadDirectory,
-                QString::fromStdString(formats->at(fmt)));
-            break;
-        }
-        default: return;
-    }
-    if (filename.isEmpty())
-        return;
-
-    auto cell = singleBatchRefine();
-    auto data = _peak_combo_1->currentPeakCollection()->data();
-
-    double scale;
-    ohkl::MergedPeakCollection* merged_data = nullptr;
-    bool sum_intensity = true;
-    if (_merged_tab_widget->currentIndex() != 0)
-        sum_intensity = false;
-
-    if (merged) {
-        scale = _intensity_rescale_merged->value();
-        merged_data = _sum_merged_data;
-        if (!sum_intensity)
-            merged_data = _profile_merged_data;
-    } else {
-        scale = _intensity_rescale_unmerged->value();
-    }
-
-    std::string comment = "";
-    bool success = _exporter.exportPeaks(
-        fmt, filename.toStdString(), merged_data, data, cell, merged, sum_intensity, scale,
-        comment);
-    if (!success)
-        QMessageBox::critical(this, "Error", "Peak export unsuccessful");
-
-    QFileInfo info(filename);
-    settings.setValue("merged", info.absolutePath());
+    PeakExportDialog dlg;
+    QString collection1 = _peak_combo_1->currentText();
+    QString collection2 = _peak_combo_2->currentText();
+    dlg.initialise(collection1, collection2, _d_min->value(), _d_max->value(), merged);
+    dlg.exec();
 }
 
 void SubframeMerge::saveMergedPeaks()
 {
-    savePeaks(true);
+    exportPeaks(true);
 }
 
 void SubframeMerge::saveUnmergedPeaks()
 {
-    savePeaks(false);
+    exportPeaks(false);
 }
 
 void SubframeMerge::toggleUnsafeWidgets()

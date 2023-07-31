@@ -52,7 +52,7 @@ class SubframeMerge : public QWidget {
     //! Set the merge parameters
     void setMergeParameters();
     //! Save unmerged/merged Peaks
-    void savePeaks(bool merged);
+    void exportPeaks(bool merged);
     //! Process the two inputs to create the merged dataset
     void processMerge();
     //! Refresh the QComboBox for the space group
@@ -145,20 +145,17 @@ class SubframeMerge : public QWidget {
     QComboBox* _space_group;
     QComboBox* _plottable_statistics;
     SXPlot* _statistics_plot;
-    QDoubleSpinBox* _intensity_rescale_merged;
-    QDoubleSpinBox* _intensity_rescale_unmerged;
     QPushButton* _save_shell;
+    QPushButton* _save_peaks;
 
     QTableView* _sum_merged_view;
     QTableView* _profile_merged_view;
-    QComboBox* _merged_save_type;
     QPushButton* _save_merged;
     QStandardItemModel* _sum_merged_model;
     QStandardItemModel* _profile_merged_model;
 
     QTableView* _sum_unmerged_view;
     QTableView* _profile_unmerged_view;
-    QComboBox* _unmerged_save_type;
     QPushButton* _save_unmerged;
     QStandardItemModel* _sum_unmerged_model;
     QStandardItemModel* _profile_unmerged_model;

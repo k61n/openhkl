@@ -17,6 +17,7 @@
 
 #include "core/experiment/Experiment.h"
 #include "core/statistics/PeakExporter.h"
+#include "gui/models/PeakCollectionModel.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
 #include "gui/utility/GridFiller.h"
@@ -50,6 +51,10 @@ class PeakExportDialog : public QDialog {
     PeakExportDialog();
     //! loads parameters from PeakMerger to gui
     void loadMergeParams();
+    //! Initialise dialogue from options in another GUI element
+    void initialise(
+       const QString& collection1, const QString& collection2,
+        double d_min, double d_max, bool merged);
     //! sets changed parameters from gui to PeakMerger
     void setMergeParams();
     //! Refresh gui

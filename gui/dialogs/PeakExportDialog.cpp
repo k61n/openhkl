@@ -167,6 +167,22 @@ void PeakExportDialog::loadMergeParams()
     _scale_factor->setValue(params->scale);
 }
 
+void PeakExportDialog::initialise(
+    const QString& collection1, const QString& collection2, double d_min,
+    double d_max, bool merged)
+{
+    _peak_combo_1->setCurrentText(collection1);
+    _peak_combo_2->setCurrentText(collection2);
+    _drange_min->setValue(d_min);
+    _drange_max->setValue(d_max);
+    _rb_merged->setAutoExclusive(false);
+    _rb_unmerged->setAutoExclusive(false);
+    _rb_merged->setChecked(merged);
+    _rb_unmerged->setChecked(!merged);
+    _rb_merged->setAutoExclusive(true);
+    _rb_unmerged->setAutoExclusive(true);
+}
+
 void PeakExportDialog::setMergeParams()
 {
     auto params = gSession->currentProject()->experiment()->peakMerger()->parameters();
