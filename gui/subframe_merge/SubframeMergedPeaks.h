@@ -53,6 +53,10 @@ class SubframeMergedPeaks : public QWidget {
     void setMergeParameters();
     //! Save unmerged/merged Peaks
     void savePeaks(bool merged);
+    //! Process the two inputs to create the merged dataset
+    void processMerge();
+    //! Refresh the QComboBox for the space group
+    void refreshSpaceGroupCombo();
 
  private:
     //! Set up the GUI size policies
@@ -68,10 +72,6 @@ class SubframeMergedPeaks : public QWidget {
     void refreshPeakLists();
     //! Refresh the QComboBoxes for peak collections
     void refreshPeakCombos();
-    //! Refresh the QComboBox for the space group
-    void refreshSpaceGroupCombo();
-    //! Process the two inputs to create the merged dataset
-    void processMerge();
     //! Disable unsafe widgets if no data loaded
     void toggleUnsafeWidgets();
 

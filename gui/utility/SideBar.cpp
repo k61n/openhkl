@@ -320,7 +320,8 @@ void SideBar::onMerger()
 {
     onSubframeChanged();
     gGui->_layout_stack->setCurrentIndex(static_cast<int>(SubFrame::Merge));
-    gGui->merger->refreshAll();
+    gGui->merger->refreshSpaceGroupCombo();
+    gGui->merger->processMerge();
 }
 
 void SideBar::refreshAll()

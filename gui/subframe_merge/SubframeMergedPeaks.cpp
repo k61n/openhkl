@@ -102,6 +102,13 @@ SubframeMergedPeaks::SubframeMergedPeaks()
 
 void SubframeMergedPeaks::grabMergeParameters()
 {
+    QSignalBlocker blocker1(_d_min);
+    QSignalBlocker blocker2(_d_max);
+    QSignalBlocker blocker3(_frame_min);
+    QSignalBlocker blocker4(_frame_max);
+    QSignalBlocker blocker5(_d_shells);
+    QSignalBlocker blocker6(_friedel);
+
     auto params = gSession->currentProject()->experiment()->peakMerger()->parameters();
 
     _d_min->setValue(params->d_min);
@@ -476,6 +483,10 @@ void SubframeMergedPeaks::refreshPeakLists()
 
 void SubframeMergedPeaks::refreshPeakCombos()
 {
+    QSignalBlocker blocker1(_peak_combo_1);
+    QSignalBlocker blocker2(_peak_combo_2);
+    QSignalBlocker blocker3(_frame_min);
+    QSignalBlocker blocker4(_frame_max);
     if (!gSession->hasProject())
         return;
 
