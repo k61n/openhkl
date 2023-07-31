@@ -516,6 +516,12 @@ void SubframeMerge::refreshPeakCombos()
 
 void SubframeMerge::refreshSpaceGroupCombo()
 {
+    if (!gSession->hasProject())
+        return;
+
+    if (!gSession->currentProject()->hasUnitCell())
+        return;
+
     QSignalBlocker blocker(_space_group);
     auto* expt = gSession->currentProject()->experiment();
 
@@ -544,6 +550,9 @@ void SubframeMerge::refreshSpaceGroupCombo()
 
 void SubframeMerge::processMerge()
 {
+    if (!gSession->hasProject())
+        return;
+
     gGui->setReady(false);
     auto* expt = gSession->currentProject()->experiment();
     auto* merger = expt->peakMerger();
