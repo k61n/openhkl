@@ -57,7 +57,7 @@ TEST_CASE("test/data/TestAutoIndexer.cpp", "")
     params->strength_min = 1.0;
     params->strength_max = 1.0e7;
 
-    indexer->autoIndex(found_peaks);
+    indexer->autoIndex(found_peaks, data);
     std::cout << indexer->solutionsToString() << std::endl;
     bool found_cell = false;
     for (const auto& [cell, quality] : indexer->solutions()) {

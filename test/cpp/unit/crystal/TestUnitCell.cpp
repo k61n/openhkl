@@ -29,7 +29,7 @@ TEST_CASE("test/crystal/TestUnitCell.cpp", "")
     double b = 7.22;
     double c = 3.44;
     double alpha = 90 * ohkl::deg;
-    ohkl::UnitCell cell(a, b, c, alpha, alpha, alpha);
+    ohkl::UnitCell cell(a, b, c, alpha, alpha, alpha, nullptr);
     auto cc = cell.character();
 
     CHECK(cc.a == Approx(a).epsilon(tolerance));
@@ -77,7 +77,7 @@ TEST_CASE("test/crystal/TestUnitCell.cpp", "")
     cell.setLatticeCentring(ohkl::LatticeCentring::I);
     cell.setBravaisType(ohkl::BravaisType::Tetragonal);
     // Check angle calculations
-    ohkl::UnitCell cell4(10, 10, 10, 90 * ohkl::deg, 98 * ohkl::deg, 90 * ohkl::deg);
+    ohkl::UnitCell cell4(10, 10, 10, 90 * ohkl::deg, 98 * ohkl::deg, 90 * ohkl::deg, nullptr);
     CHECK(cell4.angle({1, 0, 0}, {0, 0, 1}) == Approx(82.0 * ohkl::deg).epsilon(tolerance));
 
     // Check equivalence
@@ -93,7 +93,7 @@ TEST_CASE("test/crystal/TestUnitCell.cpp", "")
     Eigen::Matrix3d AA;
     AA << 2.0, 1.0, 1.0, -0.5, 2.5, 0.7, 0.1, 0.2, 1.8;
 
-    cell = ohkl::UnitCell(AA);
+    cell = ohkl::UnitCell(AA, nullptr);
     CHECK(cell.volume() == Approx(std::fabs(AA.determinant())).epsilon(1e-10));
 
     // computed covariance matrix
@@ -219,14 +219,14 @@ TEST_CASE("test/crystal/TestUnitCell.cpp", "")
     // this unit cell proved to be tricky
 
     // first check with Niggli only
-    cell = ohkl::UnitCell(5.557, 5.77, 16.138, 96.314 * deg, 90.0 * deg, 90.0 * deg);
+    cell = ohkl::UnitCell(5.557, 5.77, 16.138, 96.314 * deg, 90.0 * deg, 90.0 * deg, nullptr);
     cell.reduce(true, 1e-2, 1e-3);
     nch = cell.niggliCharacter();
     CHECK(nch.number == 35);
     CHECK_NOTHROW(cell = cell.applyNiggliConstraints());
 
     // Niggli + Gruber
-    cell = ohkl::UnitCell(5.557, 5.77, 16.138, 96.314 * deg, 90.0 * deg, 90.0 * deg);
+    cell = ohkl::UnitCell(5.557, 5.77, 16.138, 96.314 * deg, 90.0 * deg, 90.0 * deg, nullptr);
     cell.reduce(false, 1e-2, 1e-3);
     nch = cell.niggliCharacter();
     CHECK(nch.number == 35);

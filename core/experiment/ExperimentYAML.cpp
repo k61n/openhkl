@@ -65,9 +65,9 @@ void ExperimentYAML::grabDataReaderParameters(DataReaderParameters* params) cons
         throw std::runtime_error("DataReader/format not specified");
     else {
         if (format == "raw")
-            params->format = DataFormat::RAW;
+            params->data_format = DataFormat::RAW;
         if (format == "tiff")
-            params->format = DataFormat::TIFF;
+            params->data_format = DataFormat::TIFF;
     }
 
     if (format == "raw") {
@@ -95,13 +95,13 @@ void ExperimentYAML::setDataReaderParameters(DataReaderParameters* params)
     reader_node["delta_omega"] = params->delta_omega;
     reader_node["delta_phi"] = params->delta_phi;
     reader_node["bytes_per_pixel"] = params->delta_phi;
-    if (params->format == DataFormat::RAW) {
+    if (params->data_format == DataFormat::RAW) {
         reader_node["format"] = "raw";
         reader_node["row_major"] = params->row_major;
         reader_node["swap_endian"] = params->swap_endian;
         reader_node["columns"] = params->cols;
         reader_node["rows"] = params->rows;
-    } else if (params->format == DataFormat::TIFF) {
+    } else if (params->data_format == DataFormat::TIFF) {
         reader_node["format"] = "tiff";
         reader_node["rebin_size"] = params->rebin_size;
     }

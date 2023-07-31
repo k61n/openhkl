@@ -127,9 +127,8 @@ void SubframeAutoIndexer::setInputUp()
     _data_combo = f.addDataCombo("Data set");
     _peak_combo = f.addPeakCombo(ComboType::FoundPeaks, "Peak collection");
 
-    connect(
-        _peak_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
-        &SubframeAutoIndexer::refreshPeakTable);
+    connect(_peak_combo, &QComboBox::currentTextChanged, this, &SubframeAutoIndexer::refreshPeakTable);
+    connect(_data_combo, &QComboBox::currentTextChanged, this, &SubframeAutoIndexer::refreshPeakTable);
 
     _left_layout->addWidget(input_box);
 }
@@ -235,10 +234,6 @@ void SubframeAutoIndexer::setParametersUp()
     _frequency_tolerance->setMaximum(1);
     _frequency_tolerance->setDecimals(3);
 
-    connect(
-        gGui->sideBar(), &SideBar::subframeChanged, this,
-        &SubframeAutoIndexer::setIndexerParameters);
-
     _left_layout->addWidget(para_box);
 }
 
@@ -305,8 +300,6 @@ void SubframeAutoIndexer::refreshAll()
     if (!gSession->currentProject()->hasDataSet())
         return;
 
-    _data_combo->refresh();
-    _peak_combo->refresh();
     refreshPeakTable();
     _detector_widget->refresh();
     _solution_table->setModel(nullptr);
@@ -451,7 +444,8 @@ void SubframeAutoIndexer::runAutoIndexer()
 
     _solutions.clear();
 
-    bool success = autoindexer->autoIndex(_peak_combo->currentPeakCollection());
+    bool success =
+        autoindexer->autoIndex(_peak_combo->currentPeakCollection(), _data_combo->currentData());
     if (!success) {
         gGui->statusBar()->showMessage("Indexing failed");
         return;
@@ -565,7 +559,8 @@ void SubframeAutoIndexer::acceptSolution()
     if (_selected_unit_cell) {
         ohkl::Experiment* expt = gSession->currentProject()->experiment();
         QStringList collections =
-            gSession->currentProject()->getPeakCollectionNames(ohkl::PeakCollectionType::FOUND);
+            gSession->currentProject()->getPeakCollectionNames(
+                ohkl::PeakCollectionType::FOUND, _selected_unit_cell->data());
 
         QStringList space_groups;
         for (const std::string& name : _selected_unit_cell->compatibleSpaceGroups())

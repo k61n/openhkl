@@ -65,11 +65,12 @@ IndexerParameters* AutoIndexer::parameters()
 }
 
 bool AutoIndexer::autoIndex(
-    const std::vector<Peak3D*>& peaks, const InstrumentState* state, bool filter)
+    const std::vector<Peak3D*>& peaks, sptrDataSet data, const InstrumentState* state, bool filter)
 {
     _params->log(Level::Info);
     ohklLog(Level::Info, "AutoIndexer::autoIndex: indexing using ", peaks.size(), " peaks");
     _filtered_peaks.clear();
+    _data = data;
     if (state)
         ohklLog(
             Level::Info, "AutoIndexer::autoIndex: indexing using InstrumentState\n",
@@ -98,13 +99,14 @@ bool AutoIndexer::autoIndex(
     return success;
 }
 
-bool AutoIndexer::autoIndex(PeakCollection* peaks, const InstrumentState* state, bool filter)
+bool AutoIndexer::autoIndex(
+    PeakCollection* peaks, sptrDataSet data, const InstrumentState* state, bool filter)
 {
     ohklLog(Level::Info, "AutoIndexer::autoindex: indexing PeakCollection '", peaks->name(), "'");
     _params->peaks_integrated = peaks->isIntegrated();
     std::vector<Peak3D*> peak_list = peaks->getPeakList();
 
-    if (autoIndex(peak_list, state, filter)) {
+    if (autoIndex(peak_list, data, state, filter)) {
         peaks->setIndexed(true);
         return true;
     }
@@ -198,7 +200,7 @@ bool AutoIndexer::computeFFTSolutions(
                 A.col(1) = tvects[j];
                 A.col(2) = tvects[k];
                 // Build a unit cell with direct vectors
-                std::shared_ptr<UnitCell> cell{new UnitCell{A}};
+                std::shared_ptr<UnitCell> cell{new UnitCell{A, _data}};
 
                 // Skip this unit cell if its volume is below a user-defined minimum.
                 if (cell->volume() < _params->minUnitCellVolume)

@@ -21,6 +21,9 @@
 
 // subclass Action to integrate tooltips
 
+enum class SubFrame {
+    Home = 0, Experiment, Find, Filter, Index, Shapes, Predict, Refine, Integrate, Reject, Merge };
+
 class SideBar : public QWidget {
     Q_OBJECT
  public:

@@ -22,13 +22,13 @@
 #include "gui/graphics_items/PlottableItem.h"
 #include "gui/models/Session.h"
 #include "gui/subframe_experiment/SubframeExperiment.h"
-#include "gui/subframe_filter/SubframeFilterPeaks.h"
+#include "gui/subframe_filter/SubframeFilter.h"
 #include "gui/subframe_find/SubframeFindPeaks.h"
 #include "gui/subframe_home/SubframeHome.h"
 #include "gui/subframe_index/SubframeAutoIndexer.h"
 #include "gui/subframe_integrate/SubframeIntegrate.h"
-#include "gui/subframe_merge/SubframeMergedPeaks.h"
-#include "gui/subframe_predict/SubframePredictPeaks.h"
+#include "gui/subframe_merge/SubframeMerge.h"
+#include "gui/subframe_predict/SubframePredict.h"
 #include "gui/subframe_refiner/SubframeRefiner.h"
 #include "gui/subframe_reject/SubframeReject.h"
 #include "gui/subframe_shapes/SubframeShapes.h"
@@ -82,14 +82,14 @@ MainWin::MainWin()
     home = new SubframeHome;
     experiment = new SubframeExperiment;
     finder = new SubframeFindPeaks;
-    filter = new SubframeFilterPeaks;
+    filter = new SubframeFilter;
     indexer = new SubframeAutoIndexer;
     shapes = new SubframeShapes;
-    predictor = new SubframePredictPeaks;
+    predictor = new SubframePredict;
     refiner = new SubframeRefiner;
     integrator = new SubframeIntegrate;
     rejector = new SubframeReject;
-    merger = new SubframeMergedPeaks;
+    merger = new SubframeMerge;
 
     detector_window = new DetectorWindow();
     log_window = new LogWindow();

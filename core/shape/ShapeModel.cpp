@@ -489,6 +489,7 @@ void ShapeModel::integrate(
     std::vector<Peak3D*> peaks, const sptrDataSet data, sptrProgressHandler handler)
 {
     ohklLog(Level::Info, "ShapeModel::integrate: integrating ", peaks.size(), " peaks");
+    _data = data;
     ShapeIntegrator integrator(
         this, getAABB(), _params->nbins_x, _params->nbins_y, _params->nbins_z);
     ohkl::IntegrationParameters int_params{};
@@ -509,6 +510,7 @@ void ShapeModel::integrate(
 void ShapeModel::build(PeakCollection* peaks, sptrDataSet data)
 {
     ohklLog(Level::Info, "ShapeModel::build: building shape model");
+    _data = data;
     peaks->computeSigmas();
     _params->sigma_d = peaks->sigmaD();
     _params->sigma_m = peaks->sigmaM();

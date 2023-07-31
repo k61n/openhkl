@@ -61,6 +61,11 @@ class SubframeFindPeaks : public QWidget {
     //! Show the filtered/thresholded image in DetectorScene
     void showFilteredImage();
 
+    //! Set the finder parameters
+    void setFinderParameters();
+    //! Set the integration parameters
+    void setIntegrationParameters();
+
  public slots:
     void onGradientSettingsChanged();
 
@@ -91,12 +96,6 @@ class SubframeFindPeaks : public QWidget {
     void accept();
     //! Disable widgets that are unsafe without relevant data
     void toggleUnsafeWidgets();
-
-    //! Set the finder parameters
-    void setFinderParameters();
-
-    //! Set the integration parameters
-    void setIntegrationParameters();
 
     //! Convolution parameter map
     std::map<std::string, double> convolutionParameters();

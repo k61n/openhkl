@@ -26,7 +26,7 @@
 #include "gui/models/Project.h"
 #include "gui/models/Session.h" //for gSession
 #include "gui/subframe_home/SubframeHome.h"
-#include "gui/subframe_merge/SubframeMergedPeaks.h"
+#include "gui/subframe_merge/SubframeMerge.h"
 #include "gui/subwindows/DetectorWindow.h"
 #include "gui/subwindows/LogWindow.h"
 #include "gui/subwindows/PeakWindow.h"
@@ -226,24 +226,24 @@ void Actions::setupCell()
 
 void Actions::addCell()
 {
-    QStringList space_groups;
-    for (const auto& symbol : ohkl::SpaceGroup::symbols())
-        space_groups.push_back(QString::fromStdString(symbol));
-    std::unique_ptr<NewCellDialog> dlg(new NewCellDialog(space_groups));
-    dlg->exec();
+    // QStringList space_groups;
+    // for (const auto& symbol : ohkl::SpaceGroup::symbols())
+    //     space_groups.push_back(QString::fromStdString(symbol));
+    // std::unique_ptr<NewCellDialog> dlg(new NewCellDialog(space_groups));
+    // dlg->exec();
 
-    if (dlg->unitCellName().isEmpty())
-        return;
-    if (dlg->result() == QDialog::Rejected)
-        return;
+    // if (dlg->unitCellName().isEmpty())
+    //     return;
+    // if (dlg->result() == QDialog::Rejected)
+    //     return;
 
-    ohkl::Experiment* expt = gSession->currentProject()->experiment();
-    expt->addUnitCell(
-        dlg->unitCellName().toStdString(), dlg->a(), dlg->b(), dlg->c(), dlg->alpha(), dlg->beta(),
-        dlg->gamma(), dlg->spaceGroup().toStdString());
-    gSession->onUnitCellChanged();
-    auto cell_list = gSession->currentProject()->getUnitCellNames();
-    gGui->sideBar()->refreshCurrent();
+    // ohkl::Experiment* expt = gSession->currentProject()->experiment();
+    // expt->addUnitCell(
+    //     dlg->unitCellName().toStdString(), dlg->a(), dlg->b(), dlg->c(), dlg->alpha(), dlg->beta(),
+    //     dlg->gamma(), dlg->spaceGroup().toStdString());
+    // gSession->onUnitCellChanged();
+    // auto cell_list = gSession->currentProject()->getUnitCellNames();
+    // gGui->sideBar()->refreshCurrent();
 }
 
 void Actions::removeCell()
@@ -269,7 +269,7 @@ void Actions::removePeaks()
 {
     gGui->setReady(false);
     QString description{"Peak collection to remove"};
-    QStringList peaks_list = gSession->currentProject()->getPeakListNames();
+    QStringList peaks_list = gSession->currentProject()->getPeakCollectionNames();
     if (peaks_list.empty())
         return;
 
@@ -288,7 +288,6 @@ void Actions::removePeaks()
 
     gSession->currentProject()->removePeakModel(peaks_name);
     gSession->onPeaksChanged();
-    peaks_list = gSession->currentProject()->getPeakListNames();
 
     gGui->sideBar()->refreshCurrent();
     gGui->setReady(true);
@@ -300,7 +299,7 @@ void Actions::clonePeaks()
     QString description{"Peak collection to clone"};
     QString suggested_name = QString::fromStdString(
         gSession->currentProject()->experiment()->generatePeakCollectionName());
-    QStringList peaks_list = gSession->currentProject()->getPeakListNames();
+    QStringList peaks_list = gSession->currentProject()->getPeakCollectionNames();
 
     if (peaks_list.empty())
         return;
@@ -316,7 +315,6 @@ void Actions::clonePeaks()
     QString original = dlg->originalCollectionName();
     QString cloned = dlg->clonedCollectionName();
     gSession->currentProject()->clonePeakCollection(original, cloned);
-    peaks_list = gSession->currentProject()->getPeakListNames();
     gSession->onPeaksChanged();
     gGui->setReady(true);
 }

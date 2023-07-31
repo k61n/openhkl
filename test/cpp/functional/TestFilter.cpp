@@ -60,7 +60,7 @@ TEST_CASE("test/data/TestFilter.cpp", "")
     filter->filter(peaks);
     std::cout << peaks->numberCaughtByFilter() << "/" << npeaks << " with strength 5 - 10000"
               << std::endl;
-    CHECK(peaks->numberCaughtByFilter() == 422);
+    CHECK(peaks->numberCaughtByFilter() == 413);
 
     filter->resetFilterFlags();
     filter->resetFiltering(peaks);

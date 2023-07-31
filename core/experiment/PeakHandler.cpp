@@ -114,28 +114,6 @@ void PeakHandler::removePeakCollection(const std::string& name)
     }
 }
 
-std::vector<std::string> PeakHandler::getCollectionNames() const
-{
-
-    std::vector<std::string> names;
-    for (PeakCollectionMap::const_iterator it = _peak_collections.begin();
-         it != _peak_collections.end(); ++it) {
-        names.push_back(it->second->name());
-    }
-    return names;
-}
-
-std::vector<std::string> PeakHandler::getCollectionNames(PeakCollectionType pct) const
-{
-    std::vector<std::string> names;
-    for (PeakCollectionMap::const_iterator it = _peak_collections.begin();
-         it != _peak_collections.end(); ++it) {
-        if (it->second->type() == pct)
-            names.push_back(it->second->name());
-    }
-    return names;
-}
-
 bool PeakHandler::acceptFilter(
     std::string name, PeakCollection* collection, PeakCollectionType pct, sptrDataSet data)
 {
@@ -180,6 +158,16 @@ std::vector<PeakCollection*> PeakHandler::getPeakCollections()
     std::vector<PeakCollection*> collections;
     for (const auto& [name, ptr] : _peak_collections)
         collections.push_back(ptr.get());
+    return collections;
+}
+
+std::vector<PeakCollection*> PeakHandler::getPeakCollections(sptrDataSet data)
+{
+    std::vector<PeakCollection*> collections;
+    for (const auto& [name, ptr] : _peak_collections) {
+        if (ptr->data() == data)
+            collections.push_back(ptr.get());
+    }
     return collections;
 }
 

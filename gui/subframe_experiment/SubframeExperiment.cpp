@@ -229,8 +229,8 @@ void SubframeExperiment::setPreviewUp()
 
 void SubframeExperiment::setStrategyUp()
 {
-    setAdjustBeamUp();
     setPeakFinder2DUp();
+    setAdjustBeamUp();
     setIndexerUp();
     setPredictUp();
     setPreviewUp();
@@ -354,19 +354,23 @@ void SubframeExperiment::importMasks()
 {
     QSettings settings = gGui->qSettings();
     settings.beginGroup("RecentDirectories");
-    QString loadDirectory = settings.value("masks", QDir::homePath()).toString() + "/mask.yml";
+    QString loadDirectory = settings.value("masks", QDir::homePath()).toString();
+    settings.setValue("masks", loadDirectory);
 
-    std::string file_path =
-        QFileDialog::getOpenFileName(this, "Import masks from file", loadDirectory, "YAML (*.yml)")
-            .toStdString();
+    QString file_path =
+        QFileDialog::getOpenFileName(this, "Import masks from file", loadDirectory, "YAML (*.yml)");
 
-    if (file_path.empty())
+    if (file_path.isEmpty())
         return;
 
     ohkl::MaskImporter importer(
-        file_path, _data_combo->currentData()->nFrames()); // TODO: update nframes
+        file_path.toStdString(), _data_combo->currentData()->nFrames()); // TODO: update nframes
     for (auto* mask : importer.getMasks())
         _data_combo->currentData()->addMask(mask);
+
+    QFileInfo info(file_path);
+    loadDirectory = info.absolutePath();
+    settings.setValue("masks", loadDirectory);
 
     _detector_widget->scene()->loadMasksFromData();
     toggleUnsafeWidgets();
@@ -376,18 +380,20 @@ void SubframeExperiment::exportMasks()
 {
     QSettings settings = gGui->qSettings();
     settings.beginGroup("RecentDirectories");
-    QString loadDirectory =
-        settings.value("experiment", QDir::homePath()).toString() + "/masks.yml";
+    QString loadDirectory = settings.value("experiment", QDir::homePath()).toString();
 
-    std::string file_path =
-        QFileDialog::getSaveFileName(this, "Export maks to ", loadDirectory, "YAML (*.yml)")
-            .toStdString();
+    QString file_path =
+        QFileDialog::getSaveFileName(this, "Export maks to ", loadDirectory, "YAML (*.yml)");
 
-    if (file_path.empty())
+    if (file_path.isEmpty())
         return;
 
     ohkl::MaskExporter exporter(_data_combo->currentData()->masks());
-    exporter.exportToFile(file_path);
+    exporter.exportToFile(file_path.toStdString());
+
+    QFileInfo info(file_path);
+    loadDirectory = info.absolutePath();
+    settings.setValue("masks", loadDirectory);
 
     toggleUnsafeWidgets();
 }
@@ -512,9 +518,6 @@ void SubframeExperiment::setIndexerUp()
 
     connect(_index_button, &QPushButton::clicked, this, &SubframeExperiment::autoindex);
     connect(_save_cell, &QPushButton::clicked, this, &SubframeExperiment::saveCell);
-    connect(
-        gGui->sideBar(), &SideBar::subframeChanged, this,
-        &SubframeExperiment::setIndexerParameters);
 
     _strategy_layout->addWidget(index_spoiler);
 }
@@ -565,9 +568,6 @@ void SubframeExperiment::setPredictUp()
     _predict_d_max->setValue(50);
 
     connect(_predict_button, &QPushButton::clicked, this, &SubframeExperiment::predict);
-    connect(
-        gGui->sideBar(), &SideBar::subframeChanged, this,
-        &SubframeExperiment::setStrategyParameters);
     connect(_save_peaks, &QPushButton::clicked, this, &SubframeExperiment::savePeaks);
 
     _strategy_layout->addWidget(predict_spoiler);
@@ -803,7 +803,7 @@ void SubframeExperiment::autoindex()
 
     const ohkl::InstrumentState& state =
         data->instrumentStates().at(_detector_widget->scene()->currentFrame());
-    indexer->autoIndex(peaks, &state, true);
+    indexer->autoIndex(peaks, data, &state, true);
 
     _solutions.clear();
     _solutions = indexer->solutions();
@@ -1214,8 +1214,6 @@ void SubframeExperiment::saveCell()
 {
     if (_selected_unit_cell) {
         auto* expt = gSession->currentProject()->experiment();
-        QStringList collections =
-            gSession->currentProject()->getPeakCollectionNames(ohkl::PeakCollectionType::FOUND);
 
         QStringList space_groups;
         for (const std::string& name : _selected_unit_cell->compatibleSpaceGroups())
@@ -1252,6 +1250,7 @@ void SubframeExperiment::setUnitCell()
 void SubframeExperiment::refreshMaskTable()
 {
     _mask_table->clearContents();
+    _mask_table->setRowCount(0);
     if (!gSession->hasProject())
         return;
     if (!gSession->currentProject()->hasDataSet())

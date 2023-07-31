@@ -3,7 +3,7 @@
 //  OpenHKL: data reduction for single crystal diffraction
 //
 //! @file      gui/utility/SpoilerCheck.h
-//! @brief     Defines class SubframeFilterPeaks
+//! @brief     Defines class SpoilerCheck
 //!
 //! @homepage  https://openhkl.org
 //! @license   GNU General Public License v3 or higher (see COPYING)

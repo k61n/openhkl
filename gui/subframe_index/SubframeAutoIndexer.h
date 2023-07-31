@@ -56,6 +56,8 @@ class SubframeAutoIndexer : public QWidget {
     void refreshAll();
     //! Get the parameters of the indexer
     void grabIndexerParameters();
+    //! Set the parameters of the indexer
+    void setIndexerParameters();
 
  private:
     //! Build the input
@@ -83,8 +85,6 @@ class SubframeAutoIndexer : public QWidget {
     void changeSelected(PeakItemGraphic* peak_graphic);
     //! Refresh the detector scene
     void refreshPeakVisual();
-    //! Get the parameters of the indexer
-    void setIndexerParameters();
     //! Select a solution
     void selectSolutionHeader(int index);
     //! Select a solution

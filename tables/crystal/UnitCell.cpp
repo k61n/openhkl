@@ -18,6 +18,7 @@
 #include "base/geometry/ReciprocalVector.h"
 #include "base/utils/Logger.h"
 #include "base/utils/Units.h"
+#include "core/data/DataTypes.h"
 #include "tables/crystal/GruberReduction.h"
 #include "tables/crystal/MillerIndex.h"
 #include "tables/crystal/NiggliCharacter.h"
@@ -78,8 +79,9 @@ UnitCellCharacter::UnitCellCharacter(
     gamma = std::acos(g01 / a / b);
 }
 
-UnitCell::UnitCell(const Eigen::Matrix3d& basis, bool reciprocal) : UnitCell()
+UnitCell::UnitCell(const Eigen::Matrix3d& basis, sptrDataSet data, bool reciprocal) : UnitCell()
 {
+    _data = data;
     // If reciprocal is false basis must be column formed, upper triangular
     _a = reciprocal ? basis.inverse() : basis;
     // If reciprocal is true basis must be row formed, lower triangular
@@ -97,6 +99,7 @@ UnitCell::UnitCell()
     , _name("uc")
     , _indexingTolerance(0.2)
     , _id(0)
+    , _data(nullptr)
 {
 }
 
@@ -113,12 +116,15 @@ UnitCell::UnitCell(const UnitCell& other)
     , _niggli(other._niggli)
     , _characterSigmas(other._characterSigmas)
     , _id(0)
+    , _data(other._data)
 {
 }
 
-UnitCell::UnitCell(double a, double b, double c, double alpha, double beta, double gamma)
+UnitCell::UnitCell(
+    double a, double b, double c, double alpha, double beta, double gamma, sptrDataSet data)
     : UnitCell()
 {
+    _data = data;
     setParameters(a, b, c, alpha, beta, gamma);
 }
 
@@ -136,6 +142,7 @@ UnitCell& UnitCell::operator=(const UnitCell& other)
         _indexingTolerance = other._indexingTolerance;
         _niggli = other._niggli;
         _characterSigmas = other._characterSigmas;
+        _data = other._data;
     }
     return *this;
 }

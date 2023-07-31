@@ -245,7 +245,7 @@ ohkl::DataReaderParameters ImageReaderDialog::dataReaderParameters()
     }
 
     if (_tiff_mode) {
-        parameters.format = ohkl::DataFormat::TIFF;
+        parameters.data_format = ohkl::DataFormat::TIFF;
         parameters.cols = _img_res.first;
         parameters.rows = _img_res.second;
         switch (_rebin_size->currentIndex()) {
@@ -263,7 +263,7 @@ ohkl::DataReaderParameters ImageReaderDialog::dataReaderParameters()
             detector->setNRows(detector->nRows() / parameters.rebin_size);
         }
     } else {
-        parameters.format = ohkl::DataFormat::RAW;
+        parameters.data_format = ohkl::DataFormat::RAW;
         parameters.row_major = rowMajor();
     }
 

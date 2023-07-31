@@ -2,7 +2,7 @@
 //
 //  OpenHKL: data reduction for single crystal diffraction
 //
-//! @file      gui/subframe_predict/SubframePredictPeaks.h
+//! @file      gui/subframe_predict/SubframePredict.h
 //! @brief     Defines classes FoundPeaks, PeakFinderFrame
 //!
 //! @homepage  https://openhkl.org
@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef OHKL_GUI_SUBFRAME_PREDICT_SUBFRAMEPREDICTPEAKS_H
-#define OHKL_GUI_SUBFRAME_PREDICT_SUBFRAMEPREDICTPEAKS_H
+#ifndef OHKL_GUI_SUBFRAME_PREDICT_SUBFRAMEPREDICT_H
+#define OHKL_GUI_SUBFRAME_PREDICT_SUBFRAMEPREDICT_H
 
 #include "core/algo/Refiner.h"
 #include "core/data/DataTypes.h"
@@ -34,6 +34,7 @@
 #include <QWidget>
 
 class CellComboBox;
+class DataComboBox;
 class DetectorWidget;
 class DirectBeamWidget;
 class PeakComboBox;
@@ -51,10 +52,10 @@ struct ShapeModelParameters;
 }
 
 //! Frame containing interface for predicting peaks from unit cell
-class SubframePredictPeaks : public QWidget {
+class SubframePredict : public QWidget {
     Q_OBJECT
  public:
-    SubframePredictPeaks();
+    SubframePredict();
     //! Show direct beam position computed from unit cell in DetectorScene
     void showDirectBeamEvents();
     //! Refresh all the panels
@@ -67,6 +68,13 @@ class SubframePredictPeaks : public QWidget {
     void grabRefinerParameters();
     //! Get shape collection parameters
     void grabShapeModelParameters();
+    //! Set refiner parameters
+    void setRefinerParameters();
+    //! Set prediction parameters
+    void setPredictorParameters();
+    //! Set shape collection parameters
+    void setShapeModelParameters();
+    //! Refine the incident wavevector
 
  private:
     //! Manually set the incident wavevector
@@ -86,13 +94,6 @@ class SubframePredictPeaks : public QWidget {
     //! Set the save button up
     void setSaveUp();
 
-    //! Set refiner parameters
-    void setRefinerParameters();
-    //! Set prediction parameters
-    void setPredictorParameters();
-    //! Set shape collection parameters
-    void setShapeModelParameters();
-    //! Refine the incident wavevector
     void refineKi();
     //! Refresh the found peaks list
     void refreshPeakTable();
@@ -137,6 +138,7 @@ class SubframePredictPeaks : public QWidget {
     Spoiler* _set_initial_ki;
     DirectBeamWidget* _beam_setter_widget;
 
+    DataComboBox* _data_combo;
     PeakComboBox* _peak_combo;
     SafeSpinBox* _n_batches_spin;
     SafeSpinBox* _max_iter_spin;
@@ -171,4 +173,4 @@ class SubframePredictPeaks : public QWidget {
         {"Real space", ohkl::ResidualType::RealSpace}};
 };
 
-#endif // OHKL_GUI_SUBFRAME_PREDICT_SUBFRAMEPREDICTPEAKS_H
+#endif // OHKL_GUI_SUBFRAME_PREDICT_SUBFRAMEPREDICT_H

@@ -50,9 +50,11 @@ void UnitCellHandler::addUnitCell(const std::string& name, sptrUnitCell unit_cel
 }
 
 void UnitCellHandler::addUnitCell(
-    const std::string& name, double a, double b, double c, double alpha, double beta, double gamma)
+    const std::string& name, double a, double b, double c, double alpha, double beta, double gamma,
+    sptrDataSet data)
 {
-    sptrUnitCell cell = std::make_shared<UnitCell>(a, b, c, alpha * deg, beta * deg, gamma * deg);
+    sptrUnitCell cell =
+        std::make_shared<UnitCell>(a, b, c, alpha * deg, beta * deg, gamma * deg, data);
     cell->setName(name);
     cell->setId(_last_index++);
     _unit_cells.push_back(std::move(cell));
@@ -60,9 +62,10 @@ void UnitCellHandler::addUnitCell(
 
 void UnitCellHandler::addUnitCell(
     const std::string& name, double a, double b, double c, double alpha, double beta, double gamma,
-    const std::string& space_group)
+    const std::string& space_group, sptrDataSet data)
 {
-    sptrUnitCell cell = std::make_shared<UnitCell>(a, b, c, alpha * deg, beta * deg, gamma * deg);
+    sptrUnitCell cell =
+        std::make_shared<UnitCell>(a, b, c, alpha * deg, beta * deg, gamma * deg, data);
     cell->setSpaceGroup(space_group);
     cell->setName(name);
     cell->setId(_last_index++);
@@ -139,10 +142,10 @@ void UnitCellHandler::swapUnitCells(
 }
 
 void UnitCellHandler::setReferenceCell(
-    double a, double b, double c, double alpha, double beta, double gamma)
+    double a, double b, double c, double alpha, double beta, double gamma, sptrDataSet data)
 {
     std::string name = ohkl::kw_referenceUnitcell;
-    UnitCell reference_cell{a, b, c, alpha * deg, beta * deg, gamma * deg};
+    UnitCell reference_cell{a, b, c, alpha * deg, beta * deg, gamma * deg, data};
     addUnitCell(name, reference_cell);
 }
 
@@ -200,6 +203,15 @@ std::vector<sptrUnitCell> UnitCellHandler::getSptrUnitCells() const
     std::vector<sptrUnitCell> cells;
     for (auto cell : _unit_cells)
         cells.push_back(cell);
+    return cells;
+}
+
+std::vector<sptrUnitCell> UnitCellHandler::getSptrUnitCells(sptrDataSet data) const
+{
+    std::vector<sptrUnitCell> cells;
+    for (const auto& cell : _unit_cells)
+        if (cell->data() == data)
+            cells.push_back(cell);
     return cells;
 }
 

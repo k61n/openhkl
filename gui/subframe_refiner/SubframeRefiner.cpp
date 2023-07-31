@@ -96,15 +96,17 @@ SubframeRefiner::SubframeRefiner()
     _detector_widget->linkPeakModel(&_refined_model, _peak_view_widget_2, 1);
     detector_tab->setLayout(_detector_widget);
 
-    connect(
-        _peak_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
-        _detector_widget, &DetectorWidget::refresh);
-    connect(
-        _predicted_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+    connect(_peak_combo, &QComboBox::currentTextChanged, this, &SubframeRefiner::refreshAll);
+    connect(_data_combo, &QComboBox::currentTextChanged, this, &SubframeRefiner::refreshAll);
+    connect(_predicted_combo, &QComboBox::currentTextChanged,
         this, [=]() {
             updatePeaks();
             _detector_widget->refresh();
         });
+    connect(_data_combo, &QComboBox::currentTextChanged, this, [=]() {
+        updatePeaks();
+        _detector_widget->refresh();
+    });
     connect(
         _data_combo, QOverload<int>::of(&QComboBox::currentIndexChanged),
         _detector_widget->dataCombo(), &QComboBox::setCurrentIndex);
@@ -138,8 +140,8 @@ void SubframeRefiner::setInputUp()
     auto input_box = new Spoiler("Input");
     GridFiller f(input_box, true);
 
-    _peak_combo = f.addPeakCombo(ComboType::FoundPeaks, "Peaks");
     _data_combo = f.addDataCombo("Data set");
+    _peak_combo = f.addPeakCombo(ComboType::FoundPeaks, "Peaks");
     _cell_combo = f.addCellCombo("Unit cell");
     _batch_cell_check = f.addCheckBox(
         "Use refined cells", "Use unit cells generated per batch during previous refinement", 1);
@@ -178,8 +180,6 @@ void SubframeRefiner::setRefinerFlagsUp()
         _residual_combo->addItem(QString::fromStdString(key));
 
     connect(_refine_button, &QPushButton::clicked, this, &SubframeRefiner::refine);
-    connect(
-        gGui->sideBar(), &SideBar::subframeChanged, this, &SubframeRefiner::setRefinerParameters);
 
     _left_layout->addWidget(refiner_flags_box);
 }
@@ -188,12 +188,6 @@ void SubframeRefiner::refreshAll()
 {
     if (!gSession->hasProject())
         return;
-
-    _data_combo->refresh();
-    _predicted_combo->refresh();
-    _peak_combo->refresh();
-    _cell_combo->refresh();
-
 
     updatePeaks();
     grabRefinerParameters();

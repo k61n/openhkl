@@ -38,12 +38,12 @@ class SideBar;
 class SubframeHome;
 class SubframeExperiment;
 class SubframeFindPeaks;
-class SubframeFilterPeaks;
+class SubframeFilter;
 class SubframeAutoIndexer;
-class SubframeMergedPeaks;
+class SubframeMerge;
 class SubframeRefiner;
 class SubframeIntegrate;
-class SubframePredictPeaks;
+class SubframePredict;
 class SubframeShapes;
 class SubframeReject;
 
@@ -96,14 +96,14 @@ class MainWin : public QMainWindow {
     SubframeExperiment* experiment;
     SubframeHome* home;
     SubframeFindPeaks* finder;
-    SubframeFilterPeaks* filter;
+    SubframeFilter* filter;
     SubframeAutoIndexer* indexer;
     SubframeShapes* shapes;
-    SubframePredictPeaks* predictor;
+    SubframePredict* predictor;
     SubframeRefiner* refiner;
     SubframeIntegrate* integrator;
     SubframeReject* rejector;
-    SubframeMergedPeaks* merger;
+    SubframeMerge* merger;
 
     // modeless detector dialog
     DetectorWindow* detector_window;

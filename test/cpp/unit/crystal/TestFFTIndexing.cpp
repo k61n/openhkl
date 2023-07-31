@@ -57,7 +57,7 @@ TEST_CASE("test/crystal/TestFFTIndexing.cpp", "")
     // real basis of unit cell
     Eigen::Matrix3d basis;
     basis << 45.0, 1.0, -2.0, -1.5, 36.0, -2.2, 1.25, -3, 50.0;
-    ohkl::UnitCell uc(basis);
+    ohkl::UnitCell uc(basis, dataset_ptr);
     uc.reduce(params->niggliReduction, params->niggliTolerance, params->gruberTolerance);
     uc = uc.applyNiggliConstraints();
     std::cout << "Basis:\n" << uc.basis() << std::endl;
@@ -91,7 +91,7 @@ TEST_CASE("test/crystal/TestFFTIndexing.cpp", "")
     CHECK(peak_collection.numberOfPeaks() >= 5700);
 
     auto_indexer->setHandler(logger);
-    auto_indexer->autoIndex(peak_collection.getPeakList());
+    auto_indexer->autoIndex(peak_collection.getPeakList(), dataset_ptr);
 
     const auto solutions = auto_indexer->solutions();
     CHECK(solutions.size() > 1);

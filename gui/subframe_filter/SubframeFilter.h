@@ -2,8 +2,8 @@
 //
 //  OpenHKL: data reduction for single crystal diffraction
 //
-//! @file      gui/subframe_filter/SubframeFilterPeaks.h
-//! @brief     Defines class SubframeFilterPeaks
+//! @file      gui/subframe_filter/SubframeFilter.h
+//! @brief     Defines class SubframeFilter
 //!
 //! @homepage  https://openhkl.org
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef OHKL_GUI_SUBFRAME_FILTER_SUBFRAMEFILTERPEAKS_H
-#define OHKL_GUI_SUBFRAME_FILTER_SUBFRAMEFILTERPEAKS_H
+#ifndef OHKL_GUI_SUBFRAME_FILTER_SUBFRAMEFILTER_H
+#define OHKL_GUI_SUBFRAME_FILTER_SUBFRAMEFILTER_H
 
 #include "gui/items/PeakCollectionItem.h"
 #include "gui/models/PeakCollectionModel.h"
@@ -32,6 +32,7 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
+class DataComboBox;
 class DetectorWidget;
 class PeakComboBox;
 class PeakItemGraphic;
@@ -42,10 +43,10 @@ class SafeDoubleSpinBox;
 class SpoilerCheck;
 
 //! Frame containing interface for filtering peak collections
-class SubframeFilterPeaks : public QWidget {
+class SubframeFilter : public QWidget {
     Q_OBJECT
  public:
-    SubframeFilterPeaks();
+    SubframeFilter();
 
  public:
     //! Run the filtering method
@@ -56,6 +57,8 @@ class SubframeFilterPeaks : public QWidget {
     DetectorWidget* detectorWidget();
     //! Grab the finder parameters
     void grabFilterParameters();
+    //! Set the filter parameters
+    void setFilterParameters();
 
  public slots:
 
@@ -92,9 +95,6 @@ class SubframeFilterPeaks : public QWidget {
     void accept();
     //! Disable unsafe widgets if no data loaded
     void toggleUnsafeWidgets();
-
-    //! Set the finder parameters
-    void setFilterParameters();
 
     //! Refresh the found peaks list
     void refreshPeakTable();
@@ -148,6 +148,7 @@ class SubframeFilterPeaks : public QWidget {
 
     QComboBox* _rejection_flag_combo;
 
+    DataComboBox* _data_combo;
     PeakComboBox* _peak_combo;
 
     QPushButton* _filter_button;
@@ -158,4 +159,4 @@ class SubframeFilterPeaks : public QWidget {
     PeakTableView* _peak_table;
 };
 
-#endif // OHKL_GUI_SUBFRAME_FILTER_SUBFRAMEFILTERPEAKS_H
+#endif // OHKL_GUI_SUBFRAME_FILTER_SUBFRAMEFILTER_H

@@ -59,7 +59,7 @@ TEST_CASE("test/data/TestSingleFrameIndex.cpp", "")
         std::make_shared<ohkl::DataSet>(ohkl::kw_datasetDefaultName, experiment.getDiffractometer());
 
     ohkl::DataReaderParameters data_params;
-    data_params.format = ohkl::DataFormat::RAW;
+    data_params.data_format = ohkl::DataFormat::RAW;
     data_params.wavelength = 2.669;
     data_params.delta_omega = 0.3;
     data->setImageReaderParameters(data_params);
@@ -100,7 +100,7 @@ TEST_CASE("test/data/TestSingleFrameIndex.cpp", "")
         57.5, 65.7, 85.4, 90.0 * ohkl::deg, 90.0 * ohkl::deg, 90.0 * ohkl::deg);
     reference_cell.setSpaceGroup(ohkl::SpaceGroup{"P 21 21 21"});
 
-    indexer->autoIndex(found_peaks);
+    indexer->autoIndex(found_peaks, data);
     ohkl::sptrUnitCell best_cell = indexer->solutions().at(0).first;
     std::cout << reference_cell.toString() << std::endl;
     std::cout << best_cell->toString() << std::endl;

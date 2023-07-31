@@ -19,6 +19,7 @@
 #include <vector>
 
 #include "core/data/DataSet.h"
+#include "core/data/DataTypes.h"
 #include "core/shape/PeakCollection.h"
 
 namespace ohkl {
@@ -59,10 +60,6 @@ class PeakHandler {
     PeakCollection* getPeakCollection(const std::string name);
     // !Remove a peak collection from the experiment
     void removePeakCollection(const std::string& name);
-    //! Get a vector of peak collection names from the handler
-    std::vector<std::string> getCollectionNames() const;
-    //! Get a vector of peak collections with specific PeakCollectionTypes
-    std::vector<std::string> getCollectionNames(PeakCollectionType pct) const;
     //! Get the number of peak collections
     int numPeakCollections() const { return _peak_collections.size(); };
     //! Create a new collection of peaks caught by _peak_filter
@@ -75,6 +72,8 @@ class PeakHandler {
     std::string generateName();
     //! Get a vector of pointers to peak collections
     std::vector<PeakCollection*> getPeakCollections();
+    //! Get a vector of pointers to peak collections associated with the given DataSet
+    std::vector<PeakCollection*> getPeakCollections(sptrDataSet data);
     //! Set the last index for naming peak collections
     void setLastIndex(unsigned int last_index);
 

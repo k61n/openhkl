@@ -2,7 +2,7 @@
 //
 //  OpenHKL: data reduction for single crystal diffraction
 //
-//! @file      gui/subframe_merge/SubframeMergedPeaks.h
+//! @file      gui/subframe_merge/SubframeMerge.h
 //! @brief     Defines class MergedPeakInformationFrame
 //!
 //! @homepage  https://openhkl.org
@@ -12,8 +12,8 @@
 //
 //  ***********************************************************************************************
 
-#ifndef OHKL_GUI_SUBFRAME_MERGE_SUBFRAMEMERGEDPEAKS_H
-#define OHKL_GUI_SUBFRAME_MERGE_SUBFRAMEMERGEDPEAKS_H
+#ifndef OHKL_GUI_SUBFRAME_MERGE_SUBFRAMEMERGE_H
+#define OHKL_GUI_SUBFRAME_MERGE_SUBFRAMEMERGE_H
 
 #include "core/data/DataTypes.h"
 #include "core/experiment/DataQuality.h"
@@ -42,19 +42,23 @@ class QStandardItemModel;
 class SXPlot;
 
 //! Frame containing interface to merge peak collections and compute quality staticstics
-class SubframeMergedPeaks : public QWidget {
+class SubframeMerge : public QWidget {
  public:
-    SubframeMergedPeaks();
+    SubframeMerge();
     //! Refresh all the panels
     void refreshAll();
     //! Get the merge parameters
     void grabMergeParameters();
-    //! Save unmerged/merged Peaks
-    void savePeaks(bool merged);
-
- private:
     //! Set the merge parameters
     void setMergeParameters();
+    //! Save unmerged/merged Peaks
+    void exportPeaks(bool merged);
+    //! Process the two inputs to create the merged dataset
+    void processMerge();
+    //! Refresh the QComboBox for the space group
+    void refreshSpaceGroupCombo();
+
+ private:
     //! Set up the GUI size policies
     void setSizePolicies();
     //! Set up widget for resolution shells
@@ -68,10 +72,6 @@ class SubframeMergedPeaks : public QWidget {
     void refreshPeakLists();
     //! Refresh the QComboBoxes for peak collections
     void refreshPeakCombos();
-    //! Refresh the QComboBox for the space group
-    void refreshSpaceGroupCombo();
-    //! Process the two inputs to create the merged dataset
-    void processMerge();
     //! Disable unsafe widgets if no data loaded
     void toggleUnsafeWidgets();
 
@@ -145,20 +145,17 @@ class SubframeMergedPeaks : public QWidget {
     QComboBox* _space_group;
     QComboBox* _plottable_statistics;
     SXPlot* _statistics_plot;
-    QDoubleSpinBox* _intensity_rescale_merged;
-    QDoubleSpinBox* _intensity_rescale_unmerged;
     QPushButton* _save_shell;
+    QPushButton* _save_peaks;
 
     QTableView* _sum_merged_view;
     QTableView* _profile_merged_view;
-    QComboBox* _merged_save_type;
     QPushButton* _save_merged;
     QStandardItemModel* _sum_merged_model;
     QStandardItemModel* _profile_merged_model;
 
     QTableView* _sum_unmerged_view;
     QTableView* _profile_unmerged_view;
-    QComboBox* _unmerged_save_type;
     QPushButton* _save_unmerged;
     QStandardItemModel* _sum_unmerged_model;
     QStandardItemModel* _profile_unmerged_model;
@@ -166,4 +163,4 @@ class SubframeMergedPeaks : public QWidget {
     bool _frame_set;
 };
 
-#endif // OHKL_GUI_SUBFRAME_MERGE_SUBFRAMEMERGEDPEAKS_H
+#endif // OHKL_GUI_SUBFRAME_MERGE_SUBFRAMEMERGE_H

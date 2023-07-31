@@ -31,9 +31,11 @@ namespace ohkl {
 class InstrumentStateSet;
 class DataSet;
 
+enum class DataFormat { Unknown = -1, OHKL = 0, TIFF, RAW, NEXUS };
+
 //! Minimal meta data set
 struct DataReaderParameters {
-    DataFormat format = DataFormat::Unknown;
+    DataFormat data_format = DataFormat::Unknown;
     int rows = -1;
     int cols = -1;
     std::string dataset_name = kw_datasetDefaultName;

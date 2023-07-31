@@ -127,8 +127,7 @@ void DataSet::addDataFile(const std::string& filename, const std::string& extens
 }
 void DataSet::setImageReaderParameters(const DataReaderParameters& params)
 {
-    if (_dataformat == DataFormat::Unknown)
-        _dataformat = params.format;
+    _dataformat = params.data_format;
 
     if (_dataformat != DataFormat::TIFF && _dataformat != DataFormat::RAW)
         throw std::runtime_error(

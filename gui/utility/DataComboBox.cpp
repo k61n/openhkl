@@ -13,6 +13,10 @@
 //  ***********************************************************************************************
 
 #include "gui/utility/DataComboBox.h"
+#include "gui/MainWin.h"
+#include "gui/models/Project.h"
+#include "gui/models/Session.h"
+#include "gui/utility/SideBar.h"
 
 #include <QSignalBlocker>
 
@@ -44,8 +48,12 @@ void DataComboBox::addDataSet(const ohkl::sptrDataSet& data)
 
 void DataComboBox::addDataSets(const DataList& data_list)
 {
+    QSignalBlocker blocker(this);
     for (auto data : data_list)
         addDataSet(data);
+    if (gSession->currentProject()->hasDataSet())
+        if (!gSession->currentProject()->currentData())
+            gSession->currentProject()->setCurrentData(currentData());
 }
 
 //! Clear all elements
@@ -83,13 +91,25 @@ void DataComboBox::refreshAll()
         combo->refresh();
 }
 
+void DataComboBox::syncAll()
+{
+    for (auto* combo : _all_combos) {
+        QSignalBlocker blocker(combo);
+        combo->setCurrentIndex(_current_index);
+    }
+}
+
 void DataComboBox::onDataChanged(int index)
 {
-    if (index != _current_index) {
-        auto old_data = _data_sets.at(_current_index);
-        auto new_data = _data_sets.at(index);
-        old_data->clearBuffer();
-        new_data->initBuffer(true);
-        _current_index = index;
-    }
+    if (!gSession->currentProject()->hasDataSet() || index == _current_index)
+        return;
+
+    auto old_data = _data_sets.at(_current_index);
+    auto new_data = _data_sets.at(index);
+    old_data->clearBuffer();
+    new_data->initBuffer(true);
+    _current_index = index;
+    syncAll();
+    gSession->currentProject()->setCurrentData(currentData());
+    gSession->onDataChanged();
 }

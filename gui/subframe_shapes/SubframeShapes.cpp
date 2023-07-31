@@ -197,9 +197,8 @@ void SubframeShapes::setInputUp()
     connect(
         _peak_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
         &SubframeShapes::grabShapeParameters);
-    connect(
-        _peak_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
-        &SubframeShapes::refreshPeakTable);
+    connect(_peak_combo, &QComboBox::currentTextChanged, this, &SubframeShapes::refreshPeakTable);
+    connect(_data_combo, &QComboBox::currentTextChanged, this, &SubframeShapes::refreshPeakTable);
     connect(
         _show_single_region, &QCheckBox::stateChanged, this, &SubframeShapes::onRegionModeChanged);
 
@@ -402,9 +401,6 @@ void SubframeShapes::refreshAll()
     if (!gSession->hasProject())
         return;
 
-    _data_combo->refresh();
-    _peak_combo->refresh();
-    _predicted_combo->refresh();
     refreshPeakTable();
     _detector_widget->refresh();
     _params = gSession->currentProject()->experiment()->shapeParameters();

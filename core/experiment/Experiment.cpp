@@ -18,6 +18,7 @@
 #include "base/utils/Path.h" // tempFilename
 #include "base/utils/Units.h"
 #include "core/data/DataSet.h"
+#include "core/data/DataTypes.h"
 #include "core/experiment/DataHandler.h"
 #include "core/experiment/ExperimentExporter.h"
 #include "core/experiment/ExperimentImporter.h"
@@ -260,7 +261,7 @@ void Experiment::autoIndex(PeakCollection* peaks, sptrDataSet data)
     ohklLog(Level::Info, "Indexing using ", ncaught, " / ", npeaks, " peaks");
     _peak_handler->acceptFilter(collection_name, peaks, PeakCollectionType::INDEXING, data);
     PeakCollection* indexing_collection = getPeakCollection(collection_name);
-    _auto_indexer->autoIndex(indexing_collection);
+    _auto_indexer->autoIndex(indexing_collection, data);
     _peak_handler->removePeakCollection(collection_name);
 }
 
@@ -453,16 +454,6 @@ void Experiment::removePeakCollection(const std::string& name)
     _peak_handler->removePeakCollection(name);
 }
 
-std::vector<std::string> Experiment::getCollectionNames() const
-{
-    return _peak_handler->getCollectionNames();
-}
-
-std::vector<std::string> Experiment::getCollectionNames(PeakCollectionType lt) const
-{
-    return _peak_handler->getCollectionNames(lt);
-}
-
 int Experiment::numPeakCollections() const
 {
     return _peak_handler->numPeakCollections();
@@ -486,16 +477,17 @@ void Experiment::addUnitCell(const std::string& name, const UnitCell& unit_cell)
 }
 
 void Experiment::addUnitCell(
-    const std::string& name, double a, double b, double c, double alpha, double beta, double gamma)
+    const std::string& name, double a, double b, double c, double alpha, double beta, double gamma,
+    sptrDataSet data)
 {
-    _cell_handler->addUnitCell(name, a, b, c, alpha, beta, gamma);
+    _cell_handler->addUnitCell(name, a, b, c, alpha, beta, gamma, data);
 }
 
 void Experiment::addUnitCell(
     const std::string& name, double a, double b, double c, double alpha, double beta, double gamma,
-    const std::string& space_group)
+    const std::string& space_group, sptrDataSet data)
 {
-    _cell_handler->addUnitCell(name, a, b, c, alpha, beta, gamma, space_group);
+    _cell_handler->addUnitCell(name, a, b, c, alpha, beta, gamma, space_group, data);
 }
 
 bool Experiment::hasUnitCell(const std::string& name) const
@@ -552,9 +544,9 @@ void Experiment::assignUnitCell(PeakCollection* peaks, std::string name)
 }
 
 void Experiment::setReferenceCell(
-    double a, double b, double c, double alpha, double beta, double gamma)
+    double a, double b, double c, double alpha, double beta, double gamma, sptrDataSet data)
 {
-    _cell_handler->setReferenceCell(a, b, c, alpha, beta, gamma);
+    _cell_handler->setReferenceCell(a, b, c, alpha, beta, gamma, data);
 }
 
 std::vector<std::string> Experiment::getCompatibleSpaceGroups() const
@@ -624,14 +616,20 @@ std::vector<UnitCell*> Experiment::getUnitCells()
     return _cell_handler->getUnitCells();
 }
 
-std::vector<sptrUnitCell> Experiment::getSptrUnitCells()
+std::vector<sptrUnitCell> Experiment::getSptrUnitCells(sptrDataSet data /* = nullptr */)
 {
-    return _cell_handler->getSptrUnitCells();
+    if (data)
+        return _cell_handler->getSptrUnitCells(data);
+    else
+        return _cell_handler->getSptrUnitCells();
 }
 
-std::vector<PeakCollection*> Experiment::getPeakCollections()
+std::vector<PeakCollection*> Experiment::getPeakCollections(sptrDataSet data)
 {
-    return _peak_handler->getPeakCollections();
+    if (data)
+        return _peak_handler->getPeakCollections(data);
+    else 
+        return _peak_handler->getPeakCollections();
 }
 
 bool Experiment::addShapeModel(const std::string& name, const ShapeModel& shapes)
@@ -674,9 +672,12 @@ std::string Experiment::generateShapeModelName()
     return _shape_handler->generateName();
 }
 
-std::vector<ShapeModel*> Experiment::getShapeModels()
+std::vector<ShapeModel*> Experiment::getShapeModels(sptrDataSet data)
 {
-    return _shape_handler->getShapeModels();
+    if (data)
+        return _shape_handler->getShapeModels(data);
+    else
+        return _shape_handler->getShapeModels();
 }
 
 } // namespace ohkl

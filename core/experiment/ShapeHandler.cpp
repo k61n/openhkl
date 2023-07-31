@@ -120,4 +120,13 @@ std::vector<ShapeModel*> ShapeHandler::getShapeModels()
     return collections;
 }
 
+std::vector<ShapeModel*> ShapeHandler::getShapeModels(sptrDataSet data)
+{
+    std::vector<ShapeModel*> collections;
+    for (const auto& [name, ptr] : _shape_models)
+        if (ptr->data() == data)
+            collections.push_back(ptr.get());
+    return collections;
+}
+
 } // namespace ohkl

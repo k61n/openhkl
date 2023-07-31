@@ -92,7 +92,7 @@ class TestSimulatedData(unittest.TestCase):
             f'Integrated {found_peaks.numberOfValid()} valid peaks')
 
         print('Indexing found peaks...')
-        expt.setReferenceCell(24.5, 28.7, 37.7, 90, 90, 90) # reference cell used to pick best solution
+        expt.setReferenceCell(24.5, 28.7, 37.7, 90, 90, 90, data) # reference cell used to pick best solution
         space_group = ohkl.SpaceGroup('P 21 21 21') # required to check that Bravais type is correct
         reference_cell = expt.getUnitCell('reference')
         reference_cell.setSpaceGroup(space_group)

@@ -37,9 +37,9 @@ void DataReaderParameters::log(const Level& level) const
     ohklLog(level, "baseline        = ", baseline);
     ohklLog(level, "gain            = ", gain);
     ohklLog(level, "bytes_per_pixel = ", bytes_per_pixel);
-    if (format == DataFormat::RAW)
+    if (data_format == DataFormat::RAW)
         ohklLog(level, "row_major       = ", row_major);
-    if (format == DataFormat::TIFF)
+    if (data_format == DataFormat::TIFF)
         ohklLog(level, "rebin_size      = ", rebin_size);
 }
 

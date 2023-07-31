@@ -114,9 +114,7 @@ void SubframeIntegrate::setInputUp()
     _data_combo = f.addDataCombo("Data set");
     _peak_combo = f.addPeakCombo(ComboType::PeakCollection, "Peaks to integrate");
 
-    connect(
-        _peak_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
-        &SubframeIntegrate::toggleUnsafeWidgets);
+    connect(_peak_combo, &QComboBox::currentTextChanged, this, &SubframeIntegrate::toggleUnsafeWidgets);
 
     _left_layout->addWidget(input_box);
 }
@@ -131,9 +129,8 @@ void SubframeIntegrate::setFigureUp()
     connect(
         _detector_widget->scene(), &DetectorScene::signalSelectedPeakItemChanged, this,
         &SubframeIntegrate::changeSelected);
-    connect(
-        _peak_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
-        &SubframeIntegrate::refreshPeakTable);
+    connect(_peak_combo, &QComboBox::currentTextChanged, this, &SubframeIntegrate::refreshPeakTable);
+    connect(_data_combo, &QComboBox::currentTextChanged, this, &SubframeIntegrate::refreshPeakTable);
 
     _right_element->addWidget(figure_group);
 }
@@ -177,9 +174,7 @@ void SubframeIntegrate::refreshAll()
     if (!gSession->hasProject())
         return;
 
-    _data_combo->refresh();
     _detector_widget->refresh();
-    _peak_combo->refresh();
     refreshPeakTable();
     grabIntegrationParameters();
     toggleUnsafeWidgets();
@@ -412,9 +407,6 @@ void SubframeIntegrate::setIntegrateUp()
     connect(
         _integrator_combo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
         this, &SubframeIntegrate::toggleUnsafeWidgets);
-    connect(
-        gGui->sideBar(), &SideBar::subframeChanged, this,
-        &SubframeIntegrate::setIntegrationParameters);
 
     _left_layout->addWidget(_integrate_box);
 }

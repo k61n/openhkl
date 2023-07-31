@@ -457,6 +457,7 @@ void ExperimentImporter::loadUnitCells(Experiment* experiment)
             std::string bravais = "aP";
             std::string space_group = "P 1";
             std::string unit_cell_name;
+            std::string data_set_name;
 
             if (!unit_cells.nameExists(std::to_string(i)))
                 continue;
@@ -497,11 +498,14 @@ void ExperimentImporter::loadUnitCells(Experiment* experiment)
                     attr.read(typ, &z);
                 else if (attr_name == ohkl::at_unitCellName)
                     attr.read(typ, unit_cell_name);
+                else if (attr_name == ohkl::at_datasetName)
+                    attr.read(typ, data_set_name);
             }
             Eigen::Matrix3d aa = Eigen::Matrix3d::Identity();
             aa << rec_00, rec_01, rec_02, rec_10, rec_11, rec_12, rec_20, rec_21, rec_22;
+            sptrDataSet data = experiment->getData(data_set_name);
 
-            UnitCell temp_cell(aa, true);
+            UnitCell temp_cell(aa, data, true);
             temp_cell.setBravaisType(BravaisType(bravais[0]));
             temp_cell.setIndexingTolerance(indexing_tolerance);
             temp_cell.setSpaceGroup(SpaceGroup(space_group));

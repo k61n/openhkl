@@ -2,8 +2,8 @@
 //
 //  OpenHKL: data reduction for single crystal diffraction
 //
-//! @file      gui/subframe_predict/SubframePredictPeaks.cpp
-//! @brief     Implements classes FoundPeaks, SubframePredictPeaks
+//! @file      gui/subframe_predict/SubframePredict.cpp
+//! @brief     Implements classes FoundPeaks, SubframePredict
 //!
 //! @homepage  https://openhkl.org
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -12,7 +12,7 @@
 //
 //  ***********************************************************************************************
 
-#include "gui/subframe_predict/SubframePredictPeaks.h"
+#include "gui/subframe_predict/SubframePredict.h"
 
 #include "base/geometry/ReciprocalVector.h"
 #include "base/utils/Logger.h"
@@ -41,6 +41,7 @@
 #include "gui/subframe_refiner/SubframeRefiner.h"
 #include "gui/utility/CellComboBox.h"
 #include "gui/utility/ColorButton.h"
+#include "gui/utility/DataComboBox.h"
 #include "gui/utility/GridFiller.h"
 #include "gui/utility/PeakComboBox.h"
 #include "gui/utility/PropertyScrollArea.h"
@@ -65,7 +66,7 @@
 #include <QSpacerItem>
 #include <QTableWidgetItem>
 
-SubframePredictPeaks::SubframePredictPeaks()
+SubframePredict::SubframePredict()
     : QWidget()
     , _peak_collection("temp", ohkl::PeakCollectionType::PREDICTED, nullptr)
     , _peak_collection_item()
@@ -86,9 +87,9 @@ SubframePredictPeaks::SubframePredictPeaks()
 
     _right_element->addWidget(figure_group);
 
+    setParametersUp();
     setAdjustBeamUp();
     setRefineKiUp();
-    setParametersUp();
     setShapeModelUp();
     setPreviewUp();
     setSaveUp();
@@ -112,26 +113,32 @@ SubframePredictPeaks::SubframePredictPeaks()
     _shape_params = std::make_shared<ohkl::ShapeModelParameters>();
 
     connect(
+        _data_combo, QOverload<int>::of(&QComboBox::currentIndexChanged),
+        _detector_widget->dataCombo(), &QComboBox::setCurrentIndex);
+    connect(
+        _detector_widget->dataCombo(), QOverload<int>::of(&QComboBox::currentIndexChanged),
+        _data_combo, &QComboBox::setCurrentIndex);
+    connect(
         _detector_widget->scene(), &DetectorScene::signalSelectedPeakItemChanged, this,
-        &SubframePredictPeaks::changeSelected);
+        &SubframePredict::changeSelected);
 }
 
-void SubframePredictPeaks::setAdjustBeamUp()
+void SubframePredict::setAdjustBeamUp()
 {
     _set_initial_ki = new Spoiler("Set initial direct beam position");
     _set_initial_ki->setContentLayout(*_beam_setter_widget, true);
 
     connect(
         _beam_setter_widget->crosshairOn(), &QCheckBox::stateChanged, this,
-        &SubframePredictPeaks::refreshPeakVisual);
+        &SubframePredict::refreshPeakVisual);
     connect(
         _beam_setter_widget->crosshairOn(), &QCheckBox::stateChanged, this,
-        &SubframePredictPeaks::toggleCursorMode);
+        &SubframePredict::toggleCursorMode);
 
     _left_layout->addWidget(_set_initial_ki);
 }
 
-void SubframePredictPeaks::setRefineKiUp()
+void SubframePredict::setRefineKiUp()
 {
     Spoiler* ki_box = new Spoiler("Refine direct beam position");
     GridFiller f(ki_box, true);
@@ -157,16 +164,13 @@ void SubframePredictPeaks::setRefineKiUp()
     _max_iter_spin->setValue(1000);
 
     connect(
-        _direct_beam, &QCheckBox::stateChanged, this, &SubframePredictPeaks::showDirectBeamEvents);
-    connect(_refine_ki_button, &QPushButton::clicked, this, &SubframePredictPeaks::refineKi);
-    connect(
-        gGui->sideBar(), &SideBar::subframeChanged, this,
-        &SubframePredictPeaks::setRefinerParameters);
+        _direct_beam, &QCheckBox::stateChanged, this, &SubframePredict::showDirectBeamEvents);
+    connect(_refine_ki_button, &QPushButton::clicked, this, &SubframePredict::refineKi);
 
     _left_layout->addWidget(ki_box);
 }
 
-void SubframePredictPeaks::toggleCursorMode()
+void SubframePredict::toggleCursorMode()
 {
     if (_beam_setter_widget->crosshairOn()->isChecked()) {
         _stored_cursor_mode = _detector_widget->scene()->mode();
@@ -176,11 +180,12 @@ void SubframePredictPeaks::toggleCursorMode()
     }
 }
 
-void SubframePredictPeaks::setParametersUp()
+void SubframePredict::setParametersUp()
 {
     Spoiler* para_box = new Spoiler("Predict peaks");
     GridFiller f(para_box, true);
 
+    _data_combo = f.addDataCombo("Data set:");
     _cell_combo = f.addCellCombo("Unit cell:");
     std::tie(_d_min, _d_max) = f.addDoubleSpinBoxPair(
         "Resolution (d) range", "(\u212B)  - minimum and maximum resolution for peak prediction");
@@ -193,18 +198,12 @@ void SubframePredictPeaks::setParametersUp()
     _d_max->setMaximum(100);
     _d_max->setDecimals(2);
 
-    connect(_predict_button, &QPushButton::clicked, this, &SubframePredictPeaks::runPrediction);
-    connect(
-        gGui->sideBar(), &SideBar::subframeChanged, this,
-        &SubframePredictPeaks::setPredictorParameters);
-    connect(
-        gGui->sideBar(), &SideBar::subframeChanged, this,
-        &SubframePredictPeaks::setShapeModelParameters);
+    connect(_predict_button, &QPushButton::clicked, this, &SubframePredict::runPrediction);
 
     _left_layout->addWidget(para_box);
 }
 
-void SubframePredictPeaks::setShapeModelUp()
+void SubframePredict::setShapeModelUp()
 {
     Spoiler* shapes_box = new Spoiler("Shape model");
     GridFiller f(shapes_box, true);
@@ -235,33 +234,33 @@ void SubframePredictPeaks::setShapeModelUp()
     _interpolation_combo->addItem("Intensity");
 
     connect(
-        _apply_shape_model, &QPushButton::clicked, this, &SubframePredictPeaks::applyShapeModel);
+        _apply_shape_model, &QPushButton::clicked, this, &SubframePredict::applyShapeModel);
 
     _left_layout->addWidget(shapes_box);
     grabShapeModelParameters();
 }
 
-void SubframePredictPeaks::setPreviewUp()
+void SubframePredict::setPreviewUp()
 {
     Spoiler* preview_box = new Spoiler("Show/hide peaks");
 
     connect(
         _peak_view_widget, &PeakViewWidget::settingsChanged, this,
-        &SubframePredictPeaks::refreshPeakVisual);
+        &SubframePredict::refreshPeakVisual);
 
     preview_box->setContentLayout(*_peak_view_widget);
     _left_layout->addWidget(preview_box);
 }
 
-void SubframePredictPeaks::setSaveUp()
+void SubframePredict::setSaveUp()
 {
     _save_button = new QPushButton("Create peak collection");
     _save_button->setEnabled(false);
     _left_layout->addWidget(_save_button);
-    connect(_save_button, &QPushButton::clicked, this, &SubframePredictPeaks::accept);
+    connect(_save_button, &QPushButton::clicked, this, &SubframePredict::accept);
 }
 
-void SubframePredictPeaks::setPeakTableUp()
+void SubframePredict::setPeakTableUp()
 {
     QGroupBox* peak_group = new QGroupBox("Peaks");
     QGridLayout* peak_grid = new QGridLayout(peak_group);
@@ -286,28 +285,26 @@ void SubframePredictPeaks::setPeakTableUp()
     _right_element->addWidget(peak_group);
 }
 
-void SubframePredictPeaks::refreshAll()
+void SubframePredict::refreshAll()
 {
     toggleUnsafeWidgets();
     if (!gSession->hasProject())
         return;
 
-    _cell_combo->refresh();
-    _peak_combo->refresh();
     grabRefinerParameters();
     grabPredictorParameters();
     grabShapeModelParameters();
     if (!gSession->currentProject()->hasDataSet())
         return;
     refreshPeakTable();
-    const auto data = _detector_widget->currentData();
+    const auto data = _data_combo->currentData();
     if (data) {
         _n_batches_spin->setMaximum(data->nFrames());
         _beam_setter_widget->setSpinLimits(data->nCols(), data->nRows());
     }
 }
 
-void SubframePredictPeaks::grabPredictorParameters()
+void SubframePredict::grabPredictorParameters()
 {
     auto params = gSession->currentProject()->experiment()->predictor()->parameters();
 
@@ -315,7 +312,7 @@ void SubframePredictPeaks::grabPredictorParameters()
     _d_max->setValue(params->d_max);
 }
 
-void SubframePredictPeaks::setPredictorParameters()
+void SubframePredict::setPredictorParameters()
 {
     if (!gSession->hasProject())
         return;
@@ -328,7 +325,7 @@ void SubframePredictPeaks::setPredictorParameters()
     params->d_max = _d_max->value();
 }
 
-void SubframePredictPeaks::grabRefinerParameters()
+void SubframePredict::grabRefinerParameters()
 {
     auto* params = gSession->currentProject()->experiment()->refiner()->parameters();
 
@@ -342,7 +339,7 @@ void SubframePredictPeaks::grabRefinerParameters()
     }
 }
 
-void SubframePredictPeaks::setRefinerParameters()
+void SubframePredict::setRefinerParameters()
 {
     if (!gSession->hasProject())
         return;
@@ -356,7 +353,7 @@ void SubframePredictPeaks::setRefinerParameters()
     }
 }
 
-void SubframePredictPeaks::grabShapeModelParameters()
+void SubframePredict::grabShapeModelParameters()
 {
     if (!gSession->hasProject())
         return;
@@ -367,7 +364,7 @@ void SubframePredictPeaks::grabShapeModelParameters()
     _interpolation_combo->setCurrentIndex(static_cast<int>(_shape_params->interpolation));
 }
 
-void SubframePredictPeaks::setShapeModelParameters()
+void SubframePredict::setShapeModelParameters()
 {
     if (!gSession->hasProject())
         return;
@@ -379,12 +376,12 @@ void SubframePredictPeaks::setShapeModelParameters()
         static_cast<ohkl::PeakInterpolation>(_interpolation_combo->currentIndex());
 }
 
-void SubframePredictPeaks::refineKi()
+void SubframePredict::refineKi()
 {
     gGui->setReady(false);
     auto expt = gSession->currentProject()->experiment();
     auto* peaks = _peak_combo->currentPeakCollection();
-    auto data = _detector_widget->currentData();
+    auto data = _data_combo->currentData();
     auto* detector = data->diffractometer()->detector();
     auto& states = data->instrumentStates();
     auto refiner = expt->refiner();
@@ -396,7 +393,6 @@ void SubframePredictPeaks::refineKi()
 
     // Manally adjust the direct beam position
     if (_beam_setter_widget->crosshairOn()->isChecked()) {
-        auto data = _detector_widget->currentData();
         emit gGui->sentinel->instrumentStatesChanged();
         data->adjustDirectBeam(_beam_setter_widget->xOffset(), _beam_setter_widget->yOffset());
     }
@@ -428,11 +424,11 @@ void SubframePredictPeaks::refineKi()
     gGui->setReady(true);
 }
 
-void SubframePredictPeaks::runPrediction()
+void SubframePredict::runPrediction()
 {
     gGui->setReady(false);
     // Manally adjust the direct beam position
-    auto data = _detector_widget->currentData();
+    auto data = _data_combo->currentData();
     if (_beam_setter_widget->crosshairOn()->isChecked()) {
         data->adjustDirectBeam(_beam_setter_widget->xOffset(), _beam_setter_widget->yOffset());
         emit gGui->sentinel->instrumentStatesChanged();
@@ -473,12 +469,12 @@ void SubframePredictPeaks::runPrediction()
     gGui->setReady(true);
 }
 
-void SubframePredictPeaks::showDirectBeamEvents()
+void SubframePredict::showDirectBeamEvents()
 {
     if (_direct_beam->isChecked()) {
         _detector_widget->scene()->params()->directBeam = true;
 
-        const auto data = _detector_widget->currentData();
+        const auto data = _data_combo->currentData();
 
         _direct_beam_events.clear();
         const auto& states = data->instrumentStates();
@@ -495,7 +491,7 @@ void SubframePredictPeaks::showDirectBeamEvents()
     refreshPeakVisual();
 }
 
-void SubframePredictPeaks::applyShapeModel()
+void SubframePredict::applyShapeModel()
 {
 
     gGui->setReady(false);
@@ -521,12 +517,12 @@ void SubframePredictPeaks::applyShapeModel()
     gGui->setReady(true);
 }
 
-void SubframePredictPeaks::accept()
+void SubframePredict::accept()
 {
     // suggest name to user
     auto* project = gSession->currentProject();
     auto* expt = project->experiment();
-    auto data = _detector_widget->currentData();
+    auto data = _data_combo->currentData();
     auto cell = _cell_combo->currentCell();
     std::string suggestion = expt->generatePeakCollectionName();
     std::unique_ptr<ListNameDialog> dlg(new ListNameDialog(QString::fromStdString(suggestion)));
@@ -552,7 +548,7 @@ void SubframePredictPeaks::accept()
     project->generatePeakModel(dlg->listName());
 }
 
-void SubframePredictPeaks::refreshPeakTable()
+void SubframePredict::refreshPeakTable()
 {
     if (!gSession->hasProject())
         return;
@@ -563,12 +559,12 @@ void SubframePredictPeaks::refreshPeakTable()
     refreshPeakVisual();
 }
 
-void SubframePredictPeaks::refreshPeakVisual()
+void SubframePredict::refreshPeakVisual()
 {
     _detector_widget->refresh();
 }
 
-void SubframePredictPeaks::changeSelected(PeakItemGraphic* peak_graphic)
+void SubframePredict::changeSelected(PeakItemGraphic* peak_graphic)
 {
     int row = _peak_collection_item.returnRowOfVisualItem(peak_graphic);
     QModelIndex index = _peak_collection_model.index(row, 0);
@@ -576,7 +572,7 @@ void SubframePredictPeaks::changeSelected(PeakItemGraphic* peak_graphic)
     _peak_table->scrollTo(index, QAbstractItemView::PositionAtTop);
 }
 
-void SubframePredictPeaks::toggleUnsafeWidgets()
+void SubframePredict::toggleUnsafeWidgets()
 {
     _predict_button->setEnabled(false);
     _save_button->setEnabled(false);
@@ -597,7 +593,7 @@ void SubframePredictPeaks::toggleUnsafeWidgets()
     _save_button->setEnabled(_peaks_predicted);
 }
 
-DetectorWidget* SubframePredictPeaks::detectorWidget()
+DetectorWidget* SubframePredict::detectorWidget()
 {
     return _detector_widget;
 }

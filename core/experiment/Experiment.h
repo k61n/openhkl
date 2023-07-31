@@ -126,10 +126,6 @@ class Experiment {
     PeakCollection* getPeakCollection(const std::string name);
     //! Remove the named peak collection
     void removePeakCollection(const std::string& name);
-    //! Get a vector of peak collection names
-    std::vector<std::string> getCollectionNames() const;
-    //! Get a vector of peak collection names of a give PeakCollectionType
-    std::vector<std::string> getCollectionNames(PeakCollectionType lt) const;
     //! Get the number of peak collections
     int numPeakCollections() const;
     //! Create a new peak collection from peaks caught by a filter
@@ -144,11 +140,11 @@ class Experiment {
     //! Add a unit cell to the experiment via cell parameters (skip autoindexing step)
     void addUnitCell(
         const std::string& name, double a, double b, double c, double alpha, double beta,
-        double gamma);
+        double gamma, sptrDataSet data);
     //! Add a user-defined unit cell including space group
     void addUnitCell(
         const std::string& name, double a, double b, double c, double alpha, double beta,
-        double gamma, const std::string& space_group);
+        double gamma, const std::string& space_group, sptrDataSet data);
     //! Returns true if the experiment has a data
     bool hasUnitCell(const std::string& name) const;
     //! Get a list of loaded list names
@@ -172,7 +168,8 @@ class Experiment {
     //! Assign unit cell to a peak collection, compute Miller indices from q and cell
     void assignUnitCell(PeakCollection* peaks, std::string cellName = ohkl::kw_acceptedUnitcell);
     //! Set the reference cell
-    void setReferenceCell(double a, double b, double c, double alpha, double beta, double gamma);
+    void setReferenceCell(
+        double a, double b, double c, double alpha, double beta, double gamma, sptrDataSet data);
     //! Get space groups compatible with unit cell
     std::vector<std::string> getCompatibleSpaceGroups() const;
     //! Get the cell handler
@@ -182,9 +179,9 @@ class Experiment {
     //! Get a vector of unit cells in the experiment
     std::vector<UnitCell*> getUnitCells();
     //! Get a vector of unit cells in the experiment
-    std::vector<sptrUnitCell> getSptrUnitCells();
+    std::vector<sptrUnitCell> getSptrUnitCells(sptrDataSet data = nullptr);
     //! get a vector of pointers to peak collections
-    std::vector<PeakCollection*> getPeakCollections();
+    std::vector<PeakCollection*> getPeakCollections(sptrDataSet data = nullptr);
 
     // ShapeHandler
     //! Add a shape model
@@ -204,7 +201,7 @@ class Experiment {
     //! Generate name for new shape model
     std::string generateShapeModelName();
     //! Get a vector of pointers to shape models
-    std::vector<ShapeModel*> getShapeModels();
+    std::vector<ShapeModel*> getShapeModels(sptrDataSet data = nullptr);
 
     // Instrument state handler
     //! Add a set of instrment states

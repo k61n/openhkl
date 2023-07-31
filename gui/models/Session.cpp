@@ -31,12 +31,12 @@
 #include "gui/dialogs/DataNameDialog.h"
 #include "gui/dialogs/ImageReaderDialog.h"
 #include "gui/models/Project.h"
-#include "gui/subframe_filter/SubframeFilterPeaks.h"
+#include "gui/subframe_filter/SubframeFilter.h"
 #include "gui/subframe_find/SubframeFindPeaks.h"
 #include "gui/subframe_index/SubframeAutoIndexer.h"
 #include "gui/subframe_integrate/SubframeIntegrate.h"
-#include "gui/subframe_merge/SubframeMergedPeaks.h"
-#include "gui/subframe_predict/SubframePredictPeaks.h"
+#include "gui/subframe_merge/SubframeMerge.h"
+#include "gui/subframe_predict/SubframePredict.h"
 #include "gui/subframe_refiner/SubframeRefiner.h"
 #include "gui/utility/CellComboBox.h"
 #include "gui/utility/DataComboBox.h"
@@ -54,7 +54,6 @@
 #include <QMessageBox>
 #include <QSettings>
 #include <QStringList>
-#include <qfileinfo.h>
 #include <stdexcept>
 
 Session* gSession;
@@ -485,25 +484,29 @@ bool Session::loadTiffData(bool single_file /* = false */)
 
 void Session::onDataChanged()
 {
+    QSignalBlocker blocker(_data_combo);
     DataList data = currentProject()->experiment()->getAllData();
     _data_combo->clearAll();
     _data_combo->addDataSets(data);
     _data_combo->refreshAll();
 
-    if (gSession->currentProject()->hasDataSet()) {
-        double x_offset = _data_combo->currentData()
-                              ->diffractometer()
-                              ->source()
-                              .selectedMonochromator()
-                              .xOffset();
-        double y_offset = _data_combo->currentData()
-                              ->diffractometer()
-                              ->source()
-                              .selectedMonochromator()
-                              .yOffset();
-        _beam_setter_widget->onBeamPosChanged({x_offset, y_offset});
-    }
+    if (!gSession->currentProject()->hasDataSet())
+        return;
+
+    double x_offset = _data_combo->currentData()
+                            ->diffractometer()
+                            ->source()
+                            .selectedMonochromator()
+                            .xOffset();
+    double y_offset = _data_combo->currentData()
+                            ->diffractometer()
+                            ->source()
+                            .selectedMonochromator()
+                            .yOffset();
+    _beam_setter_widget->onBeamPosChanged({x_offset, y_offset});
     onPeaksChanged();
+    onUnitCellChanged();
+    onShapesChanged();
 }
 
 void Session::onExperimentChanged()
@@ -527,8 +530,9 @@ void Session::onExperimentChanged()
 
 void Session::onPeaksChanged()
 {
-    PeakList peaks = currentProject()->experiment()->getPeakCollections();
-    // gGui->onPeaksChanged();
+    PeakList peaks =
+        currentProject()->experiment()->getPeakCollections(currentProject()->currentData());
+
     _peak_combo->clearAll();
     _peak_combo->addPeakCollections(peaks);
     _peak_combo->refreshAll();
@@ -538,15 +542,20 @@ void Session::onPeaksChanged()
     _predicted_peak_combo->clearAll();
     _predicted_peak_combo->addPeakCollections(peaks);
     _predicted_peak_combo->refreshAll();
+
+    PeakList all_peaks = currentProject()->experiment()->getPeakCollections();
+
     _integrated_peak_combo->clearAll();
-    _integrated_peak_combo->addPeakCollections(peaks);
+    _integrated_peak_combo->addPeakCollections(all_peaks);
     _integrated_peak_combo->refreshAll();
+
+    gGui->sideBar()->refreshCurrent();
 }
 
 void Session::onUnitCellChanged()
 {
-    CellList cells = currentProject()->experiment()->getSptrUnitCells();
-    // gGui->onUnitCellChanged();
+    CellList cells = currentProject()->experiment()->getSptrUnitCells(currentProject()->currentData());
+
     _cell_combo->clearAll();
     _cell_combo->addCells(cells);
     _cell_combo->refreshAll();
@@ -554,7 +563,8 @@ void Session::onUnitCellChanged()
 
 void Session::onShapesChanged()
 {
-    ShapesList shape_list = currentProject()->experiment()->getShapeModels();
+    ShapesList shape_list =
+        currentProject()->experiment()->getShapeModels(currentProject()->currentData());
     _shape_combo->clearAll();
     _shape_combo->addShapeModels(shape_list);
     _shape_combo->refreshAll();

@@ -262,9 +262,7 @@ void SubframeReject::refreshAll()
         return;
 
 
-    _data_combo->refresh();
     _detector_widget->refresh();
-    _peak_combo->refresh();
     refreshPeakTable();
     toggleUnsafeWidgets();
 
