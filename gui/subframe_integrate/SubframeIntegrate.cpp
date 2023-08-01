@@ -207,7 +207,6 @@ void SubframeIntegrate::grabIntegrationParameters()
     _max_counts->setValue(params->max_counts);
     _radius_int->setValue(params->neighbour_range_pixels);
     _n_frames_int->setValue(params->neighbour_range_frames);
-    _max_strength->setValue(params->max_strength);
     _fit_center->setChecked(params->fit_center);
     _fit_covariance->setChecked(params->fit_cov);
     _min_neighbours->setValue(params->min_neighbors);
@@ -217,6 +216,9 @@ void SubframeIntegrate::grabIntegrationParameters()
     _remove_masked->setChecked(params->skip_masked);
     _remove_overlaps->setChecked(params->remove_overlaps);
     _use_max_strength->setChecked(params->use_max_strength);
+    _max_strength->setValue(params->max_strength);
+    _use_max_d->setChecked(params->use_max_d);
+    _max_d->setValue(params->max_d);
     _integrator_combo->setCurrentIndex(static_cast<int>(params->integrator_type));
 }
 
@@ -233,7 +235,6 @@ void SubframeIntegrate::setIntegrationParameters()
     params->max_counts = _max_counts->value();
     params->neighbour_range_pixels = _radius_int->value();
     params->neighbour_range_frames = _n_frames_int->value();
-    params->max_strength = _max_strength->value();
     params->fit_center = _fit_center->isChecked();
     params->fit_cov = _fit_covariance->isChecked();
     params->min_neighbors = _min_neighbours->value();
@@ -254,6 +255,9 @@ void SubframeIntegrate::setIntegrationParameters()
     params->skip_masked = _remove_masked->isChecked();
     params->remove_overlaps = _remove_overlaps->isChecked();
     params->use_max_strength = _use_max_strength->isChecked();
+    params->max_strength = _max_strength->value();
+    params->use_max_d = _use_max_d->isChecked();
+    params->max_d = _max_d->value();
     params->region_type = static_cast<ohkl::RegionType>(_integration_region_type->currentIndex());
 }
 
@@ -363,6 +367,23 @@ void SubframeIntegrate::setIntegrateUp()
     grid->addWidget(label, 0, 0, 1, 1);
     grid->addWidget(_max_strength, 0, 1, 1, 1);
     f.addWidget(_use_max_strength);
+
+    _use_max_d = new QGroupBox("Maximum d for profile integration");
+    _use_max_d->setAlignment(Qt::AlignLeft);
+    _use_max_d->setCheckable(true);
+    _use_max_d->setChecked(false);
+    _use_max_d->setToolTip("Skip profile integration of peaks with d below maximum");
+
+    _max_d = new SafeDoubleSpinBox();
+    _max_d->setMaximum(100);
+
+    label = new QLabel("Maximum d");
+    label->setToolTip("Maximum d for peak to be profile integrated");
+    grid = new QGridLayout();
+    _use_max_d->setLayout(grid);
+    grid->addWidget(label, 0, 0, 1, 1);
+    grid->addWidget(_max_d, 0, 1, 1, 1);
+    f.addWidget(_use_max_d);
 
     for (const auto& [kernel, description] : _kernel_description)
         _gradient_kernel->addItem(description);

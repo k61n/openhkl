@@ -39,6 +39,7 @@ void IntegrationParameters::log(const Level& level) const
     ohklLog(level, "neighbour_range_pixels = ", neighbour_range_pixels);
     ohklLog(level, "neighbour_range_frames = ", neighbour_range_frames);
     ohklLog(level, "max_strength           = ", max_strength);
+    ohklLog(level, "max_d                  = ", max_d);
     ohklLog(level, "fit_center             = ", fit_center);
     ohklLog(level, "fit_cov                = ", fit_cov);
     ohklLog(level, "integrator_type        = ", static_cast<int>(integrator_type));
@@ -49,6 +50,7 @@ void IntegrationParameters::log(const Level& level) const
     ohklLog(level, "skip_masked            = ", skip_masked);
     ohklLog(level, "remove_overlaps        = ", remove_overlaps);
     ohklLog(level, "use_max_strength       = ", use_max_strength);
+    ohklLog(level, "use_max_d              = ", use_max_d);
 }
 
 IIntegrator::IIntegrator()
@@ -189,17 +191,8 @@ void IIntegrator::integrate(
             else
                 result = current_peak->advanceFrame(current_frame, mask, idx);
 
-            // Skip strong peaks during profile integration
-            if (profile_integration && _params.use_max_strength
-                && peak->sumIntensity().strength() > _params.max_strength) {
-                if (peak->sumRejectionFlag() == RejectionFlag::NotRejected) {
-                    peak->updateIntegration(
-                        _rockingCurve, peak->sumBackground(), peak->sumBackground(),
-                        peak->meanBkgGradient(), peak->sumIntensity(), peak->sumIntensity(),
-                        _params.peak_end, _params.bkg_begin, _params.bkg_end, _params.region_type);
-                } else { // make sure we reject the peak if the sum intensity is not valid
-                    peak->setIntegrationFlag(peak->sumRejectionFlag(), IntegratorType::Profile3D);
-                }
+            // Skip strong and low resolution peaks during profile integration
+            if (profile_integration && !reintegrate(peak)) {
                 result = false;
                 integrated[peak] = true;
             }
@@ -294,6 +287,30 @@ void IIntegrator::removeOverlaps(
         nrejected += 2;
     }
     ohklLog(Level::Info, "IIntegrator::removeOverlaps: ", nrejected, " overlapping peaks rejected");
+}
+
+bool IIntegrator::reintegrate(Peak3D* peak)
+{
+    bool reintegrate = true;
+    if (_params.use_max_strength) // Skip strong peaks
+        if (peak->sumIntensity().strength() > _params.max_strength)
+            reintegrate = false;
+    if (_params.use_max_d) // Skip low resolution peaks
+        if (peak->d() > _params.max_d)
+            reintegrate = false;
+
+    if (!reintegrate) {
+        if (peak->sumRejectionFlag() == RejectionFlag::NotRejected) {
+            peak->updateIntegration(
+                _rockingCurve, peak->sumBackground(), peak->sumBackground(),
+                peak->meanBkgGradient(), peak->sumIntensity(), peak->sumIntensity(),
+                _params.peak_end, _params.bkg_begin, _params.bkg_end, _params.region_type);
+        } else {
+            peak->setIntegrationFlag(peak->sumRejectionFlag(), IntegratorType::Profile3D);
+        }
+    }
+
+    return reintegrate;
 }
 
 } // namespace ohkl

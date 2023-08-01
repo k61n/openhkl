@@ -50,7 +50,9 @@ struct IntegrationParameters {
     //! Search radius for neighbouring peaks (frames)
     double neighbour_range_frames = 10.0;
     //! Maximum strength for profile integration
-    double max_strength = 100;
+    double max_strength = 1;
+    //! Maximum d (minimum resolution) for profile integration
+    double max_d = 2.5;
     //! Whether to update the peak centre after integration
     bool fit_center = true;
     //! Whether to update the peak covariance after integration
@@ -73,8 +75,10 @@ struct IntegrationParameters {
     bool skip_masked = true;
     //! Whether to remove peaks with overlapping peak integration regions
     bool remove_overlaps = false;
-    //! Whether to skip profile integration of with sum intensity above max_strenght
+    //! Skip profile integration of peaks with strength above threshold
     bool use_max_strength = false;
+    //! Skip profile integration of peaks with resolution below threshold
+    bool use_max_d = false;
 
     void log(const Level& level) const;
 };
@@ -96,6 +100,9 @@ class IIntegrator {
     void setHandler(sptrProgressHandler handler);
 
  protected:
+    //! If IntegratorType != PixelSum, check whether we should profile integrate this peak
+    bool reintegrate(Peak3D* peak);
+
     //! Mean local pixel sum background of peak. The uncertainty is the uncertainty of the
     //! _estimate_ of the background.
     Intensity _sumBackground;
