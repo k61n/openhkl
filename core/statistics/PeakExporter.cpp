@@ -199,12 +199,6 @@ bool PeakExporter::saveToSCAUnmerged(
     if (!file.is_open())
         return false;
 
-    std::vector<Peak3D*> peak_vector;
-    for (const MergedPeak& peak : mergedData->mergedPeakSet()) {
-        for (auto* unmerged_peak : peak.peaks())
-            peak_vector.push_back(unmerged_peak);
-    }
-    std::sort(peak_vector.begin(), peak_vector.end(), &peakGreaterThan);
     const UnitCellCharacter character = cell->character();
     std::string symbol = cell->spaceGroup().symbol();
     std::for_each(symbol.begin(), symbol.end(), [](char& c) { c = ::tolower(c); });
@@ -218,30 +212,37 @@ bool PeakExporter::saveToSCAUnmerged(
          << std::setprecision(3) << character.beta / deg << std::fixed << std::setw(10)
          << std::setprecision(3) << character.gamma / deg << " " << symbol << std::endl;
 
-    for (int i = 0; i < peak_vector.size(); i++) {
-        const Peak3D* peak = peak_vector.at(i);
-        const MillerIndex miller_index = peak->hkl();
-        const Eigen::RowVector3i& hkl = miller_index.rowVector();
-        const double intensity = unmergedIntensity(peak).value() * scale;
-        const double sigma_intensity = unmergedIntensity(peak).sigma() * scale;
+    for (const MergedPeak& merged_peak : mergedData->mergedPeakSet()) {
+        const MillerIndex hkl_rep = merged_peak.index();
+        for (Peak3D* unmerged_peak : merged_peak.peaks()) {
+            const MillerIndex hkl_orig = unmerged_peak->hkl();
+            const double intensity = unmergedIntensity(unmerged_peak).value() * scale;
+            const double sigma_intensity = unmergedIntensity(unmerged_peak).sigma() * scale;
 
-        file << std::fixed << std::setw(4) << hkl(0) << std::fixed << std::setw(4) << hkl(1)
-             << std::fixed << std::setw(4) << hkl(2) << " " << std::setprecision(1);
+            file << std::fixed << std::setw(4) << hkl_orig.h()
+                 << std::fixed << std::setw(4) << hkl_orig.k()
+                 << std::fixed << std::setw(4) << hkl_orig.l()
+                 << std::fixed << std::setw(4) << hkl_rep.h()
+                 << std::fixed << std::setw(4) << hkl_rep.k()
+                 << std::fixed << std::setw(4) << hkl_rep.l()
+                 << " " << std::setprecision(1);
 
-        if (abs(intensity) > 100000 - 1) {
-            file << std::fixed << std::setw(7) << std::setprecision(1) << std::scientific
-                 << intensity << " ";
-        } else {
-            file << std::fixed << std::setw(7) << intensity << " ";
-        }
+            if (abs(intensity) > 100000 - 1) {
+                file << std::fixed << std::setw(7) << std::setprecision(1) << std::scientific
+                     << intensity << " ";
+            } else {
+                file << std::fixed << std::setw(7) << intensity << " ";
+            }
 
-        if (abs(sigma_intensity) > 100000 - 1) {
-            file << std::fixed << std::setw(7) << std::setprecision(1) << std::scientific
-                 << sigma_intensity << std::endl;
-        } else {
-            file << std::fixed << std::setw(7) << sigma_intensity << std::endl;
+            if (abs(sigma_intensity) > 100000 - 1) {
+                file << std::fixed << std::setw(7) << std::setprecision(1) << std::scientific
+                     << sigma_intensity << std::endl;
+            } else {
+                file << std::fixed << std::setw(7) << sigma_intensity << std::endl;
+            }
         }
     }
+
     file.close();
     return true;
 }
