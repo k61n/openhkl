@@ -29,7 +29,7 @@
 PeakExportDialog::PeakExportDialog() : QDialog(), _exporter()
 {
     setModal(true);
-    setWindowTitle("Export to .mtz file");
+    setWindowTitle("Export peaks");
 
     _data_combo = new DataComboBox(this);
     _peak_combo_1 = new IntegratedPeakComboBox(this);
@@ -232,7 +232,7 @@ void PeakExportDialog::processMerge()
     std::string filter = _exporter.exportFormatStrings()->at(
         static_cast<ohkl::ExportFormat>(_format_combo->currentIndex()));
     QString filename = QFileDialog::getSaveFileName(
-        this, "Export Experiment as MTZ file", loadDirectory, QString::fromStdString(filter));
+        this, "Export peaks", loadDirectory, QString::fromStdString(filter));
     std::string comment = _textbox->toPlainText().toStdString();
     if (filename.isEmpty())
         return;
