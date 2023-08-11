@@ -343,13 +343,12 @@ void SubframeAutoIndexer::setFigureUp()
 
 void SubframeAutoIndexer::refreshPeakTable()
 {
-    if (!gSession->currentProject()->hasPeakCollection())
-        return;
-
-    _peak_collection.setMillerIndices();
-    _peak_collection_item.setPeakCollection(&_peak_collection);
-    _peak_collection_model.setRoot(&_peak_collection_item);
-    _peak_table->resizeColumnsToContents();
+    if (gSession->currentProject()->hasPeakCollection()) {
+        _peak_collection.setMillerIndices();
+        _peak_collection_item.setPeakCollection(&_peak_collection);
+        _peak_collection_model.setRoot(&_peak_collection_item);
+        _peak_table->resizeColumnsToContents();
+    }
     refreshPeakVisual();
 }
 

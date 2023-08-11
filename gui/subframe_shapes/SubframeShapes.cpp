@@ -382,15 +382,14 @@ void SubframeShapes::setPeakTableUp()
 
 void SubframeShapes::refreshPeakTable()
 {
-    if (!gSession->currentProject()->hasPeakCollection())
-        return;
-
-    if (_predicted_combo->count() == 0)
-        _peak_collection_item.setPeakCollection(_peak_combo->currentPeakCollection());
-    else
-        _peak_collection_item.setPeakCollection(_predicted_combo->currentPeakCollection());
-    _peak_collection_model.setRoot(&_peak_collection_item);
-    _peak_table->resizeColumnsToContents();
+    if (gSession->currentProject()->hasPeakCollection()) {
+        if (_predicted_combo->count() == 0)
+            _peak_collection_item.setPeakCollection(_peak_combo->currentPeakCollection());
+        else
+            _peak_collection_item.setPeakCollection(_predicted_combo->currentPeakCollection());
+        _peak_collection_model.setRoot(&_peak_collection_item);
+        _peak_table->resizeColumnsToContents();
+    }
 
     _detector_widget->refresh();
 }
@@ -402,7 +401,6 @@ void SubframeShapes::refreshAll()
         return;
 
     refreshPeakTable();
-    _detector_widget->refresh();
     _params = gSession->currentProject()->experiment()->shapeParameters();
     grabShapeParameters();
 }
