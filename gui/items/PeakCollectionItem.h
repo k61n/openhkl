@@ -18,6 +18,9 @@
 #include "core/peak/Peak3D.h"
 #include "core/shape/PeakCollection.h"
 #include "gui/items/PeakItem.h"
+
+#include <oneapi/tbb/concurrent_vector.h>
+
 #include <QStandardItem>
 
 class PeakCollectionItem {
@@ -60,7 +63,7 @@ class PeakCollectionItem {
 
  private:
     const ohkl::PeakCollection* _peak_collection;
-    std::vector<std::unique_ptr<PeakItem>> _peak_items;
+    tbb::concurrent_vector<std::unique_ptr<PeakItem>> _peak_items;
     PeakDisplayModes _mode;
 };
 

@@ -725,6 +725,7 @@ void DetectorScene::loadCurrentImage()
     QRect full = _zoomStack.front(); // Full image size, front of the stack
     if (_currentFrameIndex >= _currentData->nFrames())
         _currentFrameIndex = _currentData->nFrames() - 1;
+
     std::optional<QImage> base_image = _dataset_graphics->baseImage(_currentFrameIndex, full);
 
     if (base_image) {
