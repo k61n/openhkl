@@ -18,6 +18,7 @@ Compile from source
    * GSL
    * HDF5
    * OpenGL
+   * Thread building blocks (TBB)
    * Tiff
    * QHull
    * YAMLCpp
