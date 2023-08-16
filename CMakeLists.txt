@@ -108,7 +108,7 @@ if((CMAKE_CXX_COMPILER_ID STREQUAL "GNU") OR (CMAKE_CXX_COMPILER_ID MATCHES "Cla
     # exception for swig-generated code:
     #add_compile_options(-Wno-error=sometimes-uninitialized)
     add_compile_options($<$<COMPILE_LANGUAGE:CXX>:-Werror=delete-incomplete>)
-    add_compile_options(-pthread)
+    # add_compile_options(-pthread -ltbb)
     add_definitions(-DEIGEN_FFTW_DEFAULT)
     add_definitions(-D_USE_MATH_DEFINES)
 elseif(DEFINED MSVC)
@@ -149,6 +149,11 @@ else()
   set(QT_VER "Qt5")
 endif()
 
+set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
+set(THREADS_PREFER_PTHREAD_FLAG TRUE)
+find_package(Threads REQUIRED)
+find_package(TBB REQUIRED)
+
 set(OpenGL_GL_PREFERENCE LEGACY)
 set(QT_USE_QTOPENGL TRUE)
 find_package(OpenGL REQUIRED)
@@ -156,7 +161,7 @@ message(STATUS "Found OpenGL:")
 message(STATUS "  libraries: ${OPENGL_LIBRARIES}")
 message(STATUS "  headers: ${OPENGL_INCLUDE_DIR}")
 
-find_package(${QT_VER} COMPONENTS Core Gui Widgets OpenGL PrintSupport REQUIRED)
+find_package(${QT_VER} COMPONENTS Core Gui Widgets OpenGL PrintSupport Concurrent REQUIRED)
 
 set(QT_LIBS "${QT_VER}::Widgets")
 set(QT_INCLUDES "${${QT_VER}Widgets_INCLUDE_DIRS}")

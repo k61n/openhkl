@@ -242,15 +242,14 @@ void SubframeReject::setPeakTableUp()
 
 void SubframeReject::refreshPeakTable()
 {
-    if (!gSession->currentProject()->hasPeakCollection())
-        return;
-
-    _peak_collection = _peak_combo->currentPeakCollection();
-    _peak_collection_item.setPeakCollection(_peak_collection);
-    _peak_collection_item.setFilterMode();
-    _peak_collection_model.setRoot(&_peak_collection_item);
-    _peak_table->resizeColumnsToContents();
-    _peak_table->model()->sort(PeakColumn::Filtered, Qt::DescendingOrder);
+    if (!gSession->currentProject()->hasPeakCollection()) {
+        _peak_collection = _peak_combo->currentPeakCollection();
+        _peak_collection_item.setPeakCollection(_peak_collection);
+        _peak_collection_item.setFilterMode();
+        _peak_collection_model.setRoot(&_peak_collection_item);
+        _peak_table->resizeColumnsToContents();
+        _peak_table->model()->sort(PeakColumn::Filtered, Qt::DescendingOrder);
+    }
 
     _detector_widget->refresh();
 }
@@ -261,8 +260,6 @@ void SubframeReject::refreshAll()
     if (!gSession->hasProject())
         return;
 
-
-    _detector_widget->refresh();
     refreshPeakTable();
     toggleUnsafeWidgets();
 
