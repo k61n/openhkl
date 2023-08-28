@@ -410,6 +410,9 @@ void SubframeShapes::grabShapeParameters()
     if (!gSession->currentProject()->hasPeakCollection())
         return;
 
+    auto* integration_params =
+        gSession->currentProject()->experiment()->integrator()->parameters();
+
     QSignalBlocker blocker1(_integration_region_type);
     QSignalBlocker blocker2(_peak_end);
     QSignalBlocker blocker3(_bkg_begin);
@@ -419,14 +422,14 @@ void SubframeShapes::grabShapeParameters()
 
     _min_d->setValue(_params->d_min);
     _max_d->setValue(_params->d_max);
-    if (_params->region_type == ohkl::RegionType::VariableEllipsoid) {
-        _peak_end->setValue(_params->peak_end);
-        _bkg_begin->setValue(_params->bkg_begin);
-        _bkg_end->setValue(_params->bkg_end);
+    if (integration_params->region_type == ohkl::RegionType::VariableEllipsoid) {
+        _peak_end->setValue(integration_params->peak_end);
+        _bkg_begin->setValue(integration_params->bkg_begin);
+        _bkg_end->setValue(integration_params->bkg_end);
     } else {
-        _peak_end->setValue(_params->fixed_peak_end);
-        _bkg_begin->setValue(_params->fixed_bkg_begin);
-        _bkg_end->setValue(_params->fixed_bkg_end);
+        _peak_end->setValue(integration_params->fixed_peak_end);
+        _bkg_begin->setValue(integration_params->fixed_bkg_begin);
+        _bkg_end->setValue(integration_params->fixed_bkg_end);
     }
     _min_strength->setValue(_params->strength_min);
     _kabsch->setChecked(_params->kabsch_coords);
@@ -439,7 +442,7 @@ void SubframeShapes::grabShapeParameters()
     _sigma_m->setValue(_peak_combo->currentPeakCollection()->sigmaM());
     _sigma_d->setValue(_peak_combo->currentPeakCollection()->sigmaD());
     _interpolation_combo->setCurrentIndex(static_cast<int>(_params->interpolation));
-    _integration_region_type->setCurrentIndex(static_cast<int>(_params->region_type));
+    _integration_region_type->setCurrentIndex(static_cast<int>(integration_params->region_type));
 }
 
 void SubframeShapes::setShapeParameters()
@@ -447,18 +450,22 @@ void SubframeShapes::setShapeParameters()
     if (!gSession->hasProject())
         return;
 
+    auto* integration_params =
+        gSession->currentProject()->experiment()->integrator()->parameters();
+
     _params->d_min = _min_d->value();
     _params->d_max = _max_d->value();
 
-    _params->region_type = static_cast<ohkl::RegionType>(_integration_region_type->currentIndex());
-    if (_params->region_type == ohkl::RegionType::VariableEllipsoid) {
-        _params->peak_end = _peak_end->value();
-        _params->bkg_begin = _bkg_begin->value();
-        _params->bkg_end = _bkg_end->value();
+    integration_params->region_type =
+        static_cast<ohkl::RegionType>(_integration_region_type->currentIndex());
+    if (integration_params->region_type == ohkl::RegionType::VariableEllipsoid) {
+        integration_params->peak_end = _peak_end->value();
+        integration_params->bkg_begin = _bkg_begin->value();
+        integration_params->bkg_end = _bkg_end->value();
     } else {
-        _params->fixed_peak_end = _peak_end->value();
-        _params->fixed_bkg_begin = _bkg_begin->value();
-        _params->fixed_bkg_end = _bkg_end->value();
+        integration_params->fixed_peak_end = _peak_end->value();
+        integration_params->fixed_bkg_begin = _bkg_begin->value();
+        integration_params->fixed_bkg_end = _bkg_end->value();
     }
 
     _params->strength_min = _min_strength->value();
