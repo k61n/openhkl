@@ -197,8 +197,8 @@ void SubframeAutoIndexer::setParametersUp()
         "Minimum fraction of amplitude of the zeroth Fourier frequency to accept as a candidate "
         "lattice vector");
 
-    _min_frame->setMaximum(1000);
-    _max_frame->setMaximum(1000);
+    _min_frame->setMaximum(10000);
+    _max_frame->setMaximum(10000);
 
     _d_min->setMaximum(100);
     _d_min->setDecimals(2);
