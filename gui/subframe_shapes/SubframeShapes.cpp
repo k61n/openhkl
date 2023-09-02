@@ -183,13 +183,13 @@ void SubframeShapes::setInputUp()
     _min_d->setMaximum(1000);
     _max_d->setMaximum(10000);
     _peak_end->setMinimum(0.1);
-    _peak_end->setMaximum(10);
+    _peak_end->setMaximum(50);
     _peak_end->setSingleStep(0.1);
     _bkg_begin->setMinimum(0.1);
-    _bkg_begin->setMaximum(100);
+    _bkg_begin->setMaximum(50);
     _bkg_begin->setSingleStep(0.1);
     _bkg_end->setMinimum(0.1);
-    _bkg_end->setMaximum(100);
+    _bkg_end->setMaximum(50);
     _bkg_end->setSingleStep(0.1);
 
     connect(_build_collection, &QPushButton::clicked, this, &SubframeShapes::buildShapeModel);

@@ -20,6 +20,7 @@
 #include "core/data/SingleFrame.h"
 #include "core/experiment/Experiment.h"
 #include "core/loader/HDF5DataReader.h"
+#include "core/loader/IDataReader.h"
 #include "core/peak/Intensity.h"
 #include "core/peak/Peak3D.h"
 #include "core/raw/DataKeys.h"
@@ -112,13 +113,13 @@ void ExperimentImporter::loadData(Experiment* experiment)
             if (experiment->strategy()) {
                 const ohkl::sptrDataSet dataset_ptr{std::make_shared<ohkl::SingleFrame>(
                     collection_name, experiment->getDiffractometer())};
-                dataset_ptr->addDataFile(_file_name, "nsx");
+                dataset_ptr->addDataFile(_file_name, DataFormat::OHKL);
                 dataset_ptr->finishRead();
                 experiment->addData(dataset_ptr, false);
             } else {
                 const ohkl::sptrDataSet dataset_ptr{std::make_shared<ohkl::DataSet>(
                     collection_name, experiment->getDiffractometer())};
-                dataset_ptr->addDataFile(_file_name, "nsx");
+                dataset_ptr->addDataFile(_file_name, DataFormat::OHKL);
                 dataset_ptr->finishRead();
                 experiment->addData(dataset_ptr, false);
             }

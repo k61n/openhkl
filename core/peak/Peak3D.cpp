@@ -238,30 +238,21 @@ void Peak3D::updateIntegration(
 {
     _rockingCurve = rockingCurve;
     _meanBkgGradient = meanBkgGradient;
-    if (sumBkg.isValid()) {
-        if (sumBkg.sigma() < _sigma2_eps) // NaN sigma handled by Intensity constructor
-            setIntegrationFlag(RejectionFlag::InvalidBkgSigma, IntegratorType::PixelSum);
-        else
-            _sumBackground = sumBkg;
-    }
+    if (sumBkg.isValid())
+        _sumBackground = sumBkg;
     if (sumInt.isValid()) { // Default intensity constructor is zero, _valid = false
         if (sumInt.sigma() < _sigma2_eps) // NaN sigma handled by Intensity constructor
             setIntegrationFlag(RejectionFlag::InvalidSigma, IntegratorType::PixelSum);
         else
             _sumIntensity = sumInt;
     }
+    if (profBkg.isValid())
+        _profileBackground = profBkg;
     if (profInt.isValid()) {
         if (profInt.sigma() < _sigma2_eps) // NaN sigma handled by Intensity constructor
             setIntegrationFlag(RejectionFlag::InvalidSigma, IntegratorType::Profile3D);
         else
             _profileIntensity = profInt;
-    }
-    if (profBkg.isValid()) {
-        if (profBkg.sigma() < _sigma2_eps) // NaN sigma handled by Intensity constructor
-            // Not necessarily Profile3D, just establishing *any* profile integration
-            setIntegrationFlag(RejectionFlag::InvalidBkgSigma, IntegratorType::Profile3D);
-        else
-            _profileBackground = profBkg;
     }
 
     //_sumIntensity = integrator.peakIntensity(); // TODO: test, reactivate ???

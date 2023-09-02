@@ -12,6 +12,7 @@
 //
 //  ***********************************************************************************************
 
+#include "core/loader/IDataReader.h"
 #include "test/cpp/catch.hpp"
 #include <array>
 #include <fstream>
@@ -37,7 +38,7 @@ void run_test(const char* filename, const char* instrument)
     const ohkl::sptrDataSet dataset_ptr { std::make_shared<ohkl::DataSet>
           (ohkl::kw_datasetDefaultName, experiment.getDiffractometer()) };
 
-    dataset_ptr->addDataFile(filename, "nsx");
+    dataset_ptr->addDataFile(filename, ohkl::DataFormat::OHKL);
     dataset_ptr->finishRead();
 
     experiment.addData(dataset_ptr);

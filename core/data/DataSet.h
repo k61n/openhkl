@@ -114,7 +114,7 @@ class DataSet {
     ohkl::MetaData& metadata();
 
     //! Add a data file for reading data. Reading frames will be done only upon request.
-    void addDataFile(const std::string& filename, const std::string& extension);
+    void addDataFile(const std::string& filename, const DataFormat& fmt);
     //! Set the parameters for the image (raw or tiff) reader
     void setImageReaderParameters(const DataReaderParameters& params);
 

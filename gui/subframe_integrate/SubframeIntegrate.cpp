@@ -281,13 +281,13 @@ void SubframeIntegrate::setIntegrationRegionUp()
         "Background end:",
         "(" + QString(QChar(0x03C3)) + ") - scaling factor for upper limit of background");
 
-    _peak_end->setMaximum(20);
+    _peak_end->setMaximum(50);
     _peak_end->setDecimals(2);
 
-    _bkg_begin->setMaximum(10);
+    _bkg_begin->setMaximum(50);
     _bkg_begin->setDecimals(2);
 
-    _bkg_end->setMaximum(10);
+    _bkg_end->setMaximum(50);
     _bkg_end->setDecimals(2);
 
     _left_layout->addWidget(_integration_region_box);

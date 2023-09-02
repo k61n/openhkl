@@ -296,7 +296,7 @@ void Session::loadData(ohkl::DataFormat format)
             const ohkl::sptrDataSet dataset_ptr{
                 std::make_shared<ohkl::DataSet>(dataset_nm, exp->getDiffractometer())};
 
-            dataset_ptr->addDataFile(filename.toStdString(), "nsx");
+            dataset_ptr->addDataFile(filename.toStdString(), format);
 
             // store the name of the first dataset
             if (dataset1_name.empty())

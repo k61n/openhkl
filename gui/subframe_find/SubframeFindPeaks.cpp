@@ -220,9 +220,9 @@ void SubframeFindPeaks::setIntegrateUp()
 
     _integrate_button = f.addButton("Integrate");
 
-    _peak_end->setMaximum(10);
-    _bkg_begin->setMaximum(10);
-    _bkg_end->setMaximum(10);
+    _peak_end->setMaximum(50);
+    _bkg_begin->setMaximum(50);
+    _bkg_end->setMaximum(50);
 
     for (const auto& [kernel, description] : _kernel_description)
         _gradient_kernel->addItem(description);

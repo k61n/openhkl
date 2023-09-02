@@ -39,7 +39,7 @@ void run_test(const char* filename, const char* instrument)
     const ohkl::sptrDataSet dataset_ptr { std::make_shared<ohkl::DataSet>
          (ohkl::kw_datasetDefaultName, experiment.getDiffractometer()) };
 
-    dataset_ptr->addDataFile(filename, "nsx");
+    dataset_ptr->addDataFile(filename, ohkl::DataFormat::OHKL);
     dataset_ptr->finishRead();
     experiment.addData(dataset_ptr);
     const int nrows = dataset_ptr->nRows();

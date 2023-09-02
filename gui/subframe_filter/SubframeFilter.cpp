@@ -242,12 +242,12 @@ void SubframeFilter::setOverlapUp()
     _peak_end = f.addDoubleSpinBox("Peak end");
     _peak_end->setValue(3.0);
     _peak_end->setMinimum(1.0);
-    _peak_end->setMaximum(10.0);
+    _peak_end->setMaximum(50.0);
     _peak_end->setDecimals(2);
 
     _bkg_end = f.addDoubleSpinBox("Background end");
     _bkg_end->setValue(6.0);
-    _bkg_end->setMaximum(10.0);
+    _bkg_end->setMaximum(50.0);
     _bkg_end->setMinimum(0.0);
     _bkg_end->setDecimals(2);
 

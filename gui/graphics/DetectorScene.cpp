@@ -584,6 +584,7 @@ void DetectorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
             sendBeamOffset(event->scenePos());
             _current_beam_position = event->scenePos();
             addBeamSetter(event->scenePos(), size);
+            _current_dragged_item = _beam_pos_setter;
             _current_dragged_item->setPos(event->scenePos());
         } else {
             for (const auto& graphic : _peak_graphics) {

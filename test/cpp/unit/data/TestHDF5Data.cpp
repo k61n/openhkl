@@ -12,6 +12,7 @@
 //
 //  ***********************************************************************************************
 
+#include "core/loader/IDataReader.h"
 #include "test/cpp/catch.hpp"
 #include <Eigen/Dense>
 
@@ -24,7 +25,7 @@ TEST_CASE("test/data/TestHDF5Data.cpp", "")
     ohkl::Diffractometer* diffractometer = ohkl::Diffractometer::create("BioDiff");
     const ohkl::sptrDataSet dataset_ptr { std::make_shared<ohkl::DataSet>
           (ohkl::kw_datasetDefaultName, diffractometer) };
-    dataset_ptr->addDataFile("H5_example.hdf", "nsx");
+    dataset_ptr->addDataFile("H5_example.hdf", ohkl::DataFormat::OHKL);
     dataset_ptr->finishRead();
 
     Eigen::MatrixXi v = dataset_ptr->frame(0);

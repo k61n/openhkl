@@ -34,6 +34,7 @@
 #include "core/instrument/Sample.h"
 #include "core/instrument/Source.h"
 #include "core/loader/HDF5DataReader.h"
+#include "core/loader/IDataReader.h"
 #include "core/loader/NexusDataReader.h"
 #include "core/loader/RawDataReader.h"
 #include "core/loader/TiffDataReader.h"
@@ -98,33 +99,15 @@ void DataSet::finishRead()
     diffractometer()->source().selectedMonochromator().setWavelength(wavelength());
 }
 
-void DataSet::addDataFile(const std::string& filename, const std::string& extension)
+void DataSet::addDataFile(const std::string& filename, const DataFormat& datafmt)
 {
-    DataFormat datafmt{DataFormat::Unknown};
-
     // if reader not set yet, initialize a proper reader
-    if (!_reader) {
-        const std::string ext = lowerCase(extension);
-
-        if (ext == "nsx" || ext == "hdf" || ext == "ohkl")
-            datafmt = DataFormat::OHKL;
-        else if (ext == "nxs")
-            datafmt = DataFormat::NEXUS;
-        else if (ext == "raw")
-            throw std::runtime_error(
-                "DataSet '" + _name + "': Use 'addRawFrame(<filename>)' for reading raw files.");
-        else if (ext == "tif" || ext == "tiff") {
-
-            datafmt = DataFormat::TIFF;
-        } else
-            throw std::runtime_error("DataSet '" + _name + "': Extension unknown.");
-
-    } else {
+    if (_reader)
         throw std::runtime_error("DataSet '" + _name + "': DataReader is already set.");
-    }
 
     setReader(datafmt, filename);
 }
+
 void DataSet::setImageReaderParameters(const DataReaderParameters& params)
 {
     _dataformat = params.data_format;
