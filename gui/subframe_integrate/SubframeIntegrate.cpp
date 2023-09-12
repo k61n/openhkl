@@ -492,6 +492,7 @@ void SubframeIntegrate::runIntegration()
             QString::number(integrator->numberOfValidPeaks()) + "/"
             + QString::number(integrator->numberOfPeaks()) + " peaks integrated");
         refreshPeakTable();
+        gSession->onPeaksChanged();
     } catch (std::exception& e) {
         QMessageBox::critical(this, "Error", QString(e.what()));
     }
