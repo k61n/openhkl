@@ -90,7 +90,7 @@ bool Profile3DIntegrator::compute(
 
     DetectorEvent event(peak->shape().center());
 
-    std::optional<Profile3D> model_profile = shape_model->meanProfile(event, radius(), nFrames());
+    std::optional<Profile3D> model_profile = shape_model->meanProfile(event);
     if (!model_profile)
         return false;
 

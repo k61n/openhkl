@@ -54,7 +54,7 @@ bool ISigmaIntegrator::compute(
 
     Profile1D profile;
     std::optional<std::vector<Intensity>> mean_profile =
-        shape_model->meanProfile1D(DetectorEvent(c), radius(), nFrames());
+        shape_model->meanProfile1D(DetectorEvent(c));
     if (!mean_profile)
         return false;
 

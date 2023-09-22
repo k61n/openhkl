@@ -53,6 +53,9 @@ struct ShapeModelParameters : public IntegrationParameters {
     double sigma_m = 0.1; //!< Variance due to crystal mosaicity
     double sigma_d = 0.1; //!< Variance due to beam divergence
     PeakInterpolation interpolation = PeakInterpolation::NoInterpolation;
+    int min_neighbors = 1; //! Minimum number of neighbouring shapes
+    double neighbour_range_pixels = 500.0; //! Search radius for neighbouring profiles (pixels)
+    double neighbour_range_frames = 10.0; //! Search radius for neighbouring profiles (frames)
 
     void log(const Level& level) const;
 };
@@ -112,21 +115,17 @@ class ShapeModel {
     double meanPearson() const;
 
     //! Returns the average peak profile near the given detector event
-    std::optional<Profile3D> meanProfile(
-        const DetectorEvent& ev, double radius, double nframes) const;
+    std::optional<Profile3D> meanProfile(const DetectorEvent& ev) const;
 
     //! Returns the average peak profile near the given detector event
-    std::optional<std::vector<Intensity>> meanProfile1D(
-        const DetectorEvent& ev, double radius, double nframes) const;
+    std::optional<std::vector<Intensity>> meanProfile1D(const DetectorEvent& ev) const;
 
     //! Returns the average peak covariance near the given detector event
-    std::optional<Eigen::Matrix3d> meanCovariance(
-        Peak3D* reference_peak, double radius, double nframes, size_t min_neighbors,
-        PeakInterpolation interpolation) const;
+    std::optional<Eigen::Matrix3d> meanCovariance(Peak3D* reference_peak) const;
 
     //! Find neighbors of a given peak
     std::optional<std::vector<Peak3D*>> findNeighbors(
-        const DetectorEvent& ev, double radius, double nframes) const;
+        const DetectorEvent& ev) const;
 
     //! Returns the background end used for the collection
     std::array<double, 6> choleskyD() const;

@@ -45,10 +45,6 @@ struct IntegrationParameters {
     double fixed_bkg_end = 2.0;
     //! Maximum per-pixel count
     double max_counts = 50000.0;
-    //! Search radius for neighbouring peaks (pixels)
-    double neighbour_range_pixels = 500.0;
-    //! Search radius for neighbouring peaks (frames)
-    double neighbour_range_frames = 10.0;
     //! Maximum strength for profile integration
     double max_strength = 1;
     //! Maximum d (minimum resolution) for profile integration
@@ -59,8 +55,6 @@ struct IntegrationParameters {
     bool fit_cov = true;
     //! Whether to discard peaks with saturated pixels
     bool discard_saturated = false;
-    //! Minimum number of neighbouring shapes for predicted shape
-    int min_neighbors = 10;
     //! Type of integrator
     IntegratorType integrator_type = IntegratorType::PixelSum;
     //! Use gradient to discriminate heterogeneous background regions
@@ -123,21 +117,6 @@ class IIntegrator {
     IntegrationParameters _params;
 
  public:
-    //! Return the peak scale
-    double peakEnd() const { return _params.peak_end; };
-    //! Return the beginning of the background region in peak scales
-    double backBegin() const { return _params.bkg_begin; };
-    //! Return the end of the background region in peak scales
-    double backEnd() const { return _params.bkg_end; };
-    //! Return the neighbour search radius in pixels (profile integration)
-    double radius() const { return _params.neighbour_range_pixels; };
-    //! Return the neighbour search radius in frames (profile integration)
-    double nFrames() const { return _params.neighbour_range_frames; };
-    //! Update the peak center as part of integration
-    bool fitCenter() const { return _params.fit_center; };
-    //! Update the peak shape covariance matrix as part of integration
-    bool fitCov() const { return _params.fit_cov; };
-
     //! Assign a parameter set to the integrator
     void setParameters(const IntegrationParameters& params);
 

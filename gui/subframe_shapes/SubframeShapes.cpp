@@ -437,10 +437,11 @@ void SubframeShapes::grabShapeParameters()
     _ny->setValue(_params->nbins_y);
     _nz->setValue(_params->nbins_z);
     _nsubdiv->setValue(_params->n_subdiv);
-    _pixel_radius->setValue(_params->neighbour_range_pixels);
-    _frame_radius->setValue(_params->neighbour_range_frames);
     _sigma_m->setValue(_peak_combo->currentPeakCollection()->sigmaM());
     _sigma_d->setValue(_peak_combo->currentPeakCollection()->sigmaD());
+    _min_neighbours->setValue(_params->min_n_neighbors);
+    _pixel_radius->setValue(_params->neighbour_range_pixels);
+    _frame_radius->setValue(_params->neighbour_range_frames);
     _interpolation_combo->setCurrentIndex(static_cast<int>(_params->interpolation));
     _integration_region_type->setCurrentIndex(static_cast<int>(integration_params->region_type));
 }
@@ -474,10 +475,11 @@ void SubframeShapes::setShapeParameters()
     _params->nbins_y = _ny->value();
     _params->nbins_z = _nz->value();
     _params->n_subdiv = _nsubdiv->value();
-    _params->neighbour_range_pixels = _pixel_radius->value();
-    _params->neighbour_range_frames = _frame_radius->value();
     _params->sigma_m = _sigma_m->value();
     _params->sigma_d = _sigma_d->value();
+    _params->min_n_neighbors = _min_neighbours->value();
+    _params->neighbour_range_pixels = _pixel_radius->value();
+    _params->neighbour_range_frames = _frame_radius->value();
     _params->interpolation =
         static_cast<ohkl::PeakInterpolation>(_interpolation_combo->currentIndex());
 }
@@ -688,12 +690,9 @@ void SubframeShapes::getPreviewPeak(ohkl::Peak3D* selected_peak)
         return;
 
     setShapeParameters();
-    int interpol = _interpolation_combo->currentIndex();
-    ohkl::PeakInterpolation peak_interpolation = static_cast<ohkl::PeakInterpolation>(interpol);
+    model->setParameters(_params);
 
-    auto cov = model->meanCovariance(
-        selected_peak, _params->neighbour_range_pixels, _params->neighbour_range_frames,
-        _params->min_n_neighbors, peak_interpolation);
+    auto cov = model->meanCovariance(selected_peak);
     if (cov) {
         Eigen::Vector3d center = selected_peak->shape().center();
         ohkl::Ellipsoid shape = ohkl::Ellipsoid(center, cov.value().inverse());

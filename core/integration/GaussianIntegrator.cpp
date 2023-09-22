@@ -126,12 +126,12 @@ bool GaussianIntegrator::compute(
     params.addParameter(&B);
     params.addParameter(&I);
 
-    if (fitCenter()) {
+    if (_params.fit_center) {
         for (size_t i = 0; i < 3; ++i)
             params.addParameter(&x0(i));
     }
 
-    if (fitCov()) {
+    if (_params.fit_cov) {
         for (size_t i = 0; i < 6; ++i)
             params.addParameter(&a(i));
     }

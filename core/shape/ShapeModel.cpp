@@ -48,9 +48,11 @@ void ShapeModelParameters::log(const Level& level) const
     ohklLog(level, "nbins_y                = ", nbins_y);
     ohklLog(level, "nbins_z                = ", nbins_z);
     ohklLog(level, "n_subdiv               = ", n_subdiv);
-    ohklLog(level, "min_n_neighbors        = ", min_n_neighbors);
     ohklLog(level, "sigma_m                = ", sigma_m);
     ohklLog(level, "sigma_d                = ", sigma_d);
+    ohklLog(level, "min_neighbors          = ", min_neighbors);
+    ohklLog(level, "neighbour_range_pixels = ", neighbour_range_pixels);
+    ohklLog(level, "neighbour_range_frames = ", neighbour_range_frames);
 }
 
 static Eigen::Matrix3d from_cholesky(const std::array<double, 6>& components)
@@ -281,11 +283,10 @@ double ShapeModel::meanPearson() const
     return sum_pearson / _profiles.size();
 }
 
-std::optional<Profile3D> ShapeModel::meanProfile(
-    const DetectorEvent& ev, double radius, double nframes) const
+std::optional<Profile3D> ShapeModel::meanProfile(const DetectorEvent& ev) const
 {
     Profile3D mean;
-    auto neighbors = findNeighbors(ev, radius, nframes);
+    auto neighbors = findNeighbors(ev);
     if (!neighbors)
         return {};
 
@@ -299,10 +300,9 @@ std::optional<Profile3D> ShapeModel::meanProfile(
     return mean;
 }
 
-std::optional<std::vector<Intensity>> ShapeModel::meanProfile1D(
-    const DetectorEvent& ev, double radius, double nframes) const
+std::optional<std::vector<Intensity>> ShapeModel::meanProfile1D(const DetectorEvent& ev) const
 {
-    auto neighbors = findNeighbors(ev, radius, nframes);
+    auto neighbors = findNeighbors(ev);
     if (!neighbors)
         return {};
 
@@ -321,8 +321,7 @@ std::optional<std::vector<Intensity>> ShapeModel::meanProfile1D(
     return mean_profile;
 }
 
-std::optional<std::vector<Peak3D*>> ShapeModel::findNeighbors(
-    const DetectorEvent& ev, double radius, double nframes) const
+std::optional<std::vector<Peak3D*>> ShapeModel::findNeighbors(const DetectorEvent& ev) const
 {
     std::vector<Peak3D*> neighbors;
     Eigen::Vector3d center(ev.px, ev.py, ev.frame);
@@ -331,10 +330,11 @@ std::optional<std::vector<Peak3D*>> ShapeModel::findNeighbors(
         auto peak = pair.first;
         Eigen::Vector3d dc = center - peak->shape().center();
         // too far away on detector
-        if (dc(0) * dc(0) + dc(1) * dc(1) > radius * radius)
+        if (dc(0) * dc(0) + dc(1) * dc(1) >
+            _params->neighbour_range_pixels * _params->neighbour_range_pixels)
             continue;
         // too far away in frame number
-        if (std::fabs(dc(2)) > nframes)
+        if (std::fabs(dc(2)) > _params->neighbour_range_frames)
             continue;
         neighbors.push_back(peak);
     }
@@ -343,20 +343,18 @@ std::optional<std::vector<Peak3D*>> ShapeModel::findNeighbors(
     return neighbors;
 }
 
-std::optional<Eigen::Matrix3d> ShapeModel::meanCovariance(
-    Peak3D* reference_peak, double radius, double nframes, size_t min_neighbors,
-    PeakInterpolation interpolation) const
+std::optional<Eigen::Matrix3d> ShapeModel::meanCovariance(Peak3D* reference_peak) const
 {
     Eigen::Matrix3d cov;
     cov.setZero();
     auto neighbors =
-        findNeighbors(DetectorEvent(reference_peak->shape().center()), radius, nframes);
+        findNeighbors(DetectorEvent(reference_peak->shape().center()));
 
     if (!neighbors) {
         reference_peak->setRejectionFlag(RejectionFlag::NoNeighbours);
         return {};
     }
-    if (neighbors.value().size() < min_neighbors) {
+    if (neighbors.value().size() < _params->min_neighbors) {
         reference_peak->setRejectionFlag(RejectionFlag::TooFewNeighbours);
         return {};
     }
@@ -369,7 +367,7 @@ std::optional<Eigen::Matrix3d> ShapeModel::meanCovariance(
         Eigen::Matrix3d J = coord.jacobian();
 
         double weight;
-        switch (interpolation) {
+        switch (_params->interpolation) {
             case (PeakInterpolation::NoInterpolation): {
                 weight = 1.0;
                 break;
@@ -423,9 +421,7 @@ void ShapeModel::setPredictedShapes(PeakCollection* peaks)
     for (auto peak : peaks->getPeakList()) {
         // Skip the peak if any error occur when computing its mean covariance (e.g.
         // too few or no neighbouring peaks found)
-        if (auto cov = meanCovariance(
-                peak, _params->neighbour_range_pixels, _params->neighbour_range_frames,
-                _params->min_n_neighbors, _params->interpolation)) {
+        if (auto cov = meanCovariance(peak)) {
             Eigen::Vector3d center = peak->shape().center();
             peak->setShape(Ellipsoid(center, cov.value().inverse()));
         } else {

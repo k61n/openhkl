@@ -204,11 +204,8 @@ void SubframeIntegrate::grabIntegrationParameters()
     }
     _discard_saturated->setChecked(params->discard_saturated);
     _max_counts->setValue(params->max_counts);
-    _radius_int->setValue(params->neighbour_range_pixels);
-    _n_frames_int->setValue(params->neighbour_range_frames);
     _fit_center->setChecked(params->fit_center);
     _fit_covariance->setChecked(params->fit_cov);
-    _min_neighbours->setValue(params->min_neighbors);
     _compute_gradient->setChecked(params->use_gradient);
     _fft_gradient->setChecked(params->fft_gradient);
     _gradient_kernel->setCurrentIndex(static_cast<int>(params->gradient_type));
@@ -219,6 +216,15 @@ void SubframeIntegrate::grabIntegrationParameters()
     _use_max_d->setChecked(params->use_max_d);
     _max_d->setValue(params->max_d);
     _integrator_combo->setCurrentIndex(static_cast<int>(params->integrator_type));
+
+    if (!gSession->currentProject()->hasShapeModel())
+        return;
+
+    auto* shape_params = _shape_combo->currentShapes()->parameters();
+    _min_neighbours->setValue(shape_params->min_neighbors);
+    _radius_int->setValue(shape_params->neighbour_range_pixels);
+    _n_frames_int->setValue(shape_params->neighbour_range_frames);
+    _interpolation_combo->setCurrentIndex(static_cast<int>(shape_params->interpolation));
 }
 
 void SubframeIntegrate::setIntegrationParameters()
@@ -232,11 +238,8 @@ void SubframeIntegrate::setIntegrationParameters()
 
     params->discard_saturated = _discard_saturated->isChecked();
     params->max_counts = _max_counts->value();
-    params->neighbour_range_pixels = _radius_int->value();
-    params->neighbour_range_frames = _n_frames_int->value();
     params->fit_center = _fit_center->isChecked();
     params->fit_cov = _fit_covariance->isChecked();
-    params->min_neighbors = _min_neighbours->value();
     params->region_type = static_cast<ohkl::RegionType>(_integration_region_type->currentIndex());
     params->integrator_type = static_cast<ohkl::IntegratorType>(_integrator_combo->currentIndex());
     if (params->region_type == ohkl::RegionType::VariableEllipsoid) {
@@ -258,6 +261,16 @@ void SubframeIntegrate::setIntegrationParameters()
     params->use_max_d = _use_max_d->isChecked();
     params->max_d = _max_d->value();
     params->region_type = static_cast<ohkl::RegionType>(_integration_region_type->currentIndex());
+
+    if (!gSession->currentProject()->hasShapeModel())
+        return;
+
+    auto* shape_params = _shape_combo->currentShapes()->parameters();
+    shape_params->min_neighbors = _min_neighbours->value();
+    shape_params->neighbour_range_pixels = _radius_int->value();
+    shape_params->neighbour_range_frames = _n_frames_int->value();
+    shape_params->interpolation =
+        static_cast<ohkl::PeakInterpolation>(_interpolation_combo->currentIndex());
 }
 
 void SubframeIntegrate::setIntegrationRegionUp()
@@ -523,6 +536,7 @@ void SubframeIntegrate::toggleUnsafeWidgets()
     _integrate_button->setToolTip("");
     _integrate_button->setEnabled(isPxsum);
     _use_max_strength->setEnabled(!isPxsum);
+    _use_max_d->setEnabled(!isPxsum);
     _compute_gradient->setEnabled(isPxsum);
     _fit_center->setEnabled(isPxsum);
     _fit_covariance->setEnabled(isPxsum);
