@@ -50,15 +50,18 @@ class TestFullWorkFlow(unittest.TestCase):
         dataset = ohkl.DataSet('trypsin', diffractometer)
 
         # raw data parameters
-        data_params = expt.data_params
+        data_params = ohkl.DataReaderParameters()
         data_params.wavelength = 2.67
         data_params.delta_omega = 0.4
+        data_params.data_format = ohkl.DataFormat_RAW
+        data_params.rows = 900
+        data_params.cols = 2500
 
 
         print(f'Reading files from {data_dir}')
         dir = Path(data_dir)
         raw_data_files = sorted(list(dir.glob('soak_9_d2*.raw')))
-        dataset.setRawReaderParameters(data_params)
+        dataset.setImageReaderParameters(data_params)
         for filename in raw_data_files:
             dataset.addRawFrame(str(filename))
 
@@ -67,6 +70,7 @@ class TestFullWorkFlow(unittest.TestCase):
         dataset.finishRead()
         expt.addData(dataset)
         data = expt.getData('trypsin')
+        data.initBuffer(True)
 
         # add masks
         box_left = ohkl.AABB(
