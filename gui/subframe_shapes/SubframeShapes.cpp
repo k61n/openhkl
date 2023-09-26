@@ -459,14 +459,22 @@ void SubframeShapes::setShapeParameters()
 
     integration_params->region_type =
         static_cast<ohkl::RegionType>(_integration_region_type->currentIndex());
+    _params->region_type =
+        static_cast<ohkl::RegionType>(_integration_region_type->currentIndex());
     if (integration_params->region_type == ohkl::RegionType::VariableEllipsoid) {
         integration_params->peak_end = _peak_end->value();
         integration_params->bkg_begin = _bkg_begin->value();
         integration_params->bkg_end = _bkg_end->value();
+        _params->peak_end = _peak_end->value();
+        _params->bkg_begin = _bkg_begin->value();
+        _params->bkg_end = _bkg_end->value();
     } else {
         integration_params->fixed_peak_end = _peak_end->value();
         integration_params->fixed_bkg_begin = _bkg_begin->value();
         integration_params->fixed_bkg_end = _bkg_end->value();
+        _params->fixed_peak_end = _peak_end->value();
+        _params->fixed_bkg_begin = _bkg_begin->value();
+        _params->fixed_bkg_end = _bkg_end->value();
     }
 
     _params->strength_min = _min_strength->value();
