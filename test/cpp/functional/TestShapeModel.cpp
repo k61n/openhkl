@@ -73,7 +73,7 @@ TEST_CASE("test/data/TestShapeModel.cpp", "")
 
     const ohkl::DetectorEvent event(1100, 450, 8);
     // search for neighbours in radius 500 pixels, 5 frames
-    ohkl::Profile3D profile = shapes.meanProfile(event).value();
+    ohkl::Profile3D profile = shapes.meanProfile(event);
     ohkl::AABB aabb = profile.ellipsoid().aabb();
     Eigen::Vector3d axis_lengths = aabb.extents();
     std::cout << "Ellipsoid: " << axis_lengths[0] << " x " << axis_lengths[1]

@@ -701,11 +701,9 @@ void SubframeShapes::getPreviewPeak(ohkl::Peak3D* selected_peak)
     model->setParameters(_params);
 
     auto cov = model->meanCovariance(selected_peak);
-    if (cov) {
-        Eigen::Vector3d center = selected_peak->shape().center();
-        ohkl::Ellipsoid shape = ohkl::Ellipsoid(center, cov.value().inverse());
-        _preview_peak = std::make_unique<ohkl::Peak3D>(selected_peak->dataSet(), shape);
-    }
+    Eigen::Vector3d center = selected_peak->shape().center();
+    ohkl::Ellipsoid shape = ohkl::Ellipsoid(center, cov.inverse());
+    _preview_peak = std::make_unique<ohkl::Peak3D>(selected_peak->dataSet(), shape);
 }
 
 void SubframeShapes::saveShapes()
