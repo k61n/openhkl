@@ -100,10 +100,7 @@ bool Profile1DIntegrator::compute(
     Eigen::Matrix3d A = peak->shape().metric();
 
     Profile1D profile(0.0, region.peakEnd());
-    std::optional<std::vector<Intensity>> mean_profile =
-        shape_model->meanProfile1D(DetectorEvent(c));
-    if (!mean_profile)
-        return false;
+    std::vector<Intensity> mean_profile = shape_model->meanProfile1D(DetectorEvent(c));
 
     // construct the observed profile
     for (size_t i = 0; i < events.size(); ++i) {
@@ -119,15 +116,15 @@ bool Profile1DIntegrator::compute(
 
     dn.push_back(profile.npoints()[0]);
     dm.push_back(profile.counts()[0]);
-    dp.push_back(mean_profile.value()[0].value());
+    dp.push_back(mean_profile[0].value());
 
     // compute differences and rebin if necessary so that dn > 0
-    for (size_t i = 1; i < mean_profile.value().size(); ++i) {
+    for (size_t i = 1; i < mean_profile.size(); ++i) {
         const auto& counts = profile.counts();
         const auto& npoints = profile.npoints();
         dn.push_back(npoints[i] - npoints[i - 1]);
         dm.push_back(counts[i] - counts[i - 1]);
-        dp.push_back(mean_profile.value()[i].value() - mean_profile.value()[i - 1].value());
+        dp.push_back(mean_profile[i].value() - mean_profile[i - 1].value());
     }
 
     Intensity I = 1e-6;
