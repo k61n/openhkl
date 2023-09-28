@@ -21,6 +21,7 @@
 #include "core/peak/Intensity.h"
 #include "core/peak/Peak3D.h"
 #include "core/shape/Octree.h"
+#include "core/shape/ShapeModel.h"
 #include "tables/crystal/UnitCell.h"
 
 #include <algorithm>
@@ -36,8 +37,6 @@ void IntegrationParameters::log(const Level& level) const
     ohklLog(level, "fixed_peak_end         = ", fixed_peak_end);
     ohklLog(level, "fixed_bkg_begin        = ", fixed_bkg_begin);
     ohklLog(level, "fixed_bkg_end          = ", fixed_bkg_end);
-    ohklLog(level, "neighbour_range_pixels = ", neighbour_range_pixels);
-    ohklLog(level, "neighbour_range_frames = ", neighbour_range_frames);
     ohklLog(level, "max_strength           = ", max_strength);
     ohklLog(level, "max_d                  = ", max_d);
     ohklLog(level, "fit_center             = ", fit_center);
@@ -75,6 +74,10 @@ const std::vector<Intensity>& IIntegrator::rockingCurve() const
 void IIntegrator::integrate(
     std::vector<ohkl::Peak3D*> peaks, ShapeModel* shape_model, sptrDataSet data)
 {
+    _params.log(Level::Info);
+    if (shape_model)
+        shape_model->parameters()->log(Level::Info);
+
     // integrate only those peaks that belong to the specified dataset
     auto it = std::remove_if(peaks.begin(), peaks.end(), [&](const Peak3D* peak) {
         return peak->dataSet() != data;
@@ -242,7 +245,6 @@ void IIntegrator::setParameters(const IntegrationParameters& params)
 {
     _params = params;
     ohklLog(Level::Info, "IIntegrator::setParameters");
-    _params.log(Level::Info);
 }
 
 void IIntegrator::removeOverlaps(

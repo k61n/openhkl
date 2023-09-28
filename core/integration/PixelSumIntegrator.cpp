@@ -160,7 +160,7 @@ bool PixelSumIntegrator::compute(Peak3D* peak, ShapeModel*, const IntegrationReg
     Eigen::Vector3d center;
     Eigen::Matrix3d cov;
 
-    if (fitCenter()) {
+    if (_params.fit_center) {
         if (blob.isValid()) {
             center = blob.center();
         } else {
@@ -171,7 +171,7 @@ bool PixelSumIntegrator::compute(Peak3D* peak, ShapeModel*, const IntegrationReg
         center = peak->shape().center();
     }
 
-    if (fitCov()) {
+    if (_params.fit_cov) {
         if (blob.isValid()) {
             cov = blob.covariance();
         } else {

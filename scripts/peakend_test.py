@@ -48,7 +48,6 @@ for peak_end in np.arange(2.5, 3.6, 0.1):
     print(name)
     shape_params.neighbour_range_pixels = 500
     shape_params.neighbour_range_frames = 10
-    shape_params.min_neighbours = 10
     shape_params.interpolation = nsx.PeakInterpolation_InverseDistance
     shapes.setPredictedShapes(peaks)
 

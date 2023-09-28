@@ -161,7 +161,6 @@ class SubframePredict : public QWidget {
     ShapeComboBox* _shape_combo;
     SafeDoubleSpinBox* _radius_pix;
     SafeDoubleSpinBox* _radius_frames;
-    SafeSpinBox* _min_neighbours;
     QComboBox* _interpolation_combo;
     QPushButton* _apply_shape_model;
 

@@ -104,11 +104,13 @@ unsigned int RegionData::getRegionDataIndex(unsigned int frame_index)
 void RegionData::buildProfile(ShapeModel* shapes, double radius, double nframes)
 {
     Peak3D* peak = _integration_region->peak();
+    ShapeModelParameters* params = shapes->parameters();
+    params->neighbour_range_pixels = radius;
+    params->neighbour_range_frames = nframes;
     DetectorEvent center = {
         peak->shape().center()[0], peak->shape().center()[1], peak->shape().center()[2]};
-    auto profile = shapes->meanProfile(center, radius, nframes);
-    if (profile)
-        _n_profiles = profile.value().nProfiles();
+    auto profile = shapes->meanProfile(center);
+    _n_profiles = profile.nProfiles();
 
     const auto& events = _integration_region->peakData().events();
     std::vector<double> profile_counts;
@@ -134,10 +136,8 @@ void RegionData::buildProfile(ShapeModel* shapes, double radius, double nframes)
         } else {
             coords = system.transform(events[idx]);
         }
-        if (!profile)
-            throw std::runtime_error("RegionData::buildProfile: bad profile");
 
-        profile_counts.push_back(profile.value().predict(coords));
+        profile_counts.push_back(profile.predict(coords));
     }
 
     for (std::size_t idx = 0; idx < events.size(); ++idx) {

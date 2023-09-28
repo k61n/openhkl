@@ -53,10 +53,7 @@ bool ISigmaIntegrator::compute(
     Eigen::Matrix3d A = peak->shape().metric();
 
     Profile1D profile;
-    std::optional<std::vector<Intensity>> mean_profile =
-        shape_model->meanProfile1D(DetectorEvent(c), radius(), nFrames());
-    if (!mean_profile)
-        return false;
+    std::vector<Intensity> mean_profile = shape_model->meanProfile1D(DetectorEvent(c));
 
     // evaluate the model profile at the given events
     for (int i = 0; i < events.size(); ++i) {
@@ -76,8 +73,8 @@ bool ISigmaIntegrator::compute(
         const double I = M - n * mean_bkg;
         const double var_I = M + n * n * var_bkg;
 
-        const double p = mean_profile.value()[i].value();
-        const double var_p = mean_profile.value()[i].variance();
+        const double p = mean_profile[i].value();
+        const double var_p = mean_profile[i].variance();
 
         const double val = var_I / I / I + var_p / p / p;
 
@@ -97,7 +94,7 @@ bool ISigmaIntegrator::compute(
     const int n = profile.npoints()[best_idx];
 
     _profileIntensity = Intensity(M - n * mean_bkg, M + n * n * var_bkg);
-    _profileIntensity = _profileIntensity / mean_profile.value()[best_idx];
+    _profileIntensity = _profileIntensity / mean_profile[best_idx];
 
     double sigma = _profileIntensity.sigma();
 

@@ -215,8 +215,6 @@ void SubframeShapes::setComputeShapesUp()
     _frame = f.addDoubleSpinBox(
         "frame coordinate", "(frames) frame coordinate of peak shape to preview");
 
-    _min_neighbours =
-        f.addSpinBox("Minimum neighbours", "Fewest possible neighbours to compute a mean profile");
     _pixel_radius =
         f.addDoubleSpinBox("Search radius (pixels)", "(pixels) - radius for neighbour search");
     _frame_radius = f.addDoubleSpinBox(
@@ -237,8 +235,6 @@ void SubframeShapes::setComputeShapesUp()
     _frame->setMaximum(100);
     _frame->setValue(5);
     _frame->setSingleStep(1);
-    _min_neighbours->setMaximum(1000);
-    _min_neighbours->setValue(10);
     _pixel_radius->setMaximum(10000);
     _pixel_radius->setValue(500);
     _pixel_radius->setSingleStep(10);
@@ -259,9 +255,6 @@ void SubframeShapes::setComputeShapesUp()
         _frame, qOverload<double>(&QDoubleSpinBox::valueChanged), this,
         &SubframeShapes::computeProfile);
     connect(
-        _min_neighbours, qOverload<int>(&QSpinBox::valueChanged), this,
-        &SubframeShapes::computeProfile);
-    connect(
         _pixel_radius, qOverload<double>(&QDoubleSpinBox::valueChanged), this,
         &SubframeShapes::computeProfile);
     connect(
@@ -279,9 +272,6 @@ void SubframeShapes::setComputeShapesUp()
         &SubframeShapes::onShapeChanged);
     connect(
         _frame, qOverload<double>(&QDoubleSpinBox::valueChanged), this,
-        &SubframeShapes::onShapeChanged);
-    connect(
-        _min_neighbours, qOverload<int>(&QSpinBox::valueChanged), this,
         &SubframeShapes::onShapeChanged);
     connect(
         _pixel_radius, qOverload<double>(&QDoubleSpinBox::valueChanged), this,
@@ -437,10 +427,10 @@ void SubframeShapes::grabShapeParameters()
     _ny->setValue(_params->nbins_y);
     _nz->setValue(_params->nbins_z);
     _nsubdiv->setValue(_params->n_subdiv);
-    _pixel_radius->setValue(_params->neighbour_range_pixels);
-    _frame_radius->setValue(_params->neighbour_range_frames);
     _sigma_m->setValue(_peak_combo->currentPeakCollection()->sigmaM());
     _sigma_d->setValue(_peak_combo->currentPeakCollection()->sigmaD());
+    _pixel_radius->setValue(_params->neighbour_range_pixels);
+    _frame_radius->setValue(_params->neighbour_range_frames);
     _interpolation_combo->setCurrentIndex(static_cast<int>(_params->interpolation));
     _integration_region_type->setCurrentIndex(static_cast<int>(integration_params->region_type));
 }
@@ -458,14 +448,22 @@ void SubframeShapes::setShapeParameters()
 
     integration_params->region_type =
         static_cast<ohkl::RegionType>(_integration_region_type->currentIndex());
+    _params->region_type =
+        static_cast<ohkl::RegionType>(_integration_region_type->currentIndex());
     if (integration_params->region_type == ohkl::RegionType::VariableEllipsoid) {
         integration_params->peak_end = _peak_end->value();
         integration_params->bkg_begin = _bkg_begin->value();
         integration_params->bkg_end = _bkg_end->value();
+        _params->peak_end = _peak_end->value();
+        _params->bkg_begin = _bkg_begin->value();
+        _params->bkg_end = _bkg_end->value();
     } else {
         integration_params->fixed_peak_end = _peak_end->value();
         integration_params->fixed_bkg_begin = _bkg_begin->value();
         integration_params->fixed_bkg_end = _bkg_end->value();
+        _params->fixed_peak_end = _peak_end->value();
+        _params->fixed_bkg_begin = _bkg_begin->value();
+        _params->fixed_bkg_end = _bkg_end->value();
     }
 
     _params->strength_min = _min_strength->value();
@@ -474,10 +472,10 @@ void SubframeShapes::setShapeParameters()
     _params->nbins_y = _ny->value();
     _params->nbins_z = _nz->value();
     _params->n_subdiv = _nsubdiv->value();
-    _params->neighbour_range_pixels = _pixel_radius->value();
-    _params->neighbour_range_frames = _frame_radius->value();
     _params->sigma_m = _sigma_m->value();
     _params->sigma_d = _sigma_d->value();
+    _params->neighbour_range_pixels = _pixel_radius->value();
+    _params->neighbour_range_frames = _frame_radius->value();
     _params->interpolation =
         static_cast<ohkl::PeakInterpolation>(_interpolation_combo->currentIndex());
 }
@@ -688,17 +686,12 @@ void SubframeShapes::getPreviewPeak(ohkl::Peak3D* selected_peak)
         return;
 
     setShapeParameters();
-    int interpol = _interpolation_combo->currentIndex();
-    ohkl::PeakInterpolation peak_interpolation = static_cast<ohkl::PeakInterpolation>(interpol);
+    model->setParameters(_params);
 
-    auto cov = model->meanCovariance(
-        selected_peak, _params->neighbour_range_pixels, _params->neighbour_range_frames,
-        _params->min_n_neighbors, peak_interpolation);
-    if (cov) {
-        Eigen::Vector3d center = selected_peak->shape().center();
-        ohkl::Ellipsoid shape = ohkl::Ellipsoid(center, cov.value().inverse());
-        _preview_peak = std::make_unique<ohkl::Peak3D>(selected_peak->dataSet(), shape);
-    }
+    auto cov = model->meanCovariance(selected_peak);
+    Eigen::Vector3d center = selected_peak->shape().center();
+    ohkl::Ellipsoid shape = ohkl::Ellipsoid(center, cov.inverse());
+    _preview_peak = std::make_unique<ohkl::Peak3D>(selected_peak->dataSet(), shape);
 }
 
 void SubframeShapes::saveShapes()

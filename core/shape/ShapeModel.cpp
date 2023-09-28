@@ -16,6 +16,7 @@
 
 #include "base/fit/Minimizer.h"
 #include "base/geometry/Ellipsoid.h"
+#include "base/geometry/ReciprocalVector.h"
 #include "base/utils/Logger.h"
 #include "core/data/DataSet.h"
 #include "core/data/DataTypes.h"
@@ -48,9 +49,10 @@ void ShapeModelParameters::log(const Level& level) const
     ohklLog(level, "nbins_y                = ", nbins_y);
     ohklLog(level, "nbins_z                = ", nbins_z);
     ohklLog(level, "n_subdiv               = ", n_subdiv);
-    ohklLog(level, "min_n_neighbors        = ", min_n_neighbors);
     ohklLog(level, "sigma_m                = ", sigma_m);
     ohklLog(level, "sigma_d                = ", sigma_d);
+    ohklLog(level, "neighbour_range_pixels = ", neighbour_range_pixels);
+    ohklLog(level, "neighbour_range_frames = ", neighbour_range_frames);
 }
 
 static Eigen::Matrix3d from_cholesky(const std::array<double, 6>& components)
@@ -281,35 +283,61 @@ double ShapeModel::meanPearson() const
     return sum_pearson / _profiles.size();
 }
 
-std::optional<Profile3D> ShapeModel::meanProfile(
-    const DetectorEvent& ev, double radius, double nframes) const
+Profile3D ShapeModel::meanProfile(const DetectorEvent& ev) const
 {
     Profile3D mean;
-    auto neighbors = findNeighbors(ev, radius, nframes);
-    if (!neighbors)
-        return {};
+    auto neighbors = findNeighbors(ev);
 
-    for (auto peak : neighbors.value()) {
-        // double weight = (1-r/radius) * (1-df/nframes);
-        // mean.addProfile(profile, weight*weight);
-        mean.addProfile(_profiles.find(peak)->second.first, 1.0);
+    if (neighbors.size() == 1)
+        return _profiles.find(neighbors[0])->second.first;
+
+    for (auto peak : neighbors) {
+
+        double weight;
+        switch (_params->interpolation) {
+            case (PeakInterpolation::NoInterpolation): {
+                weight = 1.0;
+                break;
+            }
+            case (PeakInterpolation::InverseDistance): {
+                auto state = InterpolatedState::interpolate(_data->instrumentStates(), ev.frame);
+                const auto* detector = _data->diffractometer()->detector();
+                DirectVector det_pos(detector->pixelPosition(ev.px, ev.py));
+                ReciprocalVector ev_q = state.sampleQ(det_pos);
+                Eigen::RowVector3d dq = ev_q.rowVector() - peak->q().rowVector();
+                weight = 1.0 / dq.norm();
+                break;
+            }
+            case (PeakInterpolation::Intensity): {
+                auto corrected_intensity = peak->correctedSumIntensity();
+                double intensity = corrected_intensity.value();
+                double sigma = corrected_intensity.sigma();
+                weight = intensity / sigma;
+                break;
+            }
+            default: {
+                weight = 1.0;
+                break;
+            }
+        }
+
+        mean.addProfile(_profiles.find(peak)->second.first, weight);
     }
 
     mean.normalize();
     return mean;
 }
 
-std::optional<std::vector<Intensity>> ShapeModel::meanProfile1D(
-    const DetectorEvent& ev, double radius, double nframes) const
+std::vector<Intensity> ShapeModel::meanProfile1D(const DetectorEvent& ev) const
 {
-    auto neighbors = findNeighbors(ev, radius, nframes);
-    if (!neighbors)
-        return {};
-
+    auto neighbors = findNeighbors(ev);
     std::vector<Intensity> mean_profile;
-    const double inv_N = 1.0 / neighbors.value().size();
+    const double inv_N = 1.0 / neighbors.size();
 
-    for (auto peak : neighbors.value()) {
+    if (neighbors.size() == 1)
+        return _profiles.find(neighbors[0])->second.second.profile();
+
+    for (auto peak : neighbors) {
         const auto& profile = _profiles.find(peak)->second.second.profile();
 
         if (mean_profile.empty())
@@ -321,55 +349,54 @@ std::optional<std::vector<Intensity>> ShapeModel::meanProfile1D(
     return mean_profile;
 }
 
-std::optional<std::vector<Peak3D*>> ShapeModel::findNeighbors(
-    const DetectorEvent& ev, double radius, double nframes) const
+std::vector<Peak3D*> ShapeModel::findNeighbors(const DetectorEvent& ev) const
 {
     std::vector<Peak3D*> neighbors;
     Eigen::Vector3d center(ev.px, ev.py, ev.frame);
+    Peak3D* nearest;
+    double min_dist_sq = _data->nCols() * _data->nCols() + _data->nRows() * _data->nRows();
+    double min_frames = _data->nFrames();;
+    double radius_sq = _params->neighbour_range_pixels * _params->neighbour_range_pixels;
 
     for (const auto& pair : _profiles) {
         auto peak = pair.first;
-        Eigen::Vector3d dc = center - peak->shape().center();
+        Eigen::Vector3d diff = center - peak->shape().center();
+        double pix_dist_sq = diff(0) * diff(0) + diff(1) * diff(1);
+        double frame_dist = std::fabs(diff(2));
+
         // too far away on detector
-        if (dc(0) * dc(0) + dc(1) * dc(1) > radius * radius)
-            continue;
-        // too far away in frame number
-        if (std::fabs(dc(2)) > nframes)
-            continue;
-        neighbors.push_back(peak);
+        if (pix_dist_sq < min_dist_sq && frame_dist < min_frames) {
+            min_dist_sq = pix_dist_sq;
+            min_frames = frame_dist;
+            nearest = peak;
+        }
+
+        if (pix_dist_sq < radius_sq && frame_dist < _params->neighbour_range_frames)
+            neighbors.push_back(peak);
+
     }
+
     if (neighbors.empty())
-        return {};
+        neighbors.push_back(nearest);
+
     return neighbors;
 }
 
-std::optional<Eigen::Matrix3d> ShapeModel::meanCovariance(
-    Peak3D* reference_peak, double radius, double nframes, size_t min_neighbors,
-    PeakInterpolation interpolation) const
+Eigen::Matrix3d ShapeModel::meanCovariance(Peak3D* reference_peak) const
 {
     Eigen::Matrix3d cov;
     cov.setZero();
-    auto neighbors =
-        findNeighbors(DetectorEvent(reference_peak->shape().center()), radius, nframes);
-
-    if (!neighbors) {
-        reference_peak->setRejectionFlag(RejectionFlag::NoNeighbours);
-        return {};
-    }
-    if (neighbors.value().size() < min_neighbors) {
-        reference_peak->setRejectionFlag(RejectionFlag::TooFewNeighbours);
-        return {};
-    }
+    auto neighbors = findNeighbors(DetectorEvent(reference_peak->shape().center()));
 
     PeakCoordinateSystem reference_coord(reference_peak);
 
     double sum_weight(0.0);
-    for (auto peak : neighbors.value()) {
+    for (auto peak : neighbors) {
         PeakCoordinateSystem coord(peak);
         Eigen::Matrix3d J = coord.jacobian();
 
         double weight;
-        switch (interpolation) {
+        switch (_params->interpolation) {
             case (PeakInterpolation::NoInterpolation): {
                 weight = 1.0;
                 break;
@@ -418,26 +445,20 @@ void ShapeModel::setPredictedShapes(PeakCollection* peaks)
         _handler->setProgress(0);
     }
 
-    int n_bad_shapes = 0;
 #pragma omp parallel for
     for (auto peak : peaks->getPeakList()) {
         // Skip the peak if any error occur when computing its mean covariance (e.g.
         // too few or no neighbouring peaks found)
-        if (auto cov = meanCovariance(
-                peak, _params->neighbour_range_pixels, _params->neighbour_range_frames,
-                _params->min_n_neighbors, _params->interpolation)) {
-            Eigen::Vector3d center = peak->shape().center();
-            peak->setShape(Ellipsoid(center, cov.value().inverse()));
-        } else {
-            ++n_bad_shapes;
-        }
+        auto cov = meanCovariance(peak);
+        Eigen::Vector3d center = peak->shape().center();
+        peak->setShape(Ellipsoid(center, cov.inverse()));
 
         if (_handler) {
             double progress = ++count * 100.0 / npeaks;
             _handler->setProgress(progress);
         }
     }
-    ohklLog(Level::Info, "ShapeModel: finished computing shapes, ", n_bad_shapes, " failures");
+    ohklLog(Level::Info, "ShapeModel: finished computing shapes");
 }
 
 std::array<double, 6> ShapeModel::choleskyD() const

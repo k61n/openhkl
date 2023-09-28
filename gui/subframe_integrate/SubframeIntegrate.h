@@ -121,7 +121,6 @@ class SubframeIntegrate : public QWidget {
     Spoiler* _integrate_box;
     QComboBox* _integrator_combo;
     QComboBox* _interpolation_combo;
-    SafeSpinBox* _min_neighbours;
     SafeDoubleSpinBox* _radius;
     SafeDoubleSpinBox* _n_frames;
     QCheckBox* _remove_overlaps;

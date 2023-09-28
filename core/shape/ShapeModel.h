@@ -22,7 +22,6 @@
 #include "core/shape/Profile3D.h"
 
 #include <array>
-#include <optional>
 #include <set>
 
 namespace ohkl {
@@ -53,6 +52,8 @@ struct ShapeModelParameters : public IntegrationParameters {
     double sigma_m = 0.1; //!< Variance due to crystal mosaicity
     double sigma_d = 0.1; //!< Variance due to beam divergence
     PeakInterpolation interpolation = PeakInterpolation::NoInterpolation;
+    double neighbour_range_pixels = 500.0; //! Search radius for neighbouring profiles (pixels)
+    double neighbour_range_frames = 10.0; //! Search radius for neighbouring profiles (frames)
 
     void log(const Level& level) const;
 };
@@ -111,22 +112,17 @@ class ShapeModel {
     //! Returns mean Pearson coefficient to measure quality of fit
     double meanPearson() const;
 
-    //! Returns the average peak profile near the given detector event
-    std::optional<Profile3D> meanProfile(
-        const DetectorEvent& ev, double radius, double nframes) const;
+    //! Returns the average or nearest peak profile near the given detector event
+    Profile3D meanProfile(const DetectorEvent& ev) const;
 
-    //! Returns the average peak profile near the given detector event
-    std::optional<std::vector<Intensity>> meanProfile1D(
-        const DetectorEvent& ev, double radius, double nframes) const;
+    //! Returns the average or nearest peak profile near the given detector event
+    std::vector<Intensity> meanProfile1D(const DetectorEvent& ev) const;
 
-    //! Returns the average peak covariance near the given detector event
-    std::optional<Eigen::Matrix3d> meanCovariance(
-        Peak3D* reference_peak, double radius, double nframes, size_t min_neighbors,
-        PeakInterpolation interpolation) const;
+    //! Returns the average or nearest peak covariance near the given detector event
+    Eigen::Matrix3d meanCovariance(Peak3D* reference_peak) const;
 
-    //! Find neighbors of a given peak
-    std::optional<std::vector<Peak3D*>> findNeighbors(
-        const DetectorEvent& ev, double radius, double nframes) const;
+    //! Find neighbors of a given peak, or the nearest peak if there are none within the cutoff
+    std::vector<Peak3D*> findNeighbors(const DetectorEvent& ev) const;
 
     //! Returns the background end used for the collection
     std::array<double, 6> choleskyD() const;

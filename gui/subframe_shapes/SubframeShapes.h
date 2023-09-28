@@ -147,7 +147,6 @@ class SubframeShapes : public QWidget {
     SafeDoubleSpinBox* _y;
     SafeDoubleSpinBox* _frame;
 
-    SafeSpinBox* _min_neighbours;
     SafeDoubleSpinBox* _pixel_radius;
     SafeDoubleSpinBox* _frame_radius;
     QComboBox* _interpolation_combo;

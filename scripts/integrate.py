@@ -45,7 +45,6 @@ shape_params = shapes.parameters()
 print('Assigning peak shapes...')
 shape_params.neighbour_range_pixels = 500
 shape_params.neighbour_range_frames = 10
-shape_params.min_neighbours = 10
 shape_params.interpolation = nsx.PeakInterpolation_InverseDistance
 shapes.setPredictedShapes(predicted_peaks)
 

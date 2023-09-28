@@ -90,9 +90,7 @@ bool Profile3DIntegrator::compute(
 
     DetectorEvent event(peak->shape().center());
 
-    std::optional<Profile3D> model_profile = shape_model->meanProfile(event, radius(), nFrames());
-    if (!model_profile)
-        return false;
+    Profile3D model_profile = shape_model->meanProfile(event);
 
     PeakCoordinateSystem coord(peak);
 
@@ -108,7 +106,7 @@ bool Profile3DIntegrator::compute(
             x = coord.transform(events[i]);
         }
 
-        const double predict = model_profile.value().predict(x);
+        const double predict = model_profile.predict(x);
 
         profile.push_back(predict);
         obs_counts.push_back(counts[i]);

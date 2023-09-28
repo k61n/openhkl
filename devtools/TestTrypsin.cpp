@@ -22,6 +22,7 @@
 #include "core/experiment/Experiment.h"
 #include "core/instrument/InstrumentStateSet.h"
 #include "core/integration/IIntegrator.h"
+#include "core/loader/IDataReader.h"
 #include "core/loader/RawDataReader.h"
 #include "core/peak/IntegrationRegion.h"
 #include "core/shape/PeakCollection.h"
@@ -93,12 +94,16 @@ TEST_CASE("test/data/TestTrypsin.cpp", "")
     ohkl::DataReaderParameters data_params;
     data_params.wavelength = 2.67;
     data_params.delta_omega = 0.4;
-    new_data->setRawReaderParameters(data_params);
+    data_params.data_format = ohkl::DataFormat::RAW;
+    data_params.cols = 2500;
+    data_params.row_major = 900;
+    new_data->setImageReaderParameters(data_params);
     for (const auto& file : filenames)
         new_data->addRawFrame(file);
     new_data->finishRead();
     experiment.addData(new_data);
     ohkl::sptrDataSet data = experiment.getData(data_name);
+    data->initBuffer(true);
     std::cout << "Loaded " << data->nFrames() << " images" << std::endl;
     CHECK(data->nFrames() == nfiles);
 
@@ -154,7 +159,7 @@ TEST_CASE("test/data/TestTrypsin.cpp", "")
     std::cout << "Autoindexing found peaks" << std::endl;
     data->adjustDirectBeam(-1.0, -2.0);
     ohkl::AutoIndexer* indexer = experiment.autoIndexer();
-    indexer->autoIndex(found_peaks);
+    indexer->autoIndex(found_peaks, data);
     ohkl::sptrUnitCell good_cell = indexer->goodSolution(ref_cell.get(), 1.0, 0.1);
     good_cell->setSpaceGroup(group);
     CHECK(good_cell); // nullptr if none found
@@ -230,9 +235,9 @@ TEST_CASE("test/data/TestTrypsin.cpp", "")
     std::cout << merger->summary() << std::endl;
 
     for (std::size_t idx = 0; idx < merger_params->n_shells; ++idx) {
-        CHECK(merger->shellQuality()->shells.at(idx).Rmerge < ref_rmerge.at(idx) + eps_stat);
+        CHECK(merger->sumShellQuality()->shells.at(idx).Rmerge < ref_rmerge.at(idx) + eps_stat);
         CHECK(
-            merger->shellQuality()->shells.at(idx).Completeness > ref_completeness.at(idx)
+            merger->sumShellQuality()->shells.at(idx).Completeness > ref_completeness.at(idx)
             - eps_stat);
     }
 }

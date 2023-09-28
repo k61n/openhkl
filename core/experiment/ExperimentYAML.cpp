@@ -122,8 +122,6 @@ void ExperimentYAML::grabIntegrationParameters(IntegrationParameters* params)
     params->fixed_peak_end = getNode<double>(branch, "fixed_peak_end");
     params->fixed_bkg_begin = getNode<double>(branch, "fixed_bkg_begin");
     params->fixed_bkg_end = getNode<double>(branch, "fixed_bkg_end");
-    params->neighbour_range_pixels = getNode<int>(branch, "neighbour_range_pixels");
-    params->neighbour_range_frames = getNode<int>(branch, "neighbour_range_frames");
     params->max_strength = getNode<double>(branch, "max_strength");
     params->fit_center = getNode<bool>(branch, "fit_center");
     params->fit_cov = getNode<bool>(branch, "fit_cov");
@@ -151,8 +149,6 @@ void ExperimentYAML::setIntegrationParameters(IntegrationParameters* params)
     int_node["fixed_peak_end"] = params->fixed_peak_end;
     int_node["fixed_bkg_begin"] = params->fixed_bkg_begin;
     int_node["fixed_bkg_end"] = params->fixed_bkg_end;
-    int_node["neighbour_range_pixels"] = params->neighbour_range_pixels;
-    int_node["neighbour_range_frames"] = params->neighbour_range_frames;
     int_node["max_strength"] = params->max_strength;
     int_node["fit_center"] = params->fit_center;
     int_node["fit_cov"] = params->fit_cov;
@@ -277,9 +273,11 @@ void ExperimentYAML::grabShapeParameters(ShapeModelParameters* params)
     params->nbins_y = getNode<int>(branch, "nbins_y");
     params->nbins_z = getNode<int>(branch, "nbins_z");
     params->n_subdiv = getNode<int>(branch, "n_subdiv");
-    params->min_n_neighbors = getNode<int>(branch, "min_n_neighbors");
     params->sigma_m = getNode<double>(branch, "sigma_m");
     params->sigma_d = getNode<double>(branch, "sigma_d");
+    params->neighbour_range_pixels = getNode<int>(branch, "neighbour_range_pixels");
+    params->neighbour_range_frames = getNode<int>(branch, "neighbour_range_frames");
+    params->interpolation = static_cast<PeakInterpolation>(getNode<int>(branch, "interpolation"));
 }
 
 void ExperimentYAML::setShapeParameters(ShapeModelParameters* params)
@@ -298,9 +296,11 @@ void ExperimentYAML::setShapeParameters(ShapeModelParameters* params)
     shape_node["nbins_y"] = params->nbins_y;
     shape_node["nbins_z"] = params->nbins_z;
     shape_node["n_subdiv"] = params->n_subdiv;
-    shape_node["min_n_neighbors"] = params->min_n_neighbors;
     shape_node["sigma_m"] = params->sigma_m;
     shape_node["sigma_d"] = params->sigma_d;
+    shape_node["neighbour_range_pixels"] = params->neighbour_range_pixels;
+    shape_node["neighbour_range_frames"] = params->neighbour_range_frames;
+    shape_node["interpolation"] = static_cast<int>(params->interpolation);
 }
 
 void ExperimentYAML::grabPredictorParameters(PredictionParameters* params)

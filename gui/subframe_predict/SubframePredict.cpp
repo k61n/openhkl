@@ -216,8 +216,6 @@ void SubframePredict::setShapeModelUp()
     _radius_frames = f.addDoubleSpinBox(
         "Search radius (images):",
         "(frames) - neighbour search radius in frames for generating mean covariance");
-    _min_neighbours = f.addSpinBox(
-        "Min. neighbours", "Minimum number of neighbouring shapes to generate mean covariance");
     _interpolation_combo =
         f.addCombo("Interpolation type", "Interpolation strategy for determining mean covariance");
     _apply_shape_model =
@@ -360,7 +358,6 @@ void SubframePredict::grabShapeModelParameters()
 
     _radius_pix->setValue(_shape_params->neighbour_range_pixels);
     _radius_frames->setValue(_shape_params->neighbour_range_frames);
-    _min_neighbours->setValue(_shape_params->min_neighbors);
     _interpolation_combo->setCurrentIndex(static_cast<int>(_shape_params->interpolation));
 }
 
@@ -371,7 +368,6 @@ void SubframePredict::setShapeModelParameters()
 
     _shape_params->neighbour_range_pixels = _radius_pix->value();
     _shape_params->neighbour_range_frames = _radius_frames->value();
-    _shape_params->min_neighbors = _min_neighbours->value();
     _shape_params->interpolation =
         static_cast<ohkl::PeakInterpolation>(_interpolation_combo->currentIndex());
 }
