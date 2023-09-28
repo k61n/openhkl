@@ -235,7 +235,6 @@ integrator = expt.integrator()
 params = integrator.parameters()
 params.neighbour_range_pixels = 500
 params.neighbour_range_frames = 5
-params.min_neighbours = 20
 integrator_type = nsx.IntegratorType_Profile3D
 integrator.getIntegrator(integrator_type)
 integrator.integratePeaks(data, predicted_peaks, params, filtered_peaks.shapeCollection())

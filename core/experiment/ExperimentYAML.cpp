@@ -275,7 +275,6 @@ void ExperimentYAML::grabShapeParameters(ShapeModelParameters* params)
     params->n_subdiv = getNode<int>(branch, "n_subdiv");
     params->sigma_m = getNode<double>(branch, "sigma_m");
     params->sigma_d = getNode<double>(branch, "sigma_d");
-    params->min_neighbors = getNode<int>(branch, "min_n_neighbors");
     params->neighbour_range_pixels = getNode<int>(branch, "neighbour_range_pixels");
     params->neighbour_range_frames = getNode<int>(branch, "neighbour_range_frames");
     params->interpolation = static_cast<PeakInterpolation>(getNode<int>(branch, "interpolation"));
@@ -299,7 +298,6 @@ void ExperimentYAML::setShapeParameters(ShapeModelParameters* params)
     shape_node["n_subdiv"] = params->n_subdiv;
     shape_node["sigma_m"] = params->sigma_m;
     shape_node["sigma_d"] = params->sigma_d;
-    shape_node["min_neighbors"] = params->min_n_neighbors;
     shape_node["neighbour_range_pixels"] = params->neighbour_range_pixels;
     shape_node["neighbour_range_frames"] = params->neighbour_range_frames;
     shape_node["interpolation"] = static_cast<int>(params->interpolation);

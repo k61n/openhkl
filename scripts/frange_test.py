@@ -46,7 +46,6 @@ for f_range in range(4, 18, 2):
     print(name)
     shape_params.neighbour_range_pixels = 400
     shape_params.neighbour_range_frames = f_range
-    shape_params.min_neighbours = 10
     shape_params.interpolation = nsx.PeakInterpolation_InverseDistance
     shapes.setPredictedShapes(predicted_peaks)
 

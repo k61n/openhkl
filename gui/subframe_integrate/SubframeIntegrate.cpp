@@ -221,7 +221,6 @@ void SubframeIntegrate::grabIntegrationParameters()
         return;
 
     auto* shape_params = _shape_combo->currentShapes()->parameters();
-    _min_neighbours->setValue(shape_params->min_neighbors);
     _radius_int->setValue(shape_params->neighbour_range_pixels);
     _n_frames_int->setValue(shape_params->neighbour_range_frames);
     _interpolation_combo->setCurrentIndex(static_cast<int>(shape_params->interpolation));
@@ -266,7 +265,6 @@ void SubframeIntegrate::setIntegrationParameters()
         return;
 
     auto* shape_params = _shape_combo->currentShapes()->parameters();
-    shape_params->min_neighbors = _min_neighbours->value();
     shape_params->neighbour_range_pixels = _radius_int->value();
     shape_params->neighbour_range_frames = _n_frames_int->value();
     shape_params->interpolation =
@@ -407,9 +405,6 @@ void SubframeIntegrate::setIntegrateUp()
     _n_frames_int = f.addDoubleSpinBox(
         "Search radius (images)", "(detector images) - neighbour search radius in detector images");
 
-    _min_neighbours = f.addSpinBox(
-        "Min. neighbours", "Minimum number of neighbouring shapes to predict peak shape");
-
     _interpolation_combo =
         f.addCombo("Interpolation type", "Interpolation strategy for computing mean covariance");
 
@@ -433,8 +428,6 @@ void SubframeIntegrate::setIntegrateUp()
 
     _n_frames_int->setMaximum(20);
     _n_frames_int->setDecimals(2);
-
-    _min_neighbours->setMaximum(1000);
 
     connect(_integrate_button, &QPushButton::clicked, this, &SubframeIntegrate::runIntegration);
     connect(
@@ -542,7 +535,6 @@ void SubframeIntegrate::toggleUnsafeWidgets()
     _fit_covariance->setEnabled(isPxsum);
     _radius_int->setEnabled(!isPxsum);
     _n_frames_int->setEnabled(!isPxsum);
-    _min_neighbours->setEnabled(!isPxsum);
     _interpolation_combo->setEnabled(!isPxsum);
     _shape_combo->setEnabled(!isPxsum);
     if (!isPxsum) {

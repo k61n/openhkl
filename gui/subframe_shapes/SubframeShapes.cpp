@@ -215,8 +215,6 @@ void SubframeShapes::setComputeShapesUp()
     _frame = f.addDoubleSpinBox(
         "frame coordinate", "(frames) frame coordinate of peak shape to preview");
 
-    _min_neighbours =
-        f.addSpinBox("Minimum neighbours", "Fewest possible neighbours to compute a mean profile");
     _pixel_radius =
         f.addDoubleSpinBox("Search radius (pixels)", "(pixels) - radius for neighbour search");
     _frame_radius = f.addDoubleSpinBox(
@@ -237,8 +235,6 @@ void SubframeShapes::setComputeShapesUp()
     _frame->setMaximum(100);
     _frame->setValue(5);
     _frame->setSingleStep(1);
-    _min_neighbours->setMaximum(1000);
-    _min_neighbours->setValue(10);
     _pixel_radius->setMaximum(10000);
     _pixel_radius->setValue(500);
     _pixel_radius->setSingleStep(10);
@@ -259,9 +255,6 @@ void SubframeShapes::setComputeShapesUp()
         _frame, qOverload<double>(&QDoubleSpinBox::valueChanged), this,
         &SubframeShapes::computeProfile);
     connect(
-        _min_neighbours, qOverload<int>(&QSpinBox::valueChanged), this,
-        &SubframeShapes::computeProfile);
-    connect(
         _pixel_radius, qOverload<double>(&QDoubleSpinBox::valueChanged), this,
         &SubframeShapes::computeProfile);
     connect(
@@ -279,9 +272,6 @@ void SubframeShapes::setComputeShapesUp()
         &SubframeShapes::onShapeChanged);
     connect(
         _frame, qOverload<double>(&QDoubleSpinBox::valueChanged), this,
-        &SubframeShapes::onShapeChanged);
-    connect(
-        _min_neighbours, qOverload<int>(&QSpinBox::valueChanged), this,
         &SubframeShapes::onShapeChanged);
     connect(
         _pixel_radius, qOverload<double>(&QDoubleSpinBox::valueChanged), this,
@@ -439,7 +429,6 @@ void SubframeShapes::grabShapeParameters()
     _nsubdiv->setValue(_params->n_subdiv);
     _sigma_m->setValue(_peak_combo->currentPeakCollection()->sigmaM());
     _sigma_d->setValue(_peak_combo->currentPeakCollection()->sigmaD());
-    _min_neighbours->setValue(_params->min_n_neighbors);
     _pixel_radius->setValue(_params->neighbour_range_pixels);
     _frame_radius->setValue(_params->neighbour_range_frames);
     _interpolation_combo->setCurrentIndex(static_cast<int>(_params->interpolation));
@@ -485,7 +474,6 @@ void SubframeShapes::setShapeParameters()
     _params->n_subdiv = _nsubdiv->value();
     _params->sigma_m = _sigma_m->value();
     _params->sigma_d = _sigma_d->value();
-    _params->min_n_neighbors = _min_neighbours->value();
     _params->neighbour_range_pixels = _pixel_radius->value();
     _params->neighbour_range_frames = _frame_radius->value();
     _params->interpolation =

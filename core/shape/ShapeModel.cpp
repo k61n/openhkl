@@ -50,7 +50,6 @@ void ShapeModelParameters::log(const Level& level) const
     ohklLog(level, "n_subdiv               = ", n_subdiv);
     ohklLog(level, "sigma_m                = ", sigma_m);
     ohklLog(level, "sigma_d                = ", sigma_d);
-    ohklLog(level, "min_neighbors          = ", min_neighbors);
     ohklLog(level, "neighbour_range_pixels = ", neighbour_range_pixels);
     ohklLog(level, "neighbour_range_frames = ", neighbour_range_frames);
 }
