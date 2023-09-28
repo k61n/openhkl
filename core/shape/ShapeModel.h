@@ -112,16 +112,16 @@ class ShapeModel {
     //! Returns mean Pearson coefficient to measure quality of fit
     double meanPearson() const;
 
-    //! Returns the average peak profile near the given detector event
+    //! Returns the average or nearest peak profile near the given detector event
     Profile3D meanProfile(const DetectorEvent& ev) const;
 
-    //! Returns the average peak profile near the given detector event
+    //! Returns the average or nearest peak profile near the given detector event
     std::vector<Intensity> meanProfile1D(const DetectorEvent& ev) const;
 
-    //! Returns the average peak covariance near the given detector event
+    //! Returns the average or nearest peak covariance near the given detector event
     Eigen::Matrix3d meanCovariance(Peak3D* reference_peak) const;
 
-    //! Find neighbors of a given peak
+    //! Find neighbors of a given peak, or the nearest peak if there are none within the cutoff
     std::vector<Peak3D*> findNeighbors(const DetectorEvent& ev) const;
 
     //! Returns the background end used for the collection

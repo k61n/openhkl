@@ -16,6 +16,7 @@
 
 #include "base/fit/Minimizer.h"
 #include "base/geometry/Ellipsoid.h"
+#include "base/geometry/ReciprocalVector.h"
 #include "base/utils/Logger.h"
 #include "core/data/DataSet.h"
 #include "core/data/DataTypes.h"
@@ -291,9 +292,36 @@ Profile3D ShapeModel::meanProfile(const DetectorEvent& ev) const
         return _profiles.find(neighbors[0])->second.first;
 
     for (auto peak : neighbors) {
-        // double weight = (1-r/radius) * (1-df/nframes);
-        // mean.addProfile(profile, weight*weight);
-        mean.addProfile(_profiles.find(peak)->second.first, 1.0);
+
+        double weight;
+        switch (_params->interpolation) {
+            case (PeakInterpolation::NoInterpolation): {
+                weight = 1.0;
+                break;
+            }
+            case (PeakInterpolation::InverseDistance): {
+                auto state = InterpolatedState::interpolate(_data->instrumentStates(), ev.frame);
+                const auto* detector = _data->diffractometer()->detector();
+                DirectVector det_pos(detector->pixelPosition(ev.px, ev.py));
+                ReciprocalVector ev_q = state.sampleQ(det_pos);
+                Eigen::RowVector3d dq = ev_q.rowVector() - peak->q().rowVector();
+                weight = 1.0 / dq.norm();
+                break;
+            }
+            case (PeakInterpolation::Intensity): {
+                auto corrected_intensity = peak->correctedSumIntensity();
+                double intensity = corrected_intensity.value();
+                double sigma = corrected_intensity.sigma();
+                weight = intensity / sigma;
+                break;
+            }
+            default: {
+                weight = 1.0;
+                break;
+            }
+        }
+
+        mean.addProfile(_profiles.find(peak)->second.first, weight);
     }
 
     mean.normalize();
