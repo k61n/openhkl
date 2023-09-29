@@ -1,4 +1,4 @@
-FROM ubuntu:22.04
+FROM ubuntu:23.04
 
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive \
@@ -22,12 +22,10 @@ RUN apt-get update && \
       qtbase5-dev \
       qtbase5-dev-tools \
       qtchooser \
+      qt5dxcb-plugin \
       swig \
       python3-pip \
-      python3-sphinx \
-      python3-sphinxcontrib.bibtex \
-      python3-breathe \
-      doxygen \
-      graphviz && \
-      python3 -m pip install sphinx_press_theme && \
-      rm -rf /var/lib/apt/lists/*
+      git \
+      git-lfs
+RUN git clone https://iffgit.fz-juelich.de/neutron-simlab/openhkl.git
+RUN cd openhkl && mkdir build && cd build && cmake .. && make
