@@ -739,7 +739,8 @@ void SubframeMerge::refreshGraph(int column)
     QVector<double> sum_yvals;
     QVector<double> profile_yvals;
     for (int i = 0; i < nshells; ++i) {
-        xvals.push_back(double(i));
+        double d_max = _sum_shell_model->item(i, 1)->data(Qt::DisplayRole).value<double>();
+        xvals.push_back(d_max);
         double sum_val = _sum_shell_model->item(i, column)->data(Qt::DisplayRole).value<double>();
         double profile_val =
             _profile_shell_model->item(i, column)->data(Qt::DisplayRole).value<double>();
@@ -765,7 +766,7 @@ void SubframeMerge::refreshGraph(int column)
     _statistics_plot->graph(1)->setName("Profile");
     _statistics_plot->legend->setVisible(true);
 
-    _statistics_plot->xAxis->setLabel("shell");
+    _statistics_plot->xAxis->setLabel("d max");
     _statistics_plot->yAxis->setLabel(_plottable_statistics->itemText(column));
     _statistics_plot->setNotAntialiasedElements(QCP::aeAll);
 
