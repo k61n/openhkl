@@ -258,6 +258,10 @@ DataResolution* PeakMerger::profileOverallQuality()
 std::string PeakMerger::summary()
 {
     std::ostringstream oss;
+    oss << std::setw(8) << "dmin" << std::setw(8) << "dmax" << std::setw(8) << "Rmea"
+        << std::setw(8) << "eRmea" << std::setw(8) << "Rmer" << std::setw(8) << "eRmer"
+        << std::setw(8) << "Rpim" << std::setw(8) << "eRpim" << std::setw(8) << "CChalf"
+        << std::setw(8) << "CCstar" << std::setw(8) << "Compl.";
     for (const auto& shell : _sum_shell_qualities.shells)
         oss << shell.toString() << std::endl;
     return oss.str();
