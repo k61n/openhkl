@@ -63,7 +63,7 @@ if(UNIX AND NOT APPLE)
     set(ARCHITECTURE linux)
     set(LINUX TRUE)
 elseif(APPLE)
-    set(ARCHITECTURE macos)
+    set(ARCHITECTURE arm64)
 elseif(WIN32)
     set(ARCHITECTURE windows)
 else()
@@ -289,7 +289,6 @@ endif()
 ###################################################################################################
 
 if (APPLE)
-  install(TARGETS OpenHKL DESTINATION .)
 elseif(WIN32)
   install(TARGETS OpenHKL DESTINATION .)
 else()
@@ -299,6 +298,17 @@ else()
   install(TARGETS OpenHKL DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
   install(FILES ${CMAKE_BINARY_DIR}/OpenHKL.desktop DESTINATION share/applications)
   install(FILES ${CMAKE_SOURCE_DIR}/main/images/icons/OpenHKL.png DESTINATION share/icons)
+endif()
+
+if (BUNDLE)
+  if (APPLE)
+    set_target_properties(${app} PROPERTIES
+      MACOS_BUNDLE_GUI_IDENTIFIER com.example.${app}
+      MACOS_BUNDLE_VERSION ${PROJECT_VERSION}
+      MACOS_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
+      MACOS_BUNDLE TRUE
+    )
+  endif()
 endif()
 
 include(Pack)

@@ -72,32 +72,29 @@ if(OHKL_PYTHON)
     include(UseSWIG)
 endif(OHKL_PYTHON)
 
-###### Find C-Blosc
 find_package(Blosc REQUIRED)
 include_directories(SYSTEM ${Blosc_INCLUDE_DIRS})
 
 find_package(YAMLCPP REQUIRED)
 include_directories(SYSTEM ${YAMLCPP_INCLUDES})
 
-###### Find TIFF
 find_package(TIFF REQUIRED)
 include_directories(SYSTEM ${TIFF_INCLUDE_DIR})
 
 find_package(FFTW REQUIRED)
 include_directories(SYSTEM ${FFTW_INCLUDE_DIR})
 
-###### Find GSL
 find_package(GSL REQUIRED)
 include_directories(SYSTEM ${GSL_INCLUDE_DIR})
 
-##### Find Eigen3
 find_package(Eigen3 MODULE REQUIRED)
 include_directories(SYSTEM ${EIGEN3_INCLUDE_DIR})
 
-##### Find QHull
 find_package(Qhull MODULE REQUIRED)
 include_directories(SYSTEM ${QHULL_INCLUDE_DIR})
 
-##### Find OpenCV
 find_package(OpenCV REQUIRED)
 include_directories(SYSTEM ${OpenCV_INCLUDE_DIRS})
+
+find_package(PNG REQUIRED)
+include_directories(SYSTEM ${PNG_INCLUDE_DIRS})
