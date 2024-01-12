@@ -108,7 +108,7 @@ if((CMAKE_CXX_COMPILER_ID STREQUAL "GNU") OR (CMAKE_CXX_COMPILER_ID MATCHES "Cla
     # exception for swig-generated code:
     #add_compile_options(-Wno-error=sometimes-uninitialized)
     add_compile_options($<$<COMPILE_LANGUAGE:CXX>:-Werror=delete-incomplete>)
-    # add_compile_options(-pthread -ltbb)
+    # add_compile_options(-pthread)
     add_definitions(-DEIGEN_FFTW_DEFAULT)
     add_definitions(-D_USE_MATH_DEFINES)
 elseif(DEFINED MSVC)
@@ -152,7 +152,6 @@ endif()
 set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
 set(THREADS_PREFER_PTHREAD_FLAG TRUE)
 find_package(Threads REQUIRED)
-find_package(TBB REQUIRED)
 
 set(OpenGL_GL_PREFERENCE LEGACY)
 set(QT_USE_QTOPENGL TRUE)

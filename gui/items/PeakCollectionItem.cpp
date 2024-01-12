@@ -26,11 +26,6 @@
 #include "tables/crystal/MillerIndex.h"
 #include "tables/crystal/UnitCell.h"
 
-#undef emit
-#include <oneapi/tbb/blocked_range.h>
-#include <tbb/concurrent_vector.h>
-#include <tbb/parallel_for.h>
-
 PeakCollectionItem::PeakCollectionItem()
 {
     _peak_collection = nullptr;
@@ -57,17 +52,12 @@ void PeakCollectionItem::setPeakCollection(const ohkl::PeakCollection* peak_coll
     }
     _peak_collection = peak_collection;
 
-    std::mutex mutex;
     std::vector<ohkl::Peak3D*> peak_list = _peak_collection->getPeakList();
     _peak_items.clear();
-    tbb::parallel_for(
-        tbb::blocked_range<int>(0, peak_list.size()), [&](tbb::blocked_range<int> r) {
-            for (int idx = r.begin(); idx < r.end(); ++idx) {
-            ohkl::Peak3D* peak = peak_list.at(idx);
-            auto item = std::make_unique<PeakItem>(peak);
-            _peak_items.push_back(std::move(item));
-        }
-    });
+    for (auto* peak : peak_list) {
+        auto item = std::make_unique<PeakItem>(peak);
+        _peak_items.push_back(std::move(item));
+    }
 }
 
 std::string PeakCollectionItem::name() const
