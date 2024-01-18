@@ -28,17 +28,18 @@ set(test_files
     CrChiA_c01runab_28615.raw
     CrChiA_c01runab_28616.raw
     CrChiA_c01runab_28617.raw
-    CrChiA.ohkl)
+    CrChiA.ohkl
+    Trypsin.ohkl)
 
 list(LENGTH test_files nfiles)
 message(STATUS
-    "Checking ${nfiles} test data files in directory OHKL_TESTDATA_DIR=${OHKL_TESTDATA_DIR}:")
+    "Checking ${nfiles} test data files in directory ${CMAKE_BINARY_DIR}/${OHKL_TESTDATA_DIR}:")
 
 foreach(file ${test_files})
-    if(NOT EXISTS ${OHKL_TESTDATA_DIR}/${file})
+    if(NOT EXISTS ${CMAKE_BINARY_DIR}/${OHKL_TESTDATA_DIR}/${file})
         message(STATUS "File ${file} not found, downloading...")
         execute_process(COMMAND git lfs pull --include ${file})
-        configure_file(../data/${file} ${file} COPYONLY)
+        configure_file(${CMAKE_SOURCE_DIR}/test/data/${file} ${file} COPYONLY)
     else()
           if (NOT ${OHKL_TESTDATA_DIR} STREQUAL "test/data")
               configure_file(${OHKL_TESTDATA_DIR}/${file} ${file} COPYONLY)
@@ -58,10 +59,10 @@ if (OHKL_FULL_WORKFLOW_TEST)
     message(STATUS "Full workflow tests enabled, checking for data files...")
 
     foreach(file ${nightly_test_files})
-        if(NOT EXISTS ${OHKL_TESTDATA_DIR}/${file})
+        if(NOT EXISTS ${CMAKE_SOURCE_DIR}/${OHKL_TESTDATA_DIR}/${file})
             message(STATUS "File ${file} not found, downloading...")
             execute_process(COMMAND git lfs pull --include "${file}")
-            configure_file(../data/${file} ${file} COPYONLY)
+            configure_file(${CMAKE_SOURCE_DIR}/test/data/${file} ${file} COPYONLY)
         else()
             if (NOT ${OHKL_TESTDATA_DIR} STREQUAL "test/data")
                 configure_file(${OHKL_TESTDATA_DIR}/${file} ${file} COPYONLY)

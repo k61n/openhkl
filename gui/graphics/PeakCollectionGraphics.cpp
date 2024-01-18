@@ -31,10 +31,6 @@
 #include <QVector>
 
 #include <mutex>
-#undef emit
-#include <oneapi/tbb/blocked_range.h>
-#include <tbb/parallel_for.h>
-
 #include <vector>
 
 using EventType = ohkl::IntegrationRegion::EventType;
@@ -156,34 +152,27 @@ void PeakCollectionGraphics::getIntegrationMask(Eigen::MatrixXi& mask, std::size
     std::vector<PeakItem*> peak_items = _peak_model->root()->peakItems();
 
     std::mutex mutex;
-    tbb::parallel_for(
-        tbb::blocked_range<int>(0, peak_items.size()), [&](tbb::blocked_range<int> r) {
-        for (int idx = r.begin(); idx < r.end(); ++idx) {
-            PeakItem* peak_item = peak_items.at(idx);
-            ohkl::Peak3D* peak = peak_item->peak();
-            double peak_end, bkg_begin, bkg_end;
-            if (_preview_int_regions) {
-                if (_int_params.region_type == ohkl::RegionType::VariableEllipsoid) {
-                    peak_end = _int_params.peak_end;
-                    bkg_begin = _int_params.bkg_begin;
-                    bkg_end = _int_params.bkg_end;
-                } else {
-                    peak_end = _int_params.fixed_peak_end;
-                    bkg_begin = _int_params.fixed_bkg_begin;
-                    bkg_end = _int_params.fixed_bkg_end;
-                }
+    for (auto* peak_item : peak_items) {
+        ohkl::Peak3D* peak = peak_item->peak();
+        double peak_end, bkg_begin, bkg_end;
+        if (_preview_int_regions) {
+            if (_int_params.region_type == ohkl::RegionType::VariableEllipsoid) {
+                peak_end = _int_params.peak_end;
+                bkg_begin = _int_params.bkg_begin;
+                bkg_end = _int_params.bkg_end;
             } else {
-                peak_end = peak_item->peak()->peakEnd();
-                bkg_begin = peak_item->peak()->bkgBegin();
-                bkg_end = peak_item->peak()->bkgEnd();
+                peak_end = _int_params.fixed_peak_end;
+                bkg_begin = _int_params.fixed_bkg_begin;
+                bkg_end = _int_params.fixed_bkg_end;
             }
-            ohkl::IntegrationRegion region(peak, peak_end, bkg_begin, bkg_end, _int_params.region_type);
-
-            if (region.isValid())
-                std::lock_guard<std::mutex> lock(mutex);
-                region.updateMask(mask, frame_idx);
-            }
-        });
+        } else {
+            peak_end = peak_item->peak()->peakEnd();
+            bkg_begin = peak_item->peak()->bkgBegin();
+            bkg_end = peak_item->peak()->bkgEnd();
+        }
+        ohkl::IntegrationRegion region(peak, peak_end, bkg_begin, bkg_end, _int_params.region_type);
+        region.updateMask(mask, frame_idx);
+    }
 }
 
 void PeakCollectionGraphics::getSinglePeakIntegrationMask(

@@ -17,7 +17,6 @@ target_include_directories(${lib}
 
 target_link_libraries(${lib}
     PRIVATE
-    TBB::tbb
     openhklcore
     ${QCustomPlot_LIBRARIES}
     ${QT_LIBS}
