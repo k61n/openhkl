@@ -28,7 +28,8 @@ set(test_files
     CrChiA_c01runab_28615.raw
     CrChiA_c01runab_28616.raw
     CrChiA_c01runab_28617.raw
-    CrChiA.ohkl)
+    CrChiA.ohkl
+    Trypsin.ohkl)
 
 list(LENGTH test_files nfiles)
 message(STATUS
