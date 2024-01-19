@@ -17,10 +17,12 @@ RUN  dnf install -y dnf-plugins-core \
       python3-devel \
       python3-numpy \
       python3-pip \
+      python3-sphinx \
+      python3-breathe \
       qt5-qtbase-devel \
       mesa-libGL-devel \
       eigen3-devel \
-      doxygen \ 
+      doxygen \
       graphviz-devel \
       hdf5-devel \
       swig \
@@ -31,3 +33,4 @@ RUN cd qhull \
                     -DCMAKE_INSTALL_PREFIX=/usr/local \
   && cmake --build build -j10 \
   && cd build && make install
+RUN python3 -m pip install sphinxcontrib-bibtex sphinx-press-theme

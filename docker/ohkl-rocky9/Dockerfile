@@ -17,10 +17,12 @@ RUN  dnf install -y dnf-plugins-core \
       python3-devel \
       python3-numpy \
       python3-pip \
+      python3-sphinx \
+      python3-breathe \
       qt5-qtbase-devel \
       mesa-libGL-devel \
       eigen3-devel \
-      doxygen \ 
+      doxygen \
       graphviz-devel \
       hdf5-devel \
       swig \
@@ -37,3 +39,5 @@ RUN cd openhkl \
   && cmake -B build -DCMAKE_INSTALL_PREFIX=/usr/local/ \
   && cmake --build build -j10
 RUN cd openhkl/build && ctest -j12
+RUN python3 -m pip install sphinxcontrib-bibtex sphinx-press-theme
+RUN cd openhkl/build && make docs
