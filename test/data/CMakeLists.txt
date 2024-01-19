@@ -59,7 +59,7 @@ if (OHKL_FULL_WORKFLOW_TEST)
     message(STATUS "Full workflow tests enabled, checking for data files...")
 
     foreach(file ${nightly_test_files})
-        if(NOT EXISTS ${CMAKE_SOURCE_DIR}/${OHKL_TESTDATA_DIR}/${file})
+        if(NOT EXISTS ${CMAKE_BINARY_DIR}/${OHKL_TESTDATA_DIR}/${file})
             message(STATUS "File ${file} not found, downloading...")
             execute_process(COMMAND git lfs pull --include "${file}")
             configure_file(${CMAKE_SOURCE_DIR}/test/data/${file} ${file} COPYONLY)
