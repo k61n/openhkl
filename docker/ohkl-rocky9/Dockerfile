@@ -27,17 +27,23 @@ RUN  dnf install -y dnf-plugins-core \
       hdf5-devel \
       swig \
       opencv-devel
+
 RUN git clone https://github.com/qhull/qhull.git
 RUN cd qhull \
   && cmake -B build -DCMAKE_BUILD_TYPE=RELEASE \
                     -DCMAKE_INSTALL_PREFIX=/usr/local \
   && cmake --build build -j10 \
   && cd build && make install
+
 RUN git clone https://iffgit.fz-juelich.de/neutron-simlab/openhkl.git
 RUN cd openhkl \
   && git lfs install \
   && cmake -B build -DCMAKE_INSTALL_PREFIX=/usr/local/ \
   && cmake --build build -j10
 RUN cd openhkl/build && ctest -j12
+
 RUN python3 -m pip install sphinxcontrib-bibtex sphinx-press-theme
 RUN cd openhkl/build && make docs
+
+COPY entrypoint.sh /entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]
