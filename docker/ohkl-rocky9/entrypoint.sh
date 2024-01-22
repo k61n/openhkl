@@ -15,3 +15,4 @@ groupadd -g $GROUPID $GROUPNAME
 useradd -m -g $GROUPID -u $USERID $USERNAME
 
 su $USERNAME
+/openhkl/build/main/OpenHKL
