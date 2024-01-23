@@ -14,5 +14,4 @@ GROUPID=$4
 groupadd -g $GROUPID $GROUPNAME
 useradd -m -g $GROUPID -u $USERID $USERNAME
 
-su $USERNAME
-/openhkl/build/main/OpenHKL
+su $USERNAME -c /openhkl/build/main/OpenHKL
