@@ -20,6 +20,7 @@ RUN  dnf install -y dnf-plugins-core \
       python3-sphinx \
       python3-breathe \
       qt5-qtbase-devel \
+      qt5-qtsvg-devel \
       mesa-libGL-devel \
       eigen3-devel \
       doxygen \
