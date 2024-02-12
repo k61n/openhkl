@@ -215,6 +215,8 @@ void SubframeIntegrate::grabIntegrationParameters()
     _max_strength->setValue(params->max_strength);
     _use_max_d->setChecked(params->use_max_d);
     _max_d->setValue(params->max_d);
+    _use_max_width->setChecked(params->use_max_width);
+    _max_width->setValue(params->max_width);
     _integrator_combo->setCurrentIndex(static_cast<int>(params->integrator_type));
 
     if (!gSession->currentProject()->hasShapeModel())
@@ -259,6 +261,8 @@ void SubframeIntegrate::setIntegrationParameters()
     params->max_strength = _max_strength->value();
     params->use_max_d = _use_max_d->isChecked();
     params->max_d = _max_d->value();
+    params->use_max_width = _use_max_width->isChecked();
+    params->max_width = _max_width->value();
     params->region_type = static_cast<ohkl::RegionType>(_integration_region_type->currentIndex());
 
     if (!gSession->currentProject()->hasShapeModel())
@@ -394,6 +398,23 @@ void SubframeIntegrate::setIntegrateUp()
     grid->addWidget(label, 0, 0, 1, 1);
     grid->addWidget(_max_d, 0, 1, 1, 1);
     f.addWidget(_use_max_d);
+
+    _use_max_width = new QGroupBox("Maximum width for integration");
+    _use_max_width->setAlignment(Qt::AlignLeft);
+    _use_max_width->setCheckable(true);
+    _use_max_width->setChecked(false);
+    _use_max_width->setToolTip("Skip integration of peaks spanning too many images");
+
+    _max_width = new SafeSpinBox();
+    _max_width->setMaximum(20);
+
+    label = new QLabel("Maximum width");
+    label->setToolTip("Maximum width for peak to be integrated");
+    grid = new QGridLayout();
+    _use_max_width->setLayout(grid);
+    grid->addWidget(label, 0, 0, 1, 1);
+    grid->addWidget(_max_width, 0, 1, 1, 1);
+    f.addWidget(_use_max_width);
 
     for (const auto& [kernel, description] : _kernel_description)
         _gradient_kernel->addItem(description);

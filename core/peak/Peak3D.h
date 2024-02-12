@@ -61,6 +61,7 @@ enum class RejectionFlag {
     BadIntegrationFit,
     NoShapeModel,
     NoISigmaMinimum,
+    TooWide,
     PredictionUpdateFailure, // from refiner
     ManuallyRejected,
     OutsideIndexingTol,

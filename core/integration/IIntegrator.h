@@ -49,6 +49,8 @@ struct IntegrationParameters {
     double max_strength = 1;
     //! Maximum d (minimum resolution) for profile integration
     double max_d = 2.5;
+    //! Maximum number of images a peak/shape can span
+    int max_width = 5;
     //! Whether to update the peak centre after integration
     bool fit_center = true;
     //! Whether to update the peak covariance after integration
@@ -73,6 +75,8 @@ struct IntegrationParameters {
     bool use_max_strength = false;
     //! Skip profile integration of peaks with resolution below threshold
     bool use_max_d = false;
+    //! Skip integration of peaks spanning too many images
+    bool use_max_width = false;
 
     void log(const Level& level) const;
 };

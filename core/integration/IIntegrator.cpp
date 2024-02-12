@@ -37,8 +37,6 @@ void IntegrationParameters::log(const Level& level) const
     ohklLog(level, "fixed_peak_end         = ", fixed_peak_end);
     ohklLog(level, "fixed_bkg_begin        = ", fixed_bkg_begin);
     ohklLog(level, "fixed_bkg_end          = ", fixed_bkg_end);
-    ohklLog(level, "max_strength           = ", max_strength);
-    ohklLog(level, "max_d                  = ", max_d);
     ohklLog(level, "fit_center             = ", fit_center);
     ohklLog(level, "fit_cov                = ", fit_cov);
     ohklLog(level, "integrator_type        = ", static_cast<int>(integrator_type));
@@ -49,7 +47,11 @@ void IntegrationParameters::log(const Level& level) const
     ohklLog(level, "skip_masked            = ", skip_masked);
     ohklLog(level, "remove_overlaps        = ", remove_overlaps);
     ohklLog(level, "use_max_strength       = ", use_max_strength);
+    ohklLog(level, "max_strength           = ", max_strength);
     ohklLog(level, "use_max_d              = ", use_max_d);
+    ohklLog(level, "max_d                  = ", max_d);
+    ohklLog(level, "use_max_width          = ", use_max_width);
+    ohklLog(level, "max_width              = ", max_width);
 }
 
 IIntegrator::IIntegrator()
@@ -130,6 +132,10 @@ void IIntegrator::integrate(
         auto data = peak->dataSet();
         auto lo = bb.lower();
         auto hi = bb.upper();
+
+        double width = hi[2] - lo[2];
+        if (_params.use_max_width && width > _params.max_width)
+            peak->setIntegrationFlag(RejectionFlag::TooWide, _params.integrator_type);
 
         if (lo[0] < 0 || lo[1] < 0 || lo[2] < 0 || hi[0] >= data->nCols() || hi[1] >= data->nRows()
             || hi[2] >= data->nFrames())
