@@ -58,6 +58,7 @@ const std::map<RejectionFlag, std::string> Peak3D::_rejection_map{
     {RejectionFlag::BadIntegrationFit, "Pearson coefficient of fit is too low"},
     {RejectionFlag::NoShapeModel, "No shape model found"},
     {RejectionFlag::NoISigmaMinimum, "Failed to find minimum of I/Sigma"},
+    {RejectionFlag::TooWide, "Bounding box spans too many images"},
     {RejectionFlag::PredictionUpdateFailure, "Failure updating prediction post-refinement"},
     {RejectionFlag::ManuallyRejected, "Manually unselected by user"},
     {RejectionFlag::OutsideIndexingTol, "Outside indexing tolerance"},

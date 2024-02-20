@@ -133,6 +133,7 @@ class SubframeShapes : public QWidget {
     SafeDoubleSpinBox* _min_strength;
     SafeDoubleSpinBox* _min_d;
     SafeDoubleSpinBox* _max_d;
+    SafeSpinBox* _max_width;
 
     QCheckBox* _show_single_region;
     QComboBox* _integration_region_type;

@@ -139,9 +139,9 @@ void SubframeShapes::setInputUp()
     _min_strength = f.addDoubleSpinBox(
         ("Minimum I/" + QString(QChar(0x03C3))),
         "Minimum strength (I/\u03C3) of peak to include in average");
+    _max_width = f.addSpinBox("Maximum width", "Maximum number of images peak can span");
     std::tie(_min_d, _max_d) = f.addDoubleSpinBoxPair(
         "Resolution (d) range", "(\u212B) - resolution range for peaks to include in model");
-
 
     _integration_region_type = f.addCombo("Integration region type");
     for (int i = 0; i < static_cast<int>(ohkl::RegionType::Count); ++i)
@@ -182,6 +182,7 @@ void SubframeShapes::setInputUp()
     _min_strength->setMaximum(10000);
     _min_d->setMaximum(1000);
     _max_d->setMaximum(10000);
+    _max_width->setMaximum(20);
     _peak_end->setMinimum(0.1);
     _peak_end->setMaximum(50);
     _peak_end->setSingleStep(0.1);
@@ -412,6 +413,7 @@ void SubframeShapes::grabShapeParameters()
 
     _min_d->setValue(_params->d_min);
     _max_d->setValue(_params->d_max);
+    _max_width->setValue(_params->max_width);
     if (integration_params->region_type == ohkl::RegionType::VariableEllipsoid) {
         _peak_end->setValue(integration_params->peak_end);
         _bkg_begin->setValue(integration_params->bkg_begin);
@@ -445,6 +447,8 @@ void SubframeShapes::setShapeParameters()
 
     _params->d_min = _min_d->value();
     _params->d_max = _max_d->value();
+    _params->max_width = _max_width->value();
+    _params->use_max_width = true;
 
     integration_params->region_type =
         static_cast<ohkl::RegionType>(_integration_region_type->currentIndex());
