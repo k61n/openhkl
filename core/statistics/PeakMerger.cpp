@@ -258,11 +258,19 @@ DataResolution* PeakMerger::profileOverallQuality()
 std::string PeakMerger::summary()
 {
     std::ostringstream oss;
+    oss << "Sum integration" << std::endl;
     oss << std::setw(8) << "dmin" << std::setw(8) << "dmax" << std::setw(8) << "Rmea"
         << std::setw(8) << "eRmea" << std::setw(8) << "Rmer" << std::setw(8) << "eRmer"
         << std::setw(8) << "Rpim" << std::setw(8) << "eRpim" << std::setw(8) << "CChalf"
-        << std::setw(8) << "CCstar" << std::setw(8) << "Compl.";
+        << std::setw(8) << "CCstar" << std::setw(8) << "Compl." << std::endl;
     for (const auto& shell : _sum_shell_qualities.shells)
+        oss << shell.toString() << std::endl;
+    oss << "Profile integration" << std::endl;
+    oss << std::setw(8) << "dmin" << std::setw(8) << "dmax" << std::setw(8) << "Rmea"
+        << std::setw(8) << "eRmea" << std::setw(8) << "Rmer" << std::setw(8) << "eRmer"
+        << std::setw(8) << "Rpim" << std::setw(8) << "eRpim" << std::setw(8) << "CChalf"
+        << std::setw(8) << "CCstar" << std::setw(8) << "Compl." << std::endl;
+    for (const auto& shell : _profile_shell_qualities.shells)
         oss << shell.toString() << std::endl;
     return oss.str();
 }
