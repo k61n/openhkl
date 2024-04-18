@@ -92,7 +92,7 @@ class Peak3D {
     Peak3D(std::shared_ptr<ohkl::Peak3D> peak);
 
     //! Comparison operator used to sort peaks
-    friend bool operator<(const Peak3D& p1, const Peak3D& p2);
+    // friend bool operator<(const Peak3D& p1, const Peak3D& p2);
 
     //! Sets the Peak region. Peak shaped is owned after setting
     void setShape(const Ellipsoid& shape);
@@ -222,6 +222,8 @@ class Peak3D {
     std::string rejectionString() const;
     //! Return a string representation of the peak
     std::string toString() const;
+    //! Reset integration state
+    void resetIntegration(IntegratorType integrator_type);
     //! Return the map of RejectionFlag definitions
     static const std::map<RejectionFlag, std::string>& rejectionMap();
 

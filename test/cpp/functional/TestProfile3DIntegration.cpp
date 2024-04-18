@@ -79,9 +79,9 @@ TEST_CASE("test/data/TestIntegration.cpp", "")
     params->discard_saturated = true;
     params->skip_masked = true;
     params->use_max_strength = true;
-    params->max_strength = 1.0;
+    params->max_strength = 5.0;
     params->use_max_d = true;
-    params->max_d = 2.5;
+    params->max_d = 2.56;
 
     integrator->integratePeaks(data, peaks, params, shapes);
 

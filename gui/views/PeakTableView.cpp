@@ -18,7 +18,6 @@
 
 #include <QAbstractButton>
 #include <QHeaderView>
-#include <qabstractbutton.h>
 
 PeakTableView::PeakTableView(QWidget* parent) : QTableView(parent)
 {
