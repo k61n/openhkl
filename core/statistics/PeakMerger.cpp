@@ -17,6 +17,7 @@
 #include "base/utils/Logger.h"
 #include "core/data/DataSet.h"
 #include "core/experiment/DataQuality.h"
+#include "core/peak/Peak3D.h"
 #include "core/shape/PeakCollection.h"
 #include "core/statistics/MergedPeakCollection.h"
 #include "core/statistics/RotationSlice.h"
@@ -24,6 +25,7 @@
 
 #include <fstream>
 #include <iomanip>
+#include <iostream>
 
 namespace ohkl {
 
@@ -324,6 +326,30 @@ bool PeakMerger::saveStatistics(std::string filename)
 
     file.close();
     return true;
+}
+
+std::vector<double> PeakMerger::getFigureOfMerit(FigureOfMerit fom, IntegratorType integrator)
+{
+    DataResolution* resolution;
+    if (integrator == IntegratorType::PixelSum)
+        resolution = &_sum_shell_qualities;
+    else
+        resolution = &_profile_shell_qualities;
+
+    std::vector<double> result;
+    for (const auto& shell : resolution->shells) {
+        switch (fom) {
+        case FigureOfMerit::d: result.push_back(shell.dmin); break;
+        case FigureOfMerit::Rmerge: result.push_back(shell.Rmerge); break;
+        case FigureOfMerit::Rmeas: result.push_back(shell.Rmeas); break;
+        case FigureOfMerit::Rpim: result.push_back(shell.Rpim); break;
+        case FigureOfMerit::CChalf: result.push_back(shell.CChalf); break;
+        case FigureOfMerit::CCStar: result.push_back(shell.CCstar); break;
+        case FigureOfMerit::Completeness: result.push_back(shell.Completeness); break;
+        }
+    }
+
+    return result;
 }
 
 } // namespace ohkl
