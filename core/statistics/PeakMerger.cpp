@@ -344,7 +344,7 @@ std::vector<double> PeakMerger::getFigureOfMerit(FigureOfMerit fom, IntegratorTy
         case FigureOfMerit::Rmeas: result.push_back(shell.Rmeas); break;
         case FigureOfMerit::Rpim: result.push_back(shell.Rpim); break;
         case FigureOfMerit::CChalf: result.push_back(shell.CChalf); break;
-        case FigureOfMerit::CCStar: result.push_back(shell.CCstar); break;
+        case FigureOfMerit::CCstar: result.push_back(shell.CCstar); break;
         case FigureOfMerit::Completeness: result.push_back(shell.Completeness); break;
         }
     }

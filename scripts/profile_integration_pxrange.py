@@ -15,6 +15,7 @@
 
 import sys
 import numpy as np
+import matplotlib.pyplot as plt
 from pathlib import Path
 
 lib_dir = "@SWIG_INSTALL_PATH@"  # Path to pyohkl.py
@@ -43,9 +44,10 @@ shape_params.region_type = ohkl.RegionType_FixedEllipsoid
 shape_params.fixed_peak_end = 5.5
 shape_params.fixed_bkg_begin = 1.3
 shape_params.fixed_bkg_end = 2.3
+shape_params.use_max_width = False
 shapes.build(found_peaks, data)
 
-for px_range in range(100, 400, 50):
+for px_range in range(50, 500, 100):
     predicted_peaks.resetIntegration(ohkl.IntegratorType_Profile3D)
 
     shape_params.neighbour_range_pixels = px_range
@@ -82,3 +84,12 @@ for px_range in range(100, 400, 50):
     merger.computeQuality()
     print("neighbour range (pixels) = " + str(px_range))
     print(merger.summary())
+
+    d = merger.getFigureOfMerit(ohkl.FigureOfMerit_d, ohkl.IntegratorType_Profile3D)
+    rpim = merger.getFigureOfMerit(ohkl.FigureOfMerit_Rpim, ohkl.IntegratorType_Profile3D)
+    ccstar = merger.getFigureOfMerit(ohkl.FigureOfMerit_CCstar, ohkl.IntegratorType_Profile3D)
+
+    plt.plot(d, ccstar, label=f'pixel range = {px_range}', linewidth=0.5)
+
+plt.legend()
+plt.savefig("trypsin_profile3d_pxrange.pdf")

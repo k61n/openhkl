@@ -44,19 +44,14 @@ shape_params.region_type = ohkl.RegionType_FixedEllipsoid
 shape_params.fixed_peak_end = 5.5
 shape_params.fixed_bkg_begin = 1.3
 shape_params.fixed_bkg_end = 2.3
+shape_params.use_max_width = False
 shapes.build(found_peaks, data)
 
-plt.xlabel("d (A)")
-plt.ylabel("Figure of merit")
-
-for max_width in range(6, 13, 2):
+for frame_range in range(5, 30, 5):
     predicted_peaks.resetIntegration(ohkl.IntegratorType_Profile3D)
 
     shape_params.neighbour_range_pixels = 50
-    shape_params.neighbour_range_frames = 10
-    shape_params.use_max_width = True
-    shape_params.max_width = max_width
-    shapes.build(found_peaks, data)
+    shape_params.neighbour_range_frames = frame_range
 
     # Integration parameters
     integration_params = expt.integrator().parameters()
@@ -71,8 +66,6 @@ for max_width in range(6, 13, 2):
     integration_params.max_strength = 1.0
     integration_params.use_max_d = True
     integration_params.max_d = 2.56
-    integration_params.use_max_width = True
-    integration_params.max_width = max_width
 
     integrator = expt.integrator()
     integrator.integratePeaks(data, predicted_peaks, integration_params, shapes)
@@ -89,14 +82,14 @@ for max_width in range(6, 13, 2):
     merger.setSpaceGroup(ohkl.SpaceGroup(space_group))
     merger.mergePeaks()
     merger.computeQuality()
-    print("Maximum width (images) = " + str(max_width))
+    print("neighbour range (frame) = " + str(frame_range))
     print(merger.summary())
 
     d = merger.getFigureOfMerit(ohkl.FigureOfMerit_d, ohkl.IntegratorType_Profile3D)
     rpim = merger.getFigureOfMerit(ohkl.FigureOfMerit_Rpim, ohkl.IntegratorType_Profile3D)
-    ccstar = merger.getFigureOfMerit(ohkl.FigureOfMerit_CCstar, ohkl.IntegratorType_Profile3D)
+    cchalf = merger.getFigureOfMerit(ohkl.FigureOfMerit_CChalf, ohkl.IntegratorType_Profile3D)
 
-    plt.plot(d, ccstar, label=f'max width = {max_width}', linewidth=0.5)
+    plt.plot(d, cchalf, label=f'frame range = {frame_range}', linewidth=0.5)
 
 plt.legend()
-plt.savefig("trypsin_profile3d_maxwidth.pdf")
+plt.savefig("trypsin_profile3d_framerange.pdf")

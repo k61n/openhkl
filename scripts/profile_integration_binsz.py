@@ -49,13 +49,14 @@ shapes.build(found_peaks, data)
 plt.xlabel("d (A)")
 plt.ylabel("Figure of merit")
 
-for max_width in range(6, 13, 2):
+for binsz in range(6, 13, 2):
     predicted_peaks.resetIntegration(ohkl.IntegratorType_Profile3D)
 
     shape_params.neighbour_range_pixels = 50
     shape_params.neighbour_range_frames = 10
     shape_params.use_max_width = True
-    shape_params.max_width = max_width
+    shape_params.max_width = 10
+    shape_params.nbins_z = binsz
     shapes.build(found_peaks, data)
 
     # Integration parameters
@@ -72,7 +73,7 @@ for max_width in range(6, 13, 2):
     integration_params.use_max_d = True
     integration_params.max_d = 2.56
     integration_params.use_max_width = True
-    integration_params.max_width = max_width
+    integration_params.max_width = 10
 
     integrator = expt.integrator()
     integrator.integratePeaks(data, predicted_peaks, integration_params, shapes)
@@ -89,14 +90,14 @@ for max_width in range(6, 13, 2):
     merger.setSpaceGroup(ohkl.SpaceGroup(space_group))
     merger.mergePeaks()
     merger.computeQuality()
-    print("Maximum width (images) = " + str(max_width))
+    print("bins z = " + str(binsz))
     print(merger.summary())
 
     d = merger.getFigureOfMerit(ohkl.FigureOfMerit_d, ohkl.IntegratorType_Profile3D)
     rpim = merger.getFigureOfMerit(ohkl.FigureOfMerit_Rpim, ohkl.IntegratorType_Profile3D)
-    ccstar = merger.getFigureOfMerit(ohkl.FigureOfMerit_CCstar, ohkl.IntegratorType_Profile3D)
+    cchalf = merger.getFigureOfMerit(ohkl.FigureOfMerit_CChalf, ohkl.IntegratorType_Profile3D)
 
-    plt.plot(d, ccstar, label=f'max width = {max_width}', linewidth=0.5)
+    plt.plot(d, cchalf, label=f'bins z = {binsz}', linewidth=0.5)
 
 plt.legend()
-plt.savefig("trypsin_profile3d_maxwidth.pdf")
+plt.savefig("trypsin_profile3d_binsz.pdf")
