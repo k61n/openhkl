@@ -23,7 +23,7 @@ lib_dir = "@SWIG_INSTALL_PATH@"  # Path to pyohkl.py
 sys.path.append(lib_dir)
 import pyohkl as ohkl
 
-file = Path('/home/zamaan/projects/openhkl/build/test/data/Trypsin-pxsum.ohkl')
+file = Path('@CMAKE_BINARY_DIR@/test/data/Trypsin-pxsum.ohkl')
 experiment = 'Trypsin'
 diffractometer = 'BioDiff'
 data_name = 'Scan I'

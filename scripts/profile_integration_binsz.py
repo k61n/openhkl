@@ -23,7 +23,7 @@ lib_dir = "@SWIG_INSTALL_PATH@"  # Path to pyohkl.py
 sys.path.append(lib_dir)
 import pyohkl as ohkl
 
-file = Path('/home/zamaan/projects/openhkl/build/test/data/Trypsin-pxsum.ohkl')
+file = Path('@CMAKE_BINARY_DIR@/test/data/Trypsin-pxsum.ohkl')
 experiment = 'Trypsin'
 diffractometer = 'BioDiff'
 data_name = 'Scan I'
@@ -44,7 +44,6 @@ shape_params.region_type = ohkl.RegionType_FixedEllipsoid
 shape_params.fixed_peak_end = 5.5
 shape_params.fixed_bkg_begin = 1.3
 shape_params.fixed_bkg_end = 2.3
-shapes.build(found_peaks, data)
 
 plt.xlabel("d (A)")
 plt.ylabel("Figure of merit")

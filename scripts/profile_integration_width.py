@@ -23,7 +23,7 @@ lib_dir = "@SWIG_INSTALL_PATH@"  # Path to pyohkl.py
 sys.path.append(lib_dir)
 import pyohkl as ohkl
 
-file = Path('/home/zamaan/projects/openhkl/build/test/data/Trypsin-pxsum.ohkl')
+file = Path('@CMAKE_BINARY_DIR@/test/data/Trypsin-pxsum.ohkl')
 experiment = 'Trypsin'
 diffractometer = 'BioDiff'
 data_name = 'Scan I'
@@ -94,9 +94,9 @@ for max_width in range(6, 13, 2):
 
     d = merger.getFigureOfMerit(ohkl.FigureOfMerit_d, ohkl.IntegratorType_Profile3D)
     rpim = merger.getFigureOfMerit(ohkl.FigureOfMerit_Rpim, ohkl.IntegratorType_Profile3D)
-    ccstar = merger.getFigureOfMerit(ohkl.FigureOfMerit_CCstar, ohkl.IntegratorType_Profile3D)
+    cchalf = merger.getFigureOfMerit(ohkl.FigureOfMerit_CChalf, ohkl.IntegratorType_Profile3D)
 
-    plt.plot(d, ccstar, label=f'max width = {max_width}', linewidth=0.5)
+    plt.plot(d, cchalf, label=f'max width = {max_width}', linewidth=0.5)
 
 plt.legend()
 plt.savefig("trypsin_profile3d_maxwidth.pdf")
