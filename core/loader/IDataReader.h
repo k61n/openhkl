@@ -31,7 +31,7 @@ namespace ohkl {
 class InstrumentStateSet;
 class DataSet;
 
-enum class DataFormat { Unknown = -1, OHKL = 0, TIFF, RAW, NEXUS };
+enum class DataFormat { Unknown = -1, OHKL = 0, TIFF, RAW, NEXUS, PLAINTEXT };
 
 //! Minimal meta data set
 struct DataReaderParameters {

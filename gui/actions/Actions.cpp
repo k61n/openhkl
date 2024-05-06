@@ -104,12 +104,14 @@ void Actions::setupData()
     add_data = new QAction("Add data set");
     add_single_raw = new QAction("Load single .raw image (strategy)");
     add_single_tiff = new QAction("Load single .tiff image (strategy)");
+    add_single_text = new QAction("Load single plain text image (strategy)");
     show_input_files = new QAction("Show input files");
     remove_data = new QAction("Remove data set");
-    add_raw = new QAction("Add raw data");
-    add_tiff = new QAction("Add tiff data");
-    add_hdf5 = new QAction("Add NSX(HDF5) data");
-    add_nexus = new QAction("Add Nexus data");
+    add_raw = new QAction("Add .raw data");
+    add_tiff = new QAction("Add .tiff data");
+    add_text = new QAction("Add plain text data");
+    add_hdf5 = new QAction("Add .ohkl (HDF5) data");
+    add_nexus = new QAction("Add Nexus (HDF5) data");
 
     connect(add_raw, &QAction::triggered, []() { // can cause a crash without checking
         if (gSession->loadRawData())
@@ -119,14 +121,20 @@ void Actions::setupData()
         if (gSession->loadTiffData())
             gGui->sideBar()->refreshCurrent();
     });
-
+    connect(add_text, &QAction::triggered, []() { // can cause a crash without checking
+        if (gSession->loadPlainTextData())
+            gGui->sideBar()->refreshCurrent();
+    });
     connect(add_single_raw, &QAction::triggered, []() { // can cause a crash without checking
         if (gSession->loadRawData(true))
             gGui->sideBar()->refreshCurrent();
     });
-
     connect(add_single_tiff, &QAction::triggered, []() { // can cause a crash without checking
         if (gSession->loadTiffData(true))
+            gGui->sideBar()->refreshCurrent();
+    });
+    connect(add_single_text, &QAction::triggered, []() { // can cause a crash without checking
+        if (gSession->loadPlainTextData(true))
             gGui->sideBar()->refreshCurrent();
     });
 

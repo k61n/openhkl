@@ -31,12 +31,13 @@
 #include <stdexcept>
 
 ImageReaderDialog::ImageReaderDialog(
-    const QStringList& filenames, ohkl::DataReaderParameters* parameters0, bool tiff_format)
-    : _parameters0{parameters0}, _tiff_mode(tiff_format)
+    const QStringList& filenames, ohkl::DataReaderParameters* parameters0,
+    ohkl::DataFormat data_format)
+    : _parameters0{parameters0}, _data_format(data_format)
 {
     setModal(true);
 
-    if (_tiff_mode) {
+    if (_data_format == ohkl::DataFormat::TIFF) {
         if (!checkTiffFiles(filenames)) {
             QMessageBox::critical(
                 nullptr, "Error", "Mismatch between .tiff files (resolution or depth)");
@@ -139,7 +140,8 @@ ImageReaderDialog::ImageReaderDialog(
     _dataArrangement->setEnabled(false);
     _dataFormat->setEnabled(false);
     _image_resolution->setEnabled(false);
-    if (_tiff_mode) {
+    switch(_data_format) {
+    case (ohkl::DataFormat::TIFF): {
         switch (_bytes_per_pixel) {
             case 2: _dataFormat->setCurrentIndex(0); break;
             case 4: _dataFormat->setCurrentIndex(1); break;
@@ -159,7 +161,9 @@ ImageReaderDialog::ImageReaderDialog(
         if (!valid_resolution)
             throw std::runtime_error(
                 "ImageReaderDialog::ImageReaderDialog: tiff files are not an expected resolution");
-    } else {
+        break;
+    }
+    case (ohkl::DataFormat::RAW):{
         _dataArrangement->setEnabled(true);
         _dataFormat->setEnabled(true);
         _image_resolution->setEnabled(true);
@@ -167,6 +171,19 @@ ImageReaderDialog::ImageReaderDialog(
         _dataArrangement->setCurrentIndex(1);
         _dataFormat->setCurrentIndex(0);
         _swapEndianness->setCheckState(Qt::Checked);
+        break;
+    }
+    case (ohkl::DataFormat::PLAINTEXT):{
+        _dataArrangement->setEnabled(false);
+        _dataFormat->setEnabled(true);
+        _image_resolution->setEnabled(true);
+        _rebin_size->setEnabled(false);
+        _dataArrangement->setCurrentIndex(1);
+        _dataFormat->setCurrentIndex(0);
+        _swapEndianness->setCheckState(Qt::Checked);
+        _swapEndianness->setEnabled(false);
+        break;
+    }
     }
 
     connect(_buttons, &QDialogButtonBox::accepted, this, &ImageReaderDialog::verify);
@@ -185,7 +202,7 @@ bool ImageReaderDialog::rowMajor()
 
 int ImageReaderDialog::bytesPerPixel()
 {
-    if (_tiff_mode)
+    if (_data_format == ohkl::DataFormat::TIFF)
         // this values is saved in the tif files and has already been loaded
         return ((ohkl::DataReaderParameters*)_parameters0)->bytes_per_pixel;
 
@@ -244,7 +261,8 @@ ohkl::DataReaderParameters ImageReaderDialog::dataReaderParameters()
         parameters.gain = 1.0;
     }
 
-    if (_tiff_mode) {
+    switch(_data_format) {
+    case (ohkl::DataFormat::TIFF): {
         parameters.data_format = ohkl::DataFormat::TIFF;
         parameters.cols = _img_res.first;
         parameters.rows = _img_res.second;
@@ -262,9 +280,17 @@ ohkl::DataReaderParameters ImageReaderDialog::dataReaderParameters()
             detector->setNCols(detector->nCols() / parameters.rebin_size);
             detector->setNRows(detector->nRows() / parameters.rebin_size);
         }
-    } else {
+        break;
+    }
+    case (ohkl::DataFormat::RAW): {
         parameters.data_format = ohkl::DataFormat::RAW;
         parameters.row_major = rowMajor();
+        break;
+    }
+    case (ohkl::DataFormat::PLAINTEXT): {
+        parameters.data_format = ohkl::DataFormat::PLAINTEXT;
+        break;
+    }
     }
 
     return parameters;

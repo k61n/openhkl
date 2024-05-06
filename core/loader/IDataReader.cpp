@@ -71,7 +71,7 @@ bool IDataReader::initRead()
         _dataset_out->diffractometer()->source().addMonochromator(mono);
         ohklLog(
             Level::Warning, __FUNCTION__,
-            ": Source had no monochromators; hence, a default monochromator is created.");
+            ": Source had no monochromator. A default monochromator was created.");
     }
 
     return true;

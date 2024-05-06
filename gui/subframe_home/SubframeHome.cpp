@@ -176,12 +176,14 @@ void SubframeHome::setRightLayout(QHBoxLayout* main_layout)
     _add_data->addItem(QIcon(path + "plus.svg"), "Add data set");
     _add_data->addItem("Tiff (.tiff)");
     _add_data->addItem("Raw (.raw)");
+    _add_data->addItem("Plain text");
     _add_data->addItem("Nexus (.nxs)");
     _add_data->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum);
 
     _add_single_image->addItem(QIcon(path + "plus.svg"), "Add single image");
     _add_single_image->addItem("Tiff (.tiff)");
     _add_single_image->addItem("Raw (.raw)");
+    _add_single_image->addItem("Plain text");
     _add_single_image->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum);
 
     _dataset_table = new QTableWidget(0, 6);
@@ -829,6 +831,12 @@ void SubframeHome::addDataSet(int index)
             break;
         }
         case 3: {
+            gSession->loadPlainTextData(false);
+            gGui->sideBar()->refreshCurrent();
+            _add_data->setCurrentIndex(0);
+            break;
+        }
+        case 4: {
             gSession->loadData(ohkl::DataFormat::NEXUS);
             gGui->sideBar()->refreshCurrent();
             _add_data->setCurrentIndex(0);
@@ -851,6 +859,12 @@ void SubframeHome::addSingleImage(int index)
         }
         case 2: {
             gSession->loadRawData(true);
+            gGui->sideBar()->refreshCurrent();
+            _add_data->setCurrentIndex(0);
+            break;
+        }
+        case 3: {
+            gSession->loadPlainTextData(true);
             gGui->sideBar()->refreshCurrent();
             _add_data->setCurrentIndex(0);
             break;

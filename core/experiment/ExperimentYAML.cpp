@@ -68,6 +68,8 @@ void ExperimentYAML::grabDataReaderParameters(DataReaderParameters* params) cons
             params->data_format = DataFormat::RAW;
         if (format == "tiff")
             params->data_format = DataFormat::TIFF;
+        if (format == "text")
+            params->data_format = DataFormat::PLAINTEXT;
     }
 
     if (format == "raw") {
