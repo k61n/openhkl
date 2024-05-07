@@ -480,6 +480,17 @@ std::string Peak3D::toString() const
     return oss.str();
 }
 
+void Peak3D::resetIntegration(IntegratorType integrator_type) {
+    if (integrator_type == IntegratorType::PixelSum) {
+        _sumBackground = {};
+        _sumIntensity = {};
+        _meanBkgGradient = {};
+    } else {
+        _profileBackground = {};
+        _profileIntensity = {};
+    }
+}
+
 const std::map<RejectionFlag, std::string>& Peak3D::rejectionMap()
 {
     return _rejection_map;

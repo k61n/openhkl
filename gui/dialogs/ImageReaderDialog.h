@@ -37,7 +37,7 @@ class ImageReaderDialog : public QDialog {
     //! Constructor in case or processing Raw files
     ImageReaderDialog(
         const QStringList& filenames, ohkl::DataReaderParameters* parameters0,
-        bool tiff_format = false);
+        ohkl::DataFormat data_format = ohkl::DataFormat::TIFF);
     //! Disable widgets that are relevant for multiple images only
     void setSingleImageMode();
     //! Return a copy of the DataReaderParameters object
@@ -74,7 +74,7 @@ class ImageReaderDialog : public QDialog {
     QComboBox* _image_resolution;
     QComboBox* _rebin_size;
 
-    bool _tiff_mode;
+    ohkl::DataFormat _data_format;
 };
 
 #endif // OHKL_GUI_DIALOGS_RAWDATADIALOG_H

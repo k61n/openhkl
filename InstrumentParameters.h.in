@@ -31,6 +31,7 @@ static const std::string resource_dir = INSTRUMENT_RESOURCE_DIR;
 //! Map of instrument names {name, description}
 static const std::map<std::string, std::string> instrument_list = {
     {"BioDiff", "BioDiff"},
+    {"POLI", "POLI"},
     {"D9", "D9"},
     {"D9_lifting arm", "D9 lifting arm"},
     {"D9_large", "D9 large"},

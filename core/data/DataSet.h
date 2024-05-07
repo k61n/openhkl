@@ -122,7 +122,10 @@ class DataSet {
     //! upon request.
     void addRawFrame(const std::string& rawfilename);
 
-    //! Add a tif file
+    //! Add a plain text file
+    void addPlainTextFrame(const std::string& textfilename);
+
+    //! Add a tiff file
     void addTiffFrame(const std::string& filename);
 
     //! Finish reading procedure (must be called before using the data stored in the DataSet).

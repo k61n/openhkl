@@ -16,6 +16,7 @@
 
 #include "base/utils/Logger.h"
 #include "core/data/DataSet.h"
+#include "core/integration/IIntegrator.h"
 #include "core/integration/ShapeIntegrator.h"
 #include "core/peak/Peak3D.h"
 #include "core/raw/DataKeys.h"
@@ -275,6 +276,13 @@ void PeakCollection::setUnitCell(const sptrUnitCell& cell, bool setPeaks)
         return;
     for (auto* peak : getPeakList())
         peak->setUnitCell(cell);
+}
+
+void PeakCollection::resetIntegration(IntegratorType integrator_type)
+{
+    ohklLog(Level::Info, "PeakCollection::resetIntegration");
+    for (auto* peak : getPeakList())
+        peak->resetIntegration(integrator_type);
 }
 
 void PeakCollection::resetRejectionFlags()

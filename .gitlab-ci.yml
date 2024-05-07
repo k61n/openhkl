@@ -14,9 +14,9 @@ build:rocky9:
     - |
       if test $CI_PIPELINE_SOURCE == "nightly"
       then
-          cmake -B build -D OHKL_FULL_WORKFLOW_TEST=ON
+          cmake -B build -D OHKL_FULL_WORKFLOW_TEST=ON -D CMAKE_BUILD_TYPE=Release
       else
-          cmake -B build
+          cmake -B build -D CMAKE_BUILD_TYPE=Release
       fi
     - cmake --build build
   artifacts:
@@ -26,6 +26,7 @@ build:rocky9:
 
 test:rocky9:
   stage: test
+  timeout: 3 hours
   script:
     - cd build
     - |

@@ -29,11 +29,12 @@ set(test_files
     CrChiA_c01runab_28616.raw
     CrChiA_c01runab_28617.raw
     CrChiA.ohkl
-    Trypsin.ohkl)
+    Trypsin.ohkl
+    Trypsin-pxsum.ohkl)
 
 list(LENGTH test_files nfiles)
 message(STATUS
-    "Checking ${nfiles} test data files in directory ${CMAKE_BINARY_DIR}/${OHKL_TESTDATA_DIR}:")
+  "Checking ${nfiles} test data files in directory ${CMAKE_BINARY_DIR}/${OHKL_TESTDATA_DIR}:")
 
 foreach(file ${test_files})
     if(NOT EXISTS ${CMAKE_BINARY_DIR}/${OHKL_TESTDATA_DIR}/${file})

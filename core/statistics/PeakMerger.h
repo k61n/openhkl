@@ -18,6 +18,7 @@
 #include "base/utils/Logger.h"
 #include "base/utils/ProgressHandler.h"
 #include "core/experiment/DataQuality.h"
+#include "core/peak/Peak3D.h"
 #include "core/statistics/MergedPeakCollection.h"
 #include "core/statistics/ResolutionShell.h"
 
@@ -93,6 +94,9 @@ class PeakMerger {
 
     //! Saves the shell information to file.
     bool saveStatistics(std::string filename);
+
+    //! Return a vector containing the resolution-dependent figure of merit
+    std::vector<double> getFigureOfMerit(FigureOfMerit fom, IntegratorType integrator);
 
     //! Set the progress handler
     void setHandler(sptrProgressHandler handler) { _handler = handler; };

@@ -29,6 +29,8 @@ class PeakCollection;
 class ResolutionShell;
 class SpaceGroup;
 
+enum class FigureOfMerit { d = 0, Rmerge, Rmeas, Rpim, CChalf, CCstar, Completeness };
+
 struct DataQuality {
     int nobserved; //!< Total number of observations including redundant
     int nunique; //!< Total number of observations excluding redundant

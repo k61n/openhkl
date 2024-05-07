@@ -36,6 +36,7 @@
 #include "core/loader/HDF5DataReader.h"
 #include "core/loader/IDataReader.h"
 #include "core/loader/NexusDataReader.h"
+#include "core/loader/PlainTextReader.h"
 #include "core/loader/RawDataReader.h"
 #include "core/loader/TiffDataReader.h"
 #include "core/peak/Peak3D.h"
@@ -79,6 +80,7 @@ void DataSet::setReader(const DataFormat dataformat, const std::string& filename
             _reader.reset(new RawDataReader);
             break;
         case DataFormat::TIFF: _reader.reset(new TiffDataReader); break;
+        case DataFormat::PLAINTEXT: _reader.reset(new PlainTextReader); break;
         default: throw std::invalid_argument("Data format is not recognized.");
     }
 
@@ -112,11 +114,6 @@ void DataSet::setImageReaderParameters(const DataReaderParameters& params)
 {
     _dataformat = params.data_format;
 
-    if (_dataformat != DataFormat::TIFF && _dataformat != DataFormat::RAW)
-        throw std::runtime_error(
-            "DataSet '" + _name
-            + "': Cannot set data reader parameters since data format is not raw or tiff.");
-
     if (!_reader)
         setReader(_dataformat);
 
@@ -131,6 +128,14 @@ void DataSet::setImageReaderParameters(const DataReaderParameters& params)
             tiffreader.setParameters(params);
             break;
         }
+        case DataFormat::PLAINTEXT: {
+            PlainTextReader& textreader = *static_cast<PlainTextReader*>(_reader.get());
+            textreader.setParameters(params);
+            break;
+        }
+        default: {
+            throw std::runtime_error("DataSet '" + _name + "': invalid data format");
+        }
     }
 
     ohklLog(Level::Info, "DataSet '" + _name + "': DataReaderParameters set.");
@@ -144,7 +149,7 @@ void DataSet::addTiffFrame(const std::string& tiffilename)
     // no mixing of different data format
     if (_dataformat != DataFormat::TIFF)
         throw std::runtime_error(
-            "DataSet '" + _name + "': To read a tif frame, data format must be tif.");
+            "DataSet '" + _name + "': To read a tiff frame, data format must be tiff.");
 
     TiffDataReader& tiffreader = *static_cast<TiffDataReader*>(_reader.get());
 
@@ -164,6 +169,21 @@ void DataSet::addRawFrame(const std::string& rawfilename)
     RawDataReader& rawreader = *static_cast<RawDataReader*>(_reader.get());
 
     rawreader.addFrame(rawfilename);
+}
+
+void DataSet::addPlainTextFrame(const std::string& textfilename)
+{
+    if (!_reader)
+        setReader(DataFormat::PLAINTEXT);
+
+    // prevent mixing data formats
+    if (_dataformat != DataFormat::PLAINTEXT)
+        throw std::runtime_error(
+            "DataSet '" + _name + "': To read a plain text frame, data format must be plain text.");
+
+    PlainTextReader& textreader = *static_cast<PlainTextReader*>(_reader.get());
+
+    textreader.addFrame(textfilename);
 }
 
 Eigen::MatrixXi DataSet::frame(const std::size_t idx) const

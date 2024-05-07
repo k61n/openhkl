@@ -17,6 +17,7 @@
 #include "base/utils/Logger.h"
 #include "core/data/DataSet.h"
 #include "core/experiment/DataQuality.h"
+#include "core/peak/Peak3D.h"
 #include "core/shape/PeakCollection.h"
 #include "core/statistics/MergedPeakCollection.h"
 #include "core/statistics/RotationSlice.h"
@@ -24,6 +25,7 @@
 
 #include <fstream>
 #include <iomanip>
+#include <iostream>
 
 namespace ohkl {
 
@@ -258,11 +260,19 @@ DataResolution* PeakMerger::profileOverallQuality()
 std::string PeakMerger::summary()
 {
     std::ostringstream oss;
+    oss << "Sum integration" << std::endl;
     oss << std::setw(8) << "dmin" << std::setw(8) << "dmax" << std::setw(8) << "Rmea"
         << std::setw(8) << "eRmea" << std::setw(8) << "Rmer" << std::setw(8) << "eRmer"
         << std::setw(8) << "Rpim" << std::setw(8) << "eRpim" << std::setw(8) << "CChalf"
-        << std::setw(8) << "CCstar" << std::setw(8) << "Compl.";
+        << std::setw(8) << "CCstar" << std::setw(8) << "Compl." << std::endl;
     for (const auto& shell : _sum_shell_qualities.shells)
+        oss << shell.toString() << std::endl;
+    oss << "Profile integration" << std::endl;
+    oss << std::setw(8) << "dmin" << std::setw(8) << "dmax" << std::setw(8) << "Rmea"
+        << std::setw(8) << "eRmea" << std::setw(8) << "Rmer" << std::setw(8) << "eRmer"
+        << std::setw(8) << "Rpim" << std::setw(8) << "eRpim" << std::setw(8) << "CChalf"
+        << std::setw(8) << "CCstar" << std::setw(8) << "Compl." << std::endl;
+    for (const auto& shell : _profile_shell_qualities.shells)
         oss << shell.toString() << std::endl;
     return oss.str();
 }
@@ -316,6 +326,30 @@ bool PeakMerger::saveStatistics(std::string filename)
 
     file.close();
     return true;
+}
+
+std::vector<double> PeakMerger::getFigureOfMerit(FigureOfMerit fom, IntegratorType integrator)
+{
+    DataResolution* resolution;
+    if (integrator == IntegratorType::PixelSum)
+        resolution = &_sum_shell_qualities;
+    else
+        resolution = &_profile_shell_qualities;
+
+    std::vector<double> result;
+    for (const auto& shell : resolution->shells) {
+        switch (fom) {
+        case FigureOfMerit::d: result.push_back(shell.dmin); break;
+        case FigureOfMerit::Rmerge: result.push_back(shell.Rmerge); break;
+        case FigureOfMerit::Rmeas: result.push_back(shell.Rmeas); break;
+        case FigureOfMerit::Rpim: result.push_back(shell.Rpim); break;
+        case FigureOfMerit::CChalf: result.push_back(shell.CChalf); break;
+        case FigureOfMerit::CCstar: result.push_back(shell.CCstar); break;
+        case FigureOfMerit::Completeness: result.push_back(shell.Completeness); break;
+        }
+    }
+
+    return result;
 }
 
 } // namespace ohkl

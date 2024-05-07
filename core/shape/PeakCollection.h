@@ -16,6 +16,7 @@
 #define OHKL_CORE_SHAPE_PEAKCOLLECTION_H
 
 #include "core/data/DataTypes.h"
+#include "core/integration/IIntegrator.h"
 #include "core/raw/MetaData.h"
 #include "core/shape/ShapeModel.h"
 
@@ -141,6 +142,8 @@ class PeakCollection {
 
     void setUnitCell(const sptrUnitCell& cell, bool setPeaks = true);
 
+    //! Reset integration status
+    void resetIntegration(IntegratorType integrator_type);
     //! Reset peak rejection flags
     void resetRejectionFlags();
     //! Reset peak rejection status to pre-integration values

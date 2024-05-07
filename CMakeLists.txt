@@ -225,6 +225,9 @@ if(OHKL_PYTHON AND NOT MSVC AND BUILD_TESTING)
         ${CMAKE_SOURCE_DIR}/devtools/check-line-length.py 200 ${allsources})
 endif()
 
+# Ignore tests specified in CTestCustom.cmake
+configure_file(${CMAKE_SOURCE_DIR}/cmake/CTestCustom.cmake ${CMAKE_BINARY_DIR})
+
 ###################################################################################################
 #  Build documentation
 ###################################################################################################
