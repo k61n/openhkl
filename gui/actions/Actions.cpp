@@ -56,7 +56,6 @@ void Actions::setupExperiment()
     load_experiment = new QAction("Load experiment");
     save_experiment = new QAction("Save");
     save_experiment_as = new QAction("Save as");
-    save_experiment_as = new QAction("Save as");
     save_all_experiment = new QAction("Save all");
     export_peaks = new QAction("Export peaks");
     remove_experiment = new QAction("Remove experiment");

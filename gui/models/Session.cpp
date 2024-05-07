@@ -511,7 +511,7 @@ bool Session::loadPlainTextData(bool single_file /* = false */)
         if (filenames.empty())
             return false;
         if (single_file && filenames.size() > 1)
-            throw std::runtime_error("Session::loadTiffData expected exactly one file");
+            throw std::runtime_error("Session::loadPlainTextData expected exactly one file");
 
         std::string ext = ""; // let's store the used file extension for later
 

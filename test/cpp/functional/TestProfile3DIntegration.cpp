@@ -33,7 +33,7 @@
 #include <string>
 #include <vector>
 
-TEST_CASE("test/data/TestIntegration.cpp", "")
+TEST_CASE("test/data/TestProfile3DIntegration.cpp", "")
 {
     // reference values
     const int ref_n_peaks = 59209;

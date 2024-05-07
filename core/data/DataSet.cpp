@@ -179,7 +179,7 @@ void DataSet::addPlainTextFrame(const std::string& textfilename)
     // prevent mixing data formats
     if (_dataformat != DataFormat::PLAINTEXT)
         throw std::runtime_error(
-            "DataSet '" + _name + "': To read a raw frame, data format must be plain text.");
+            "DataSet '" + _name + "': To read a plain text frame, data format must be plain text.");
 
     PlainTextReader& textreader = *static_cast<PlainTextReader*>(_reader.get());
 
