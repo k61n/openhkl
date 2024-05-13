@@ -97,11 +97,10 @@ SubframeRefiner::SubframeRefiner()
 
     connect(_peak_combo, &QComboBox::currentTextChanged, this, &SubframeRefiner::refreshAll);
     connect(_data_combo, &QComboBox::currentTextChanged, this, &SubframeRefiner::refreshAll);
-    connect(_predicted_combo, &QComboBox::currentTextChanged,
-        this, [=]() {
-            updatePeaks();
-            _detector_widget->refresh();
-        });
+    connect(_predicted_combo, &QComboBox::currentTextChanged, this, [=]() {
+        updatePeaks();
+        _detector_widget->refresh();
+    });
     connect(_data_combo, &QComboBox::currentTextChanged, this, [=]() {
         updatePeaks();
         _detector_widget->refresh();

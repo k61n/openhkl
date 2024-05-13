@@ -521,7 +521,8 @@ bool Session::loadPlainTextData(bool single_file /* = false */)
         if (info.exists() && info.isFile())
             params.loadFromYAML(yml_path.toStdString());
         ImageReaderDialog dialog(
-            filenames, static_cast<ohkl::DataReaderParameters*>(&params), ohkl::DataFormat::PLAINTEXT);
+            filenames, static_cast<ohkl::DataReaderParameters*>(&params),
+            ohkl::DataFormat::PLAINTEXT);
 
         dialog.setWindowTitle("Plain text data parameters");
         if (single_file)
@@ -572,16 +573,10 @@ void Session::onDataChanged()
     if (!gSession->currentProject()->hasDataSet())
         return;
 
-    double x_offset = _data_combo->currentData()
-                            ->diffractometer()
-                            ->source()
-                            .selectedMonochromator()
-                            .xOffset();
-    double y_offset = _data_combo->currentData()
-                            ->diffractometer()
-                            ->source()
-                            .selectedMonochromator()
-                            .yOffset();
+    double x_offset =
+        _data_combo->currentData()->diffractometer()->source().selectedMonochromator().xOffset();
+    double y_offset =
+        _data_combo->currentData()->diffractometer()->source().selectedMonochromator().yOffset();
     _beam_setter_widget->onBeamPosChanged({x_offset, y_offset});
     onPeaksChanged();
     onUnitCellChanged();
@@ -630,7 +625,8 @@ void Session::onPeaksChanged()
 
 void Session::onUnitCellChanged()
 {
-    CellList cells = currentProject()->experiment()->getSptrUnitCells(currentProject()->currentData());
+    CellList cells =
+        currentProject()->experiment()->getSptrUnitCells(currentProject()->currentData());
 
     _cell_combo->clearAll();
     _cell_combo->addCells(cells);

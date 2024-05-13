@@ -23,8 +23,8 @@
 #include "core/raw/MetaData.h"
 #include "core/shape/PeakCollection.h"
 #include "core/shape/PeakFilter.h"
-#include "gui/items/PeakItem.h"
 #include "gui/graphics_items/PeakItemGraphic.h"
+#include "gui/items/PeakItem.h"
 #include "tables/crystal/MillerIndex.h"
 #include "tables/crystal/UnitCell.h"
 

@@ -178,8 +178,7 @@ void PeakExportDialog::loadMergeParams()
 }
 
 void PeakExportDialog::initialise(
-    const QString& collection1, const QString& collection2, double d_min,
-    double d_max, bool merged)
+    const QString& collection1, const QString& collection2, double d_min, double d_max, bool merged)
 {
     _peak_combo_1->setCurrentText(collection1);
     _peak_combo_2->setCurrentText(collection2);

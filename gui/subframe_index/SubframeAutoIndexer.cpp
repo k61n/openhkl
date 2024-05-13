@@ -17,8 +17,8 @@
 #include "base/utils/Logger.h"
 #include "base/utils/ProgressHandler.h"
 #include "base/utils/Units.h"
-#include "core/data/DataSet.h"
 #include "core/algo/AutoIndexer.h"
+#include "core/data/DataSet.h"
 #include "core/data/DataTypes.h"
 #include "core/experiment/Experiment.h"
 #include "core/instrument/Diffractometer.h"
@@ -122,8 +122,10 @@ void SubframeAutoIndexer::setInputUp()
     _data_combo = f.addDataCombo("Data set");
     _peak_combo = f.addPeakCombo(ComboType::FoundPeaks, "Peak collection");
 
-    connect(_peak_combo, &QComboBox::currentTextChanged, this, &SubframeAutoIndexer::refreshPeakTable);
-    connect(_data_combo, &QComboBox::currentTextChanged, this, &SubframeAutoIndexer::refreshPeakTable);
+    connect(
+        _peak_combo, &QComboBox::currentTextChanged, this, &SubframeAutoIndexer::refreshPeakTable);
+    connect(
+        _data_combo, &QComboBox::currentTextChanged, this, &SubframeAutoIndexer::refreshPeakTable);
 
     _left_layout->addWidget(input_box);
 }
@@ -552,9 +554,8 @@ void SubframeAutoIndexer::acceptSolution()
 {
     if (_selected_unit_cell) {
         ohkl::Experiment* expt = gSession->currentProject()->experiment();
-        QStringList collections =
-            gSession->currentProject()->getPeakCollectionNames(
-                ohkl::PeakCollectionType::FOUND, _selected_unit_cell->data());
+        QStringList collections = gSession->currentProject()->getPeakCollectionNames(
+            ohkl::PeakCollectionType::FOUND, _selected_unit_cell->data());
 
         QStringList space_groups;
         for (const std::string& name : _selected_unit_cell->compatibleSpaceGroups())

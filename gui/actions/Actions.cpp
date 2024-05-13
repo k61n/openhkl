@@ -250,8 +250,8 @@ void Actions::addCell()
 
     // ohkl::Experiment* expt = gSession->currentProject()->experiment();
     // expt->addUnitCell(
-    //     dlg->unitCellName().toStdString(), dlg->a(), dlg->b(), dlg->c(), dlg->alpha(), dlg->beta(),
-    //     dlg->gamma(), dlg->spaceGroup().toStdString());
+    //     dlg->unitCellName().toStdString(), dlg->a(), dlg->b(), dlg->c(), dlg->alpha(),
+    //     dlg->beta(), dlg->gamma(), dlg->spaceGroup().toStdString());
     // gSession->onUnitCellChanged();
     // auto cell_list = gSession->currentProject()->getUnitCellNames();
     // gGui->sideBar()->refreshCurrent();

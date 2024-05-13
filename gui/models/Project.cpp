@@ -157,7 +157,7 @@ void Project::generatePeakModels()
     _peak_collection_models.clear();
     auto peak_collections = _experiment->getPeakCollections();
 
-    for (const auto*  collection : peak_collections) {
+    for (const auto* collection : peak_collections) {
         PeakCollectionItem* peak_collection_item = new PeakCollectionItem(collection);
         _peak_collection_items.push_back(peak_collection_item);
 

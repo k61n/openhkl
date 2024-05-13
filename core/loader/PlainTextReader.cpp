@@ -27,10 +27,7 @@
 namespace ohkl {
 
 // NOTE: PlainTextReader needs a list of frame files which should be given later
-PlainTextReader::PlainTextReader()
-    : IDataReader("::NO-FILENAME::"), _parameters()
-{
-}
+PlainTextReader::PlainTextReader() : IDataReader("::NO-FILENAME::"), _parameters() { }
 
 bool PlainTextReader::initRead()
 {
@@ -125,7 +122,6 @@ void PlainTextReader::setParameters(const DataReaderParameters& parameters)
             throw std::runtime_error(
                 "bytes_per_pixel unsupported: " + std::to_string(_parameters.bytes_per_pixel));
     }
-
 }
 
 Eigen::MatrixXi PlainTextReader::data(size_t frame)
@@ -147,7 +143,7 @@ Eigen::MatrixXi PlainTextReader::data(size_t frame)
     Eigen::MatrixXd image = Eigen::MatrixXd::Zero(nrows, ncols);
     for (std::size_t row = 0; row < nrows; ++row) {
         std::getline(file, line);
-        for (std::size_t col =0; col < ncols; ++col)
+        for (std::size_t col = 0; col < ncols; ++col)
             file >> image(row, col);
     }
 

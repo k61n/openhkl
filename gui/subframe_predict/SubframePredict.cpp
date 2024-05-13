@@ -52,14 +52,14 @@
 #include "gui/widgets/PeakViewWidget.h"
 #include "tables/crystal/UnitCell.h"
 
-#include <QGridLayout>
-#include <QGroupBox>
 #include <QCheckBox>
 #include <QComboBox>
+#include <QGridLayout>
+#include <QGroupBox>
+#include <QMessageBox>
 #include <QPushButton>
 #include <QSplitter>
 #include <QVBoxLayout>
-#include <QMessageBox>
 
 SubframePredict::SubframePredict()
     : QWidget()
@@ -158,8 +158,7 @@ void SubframePredict::setRefineKiUp()
     _max_iter_spin->setMaximum(1000000);
     _max_iter_spin->setValue(1000);
 
-    connect(
-        _direct_beam, &QCheckBox::stateChanged, this, &SubframePredict::showDirectBeamEvents);
+    connect(_direct_beam, &QCheckBox::stateChanged, this, &SubframePredict::showDirectBeamEvents);
     connect(_refine_ki_button, &QPushButton::clicked, this, &SubframePredict::refineKi);
 
     _left_layout->addWidget(ki_box);
@@ -226,8 +225,7 @@ void SubframePredict::setShapeModelUp()
     _interpolation_combo->addItem("Inverse distance");
     _interpolation_combo->addItem("Intensity");
 
-    connect(
-        _apply_shape_model, &QPushButton::clicked, this, &SubframePredict::applyShapeModel);
+    connect(_apply_shape_model, &QPushButton::clicked, this, &SubframePredict::applyShapeModel);
 
     _left_layout->addWidget(shapes_box);
     grabShapeModelParameters();

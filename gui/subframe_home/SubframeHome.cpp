@@ -579,7 +579,8 @@ void SubframeHome::refreshTables() const
     int ndata = 0;
     if (gSession->currentProject()->hasDataSet()) {
         for (const auto& data : gSession->currentProject()->experiment()->getAllData()) {
-        // for (const auto& [key, data] : *(gSession->currentProject()->experiment()->getDataMap())) {
+            // for (const auto& [key, data] :
+            // *(gSession->currentProject()->experiment()->getDataMap())) {
 
             if (ndata >= _dataset_table->rowCount())
                 _dataset_table->insertRow(_dataset_table->rowCount());
@@ -589,8 +590,7 @@ void SubframeHome::refreshTables() const
                 ndata, col++, new QTableWidgetItem(QString::fromStdString(data->name())));
             _dataset_table->setItem(
                 ndata, col++,
-                new QTableWidgetItem(
-                    QString::fromStdString(data->diffractometer()->name())));
+                new QTableWidgetItem(QString::fromStdString(data->diffractometer()->name())));
             _dataset_table->setItem(
                 ndata, col++, new QTableWidgetItem(QString::number(data->nFrames())));
             _dataset_table->setItem(
@@ -617,21 +617,28 @@ void SubframeHome::refreshTables() const
 
             int col = 0;
             _peak_collections_table->setItem(
-                ncollection, col++, new QTableWidgetItem(QString::fromStdString(collection->name())));
+                ncollection, col++,
+                new QTableWidgetItem(QString::fromStdString(collection->name())));
             _peak_collections_table->setItem(
-                ncollection, col++, new QTableWidgetItem(QString::fromStdString(collection->data()->name())));
+                ncollection, col++,
+                new QTableWidgetItem(QString::fromStdString(collection->data()->name())));
             _peak_collections_table->setItem(
                 ncollection, col++, new QTableWidgetItem(QString::fromStdString(cell_name)));
             _peak_collections_table->setItem(
-                ncollection, col++, new QTableWidgetItem(QString::number(collection->numberOfPeaks())));
+                ncollection, col++,
+                new QTableWidgetItem(QString::number(collection->numberOfPeaks())));
             _peak_collections_table->setItem(
-                ncollection, col++, new QTableWidgetItem(QString::number(collection->numberOfValid())));
+                ncollection, col++,
+                new QTableWidgetItem(QString::number(collection->numberOfValid())));
             _peak_collections_table->setItem(
-                ncollection, col++, new QTableWidgetItem(QString::number(collection->numberOfInvalid())));
-            _peak_collections_table->setItem(ncollection, col++, new QTableWidgetItem(b2s(collection->isIndexed())));
+                ncollection, col++,
+                new QTableWidgetItem(QString::number(collection->numberOfInvalid())));
+            _peak_collections_table->setItem(
+                ncollection, col++, new QTableWidgetItem(b2s(collection->isIndexed())));
             _peak_collections_table->setItem(
                 ncollection, col++, new QTableWidgetItem(b2s(collection->isIntegrated())));
-            _peak_collections_table->setItem(ncollection++, col++, new QTableWidgetItem(Type2s(collection->type())));
+            _peak_collections_table->setItem(
+                ncollection++, col++, new QTableWidgetItem(Type2s(collection->type())));
         }
         _peak_collections_table->resizeColumnsToContents();
     }

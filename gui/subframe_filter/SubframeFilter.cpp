@@ -105,10 +105,8 @@ void SubframeFilter::setInputUp()
     _data_combo = f.addDataCombo("Data set");
     _peak_combo = f.addPeakCombo(ComboType::PeakCollection, "Peak collection");
 
-    connect(
-        _peak_combo, &QComboBox::currentTextChanged, this, &SubframeFilter::refreshPeakTable);
-    connect(
-        _data_combo, &QComboBox::currentTextChanged, this, &SubframeFilter::refreshPeakTable);
+    connect(_peak_combo, &QComboBox::currentTextChanged, this, &SubframeFilter::refreshPeakTable);
+    connect(_data_combo, &QComboBox::currentTextChanged, this, &SubframeFilter::refreshPeakTable);
 
     _left_layout->addWidget(input_box);
 }
@@ -315,7 +313,9 @@ void SubframeFilter::setFigureUp()
         _detector_widget->scene(), &DetectorScene::signalSelectedPeakItemChanged, this,
         &SubframeFilter::changeSelected);
     connect(_peak_combo, &QComboBox::currentTextChanged, this, &SubframeFilter::refreshPeakTable);
-    connect(_detector_widget->dataCombo(), &QComboBox::currentTextChanged, this, &SubframeFilter::refreshPeakTable);
+    connect(
+        _detector_widget->dataCombo(), &QComboBox::currentTextChanged, this,
+        &SubframeFilter::refreshPeakTable);
 
     _right_element->addWidget(figure_group);
 }

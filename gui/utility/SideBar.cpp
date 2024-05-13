@@ -51,10 +51,7 @@
 // merger.svg: Merge by Muneer A.Safiah from the Noun Project
 
 SideBar::SideBar(QWidget* parent)
-    : QWidget(parent)
-    , mCheckedAction(nullptr)
-    , mOverAction(nullptr)
-    , _strategy(false)
+    : QWidget(parent), mCheckedAction(nullptr), mOverAction(nullptr), _strategy(false)
 {
     setMouseTracking(true);
 
@@ -344,46 +341,45 @@ void SideBar::refreshCurrent()
 void SideBar::onSubframeChanged()
 {
     switch (static_cast<SubFrame>(gGui->_layout_stack->currentIndex())) {
-    case SubFrame::Experiment: {
-        gGui->experiment->setIndexerParameters();
-        gGui->experiment->setStrategyParameters();
-        break;
-    }
-    case SubFrame::Find: {
-        gGui->finder->setFinderParameters();
-        gGui->finder->setIntegrationParameters();
-        break;
-    }
-    case SubFrame::Filter: {
-        gGui->filter->setFilterParameters();
-        break;
-    }
-    case SubFrame::Index: {
-        gGui->indexer->setIndexerParameters();
-        break;
-    }
-    case SubFrame::Shapes: {
-        gGui->shapes->setShapeParameters();
-        break;
-    }
-    case SubFrame::Predict: {
-        gGui->predictor->setRefinerParameters();
-        gGui->predictor->setPredictorParameters();
-        gGui->predictor->setShapeModelParameters();
-        break;
-    }
-    case SubFrame::Refine: {
-        gGui->refiner->setRefinerParameters();
-        break;
-    }
-    case SubFrame::Integrate: {
-        gGui->integrator->setIntegrationParameters();
-        break;
-    }
-    // SubframeMerge does not need setMergeParameters because it is triggered on merging
+        case SubFrame::Experiment: {
+            gGui->experiment->setIndexerParameters();
+            gGui->experiment->setStrategyParameters();
+            break;
+        }
+        case SubFrame::Find: {
+            gGui->finder->setFinderParameters();
+            gGui->finder->setIntegrationParameters();
+            break;
+        }
+        case SubFrame::Filter: {
+            gGui->filter->setFilterParameters();
+            break;
+        }
+        case SubFrame::Index: {
+            gGui->indexer->setIndexerParameters();
+            break;
+        }
+        case SubFrame::Shapes: {
+            gGui->shapes->setShapeParameters();
+            break;
+        }
+        case SubFrame::Predict: {
+            gGui->predictor->setRefinerParameters();
+            gGui->predictor->setPredictorParameters();
+            gGui->predictor->setShapeModelParameters();
+            break;
+        }
+        case SubFrame::Refine: {
+            gGui->refiner->setRefinerParameters();
+            break;
+        }
+        case SubFrame::Integrate: {
+            gGui->integrator->setIntegrationParameters();
+            break;
+        }
+            // SubframeMerge does not need setMergeParameters because it is triggered on merging
     }
 
     if (gSession->hasProject())
         gSession->currentProject()->writeYaml();
-
 }

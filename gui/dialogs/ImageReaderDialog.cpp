@@ -141,50 +141,50 @@ ImageReaderDialog::ImageReaderDialog(
     _dataArrangement->setEnabled(false);
     _dataFormat->setEnabled(false);
     _image_resolution->setEnabled(false);
-    switch(_data_format) {
-    case (ohkl::DataFormat::TIFF): {
-        switch (_bytes_per_pixel) {
-            case 2: _dataFormat->setCurrentIndex(0); break;
-            case 4: _dataFormat->setCurrentIndex(1); break;
-            default:
-                throw std::runtime_error(
-                    "ImageReaderDialog::ImageReaderDialog: invalid tiff bytes_per_pixel");
-        }
-        bool valid_resolution = false;
-        for (int idx = 0; idx < resolutions.size(); ++idx) {
-            if (_img_res.first == resolutions[idx].first
-                && _img_res.second == resolutions[idx].second) {
-                _image_resolution->setCurrentIndex(idx);
-                valid_resolution = true;
-                break;
+    switch (_data_format) {
+        case (ohkl::DataFormat::TIFF): {
+            switch (_bytes_per_pixel) {
+                case 2: _dataFormat->setCurrentIndex(0); break;
+                case 4: _dataFormat->setCurrentIndex(1); break;
+                default:
+                    throw std::runtime_error(
+                        "ImageReaderDialog::ImageReaderDialog: invalid tiff bytes_per_pixel");
             }
+            bool valid_resolution = false;
+            for (int idx = 0; idx < resolutions.size(); ++idx) {
+                if (_img_res.first == resolutions[idx].first
+                    && _img_res.second == resolutions[idx].second) {
+                    _image_resolution->setCurrentIndex(idx);
+                    valid_resolution = true;
+                    break;
+                }
+            }
+            if (!valid_resolution)
+                throw std::runtime_error("ImageReaderDialog::ImageReaderDialog: tiff files are not "
+                                         "an expected resolution");
+            break;
         }
-        if (!valid_resolution)
-            throw std::runtime_error(
-                "ImageReaderDialog::ImageReaderDialog: tiff files are not an expected resolution");
-        break;
-    }
-    case (ohkl::DataFormat::RAW):{
-        _dataArrangement->setEnabled(true);
-        _dataFormat->setEnabled(true);
-        _image_resolution->setEnabled(true);
-        _rebin_size->setEnabled(false);
-        _dataArrangement->setCurrentIndex(1);
-        _dataFormat->setCurrentIndex(0);
-        _swapEndianness->setCheckState(Qt::Checked);
-        break;
-    }
-    case (ohkl::DataFormat::PLAINTEXT):{
-        _dataArrangement->setEnabled(false);
-        _dataFormat->setEnabled(true);
-        _image_resolution->setEnabled(true);
-        _rebin_size->setEnabled(false);
-        _dataArrangement->setCurrentIndex(1);
-        _dataFormat->setCurrentIndex(0);
-        _swapEndianness->setCheckState(Qt::Checked);
-        _swapEndianness->setEnabled(false);
-        break;
-    }
+        case (ohkl::DataFormat::RAW): {
+            _dataArrangement->setEnabled(true);
+            _dataFormat->setEnabled(true);
+            _image_resolution->setEnabled(true);
+            _rebin_size->setEnabled(false);
+            _dataArrangement->setCurrentIndex(1);
+            _dataFormat->setCurrentIndex(0);
+            _swapEndianness->setCheckState(Qt::Checked);
+            break;
+        }
+        case (ohkl::DataFormat::PLAINTEXT): {
+            _dataArrangement->setEnabled(false);
+            _dataFormat->setEnabled(true);
+            _image_resolution->setEnabled(true);
+            _rebin_size->setEnabled(false);
+            _dataArrangement->setCurrentIndex(1);
+            _dataFormat->setCurrentIndex(0);
+            _swapEndianness->setCheckState(Qt::Checked);
+            _swapEndianness->setEnabled(false);
+            break;
+        }
     }
 
     connect(_buttons, &QDialogButtonBox::accepted, this, &ImageReaderDialog::verify);
@@ -262,36 +262,37 @@ ohkl::DataReaderParameters ImageReaderDialog::dataReaderParameters()
         parameters.gain = 1.0;
     }
 
-    switch(_data_format) {
-    case (ohkl::DataFormat::TIFF): {
-        parameters.data_format = ohkl::DataFormat::TIFF;
-        parameters.cols = _img_res.first;
-        parameters.rows = _img_res.second;
-        switch (_rebin_size->currentIndex()) {
-            case 0: parameters.rebin_size = 1; break;
-            case 1: parameters.rebin_size = 2; break;
-            case 2: parameters.rebin_size = 4; break;
-        }
+    switch (_data_format) {
+        case (ohkl::DataFormat::TIFF): {
+            parameters.data_format = ohkl::DataFormat::TIFF;
+            parameters.cols = _img_res.first;
+            parameters.rows = _img_res.second;
+            switch (_rebin_size->currentIndex()) {
+                case 0: parameters.rebin_size = 1; break;
+                case 1: parameters.rebin_size = 2; break;
+                case 2: parameters.rebin_size = 4; break;
+            }
 
-        auto detector = gSession->currentProject()->experiment()->getDiffractometer()->detector();
-        auto idx = _image_resolution->currentIndex();
-        detector->selectDetectorResolution(idx);
+            auto detector =
+                gSession->currentProject()->experiment()->getDiffractometer()->detector();
+            auto idx = _image_resolution->currentIndex();
+            detector->selectDetectorResolution(idx);
 
-        if (parameters.rebin_size != 1) {
-            detector->setNCols(detector->nCols() / parameters.rebin_size);
-            detector->setNRows(detector->nRows() / parameters.rebin_size);
+            if (parameters.rebin_size != 1) {
+                detector->setNCols(detector->nCols() / parameters.rebin_size);
+                detector->setNRows(detector->nRows() / parameters.rebin_size);
+            }
+            break;
         }
-        break;
-    }
-    case (ohkl::DataFormat::RAW): {
-        parameters.data_format = ohkl::DataFormat::RAW;
-        parameters.row_major = rowMajor();
-        break;
-    }
-    case (ohkl::DataFormat::PLAINTEXT): {
-        parameters.data_format = ohkl::DataFormat::PLAINTEXT;
-        break;
-    }
+        case (ohkl::DataFormat::RAW): {
+            parameters.data_format = ohkl::DataFormat::RAW;
+            parameters.row_major = rowMajor();
+            break;
+        }
+        case (ohkl::DataFormat::PLAINTEXT): {
+            parameters.data_format = ohkl::DataFormat::PLAINTEXT;
+            break;
+        }
     }
 
     return parameters;

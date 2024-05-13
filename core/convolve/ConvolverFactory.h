@@ -15,7 +15,11 @@
 #ifndef OHKL_CORE_CONVOLVE_CONVOLVERFACTORY_H
 #define OHKL_CORE_CONVOLVE_CONVOLVERFACTORY_H
 
+#include <Eigen/Dense>
+
+#include <functional>
 #include <map>
+#include <string>
 
 namespace ohkl {
 
