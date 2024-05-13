@@ -30,18 +30,18 @@
 #include "gui/utility/SideBar.h"
 #include "tables/crystal/UnitCell.h"
 
-#include <QFileDialog>
-#include <QHBoxLayout>
-#include <QLabel>
 #include <QCheckBox>
 #include <QComboBox>
 #include <QDoubleSpinBox>
+#include <QFileDialog>
+#include <QHBoxLayout>
+#include <QLabel>
 #include <QPushButton>
+#include <QSettings>
 #include <QSpinBox>
+#include <QStandardItemModel>
 #include <QTabWidget>
 #include <QTableView>
-#include <QSettings>
-#include <QStandardItemModel>
 #include <QVBoxLayout>
 
 

@@ -619,7 +619,7 @@ std::vector<PeakCollection*> Experiment::getPeakCollections(sptrDataSet data)
 {
     if (data)
         return _peak_handler->getPeakCollections(data);
-    else 
+    else
         return _peak_handler->getPeakCollections();
 }
 

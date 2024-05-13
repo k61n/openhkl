@@ -15,9 +15,9 @@
 #include "core/shape/ShapeModel.h"
 
 #include "base/fit/Minimizer.h"
+#include "base/geometry/DirectVector.h"
 #include "base/geometry/Ellipsoid.h"
 #include "base/geometry/ReciprocalVector.h"
-#include "base/geometry/DirectVector.h"
 #include "base/utils/Logger.h"
 #include "base/utils/ProgressHandler.h"
 #include "core/data/DataSet.h"
@@ -357,7 +357,8 @@ std::vector<Peak3D*> ShapeModel::findNeighbors(const DetectorEvent& ev) const
     Eigen::Vector3d center(ev.px, ev.py, ev.frame);
     Peak3D* nearest;
     double min_dist_sq = _data->nCols() * _data->nCols() + _data->nRows() * _data->nRows();
-    double min_frames = _data->nFrames();;
+    double min_frames = _data->nFrames();
+    ;
     double radius_sq = _params->neighbour_range_pixels * _params->neighbour_range_pixels;
 
     for (const auto& pair : _profiles) {
@@ -375,7 +376,6 @@ std::vector<Peak3D*> ShapeModel::findNeighbors(const DetectorEvent& ev) const
 
         if (pix_dist_sq < radius_sq && frame_dist < _params->neighbour_range_frames)
             neighbors.push_back(peak);
-
     }
 
     if (neighbors.empty())

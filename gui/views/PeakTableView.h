@@ -15,8 +15,8 @@
 #ifndef OHKL_GUI_VIEWS_PEAKTABLEVIEW_H
 #define OHKL_GUI_VIEWS_PEAKTABLEVIEW_H
 
-#include <QTableView>
 #include <QSortFilterProxyModel>
+#include <QTableView>
 
 class QAbstractItemModel;
 
@@ -26,7 +26,7 @@ class PeakTableView : public QTableView {
     explicit PeakTableView(QWidget* parent = nullptr);
 
     void setModel(QAbstractItemModel* model) override;
-    void selectAll() override {};
+    void selectAll() override{};
 
  private:
     void resetSort();

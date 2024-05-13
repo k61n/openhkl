@@ -339,13 +339,13 @@ std::vector<double> PeakMerger::getFigureOfMerit(FigureOfMerit fom, IntegratorTy
     std::vector<double> result;
     for (const auto& shell : resolution->shells) {
         switch (fom) {
-        case FigureOfMerit::d: result.push_back(shell.dmin); break;
-        case FigureOfMerit::Rmerge: result.push_back(shell.Rmerge); break;
-        case FigureOfMerit::Rmeas: result.push_back(shell.Rmeas); break;
-        case FigureOfMerit::Rpim: result.push_back(shell.Rpim); break;
-        case FigureOfMerit::CChalf: result.push_back(shell.CChalf); break;
-        case FigureOfMerit::CCstar: result.push_back(shell.CCstar); break;
-        case FigureOfMerit::Completeness: result.push_back(shell.Completeness); break;
+            case FigureOfMerit::d: result.push_back(shell.dmin); break;
+            case FigureOfMerit::Rmerge: result.push_back(shell.Rmerge); break;
+            case FigureOfMerit::Rmeas: result.push_back(shell.Rmeas); break;
+            case FigureOfMerit::Rpim: result.push_back(shell.Rpim); break;
+            case FigureOfMerit::CChalf: result.push_back(shell.CChalf); break;
+            case FigureOfMerit::CCstar: result.push_back(shell.CCstar); break;
+            case FigureOfMerit::Completeness: result.push_back(shell.Completeness); break;
         }
     }
 

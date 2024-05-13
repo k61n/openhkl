@@ -15,8 +15,8 @@
 #ifndef OHKL_GUI_ITEMS_PEAKCOLLECTIONITEM_H
 #define OHKL_GUI_ITEMS_PEAKCOLLECTIONITEM_H
 
-#include "gui/items/PeakItem.h"
 #include "gui/graphics_items/PeakItemGraphic.h"
+#include "gui/items/PeakItem.h"
 
 #include <QVariant>
 #include <memory>

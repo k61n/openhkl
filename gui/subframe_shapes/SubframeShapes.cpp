@@ -403,8 +403,7 @@ void SubframeShapes::grabShapeParameters()
     if (!gSession->currentProject()->hasPeakCollection())
         return;
 
-    auto* integration_params =
-        gSession->currentProject()->experiment()->integrator()->parameters();
+    auto* integration_params = gSession->currentProject()->experiment()->integrator()->parameters();
 
     QSignalBlocker blocker1(_integration_region_type);
     QSignalBlocker blocker2(_peak_end);
@@ -444,8 +443,7 @@ void SubframeShapes::setShapeParameters()
     if (!gSession->hasProject())
         return;
 
-    auto* integration_params =
-        gSession->currentProject()->experiment()->integrator()->parameters();
+    auto* integration_params = gSession->currentProject()->experiment()->integrator()->parameters();
 
     _params->d_min = _min_d->value();
     _params->d_max = _max_d->value();
@@ -454,8 +452,7 @@ void SubframeShapes::setShapeParameters()
 
     integration_params->region_type =
         static_cast<ohkl::RegionType>(_integration_region_type->currentIndex());
-    _params->region_type =
-        static_cast<ohkl::RegionType>(_integration_region_type->currentIndex());
+    _params->region_type = static_cast<ohkl::RegionType>(_integration_region_type->currentIndex());
     if (integration_params->region_type == ohkl::RegionType::VariableEllipsoid) {
         integration_params->peak_end = _peak_end->value();
         integration_params->bkg_begin = _bkg_begin->value();

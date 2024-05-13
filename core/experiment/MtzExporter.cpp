@@ -22,8 +22,8 @@
 #include "core/instrument/InterpolatedState.h"
 #include "core/peak/Peak3D.h"
 #include "core/statistics/MergedPeakCollection.h"
-#include "tables/crystal/UnitCell.h"
 #include "mtzdata.h"
+#include "tables/crystal/UnitCell.h"
 
 #include <Eigen/src/Core/Matrix.h>
 #include <Eigen/src/Geometry/Quaternion.h>
@@ -174,18 +174,18 @@ void MtzExporter::buildBatches(CMtz::MTZSET* mtz_set)
         batch->phistt = sample_states[frame][_omega_idx] / deg;
         // batch->phistt = start;
         if (frame < nframes - 1)
-            batch->phiend = batch->phistt +
-                (sample_states[frame + 1][_omega_idx] - sample_states[frame][_omega_idx]) / deg;
+            batch->phiend = batch->phistt
+                + (sample_states[frame + 1][_omega_idx] - sample_states[frame][_omega_idx]) / deg;
         else
-            batch->phiend =
-                (sample_states[frame][_omega_idx] + sample_states[frame - 1][_omega_idx] -
-                 sample_states[frame - 2][_omega_idx]) / deg;
+            batch->phiend = (sample_states[frame][_omega_idx] + sample_states[frame - 1][_omega_idx]
+                             - sample_states[frame - 2][_omega_idx])
+                / deg;
 
         // datum values of goniostat axes
-        for (int i = 0; i < 3; i++) batch->datum[i] = sample_states[frame][i] / deg;
+        for (int i = 0; i < 3; i++)
+            batch->datum[i] = sample_states[frame][i] / deg;
 
-        batch->phirange =
-            (sample_states[1][_omega_idx] - sample_states[0][_omega_idx]) / deg;
+        batch->phirange = (sample_states[1][_omega_idx] - sample_states[0][_omega_idx]) / deg;
 
         batch->alambd = _ohkl_data->wavelength(); // wavelength
 
@@ -300,7 +300,7 @@ void MtzExporter::populateColumns(CMtz::MTZCOL** columns, int ncol)
 
     _mtz->nref = irefl;
     _mtz->nref_filein = irefl;
-    }
+}
 
 bool MtzExporter::writeToFile(std::string filename)
 {

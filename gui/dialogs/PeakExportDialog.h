@@ -39,8 +39,8 @@ class PeakExportDialog : public QDialog {
     void loadMergeParams();
     //! Initialise dialogue from options in another GUI element
     void initialise(
-       const QString& collection1, const QString& collection2,
-        double d_min, double d_max, bool merged);
+        const QString& collection1, const QString& collection2, double d_min, double d_max,
+        bool merged);
     //! sets changed parameters from gui to PeakMerger
     void setMergeParams();
     //! Refresh gui

@@ -18,7 +18,7 @@
 #include "core/integration/IIntegrator.h"
 #include "gui/models/PeakCollectionModel.h"
 
-#include  <QColor>
+#include <QColor>
 #include <QVector>
 
 namespace ohkl {

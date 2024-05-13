@@ -482,7 +482,8 @@ std::string Peak3D::toString() const
     return oss.str();
 }
 
-void Peak3D::resetIntegration(IntegratorType integrator_type) {
+void Peak3D::resetIntegration(IntegratorType integrator_type)
+{
     if (integrator_type == IntegratorType::PixelSum) {
         _sumBackground = {};
         _sumIntensity = {};

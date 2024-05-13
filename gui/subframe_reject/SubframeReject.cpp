@@ -43,13 +43,13 @@
 
 #include <QCheckBox>
 #include <QComboBox>
+#include <QGridLayout>
+#include <QGroupBox>
+#include <QItemSelectionModel>
 #include <QPushButton>
 #include <QRadioButton>
 #include <QSplitter>
 #include <QVBoxLayout>
-#include <QGridLayout>
-#include <QGroupBox>
-#include <QItemSelectionModel>
 
 SubframeReject::SubframeReject() : QWidget()
 {

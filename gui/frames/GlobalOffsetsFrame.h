@@ -25,7 +25,7 @@ class QSpinBox;
 class QTableWidget;
 class SXPlot;
 
-enum class offsetMode {DETECTOR, SAMPLE};
+enum class offsetMode { DETECTOR, SAMPLE };
 
 //! Frame which shows the global offsets of the detector or sample
 class GlobalOffsetsFrame : public QFrame {

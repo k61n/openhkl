@@ -96,7 +96,8 @@ bool PeakExporter::saveToShelXUnmerged(
 bool PeakExporter::saveToShelXMerged(const std::string& filename, MergedPeakCollection* mergedData)
 {
     std::vector<MergedPeak*> merged_peaks;
-    for (auto it = mergedData->mergedPeakSet().begin(); it != mergedData->mergedPeakSet().end(); ++it)
+    for (auto it = mergedData->mergedPeakSet().begin(); it != mergedData->mergedPeakSet().end();
+         ++it)
         merged_peaks.emplace_back(const_cast<MergedPeak*>(&(*it)));
     std::sort(merged_peaks.begin(), merged_peaks.end(), &mergedPeakGreaterThan);
 
@@ -218,13 +219,10 @@ bool PeakExporter::saveToSCAUnmerged(
             const double intensity = unmergedIntensity(unmerged_peak).value() * scale;
             const double sigma_intensity = unmergedIntensity(unmerged_peak).sigma() * scale;
 
-            file << std::fixed << std::setw(4) << hkl_orig.h()
-                 << std::fixed << std::setw(4) << hkl_orig.k()
-                 << std::fixed << std::setw(4) << hkl_orig.l()
-                 << std::fixed << std::setw(4) << hkl_rep.h()
-                 << std::fixed << std::setw(4) << hkl_rep.k()
-                 << std::fixed << std::setw(4) << hkl_rep.l()
-                 << " " << std::setprecision(1);
+            file << std::fixed << std::setw(4) << hkl_orig.h() << std::fixed << std::setw(4)
+                 << hkl_orig.k() << std::fixed << std::setw(4) << hkl_orig.l() << std::fixed
+                 << std::setw(4) << hkl_rep.h() << std::fixed << std::setw(4) << hkl_rep.k()
+                 << std::fixed << std::setw(4) << hkl_rep.l() << " " << std::setprecision(1);
 
             if (abs(intensity) > 100000 - 1) {
                 file << std::fixed << std::setw(7) << std::setprecision(1) << std::scientific

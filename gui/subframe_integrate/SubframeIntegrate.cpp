@@ -115,7 +115,8 @@ void SubframeIntegrate::setInputUp()
     _data_combo = f.addDataCombo("Data set");
     _peak_combo = f.addPeakCombo(ComboType::PeakCollection, "Peaks to integrate");
 
-    connect(_peak_combo, &QComboBox::currentTextChanged, this, &SubframeIntegrate::toggleUnsafeWidgets);
+    connect(
+        _peak_combo, &QComboBox::currentTextChanged, this, &SubframeIntegrate::toggleUnsafeWidgets);
 
     _left_layout->addWidget(input_box);
 }
@@ -130,8 +131,10 @@ void SubframeIntegrate::setFigureUp()
     connect(
         _detector_widget->scene(), &DetectorScene::signalSelectedPeakItemChanged, this,
         &SubframeIntegrate::changeSelected);
-    connect(_peak_combo, &QComboBox::currentTextChanged, this, &SubframeIntegrate::refreshPeakTable);
-    connect(_data_combo, &QComboBox::currentTextChanged, this, &SubframeIntegrate::refreshPeakTable);
+    connect(
+        _peak_combo, &QComboBox::currentTextChanged, this, &SubframeIntegrate::refreshPeakTable);
+    connect(
+        _data_combo, &QComboBox::currentTextChanged, this, &SubframeIntegrate::refreshPeakTable);
 
     _right_element->addWidget(figure_group);
 }
