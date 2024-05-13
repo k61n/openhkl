@@ -22,8 +22,10 @@
 #include "core/instrument/InstrumentState.h"
 #include "core/instrument/InterpolatedState.h" // interpolate
 #include "core/peak/Peak3D.h"
+#include "core/shape/PeakCollection.h"
 #include "core/shape/PeakFilter.h"
 #include "tables/crystal/MillerIndex.h"
+#include "tables/crystal/UnitCell.h"
 
 #include <iomanip>
 #include <string>

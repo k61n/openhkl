@@ -12,13 +12,14 @@
 //
 //  ***********************************************************************************************
 
-#include "core/experiment/ExperimentImporter.h"
 #include "base/geometry/Ellipsoid.h"
 #include "base/utils/Logger.h"
+#include "core/experiment/ExperimentImporter.h"
 #include "core/data/DataSet.h"
 #include "core/data/DataTypes.h"
 #include "core/data/SingleFrame.h"
 #include "core/experiment/Experiment.h"
+#include "core/instrument/Diffractometer.h"
 #include "core/loader/HDF5DataReader.h"
 #include "core/loader/IDataReader.h"
 #include "core/peak/Intensity.h"
@@ -26,11 +27,11 @@
 #include "core/raw/DataKeys.h"
 #include "core/raw/HDF5TableIO.h" // HDF5TableReader
 #include "tables/crystal/MillerIndex.h"
+#include "tables/crystal/UnitCell.h"
+
 #include <Eigen/Dense>
 
 #include <H5Cpp.h>
-#include <stdexcept>
-#include <string>
 
 namespace ohkl {
 

@@ -19,23 +19,19 @@
 #include "gui/items/PeakCollectionItem.h"
 #include "gui/models/PeakCollectionModel.h"
 
-#include <QCheckBox>
-#include <QComboBox>
-#include <QHBoxLayout>
-#include <QPushButton>
-#include <QSizePolicy>
-#include <QSplitter>
-#include <QTableWidget>
-#include <QVBoxLayout>
 #include <QWidget>
-#include <qcombobox.h>
 
 class DataComboBox;
-class DetectorScene;
 class DetectorWidget;
 class PeakItemGraphic;
 class PeakTableView;
 class PeakViewWidget;
+class QCheckBox;
+class QComboBox;
+class QPushButton;
+class QSplitter;
+class QTableWidget;
+class QVBoxLayout;
 class SafeSpinBox;
 class SafeDoubleSpinBox;
 

@@ -14,9 +14,9 @@
 
 #include "core/experiment/PeakFinder2D.h"
 
-#include "core/convolve/Convolver.h"
+#include "base/utils/ProgressHandler.h"
 #include "core/convolve/ConvolverFactory.h"
-#include "core/data/DataTypes.h"
+#include "core/data/DataSet.h"
 #include "core/peak/Peak3D.h"
 
 #include <Eigen/src/Core/Matrix.h>

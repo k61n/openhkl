@@ -14,8 +14,9 @@
 #ifndef OPENHKL_CORE_EXPERIMENT_INTEGRATOR_H
 #define OPENHKL_CORE_EXPERIMENT_INTEGRATOR_H
 
+#include "core/data/DataTypes.h"
 #include "core/integration/IIntegrator.h"
-#include "core/shape/PeakFilter.h"
+
 #include <map>
 #include <string>
 
@@ -25,14 +26,8 @@ using IntegratorMap = std::map<IntegratorType, std::unique_ptr<ohkl::IIntegrator
 
 class PeakCollection;
 class PeakFinder;
-class GaussianIntegrator;
-class ISigmaIntegrator;
-class PixelSumIntegrator;
-class Profile1DIntegrator;
-class Profile3DIntegrator;
-class ShapeIntegrator;
 class DataHandler;
-struct PredictionParameters;
+struct ShapeModelParameters;
 
 /*! \addtogroup python_api
  *  @{*/

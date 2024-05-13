@@ -15,13 +15,13 @@
 #ifndef OPENHKL_CORE_INTEGRATION_IINTEGRATOR_H
 #define OPENHKL_CORE_INTEGRATION_IINTEGRATOR_H
 
-#include "base/utils/ProgressHandler.h"
+#include "core/data/DataTypes.h"
 #include "core/data/ImageGradient.h"
 #include "core/peak/IntegrationRegion.h"
+#include "core/peak/Intensity.h"
 
 namespace ohkl {
 
-class IntegrationRegion;
 enum class Level;
 
 enum class IntegratorType { PixelSum = 0, Gaussian, ISigma, Profile1D, Profile3D, Count };

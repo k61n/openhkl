@@ -13,7 +13,9 @@
 //  ***********************************************************************************************
 
 #include "gui/models/ExperimentModel.h"
+
 #include "core/experiment/Experiment.h"
+#include "core/instrument/Diffractometer.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
 #include <QColor>

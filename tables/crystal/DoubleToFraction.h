@@ -17,7 +17,7 @@
 
 namespace ohkl {
 
-// Converts a number into nominator and denominator.
+// Converts a number into numerator and denominator.
 void doubleToFraction(double number, int nmax, long& nom, long& dnom);
 
 } // namespace ohkl

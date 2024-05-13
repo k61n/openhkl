@@ -17,11 +17,13 @@
 
 #include "core/detector/DetectorEvent.h"
 #include "core/instrument/InterpolatedState.h"
-#include "core/peak/Peak3D.h"
 
 #include <Eigen/Core>
 
 namespace ohkl {
+
+class Ellipsoid;
+class Peak3D;
 
 //! The per-peak coordinate system described by Kabsch (1988, 2010).
 

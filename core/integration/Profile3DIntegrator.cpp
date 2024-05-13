@@ -13,8 +13,10 @@
 //  ***********************************************************************************************
 
 #include "core/integration/Profile3DIntegrator.h"
+
 #include "core/data/DataSet.h"
 #include "core/peak/Peak3D.h"
+#include "core/shape/ShapeModel.h"
 
 namespace ohkl {
 

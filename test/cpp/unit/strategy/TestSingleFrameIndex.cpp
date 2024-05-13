@@ -21,6 +21,7 @@
 #include "core/experiment/Experiment.h"
 #include "core/experiment/PeakFinder2D.h"
 #include "core/instrument/Diffractometer.h"
+#include "core/algo/AutoIndexer.h"
 #include "core/instrument/InstrumentState.h"
 #include "core/loader/RawDataReader.h"
 #include "core/peak/Peak3D.h"

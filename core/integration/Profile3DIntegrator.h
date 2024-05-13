@@ -16,9 +16,10 @@
 #define OHKL_CORE_INTEGRATION_PROFILE3DINTEGRATOR_H
 
 #include "core/integration/IIntegrator.h"
-#include "core/shape/ShapeModel.h"
 
 namespace ohkl {
+
+class ShapeModel;
 
 /*! \addtogroup python_api
  *  @{*/

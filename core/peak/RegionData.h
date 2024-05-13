@@ -23,7 +23,6 @@
 namespace ohkl {
 
 class IntegrationRegion;
-class Peak3D;
 class ShapeModel;
 
 //! A small container class for visualising individual peaks mainly via Python interface

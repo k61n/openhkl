@@ -16,14 +16,13 @@
 #define OHKL_CORE_STATISTICS_MERGEDPEAKCOLLECTION_H
 
 #include "core/data/DataTypes.h"
-#include "core/shape/PeakCollection.h"
 #include "core/statistics/MergedPeak.h"
-#include "tables/crystal/SpaceGroup.h"
-#include "tables/crystal/UnitCell.h"
 
 #include <set>
 
 namespace ohkl {
+
+class PeakCollection;
 
 //! A set of `MergedPeak`s.
 

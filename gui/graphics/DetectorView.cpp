@@ -16,7 +16,9 @@
 
 #include "core/data/DataSet.h"
 #include "core/instrument/Diffractometer.h"
+#include "core/detector/Detector.h"
 #include "gui/graphics/DetectorScene.h"
+
 #include <QApplication>
 #include <QClipboard>
 #include <QKeyEvent>

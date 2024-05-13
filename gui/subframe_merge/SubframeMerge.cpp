@@ -14,19 +14,15 @@
 
 #include "gui/subframe_merge/SubframeMerge.h"
 
+#include "core/algo/Refiner.h"
 #include "core/data/DataSet.h"
-#include "core/experiment/DataQuality.h"
 #include "core/experiment/Experiment.h"
-#include "core/peak/Peak3D.h"
 #include "core/shape/PeakCollection.h"
-#include "core/statistics/CC.h"
 #include "core/statistics/MergedPeak.h"
 #include "core/statistics/MergedPeakCollection.h"
-#include "core/statistics/PeakExporter.h"
 #include "core/statistics/PeakMerger.h"
-#include "core/statistics/RFactor.h"
-#include "core/statistics/ResolutionShell.h"
 #include "gui/MainWin.h" // gGui
+#include "gui/dialogs/PeakExportDialog.h"
 #include "gui/graphics/SXPlot.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
@@ -34,21 +30,20 @@
 #include "gui/utility/SideBar.h"
 #include "tables/crystal/UnitCell.h"
 
-#include "core/experiment/MtzExporter.h"
-
-#include <QDialogButtonBox>
 #include <QFileDialog>
-#include <QFormLayout>
 #include <QHBoxLayout>
 #include <QLabel>
+#include <QCheckBox>
+#include <QComboBox>
+#include <QDoubleSpinBox>
+#include <QPushButton>
+#include <QSpinBox>
+#include <QTabWidget>
+#include <QTableView>
 #include <QSettings>
 #include <QStandardItemModel>
 #include <QVBoxLayout>
 
-#include <fstream>
-#include <iomanip>
-
-#include "gui/dialogs/PeakExportDialog.h"
 
 SubframeMerge::SubframeMerge()
 {

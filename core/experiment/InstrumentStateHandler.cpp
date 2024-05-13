@@ -17,7 +17,6 @@
 #include "base/utils/Logger.h"
 #include "core/data/DataSet.h"
 #include "core/data/DataTypes.h"
-#include "core/instrument/InstrumentState.h"
 #include "core/instrument/InstrumentStateSet.h"
 
 namespace ohkl {

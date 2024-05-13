@@ -15,23 +15,16 @@
 #ifndef MTZ_EXPORTER_H
 #define MTZ_EXPORTER_H
 
-#include "base/utils/LogLevel.h"
-#include "base/utils/Logger.h"
-#include "core/data/DataSet.h"
-#include "tables/crystal/UnitCell.h"
+#include "core/data/DataTypes.h"
 
 #include "3rdparty/ccp4/cmtzlib.h"
 #include "3rdparty/ccp4/mtzdata.h"
 
-#include <string.h>
 #include <string>
-#include <vector>
 
 namespace ohkl {
 
 class MergedPeakCollection;
-class PeakCollection;
-class PeakMerger;
 
 class MtzExporter {
  public:

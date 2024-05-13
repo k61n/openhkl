@@ -25,7 +25,6 @@
 #include "core/peak/Qs2Events.h"
 #include "core/shape/PeakFilter.h"
 #include "tables/crystal/MillerIndex.h"
-#include "tables/crystal/UnitCell.h"
 
 
 namespace ohkl {

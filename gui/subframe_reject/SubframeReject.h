@@ -15,39 +15,32 @@
 #ifndef OHKL_GUI_SUBFRAME_REJECT_SUBFRAMEREJECT_H
 #define OHKL_GUI_SUBFRAME_REJECT_SUBFRAMEREJECT_H
 
-#include "core/data/DataSet.h"
-#include "core/shape/PeakCollection.h"
 #include "core/statistics/PeakStatistics.h"
 #include "gui/items/PeakCollectionItem.h"
 #include "gui/models/PeakCollectionModel.h"
 
 #include <gsl/gsl_histogram.h>
 
-#include <QCheckBox>
-#include <QComboBox>
-#include <QGroupBox>
-#include <QHBoxLayout>
-#include <QPushButton>
-#include <QRadioButton>
-#include <QRandomGenerator>
-#include <QSizePolicy>
-#include <QSplitter>
-#include <QTableWidget>
-#include <QVBoxLayout>
 #include <QWidget>
-#include <qobjectdefs.h>
 
 class PeakComboBox;
 class PlotPanel;
-class FoundPeakComboBox;
 class DataComboBox;
 class DetectorWidget;
 class PeakItemGraphic;
 class PeakTableView;
 class PeakViewWidget;
-class Spoiler;
+class QCheckBox;
+class QComboBox;
+class QPushButton;
+class QRadioButton;
+class QSplitter;
+class QVBoxLayout;
 class SafeSpinBox;
 class SafeDoubleSpinBox;
+namespace ohkl {
+class PeakCollection;
+}
 
 //! Frame containing interface to integrate peaks
 class SubframeReject : public QWidget {

@@ -15,30 +15,26 @@
 #ifndef OHKL_GUI_SUBFRAME_FILTER_SUBFRAMEFILTER_H
 #define OHKL_GUI_SUBFRAME_FILTER_SUBFRAMEFILTER_H
 
+#include "core/shape/PeakCollection.h"
 #include "gui/items/PeakCollectionItem.h"
 #include "gui/models/PeakCollectionModel.h"
-#include "gui/utility/CellComboBox.h"
-#include "gui/utility/ColorButton.h"
-#include "gui/views/PeakTableView.h"
 
-#include <QCheckBox>
-#include <QComboBox>
-#include <QGroupBox>
-#include <QHBoxLayout>
-#include <QPushButton>
-#include <QSizePolicy>
-#include <QSplitter>
-#include <QTableWidget>
-#include <QVBoxLayout>
 #include <QWidget>
 
+class CellComboBox;
 class DataComboBox;
 class DetectorWidget;
 class PeakComboBox;
 class PeakItemGraphic;
+class PeakTableView;
 class PeakViewWidget;
+class QComboBox;
+class QCheckBox;
+class QHBoxLayout;
+class QPushButton;
 class QRadioButton;
-class SafeSpinBox;
+class QSplitter;
+class QVBoxLayout;
 class SafeDoubleSpinBox;
 class SpoilerCheck;
 

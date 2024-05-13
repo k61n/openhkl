@@ -12,16 +12,14 @@
 //
 //  ***********************************************************************************************
 
-#include "core/data/DataSet.h"
 #include "test/cpp/catch.hpp"
-#include "core/experiment/Experiment.h"
-#include "core/instrument/Diffractometer.h"
 
+#include "core/data/DataSet.h"
+#include "core/shape/PeakCollection.h"
+#include "core/experiment/Experiment.h"
+#include "tables/crystal/UnitCell.h"
 
 #include <Eigen/Dense>
-#include <iostream>
-#include <string>
-#include <vector>
 
 TEST_CASE("test/data/TestPeakFinder.cpp", "")
 {

@@ -15,11 +15,9 @@
 
 #include "gui/subframe_integrate/SubframeIntegrate.h"
 
-#include "core/data/ImageGradient.h"
 #include "core/experiment/Experiment.h"
-#include "core/integration/IIntegrator.h"
-#include "core/peak/IntegrationRegion.h"
-#include "core/peak/Peak3D.h"
+#include "core/experiment/Integrator.h"
+#include "core/shape/PeakCollection.h"
 #include "core/shape/ShapeModel.h"
 #include "gui/MainWin.h" // gGui
 #include "gui/frames/ProgressView.h"
@@ -39,14 +37,17 @@
 #include "gui/views/PeakTableView.h"
 #include "gui/widgets/DetectorWidget.h"
 
-#include <QFileInfo>
+#include <QCheckBox>
+#include <QComboBox>
 #include <QGridLayout>
 #include <QGroupBox>
-#include <QHeaderView>
 #include <QLabel>
 #include <QMessageBox>
+#include <QPushButton>
 #include <QScrollBar>
 #include <QSpacerItem>
+#include <QSplitter>
+#include <QVBoxLayout>
 
 SubframeIntegrate::SubframeIntegrate() : QWidget()
 {

@@ -19,9 +19,11 @@
 #include "core/data/DataTypes.h"
 #include "core/detector/DetectorEvent.h"
 #include "core/experiment/Experiment.h"
+#include "core/experiment/Integrator.h"
 #include "core/peak/IntegrationRegion.h"
+#include "core/peak/Peak3D.h"
 #include "core/peak/RegionData.h"
-#include "core/shape/Profile3D.h"
+#include "core/shape/PeakCollection.h"
 #include "core/shape/ShapeModel.h"
 #include "gui/MainWin.h" // gGui
 #include "gui/dialogs/ListNameDialog.h"
@@ -42,16 +44,16 @@
 #include "gui/views/PeakTableView.h"
 #include "gui/widgets/DetectorWidget.h"
 
-#include <QFileInfo>
+#include <QCheckBox>
+#include <QComboBox>
 #include <QGraphicsView>
 #include <QGridLayout>
 #include <QGroupBox>
-#include <QHeaderView>
 #include <QLabel>
 #include <QMessageBox>
-#include <QScrollBar>
-#include <QSpacerItem>
-#include <cmath>
+#include <QPushButton>
+#include <QSplitter>
+#include <QVBoxLayout>
 
 SubframeShapes::SubframeShapes()
     : QWidget()

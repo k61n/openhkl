@@ -14,12 +14,8 @@
 #ifndef OHKL_GUI_GRAPHICS_DATASETGRAPHICS_H
 #define OHKL_GUI_GRAPHICS_DATASETGRAPHICS_H
 
-#include "core/convolve/Convolver.h"
-#include "core/data/DataSet.h"
 #include "core/data/DataTypes.h"
 #include "core/detector/DetectorEvent.h"
-#include "core/instrument/InstrumentState.h"
-#include "gui/graphics/DetectorSceneParams.h"
 #include "gui/models/ColorMap.h"
 #include "tables/crystal/UnitCell.h"
 
@@ -32,6 +28,12 @@
 // function and optimize cache hit.
 typedef Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> RowMatrix;
 
+namespace ohkl {
+class Convolver;
+class InstrumentState;
+}
+
+class DetectorSceneParams;
 class MaskItem;
 // Make it easier to remove direct beam
 class DirectBeamGraphic : public QGraphicsEllipseItem { };

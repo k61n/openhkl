@@ -12,16 +12,21 @@
 //
 //  ***********************************************************************************************
 
-#include "core/loader/IDataReader.h"
 #include "test/cpp/catch.hpp"
 
 #include <Eigen/Dense>
 #include <iostream>
 
-#include "core/experiment/Experiment.h"
-#include "core/raw/DataKeys.h"
+#include "base/utils/ProgressHandler.h"
+#include "core/algo/AutoIndexer.h"
 #include "core/data/DataSet.h"
+#include "core/experiment/Experiment.h"
+#include "core/loader/IDataReader.h"
+#include "core/peak/Peak3D.h"
 #include "core/peak/Qs2Events.h"
+#include "core/raw/DataKeys.h"
+#include "core/shape/PeakCollection.h"
+#include "tables/crystal/UnitCell.h"
 
 TEST_CASE("test/crystal/TestFFTIndexing.cpp", "")
 {

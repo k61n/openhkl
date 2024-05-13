@@ -14,7 +14,7 @@
 
 #include "gui/graphics_items/EllipseMaskItem.h"
 
-#include "base/mask/EllipseMask.h"
+#include "base/geometry/AABB.h"
 #include "core/data/DataSet.h"
 
 #include <QGraphicsSceneWheelEvent>

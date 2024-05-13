@@ -13,6 +13,9 @@
 //  ***********************************************************************************************
 
 #include "core/instrument/InterpolatedState.h"
+
+#include "base/geometry/DirectVector.h"
+#include "base/geometry/ReciprocalVector.h"
 #include "core/detector/Detector.h"
 #include "core/gonio/Component.h"
 #include "core/instrument/Diffractometer.h"

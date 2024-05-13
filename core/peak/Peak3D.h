@@ -16,11 +16,10 @@
 #define OHKL_CORE_PEAK_PEAK3D_H
 
 #include "base/geometry/Ellipsoid.h"
-#include "base/geometry/ReciprocalVector.h"
 #include "core/data/DataTypes.h"
 #include "core/instrument/InstrumentState.h"
 #include "core/peak/Intensity.h"
-#include "tables/crystal/UnitCell.h"
+#include "tables/crystal/MillerIndex.h"
 
 #include <map>
 
@@ -28,8 +27,8 @@ namespace ohkl {
 
 enum class RegionType;
 enum class IntegratorType;
-class IIntegrator;
-class MillerIndex;
+class ReciprocalVector;
+class UnitCell;
 
 /*! \addtogroup python_api
  *  @{*/

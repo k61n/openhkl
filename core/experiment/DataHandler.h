@@ -16,7 +16,6 @@
 #define OHKL_CORE_EXPERIMENT_DATAHANDLER_H
 
 #include "core/data/DataTypes.h"
-#include "core/experiment/InstrumentStateHandler.h"
 
 #include <map>
 #include <stdexcept>
@@ -26,7 +25,6 @@ namespace ohkl {
 
 using DataMap = std::map<std::string, sptrDataSet>;
 
-class DataSet;
 class Diffractometer;
 class InstrumentStateHandler;
 

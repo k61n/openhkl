@@ -15,11 +15,13 @@
 #ifndef OHKL_GUI_SUBFRAME_EXPERIMENT_PROPERTIES_PEAKPROPERTIES_H
 #define OHKL_GUI_SUBFRAME_EXPERIMENT_PROPERTIES_PEAKPROPERTIES_H
 
-#include "gui/views/PeakTableView.h"
+#include <QWidget>
 
-#include <QComboBox>
-#include <QLabel>
-#include <QPushButton>
+class PeakTableView;
+class QComboBox;
+class QLabel;
+class QPushButton;
+class QSizePolicy;
 
 //! Tab of the SubframeSetup which contains the different peak collections
 class PeakProperties : public QWidget {

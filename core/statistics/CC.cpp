@@ -14,7 +14,6 @@
 
 #include "core/statistics/CC.h"
 
-#include "core/statistics/MergedPeak.h"
 #include "core/statistics/MergedPeakCollection.h"
 
 namespace ohkl {

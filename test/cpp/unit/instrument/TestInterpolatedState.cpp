@@ -17,6 +17,7 @@
 #include <Eigen/Dense>
 #include <array>
 
+#include "base/geometry/DirectVector.h"
 #include "base/geometry/ReciprocalVector.h"
 #include "base/utils/ProgressHandler.h"
 #include "core/data/DataSet.h"

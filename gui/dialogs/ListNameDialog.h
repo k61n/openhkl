@@ -15,7 +15,6 @@
 #ifndef OHKL_GUI_DIALOGS_LISTNAMEDIALOG_H
 #define OHKL_GUI_DIALOGS_LISTNAMEDIALOG_H
 
-#include "core/peak/Peak3D.h"
 #include <QDialog>
 #include <QLineEdit>
 

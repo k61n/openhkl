@@ -14,17 +14,16 @@
 #ifndef OHKL_CORE_EXPERIMENT_INSTRUMENTSTATEHANDLER_H
 #define OHKL_CORE_EXPERIMENT_INSTRUMENTSTATEHANDLER_H
 
-#include "core/instrument/InstrumentStateSet.h"
-
 #include "core/data/DataTypes.h"
 #include "core/instrument/InstrumentState.h"
-#include "core/instrument/InstrumentStateSet.h"
 
 #include <map>
 #include <memory>
 #include <string>
 
 namespace ohkl {
+
+class InstrumentStateSet;
 
 using InstrumentStateMap = std::map<sptrDataSet, std::unique_ptr<InstrumentStateSet>>;
 

@@ -14,19 +14,15 @@
 
 #include "TiffDataReader.h"
 
-#include "base/parser/EigenToVector.h"
-#include "base/parser/Parser.h"
-#include "base/utils/StringIO.h" // join
 #include "base/utils/Units.h"
 #include "core/data/DataSet.h"
 #include "core/detector/Detector.h"
-#include "core/gonio/Component.h"
+#include "core/gonio/Axis.h"
 #include "core/gonio/Gonio.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/Monochromator.h"
 #include "core/instrument/Sample.h"
 #include "core/instrument/Source.h"
-#include "core/raw/DataKeys.h"
 
 #include <opencv2/core/eigen.hpp>
 #include <opencv2/opencv.hpp>

@@ -15,14 +15,16 @@
 #ifndef OHKL_CORE_STATISTICS_PEAKMERGER_H
 #define OHKL_CORE_STATISTICS_PEAKMERGER_H
 
-#include "base/utils/Logger.h"
-#include "base/utils/ProgressHandler.h"
+#include "base/utils/LogLevel.h"
+#include "core/data/DataTypes.h"
 #include "core/experiment/DataQuality.h"
-#include "core/peak/Peak3D.h"
-#include "core/statistics/MergedPeakCollection.h"
-#include "core/statistics/ResolutionShell.h"
+#include "tables/crystal/SpaceGroup.h"
 
 namespace ohkl {
+
+class MergedPeakCollection;
+class PeakCollection;
+enum class IntegratorType;
 
 /*! \addtogroup python_api
  *  @{*/

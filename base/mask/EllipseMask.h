@@ -15,15 +15,14 @@
 #ifndef OHKL_BASE_MASK_ELLIPSEMASK_H
 #define OHKL_BASE_MASK_ELLIPSEMASK_H
 
-#include "base/geometry/AABB.h"
 #include "base/geometry/Ellipsoid.h"
 #include "base/mask/IMask.h"
-#include "base/utils/Logger.h"
 
 namespace ohkl {
 
-//! Ellipsoidal detector IMask.
+class AABB;
 
+//! Ellipsoidal detector IMask.
 class EllipseMask : public IMask {
  public:
     EllipseMask() = delete;

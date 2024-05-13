@@ -14,6 +14,7 @@
 
 #include "core/experiment/DataHandler.h"
 
+#include "base/geometry/AABB.h"
 #include "base/utils/Logger.h"
 #include "core/data/DataSet.h"
 #include "core/experiment/InstrumentStateHandler.h"

@@ -16,20 +16,19 @@
 
 #include "base/utils/Units.h"
 #include "core/data/DataSet.h"
-#include "core/data/DataTypes.h"
 #include "core/experiment/DataQuality.h"
 #include "core/experiment/MtzExporter.h"
+#include "core/peak/Intensity.h"
+#include "core/peak/Peak3D.h"
 #include "core/raw/DataKeys.h"
 #include "core/statistics/CC.h"
 #include "core/statistics/MergedPeak.h"
-#include "core/statistics/RFactor.h"
-#include "tables/crystal/MillerIndex.h"
-#include "tables/crystal/UnitCell.h"
-
-#include "core/peak/Peak3D.h"
 #include "core/statistics/MergedPeakCollection.h"
+#include "core/statistics/RFactor.h"
 #include "core/statistics/ResolutionShell.h"
+#include "tables/crystal/MillerIndex.h"
 #include "tables/crystal/SpaceGroup.h"
+#include "tables/crystal/UnitCell.h"
 
 #include <fstream>
 #include <iomanip>

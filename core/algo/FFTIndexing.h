@@ -15,9 +15,11 @@
 #ifndef OHKL_CORE_ALGO_FFTINDEXING_H
 #define OHKL_CORE_ALGO_FFTINDEXING_H
 
-#include "base/geometry/ReciprocalVector.h"
+#include <Eigen/Dense>
 
 namespace ohkl {
+
+class ReciprocalVector;
 
 namespace algo {
 

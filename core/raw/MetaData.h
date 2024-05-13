@@ -19,10 +19,7 @@
 #include "core/raw/DataKeys.h"
 
 #include <map>
-#include <memory>
 #include <set>
-#include <stdexcept>
-#include <string>
 #include <variant>
 
 namespace ohkl {
@@ -76,7 +73,6 @@ class MetaData {
 
     friend std::ostream& operator<<(std::ostream& os, const MetaData& metadata);
 };
-
 
 template <typename _type> void MetaData::add(const std::string& key, const _type& value)
 {

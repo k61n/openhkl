@@ -16,7 +16,6 @@
 #define OHKL_CORE_INSTRUMENT_INSTRUMENTSTATESET_H
 
 #include "core/data/DataTypes.h"
-#include "core/instrument/Diffractometer.h"
 #include "core/instrument/InstrumentState.h"
 
 namespace ohkl {
@@ -24,6 +23,7 @@ namespace ohkl {
 using sptrDataSet = std::shared_ptr<DataSet>;
 
 class DataSet;
+class Diffractometer;
 
 /*! \addtogroup python_api
  *  @{*/

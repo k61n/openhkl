@@ -15,11 +15,16 @@
 #ifndef OHKL_GUI_ITEMS_PEAKCOLLECTIONITEM_H
 #define OHKL_GUI_ITEMS_PEAKCOLLECTIONITEM_H
 
-#include "core/peak/Peak3D.h"
-#include "core/shape/PeakCollection.h"
 #include "gui/items/PeakItem.h"
+#include "gui/graphics_items/PeakItemGraphic.h"
 
-#include <QStandardItem>
+#include <QVariant>
+#include <memory>
+#include <string>
+
+namespace ohkl {
+class PeakCollection;
+}
 
 class PeakCollectionItem {
  public:

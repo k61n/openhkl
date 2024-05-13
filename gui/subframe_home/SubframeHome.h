@@ -15,18 +15,14 @@
 #ifndef OHKL_GUI_SUBFRAME_HOME_SUBFRAMEHOME_H
 #define OHKL_GUI_SUBFRAME_HOME_SUBFRAMEHOME_H
 
-#include "gui/models/ExperimentModel.h"
-#include "gui/subwindows/InputFilesWindow.h"
-#include "gui/subwindows/PeaklistWindow.h"
-#include "gui/views/ExperimentTableView.h"
-
 #include <memory>
 
 #include <QPair>
 #include <QWidget>
 
+class ExperimentModel;
+class ExperimentTableView;
 class InputFilesWindow;
-class InstrumentDataWindow;
 class QComboBox;
 class QHBoxLayout;
 class QListWidget;

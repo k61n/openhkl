@@ -17,8 +17,6 @@
 
 #include "gui/utility/PeakComboBox.h"
 
-#include <QComboBox>
-
 namespace ohkl {
 class PeakCollection;
 }

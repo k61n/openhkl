@@ -12,6 +12,7 @@
 //
 //  ***********************************************************************************************
 
+#include "core/convolve/Convolver.h"
 #include "core/convolve/ConvolverFactory.h"
 #include "core/convolve/AnnularConvolver.h"
 #include "core/convolve/CentralDifference.h"

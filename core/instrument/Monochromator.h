@@ -15,11 +15,11 @@
 #ifndef OHKL_CORE_INSTRUMENT_MONOCHROMATOR_H
 #define OHKL_CORE_INSTRUMENT_MONOCHROMATOR_H
 
-#include "base/geometry/ReciprocalVector.h"
-
 #include <yaml-cpp/yaml.h>
 
 namespace ohkl {
+
+class ReciprocalVector;
 
 //! Holds properties of a monochromator, used by Source.
 

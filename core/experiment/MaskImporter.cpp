@@ -13,6 +13,10 @@
 //  ***********************************************************************************************
 
 #include "MaskImporter.h"
+
+#include "base/mask/BoxMask.h"
+#include "base/mask/EllipseMask.h"
+
 #include <fstream>
 
 namespace ohkl {

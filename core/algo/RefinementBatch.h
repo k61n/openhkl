@@ -16,11 +16,12 @@
 #define OHKL_CORE_ALGO_REFINEMENTBATCH_H
 
 #include "base/fit/FitParameters.h"
+#include "core/data/DataTypes.h"
 #include "core/instrument/InstrumentState.h"
-#include "core/peak/Peak3D.h"
-#include "tables/crystal/UnitCell.h"
 
 namespace ohkl {
+
+class Peak3D;
 
 enum class ResidualType { RealSpace, QSpace, Count };
 

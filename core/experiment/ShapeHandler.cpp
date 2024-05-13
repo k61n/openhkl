@@ -18,8 +18,6 @@
 #include "core/peak/Peak3D.h"
 #include "core/shape/PeakCollection.h"
 #include "core/shape/ShapeModel.h"
-#include <memory>
-#include <stdexcept>
 
 namespace ohkl {
 

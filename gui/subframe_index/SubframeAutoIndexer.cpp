@@ -17,9 +17,11 @@
 #include "base/utils/Logger.h"
 #include "base/utils/ProgressHandler.h"
 #include "base/utils/Units.h"
+#include "core/data/DataSet.h"
 #include "core/algo/AutoIndexer.h"
 #include "core/data/DataTypes.h"
 #include "core/experiment/Experiment.h"
+#include "core/instrument/Diffractometer.h"
 #include "core/peak/Qs2Events.h"
 #include "gui/MainWin.h" // gGui
 #include "gui/connect/Sentinel.h"
@@ -28,7 +30,6 @@
 #include "gui/graphics/DetectorScene.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
-#include "gui/utility/CellComboBox.h"
 #include "gui/utility/DataComboBox.h"
 #include "gui/utility/FoundPeakComboBox.h"
 #include "gui/utility/GridFiller.h"
@@ -40,24 +41,18 @@
 #include "gui/views/UnitCellTableView.h"
 #include "gui/widgets/DetectorWidget.h"
 #include "gui/widgets/DirectBeamWidget.h"
+#include "gui/widgets/PeakViewWidget.h"
 
 #include <QBoxLayout>
 #include <QCheckBox>
-#include <QFileInfo>
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QHBoxLayout>
 #include <QHeaderView>
-#include <QLabel>
-#include <QMessageBox>
-#include <QObject>
 #include <QPushButton>
 #include <QSplitter>
 #include <QTabWidget>
 #include <QVBoxLayout>
-
-#include <stdexcept>
-
 
 SubframeAutoIndexer::SubframeAutoIndexer()
     : QWidget()

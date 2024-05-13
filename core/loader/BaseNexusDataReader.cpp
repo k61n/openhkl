@@ -19,6 +19,7 @@
 #include "base/utils/Units.h"
 #include "core/data/DataSet.h"
 #include "core/detector/Detector.h"
+#include "core/gonio/Axis.h"
 #include "core/gonio/Gonio.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/Sample.h"

@@ -19,12 +19,7 @@
 #include "gui/items/PeakCollectionItem.h"
 #include "gui/models/PeakCollectionModel.h"
 
-#include <QComboBox>
 #include <QDialog>
-#include <QHBoxLayout>
-#include <QScrollBar>
-#include <QSplitter>
-#include <QVBoxLayout>
 
 class ColorButton;
 class DetectorWidget;
@@ -33,6 +28,9 @@ class SafeSpinBox;
 class ShortTable;
 class CellComboBox;
 class PeakComboBox;
+class QComboBox;
+class QSplitter;
+class QVBoxLayout;
 
 //! Modeless dialog containing a non-contextual detector scene (open via Menu)
 class DetectorWindow : public QDialog {

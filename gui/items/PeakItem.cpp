@@ -23,6 +23,7 @@
 #include "core/raw/DataKeys.h"
 #include "core/raw/MetaData.h"
 #include "core/shape/PeakFilter.h"
+#include "gui/graphics_items/PeakItemGraphic.h"
 #include "gui/items/PeakCollectionItem.h"
 #include "tables/crystal/MillerIndex.h"
 #include "tables/crystal/UnitCell.h"

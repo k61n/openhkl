@@ -15,9 +15,11 @@
 #ifndef OHKL_CORE_CONVOLVE_CONVOLVERFACTORY_H
 #define OHKL_CORE_CONVOLVE_CONVOLVERFACTORY_H
 
-#include "core/convolve/Convolver.h"
+#include <map>
 
 namespace ohkl {
+
+class Convolver;
 
 //! Factory for the different convolvers (i.e. image filters).
 

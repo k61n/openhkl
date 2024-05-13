@@ -13,7 +13,6 @@
 //  ***********************************************************************************************
 
 #include "base/geometry/Ellipsoid.h"
-#include "base/geometry/AABB.h"
 
 #include <array>
 

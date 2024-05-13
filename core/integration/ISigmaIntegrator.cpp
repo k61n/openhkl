@@ -13,6 +13,7 @@
 //  ***********************************************************************************************
 
 #include "core/integration/ISigmaIntegrator.h"
+
 #include "base/geometry/Ellipsoid.h"
 #include "core/data/DataSet.h"
 #include "core/peak/Intensity.h"

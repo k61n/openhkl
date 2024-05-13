@@ -14,6 +14,9 @@
 
 #include "base/mask/EllipseMask.h"
 
+#include "base/geometry/AABB.h"
+#include "base/utils/Logger.h"
+
 namespace ohkl {
 
 EllipseMask::EllipseMask(const AABB& aabb, bool /*two_dim*/) : IMask(), _ellipsoid()

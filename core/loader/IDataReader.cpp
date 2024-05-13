@@ -15,14 +15,10 @@
 #include "core/loader/IDataReader.h"
 
 #include "base/utils/Logger.h"
-#include "base/utils/Path.h" // fileBasename
 #include "core/data/DataSet.h"
 #include "core/experiment/ExperimentYAML.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/raw/DataKeys.h"
-
-#include <cassert>
-#include <stdexcept>
 
 namespace ohkl {
 

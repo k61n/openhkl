@@ -15,7 +15,8 @@
 #ifndef OHKL_GUI_FRAMES_UNITCELLWIDGET_H
 #define OHKL_GUI_FRAMES_UNITCELLWIDGET_H
 
-#include "tables/crystal/UnitCell.h"
+#include "core/data/DataTypes.h"
+
 #include <QTableView>
 
 //! Tab of an indexer frame which shows the parameters of the selected unit cell

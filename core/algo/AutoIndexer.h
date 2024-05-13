@@ -15,12 +15,13 @@
 #ifndef OHKL_CORE_ALGO_AUTOINDEXER_H
 #define OHKL_CORE_ALGO_AUTOINDEXER_H
 
-#include "base/utils/ProgressHandler.h"
 #include "core/data/DataTypes.h"
-#include "core/instrument/InstrumentState.h"
-#include "core/shape/PeakCollection.h"
 
 namespace ohkl {
+class InstrumentState;
+class Peak3D;
+class PeakCollection;
+class ProgressHandler;
 
 /*! \addtogroup python_api
  *  @{*/

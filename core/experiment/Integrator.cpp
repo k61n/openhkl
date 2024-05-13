@@ -18,12 +18,12 @@
 #include "core/experiment/DataHandler.h"
 #include "core/experiment/PeakFinder.h"
 #include "core/integration/GaussianIntegrator.h"
-#include "core/integration/IIntegrator.h"
 #include "core/integration/ISigmaIntegrator.h"
 #include "core/integration/PixelSumIntegrator.h"
 #include "core/integration/Profile1DIntegrator.h"
 #include "core/integration/Profile3DIntegrator.h"
 #include "core/integration/ShapeIntegrator.h"
+#include "core/peak/Peak3D.h"
 #include "core/shape/PeakCollection.h"
 #include "core/shape/ShapeModel.h"
 

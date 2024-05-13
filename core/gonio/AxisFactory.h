@@ -16,7 +16,6 @@
 #define OHKL_CORE_GONIO_AXISFACTORY_H
 
 #include "base/utils/Factory.h"
-#include "base/utils/ISingleton.h"
 #include "core/gonio/Axis.h"
 
 namespace ohkl {

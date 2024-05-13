@@ -26,6 +26,7 @@
 #include "gui/utility/DataComboBox.h"
 #include "gui/widgets/PeakViewWidget.h"
 
+#include <QApplication>
 #include <QButtonGroup>
 #include <QClipboard>
 #include <QComboBox>
@@ -35,7 +36,7 @@
 #include <QScrollBar>
 #include <QSlider>
 #include <QSpinBox>
-#include <QVBoxLayout>
+#include <QWidget>
 
 QList<DetectorWidget*> DetectorWidget::_detector_widgets = QList<DetectorWidget*>();
 

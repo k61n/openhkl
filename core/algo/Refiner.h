@@ -16,14 +16,16 @@
 #define OHKL_CORE_ALGO_REFINER_H
 
 #include "core/algo/RefinementBatch.h"
-#include "core/experiment/UnitCellHandler.h"
 #include "core/integration/IIntegrator.h"
 #include "tables/crystal/UnitCell.h"
+
 #include <vector>
 
 namespace ohkl {
 
 class ProgressHandler;
+class UnitCellHandler;
+
 using sptrProgressHandler = std::shared_ptr<ProgressHandler>;
 enum class Level;
 

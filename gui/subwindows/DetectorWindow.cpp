@@ -14,12 +14,11 @@
 
 #include "gui/subwindows/DetectorWindow.h"
 
+#include "core/data/DataSet.h"
 #include "core/experiment/Experiment.h"
 #include "core/shape/PeakCollection.h"
-#include "gui/graphics/DetectorScene.cpp"
-#include "gui/graphics/DetectorView.cpp"
-#include "gui/items/PeakCollectionItem.h"
-#include "gui/models/PeakCollectionModel.h"
+#include "gui/MainWin.h"
+#include "gui/graphics/DetectorScene.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
 #include "gui/utility/CellComboBox.h"
@@ -35,13 +34,14 @@
 #include "gui/widgets/PeakViewWidget.h"
 
 #include <QCheckBox>
+#include <QComboBox>
 #include <QFileDialog>
-#include <QFileInfo>
-#include <QGridLayout>
 #include <QGroupBox>
 #include <QLabel>
 #include <QMessageBox>
 #include <QSettings>
+#include <QSplitter>
+#include <QVBoxLayout>
 
 DetectorWindow::DetectorWindow(QWidget* parent)
     : QDialog(parent)

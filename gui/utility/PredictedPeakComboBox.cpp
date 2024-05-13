@@ -12,10 +12,9 @@
 //
 //  ***********************************************************************************************
 
-#include "gui/utility/PeakComboBox.h"
+#include "gui/utility/PredictedPeakComboBox.h"
 
 #include "core/shape/PeakCollection.h"
-#include "gui/utility/PredictedPeakComboBox.h"
 
 #include <QSignalBlocker>
 

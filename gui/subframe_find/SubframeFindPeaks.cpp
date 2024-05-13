@@ -18,6 +18,7 @@
 #include "core/data/DataSet.h"
 #include "core/data/ImageGradient.h"
 #include "core/experiment/Experiment.h"
+#include "core/experiment/Integrator.h"
 #include "core/experiment/PeakFinder.h"
 #include "core/integration/IIntegrator.h"
 #include "core/peak/IntegrationRegion.h"
@@ -42,16 +43,20 @@
 #include "gui/widgets/DetectorWidget.h"
 #include "gui/widgets/PeakViewWidget.h"
 
-#include <QFileInfo>
+#include <QCheckBox>
+#include <QComboBox>
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QHeaderView>
-#include <QItemDelegate>
 #include <QLabel>
 #include <QMessageBox>
+#include <QPushButton>
 #include <QScrollBar>
 #include <QSpacerItem>
+#include <QSplitter>
+#include <QTableWidget>
 #include <QTableWidgetItem>
+#include <QVBoxLayout>
 
 SubframeFindPeaks::SubframeFindPeaks()
     : QWidget()

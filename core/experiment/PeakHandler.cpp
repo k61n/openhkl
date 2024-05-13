@@ -13,11 +13,10 @@
 //  ***********************************************************************************************
 
 #include "core/experiment/PeakHandler.h"
+
 #include "base/utils/Logger.h"
 #include "core/peak/Peak3D.h"
 #include "core/shape/PeakCollection.h"
-
-#include <stdexcept>
 
 namespace ohkl {
 

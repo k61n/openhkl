@@ -15,16 +15,20 @@
 #include "core/experiment/PeakFinder.h"
 
 #include "base/geometry/AABB.h"
+#include "base/mask/IMask.h"
 #include "base/utils/Logger.h"
+#include "base/utils/ProgressHandler.h"
 #include "core/convolve/ConvolverFactory.h"
 #include "core/data/DataSet.h"
 #include "core/experiment/Experiment.h"
+#include "core/detector/Detector.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/Sample.h"
 #include "core/integration/Blob3D.h"
 #include "core/loader/IDataReader.h"
 #include "core/peak/Peak3D.h"
 #include "core/shape/Octree.h"
+
 #include <Eigen/Dense>
 #include <cstdio>
 #include <utility>

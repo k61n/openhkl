@@ -14,20 +14,23 @@
 
 #include "gui/graphics/PeakCollectionGraphics.h"
 
-#include "core/integration/IIntegrator.h"
+#include "core/data/DataSet.h"
 #include "core/loader/XFileHandler.h"
 #include "core/peak/IntegrationRegion.h"
 #include "core/peak/Peak3D.h"
 #include "core/shape/KeyPointCollection.h"
+#include "gui/graphics/DetectorSceneParams.h"
 #include "gui/graphics_items/PeakCenterGraphic.h"
 #include "gui/graphics_items/PeakItemGraphic.h"
 #include "gui/items/PeakCollectionItem.h"
 #include "gui/items/PeakItem.h"
 #include "gui/utility/ColorButton.h"
+#include "gui/widgets/PeakViewWidget.h"
 
 #include <QCheckBox>
 #include <QComboBox>
 #include <QDoubleSpinBox>
+#include <QImage>
 #include <QVector>
 
 #include <mutex>

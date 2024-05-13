@@ -14,6 +14,7 @@
 
 #include "gui/subwindows/InstrumentStateWindow.h"
 
+#include "core/data/DataSet.h"
 #include "core/experiment/Experiment.h"
 #include "gui/MainWin.h" // gGui
 #include "gui/connect/Sentinel.h"
@@ -24,7 +25,6 @@
 
 #include <QGridLayout>
 #include <QLineEdit>
-#include <QSignalBlocker>
 #include <QSizePolicy>
 #include <QSpacerItem>
 #include <QSpinBox>

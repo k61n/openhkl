@@ -19,9 +19,7 @@
 #include "core/detector/Detector.h"
 #include "core/detector/DetectorFactory.h"
 #include "core/gonio/Gonio.h"
-#include "core/instrument/Sample.h"
-#include "core/instrument/Source.h"
-#include "core/raw/DataKeys.h"
+#include "core/instrument/InstrumentState.h"
 
 namespace ohkl {
 

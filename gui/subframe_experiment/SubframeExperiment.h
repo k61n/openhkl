@@ -15,16 +15,13 @@
 #ifndef OHKL_GUI_SUBFRAME_EXPERIMENT_SUBFRAMEEXPERIMENT_H
 #define OHKL_GUI_SUBFRAME_EXPERIMENT_SUBFRAMEEXPERIMENT_H
 
-#include "core/convolve/Convolver.h"
 #include "core/data/DataTypes.h"
 #include "core/detector/DetectorEvent.h"
 #include "core/shape/PeakCollection.h"
 #include "gui/items/PeakCollectionItem.h"
 #include "gui/models/PeakCollectionModel.h"
-#include "gui/utility/CellComboBox.h"
-#include "gui/utility/SafeSpinBox.h"
-#include "tables/crystal/UnitCell.h"
 
+#include <QSpinBox>
 #include <QWidget>
 
 class CellComboBox;
@@ -34,15 +31,15 @@ class DirectBeamWidget;
 class PeakViewWidget;
 class PlotPanel;
 class PropertyPanel;
-class QGraphicsPixmapItem;
 class QPushButton;
 class QCheckBox;
 class QComboBox;
-class QSlider;
 class QTabWidget;
 class QTableWidget;
 class QVBoxLayout;
 class QHBoxLayout;
+class SafeDoubleSpinBox;
+class SafeSpinBox;
 class Spoiler;
 class SpoilerCheck;
 class UnitCellTableView;

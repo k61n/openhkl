@@ -15,19 +15,16 @@
 #ifndef OHKL_CORE_STATISTICS_PEAKEXPORTER_H
 #define OHKL_CORE_STATISTICS_PEAKEXPORTER_H
 
-#include "core/data/DataSet.h"
-#include "tables/crystal/UnitCell.h"
+#include "core/data/DataTypes.h"
 
+#include <map>
 #include <string>
 
 namespace ohkl {
 
+class Intensity;
 class Peak3D;
 class MergedPeakCollection;
-class MergedPeak;
-class ResolutionShell;
-class SpaceGroup;
-struct DataResolution;
 
 enum class ExportFormat { Mtz = 0, Phenix, ShelX, FullProf, Count };
 

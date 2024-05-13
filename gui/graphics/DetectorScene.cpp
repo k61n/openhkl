@@ -17,18 +17,20 @@
 #include "base/geometry/AABB.h"
 #include "base/mask/BoxMask.h"
 #include "base/mask/EllipseMask.h"
-#include "core/detector/DetectorEvent.h"
+#include "core/data/DataSet.h"
 #include "core/experiment/Experiment.h"
 #include "core/loader/XFileHandler.h"
 #include "core/peak/Peak3D.h"
 #include "core/shape/KeyPointCollection.h"
+#include "core/shape/PeakCollection.h"
+#include "core/statistics/PeakMerger.h"
 #include "gui/MainWin.h"
-#include "gui/graphics/PeakCollectionGraphics.h"
 #include "gui/graphics_items/BoxMaskItem.h"
 #include "gui/graphics_items/CircleGraphic.h"
 #include "gui/graphics_items/CrosshairGraphic.h"
 #include "gui/graphics_items/EllipseMaskItem.h"
 #include "gui/graphics_items/MaskItem.h"
+#include "gui/graphics_items/PeakCenterGraphic.h"
 #include "gui/graphics_items/PeakItemGraphic.h"
 #include "gui/graphics_items/PlottableItem.h"
 #include "gui/graphics_items/SXGraphicsItem.h"
@@ -46,6 +48,7 @@
 
 #include <QCheckBox>
 #include <QGraphicsItem>
+#include <QGraphicsPixmapItem>
 #include <QGraphicsSceneMouseEvent>
 #include <QKeyEvent>
 #include <QMessageBox>

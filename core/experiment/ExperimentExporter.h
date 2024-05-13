@@ -22,7 +22,6 @@
 namespace ohkl {
 
 class DataSet;
-class Diffractometer;
 class InstrumentStateSet;
 class PeakCollection;
 class UnitCell;

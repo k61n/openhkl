@@ -17,28 +17,19 @@
 
 #include "core/data/DataTypes.h"
 #include "core/experiment/DataQuality.h"
-#include "core/statistics/MergedPeakCollection.h"
 #include "core/statistics/PeakExporter.h"
-#include "tables/crystal/UnitCell.h"
 
-#include <QCheckBox>
-#include <QComboBox>
-#include <QDoubleSpinBox>
-#include <QHBoxLayout>
-#include <QPushButton>
-#include <QSizePolicy>
-#include <QSpinBox>
-#include <QSplitter>
-#include <QTabWidget>
-#include <QTableView>
-#include <QTableWidget>
-#include <QVBoxLayout>
 #include <QWidget>
 
 class IntegratedPeakComboBox;
-class PeakComboBox;
-class MergedPeakCollection;
+class QCheckBox;
+class QComboBox;
+class QDoubleSpinBox;
+class QPushButton;
+class QSpinBox;
 class QStandardItemModel;
+class QTableView;
+class QTabWidget;
 class SXPlot;
 
 //! Frame containing interface to merge peak collections and compute quality staticstics

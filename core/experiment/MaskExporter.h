@@ -15,15 +15,11 @@
 #ifndef OHKL_CORE_MASK_EXPORTER_H
 #define OHKL_CORE_MASK_EXPORTER_H
 
-#include "base/mask/BoxMask.h"
-#include "base/mask/EllipseMask.h"
 #include "base/mask/IMask.h"
 #include "base/utils/YAMLType.h"
 
-#include <set>
-#include <string>
-
 namespace ohkl {
+
 class MaskExporter {
  public:
     //! constructs the yaml nodes from given mask data

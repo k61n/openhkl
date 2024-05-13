@@ -21,7 +21,6 @@
 #include "core/algo/RefinementBatch.h"
 #include "core/algo/Refiner.h"
 #include "core/data/DataSet.h"
-#include "core/instrument/InstrumentState.h"
 #include "core/instrument/InterpolatedState.h"
 #include "core/peak/Peak3D.h"
 #include "core/peak/Qs2Events.h"

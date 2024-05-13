@@ -13,6 +13,8 @@
 //  ***********************************************************************************************
 
 #include "core/data/DataSet.h"
+#include "base/geometry/AABB.h"
+#include "base/geometry/DirectVector.h"
 #include "base/mask/BoxMask.h"
 #include "base/mask/EllipseMask.h"
 #include "base/parser/BloscFilter.h"
@@ -34,14 +36,11 @@
 #include "core/instrument/Sample.h"
 #include "core/instrument/Source.h"
 #include "core/loader/HDF5DataReader.h"
-#include "core/loader/IDataReader.h"
 #include "core/loader/NexusDataReader.h"
 #include "core/loader/PlainTextReader.h"
 #include "core/loader/RawDataReader.h"
 #include "core/loader/TiffDataReader.h"
 #include "core/peak/Peak3D.h"
-#include "core/raw/DataKeys.h"
-
 
 #include <Eigen/src/Core/Matrix.h>
 #include <H5Cpp.h>

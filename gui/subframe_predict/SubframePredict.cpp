@@ -14,19 +14,16 @@
 
 #include "gui/subframe_predict/SubframePredict.h"
 
-#include "base/geometry/ReciprocalVector.h"
 #include "base/utils/Logger.h"
 #include "core/data/DataSet.h"
-#include "core/data/DataTypes.h"
-#include "core/detector/DetectorEvent.h"
 #include "core/experiment/Experiment.h"
+#include "core/instrument/Diffractometer.h"
 #include "core/instrument/InstrumentState.h"
 #include "core/integration/IIntegrator.h"
 #include "core/integration/ShapeIntegrator.h"
 #include "core/peak/Peak3D.h"
 #include "core/peak/Qs2Events.h"
 #include "core/raw/DataKeys.h"
-#include "core/shape/PeakCollection.h"
 #include "core/shape/Predictor.h"
 #include "core/shape/ShapeModel.h"
 #include "gui/MainWin.h" // gGui
@@ -38,7 +35,6 @@
 #include "gui/models/Meta.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
-#include "gui/subframe_refiner/SubframeRefiner.h"
 #include "gui/utility/CellComboBox.h"
 #include "gui/utility/ColorButton.h"
 #include "gui/utility/DataComboBox.h"
@@ -56,15 +52,14 @@
 #include "gui/widgets/PeakViewWidget.h"
 #include "tables/crystal/UnitCell.h"
 
-#include <QFileInfo>
 #include <QGridLayout>
 #include <QGroupBox>
-#include <QHeaderView>
-#include <QItemDelegate>
+#include <QCheckBox>
+#include <QComboBox>
+#include <QPushButton>
+#include <QSplitter>
+#include <QVBoxLayout>
 #include <QMessageBox>
-#include <QScrollBar>
-#include <QSpacerItem>
-#include <QTableWidgetItem>
 
 SubframePredict::SubframePredict()
     : QWidget()

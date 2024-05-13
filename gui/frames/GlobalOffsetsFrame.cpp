@@ -16,15 +16,25 @@
 #include "base/utils/Units.h"
 #include "core/algo/GonioFit.h"
 #include "core/data/DataSet.h"
+#include "core/detector/Detector.h"
 #include "core/experiment/Experiment.h"
+#include "core/instrument/Diffractometer.h"
+#include "core/gonio/Axis.h"
+#include "gui/graphics/SXPlot.h"
 #include "gui/models/Meta.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
+
 #include <QFileInfo>
 #include <QFormLayout>
 #include <QGroupBox>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
+#include <QDialogButtonBox>
+#include <QDoubleSpinBox>
+#include <QListWidget>
+#include <QSpinBox>
+#include <QTableWidget>
 
 GlobalOffsetsFrame::GlobalOffsetsFrame(offsetMode mode) : QFrame()
 {

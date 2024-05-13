@@ -14,16 +14,11 @@
 #ifndef OHKL_GUI_GRAPHICS_PEAKCOLLECTIONGRAPHICS_H
 #define OHKL_GUI_GRAPHICS_PEAKCOLLECTIONGRAPHICS_H
 
-#include "core/data/DataSet.h"
 #include "core/data/DataTypes.h"
 #include "core/integration/IIntegrator.h"
-#include "core/peak/IntegrationRegion.h"
-#include "gui/graphics/DetectorSceneParams.h"
-#include "gui/models/ColorMap.h"
 #include "gui/models/PeakCollectionModel.h"
-#include "gui/widgets/PeakViewWidget.h"
 
-#include <QGraphicsPixmapItem>
+#include  <QColor>
 #include <QVector>
 
 namespace ohkl {
@@ -31,8 +26,12 @@ class KeyPointCollection;
 class PeakCenterDataSet;
 class Peak3D;
 }
+class DetectorSceneParams;
 class PeakItemGraphic;
 class PeakCenterGraphic;
+class PeakViewWidget;
+
+class QImage;
 
 enum class VisualisationType { Enabled, Filtered };
 

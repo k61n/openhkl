@@ -15,11 +15,12 @@
 #ifndef OHKL_GUI_ITEMS_PEAKITEM_H
 #define OHKL_GUI_ITEMS_PEAKITEM_H
 
-#include "core/peak/Peak3D.h"
-
-#include "gui/graphics_items/PeakItemGraphic.h"
-
 #include <QStandardItem>
+
+namespace ohkl {
+class Peak3D;
+}
+class PeakItemGraphic;
 
 enum PeakDisplayModes { VALID, FILTER };
 

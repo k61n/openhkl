@@ -17,10 +17,6 @@
 
 #include "core/data/DataSet.h"
 #include "core/loader/IDataReader.h" // inherits from
-#include "core/raw/DataKeys.h"
-
-#include <fstream>
-#include <stdexcept>
 
 namespace ohkl {
 

@@ -16,11 +16,14 @@
 #define OHKL_CORE_SHAPE_PEAKCOLLECTION_H
 
 #include "core/data/DataTypes.h"
-#include "core/integration/IIntegrator.h"
+#include "core/peak/Peak3D.h"
 #include "core/raw/MetaData.h"
 #include "core/shape/ShapeModel.h"
 
 namespace ohkl {
+
+enum class IntegratorType;
+class MillerIndex;
 
 /*! \addtogroup python_api
  *  @{*/

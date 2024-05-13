@@ -18,7 +18,9 @@
 #include <cmath>
 
 #include "base/geometry/DirectVector.h"
+#include "base/geometry/ReciprocalVector.h"
 #include "base/utils/Units.h"
+#include "core/detector/DetectorEvent.h"
 #include "core/detector/FlatDetector.h"
 #include "core/gonio/Gonio.h"
 #include "core/instrument/InstrumentState.h"

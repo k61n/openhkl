@@ -14,9 +14,11 @@
 
 #include "gui/graphics_items/BoxMaskItem.h"
 
-#include "base/mask/BoxMask.h"
+#include "base/geometry/AABB.h"
 #include "core/data/DataSet.h"
+
 #include <Eigen/Dense>
+
 #include <QGraphicsSceneWheelEvent>
 #include <QPainter>
 #include <QStyleOptionGraphicsItem>

@@ -15,10 +15,14 @@
 #ifndef OHKL_CORE_GONIO_GONIO_H
 #define OHKL_CORE_GONIO_GONIO_H
 
-#include "base/geometry/DirectVector.h"
-#include "core/gonio/Axis.h"
+#include "base/utils/YAMLType.h"
+
+#include <string>
 
 namespace ohkl {
+
+class Axis;
+class DirectVector;
 
 //! A goniometer, i.e. system of several rotation axes.
 

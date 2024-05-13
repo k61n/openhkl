@@ -15,14 +15,15 @@
 #ifndef OHKL_CORE_INSTRUMENT_DIFFRACTOMETER_H
 #define OHKL_CORE_INSTRUMENT_DIFFRACTOMETER_H
 
-#include "core/detector/Detector.h"
-#include "core/instrument/InstrumentState.h"
 #include "core/instrument/Sample.h"
 #include "core/instrument/Source.h"
 #include "core/raw/DataKeys.h"
 
 
 namespace ohkl {
+
+class Detector;
+class InstrumentState;
 
 /*! \addtogroup python_api
  *  @{*/

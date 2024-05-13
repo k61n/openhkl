@@ -15,15 +15,14 @@
 #include "gui/subframe_filter/SubframeFilter.h"
 
 #include "core/experiment/Experiment.h"
-#include "core/shape/PeakCollection.h"
 #include "core/shape/PeakFilter.h"
 #include "gui/MainWin.h" // gGui
 #include "gui/dialogs/ListNameDialog.h"
 #include "gui/graphics/DetectorScene.h"
-#include "gui/graphics/PeakCollectionGraphics.h"
 #include "gui/models/Meta.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
+#include "gui/utility/CellComboBox.h"
 #include "gui/utility/DataComboBox.h"
 #include "gui/utility/GridFiller.h"
 #include "gui/utility/PeakComboBox.h"
@@ -32,21 +31,21 @@
 #include "gui/utility/SideBar.h"
 #include "gui/utility/Spoiler.h"
 #include "gui/utility/SpoilerCheck.h"
+#include "gui/views/PeakTableView.h"
 #include "gui/widgets/DetectorWidget.h"
 #include "gui/widgets/PeakViewWidget.h"
 
-#include <QFileInfo>
+#include <QCheckBox>
+#include <QComboBox>
 #include <QGridLayout>
 #include <QGroupBox>
+#include <QHBoxLayout>
 #include <QHeaderView>
-#include <QItemDelegate>
-#include <QLabel>
 #include <QMessageBox>
+#include <QPushButton>
 #include <QRadioButton>
-#include <QScrollBar>
-#include <QSignalBlocker>
-#include <QSpacerItem>
-#include <QTableWidgetItem>
+#include <QSplitter>
+#include <QVBoxLayout>
 
 #include <sstream>
 

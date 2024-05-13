@@ -18,6 +18,7 @@
 #include "base/fit/Minimizer.h"
 #include "base/utils/Logger.h"
 #include "core/data/DataSet.h"
+#include "core/gonio/Gonio.h"
 #include "core/instrument/Diffractometer.h"
 
 namespace ohkl {

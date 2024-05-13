@@ -17,6 +17,8 @@
 
 #include <Eigen/Geometry>
 
+#include "base/geometry/DirectVector.h"
+#include "core/gonio/Axis.h"
 #include "core/gonio/Gonio.h"
 #include "core/gonio/RotAxis.h"
 #include "core/raw/DataKeys.h"
