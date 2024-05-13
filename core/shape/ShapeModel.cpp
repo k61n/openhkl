@@ -358,7 +358,6 @@ std::vector<Peak3D*> ShapeModel::findNeighbors(const DetectorEvent& ev) const
     Peak3D* nearest;
     double min_dist_sq = _data->nCols() * _data->nCols() + _data->nRows() * _data->nRows();
     double min_frames = _data->nFrames();
-    ;
     double radius_sq = _params->neighbour_range_pixels * _params->neighbour_range_pixels;
 
     for (const auto& pair : _profiles) {
