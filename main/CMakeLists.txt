@@ -11,6 +11,8 @@ else()
     add_executable(${app} main.cpp resources.qrc)
 endif()
 
+target_link_options(${app} PRIVATE "LINKER:-as-needed")
+
 target_include_directories(${app}
     PRIVATE
     ${CMAKE_BINARY_DIR} # for manifest.h

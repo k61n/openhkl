@@ -4,7 +4,7 @@ endif()
 
 if((CMAKE_CXX_COMPILER_ID STREQUAL "GNU") OR (CMAKE_CXX_COMPILER_ID MATCHES "Clang"))
     # suppress warning from swig::container_owner<T>::back_reference(PyObject*, PyObject*)
-    add_compile_options(-Wno-unused-parameter;-Wno-deprecated-declarations;-Wno-sometimes-uninitialized;-Wno-missing-field-initializers)
+    add_compile_options(-Wno-unused-parameter;-Wno-deprecated-declarations;-Wno-missing-field-initializers)
 endif()
 
 set(CMAKE_SWIG_OUTDIR "${CMAKE_CURRENT_BINARY_DIR}")
