@@ -16,8 +16,11 @@
 #define OHKL_CORE_PEAK_INTEGRATIONREGION_H
 
 #include "base/geometry/ConvexHull.h"
+#include "base/geometry/Ellipsoid.h"
 #include "core/peak/PeakData.h"
 #include "core/peak/RegionData.h"
+
+#include <map>
 
 namespace ohkl {
 

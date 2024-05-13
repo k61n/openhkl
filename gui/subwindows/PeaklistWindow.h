@@ -15,11 +15,9 @@
 #ifndef OHKL_GUI_SUBWINDOWS_PEAKLIST_WINDOW_H
 #define OHKL_GUI_SUBWINDOWS_PEAKLIST_WINDOW_H
 
-#include "core/experiment/Experiment.h"
-#include "gui/models/Project.h"
-#include "gui/models/Session.h"
-#include "gui/widgets/PeakProperties.h"
 #include <QDialog>
+
+class PeakProperties;
 
 class PeaklistWindow : public QDialog {
  public:

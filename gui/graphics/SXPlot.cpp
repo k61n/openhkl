@@ -13,9 +13,7 @@
 //  ***********************************************************************************************
 
 #include "gui/graphics/SXPlot.h"
-#include "qcustomplot.h"
 
-#include <Eigen/Dense>
 #include <QApplication>
 #include <QFileInfo>
 #include <QKeyEvent>

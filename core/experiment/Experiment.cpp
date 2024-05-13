@@ -16,43 +16,34 @@
 
 #include "base/utils/Logger.h"
 #include "base/utils/Path.h" // tempFilename
-#include "base/utils/Units.h"
+#include "core/algo/AutoIndexer.h"
+#include "core/algo/Refiner.h"
 #include "core/data/DataSet.h"
-#include "core/data/DataTypes.h"
 #include "core/experiment/DataHandler.h"
 #include "core/experiment/ExperimentExporter.h"
 #include "core/experiment/ExperimentImporter.h"
 #include "core/experiment/ExperimentYAML.h"
 #include "core/experiment/InstrumentStateHandler.h"
+#include "core/experiment/Integrator.h"
+#include "core/experiment/PeakFinder.h"
 #include "core/experiment/PeakFinder2D.h"
 #include "core/experiment/PeakHandler.h"
 #include "core/experiment/ShapeHandler.h"
 #include "core/experiment/UnitCellHandler.h"
 #include "core/instrument/Diffractometer.h"
+#include "core/instrument/InstrumentStateSet.h"
 #include "core/instrument/Monochromator.h"
-#include "core/instrument/Source.h"
-#include "core/integration/GaussianIntegrator.h"
-#include "core/integration/ISigmaIntegrator.h"
-#include "core/integration/PixelSumIntegrator.h"
-#include "core/integration/Profile1DIntegrator.h"
-#include "core/integration/Profile3DIntegrator.h"
-#include "core/integration/ShapeIntegrator.h"
-#include "core/loader/IDataReader.h"
-#include "core/peak/PeakCoordinateSystem.h"
-#include "core/raw/DataKeys.h"
 #include "core/raw/MetaData.h"
+#include "core/shape/PeakCollection.h"
+#include "core/shape/PeakFilter.h"
+#include "core/shape/Predictor.h"
 #include "core/shape/ShapeModel.h"
-#include "core/statistics/CC.h"
-#include "core/statistics/RFactor.h"
+#include "core/statistics/MergedPeakCollection.h"
+#include "core/statistics/PeakMerger.h"
 #include "manifest.h"
 #include "tables/crystal/UnitCell.h"
 
-#include <cstdio> // rename
-#include <memory>
 #include <stdexcept>
-#include <string>
-#include <utility>
-#include <vector>
 
 namespace ohkl {
 

@@ -15,34 +15,28 @@
 #ifndef OHKL_GUI_SUBFRAME_INDEX_SUBFRAMEAUTOINDEXER_H
 #define OHKL_GUI_SUBFRAME_INDEX_SUBFRAMEAUTOINDEXER_H
 
-#include "core/algo/AutoIndexer.h"
 #include "core/shape/PeakCollection.h"
 #include "gui/items/PeakCollectionItem.h"
 #include "gui/models/PeakCollectionModel.h"
-#include "gui/widgets/PeakViewWidget.h"
 
-#include <QPushButton>
-#include <QSizePolicy>
 #include <QWidget>
 
-class CellComboBox;
 class DataComboBox;
 class DirectBeamWidget;
-class FoundPeakComboBox;
 class PeakComboBox;
 class DetectorWidget;
 class PeakTableView;
+class PeakViewWidget;
 class UnitCellTableView;
 class Spoiler;
-class SpoilerCheck;
 class SafeSpinBox;
 class SafeDoubleSpinBox;
-class QVBoxLayout;
-class QSlider;
-class QSplitter;
-class QTabWidget;
 class QCheckBox;
 class QGroupBox;
+class QPushButton;
+class QSplitter;
+class QTabWidget;
+class QVBoxLayout;
 
 //! Frame containing interface to autoindex peak collections
 class SubframeAutoIndexer : public QWidget {

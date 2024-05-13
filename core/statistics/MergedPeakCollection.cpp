@@ -16,7 +16,8 @@
 
 #include "base/utils/Logger.h"
 #include "core/data/DataSet.h"
-#include "core/data/DataTypes.h"
+#include "core/peak/Peak3D.h"
+#include "core/shape/PeakCollection.h"
 #include "tables/crystal/MillerIndex.h"
 #include "tables/crystal/UnitCell.h"
 

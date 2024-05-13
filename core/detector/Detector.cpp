@@ -15,9 +15,11 @@
 #include <cmath>
 #include <stdexcept>
 
+#include "base/geometry/ReciprocalVector.h"
 #include "base/utils/Units.h"
 #include "base/utils/YAMLType.h"
 #include "core/detector/Detector.h"
+#include "core/detector/DetectorEvent.h"
 #include "core/detector/DetectorFactory.h"
 #include "core/raw/DataKeys.h"
 

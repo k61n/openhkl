@@ -15,6 +15,7 @@
 #include "gui/widgets/PeakProperties.h"
 
 #include "core/experiment/Experiment.h"
+#include "core/shape/PeakCollection.h"
 #include "gui/MainWin.h"
 #include "gui/dialogs/ClonePeakDialog.h"
 #include "gui/items/PeakCollectionItem.h"
@@ -22,10 +23,14 @@
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
 #include "gui/utility/SideBar.h"
+#include "gui/views/PeakTableView.h"
 
+#include <QComboBox>
 #include <QFormLayout>
 #include <QHBoxLayout>
+#include <QLabel>
 #include <QMenu>
+#include <QPushButton>
 #include <QStandardItemModel>
 #include <QTreeView>
 #include <QVBoxLayout>

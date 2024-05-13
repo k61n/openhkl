@@ -15,12 +15,13 @@
 #ifndef OHKL_CORE_SHAPE_PEAKFILTER_H
 #define OHKL_CORE_SHAPE_PEAKFILTER_H
 
-#include "core/instrument/InstrumentState.h"
 #include "core/peak/Peak3D.h"
 #include "core/raw/DataKeys.h"
-#include "core/shape/PeakCollection.h"
 
 namespace ohkl {
+
+class PeakCollection;
+class InstrumentState;
 
 /*! \addtogroup python_api
  *  @{*/

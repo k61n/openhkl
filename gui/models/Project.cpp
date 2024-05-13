@@ -15,9 +15,9 @@
 #include "gui/models/Project.h"
 
 #include "core/data/DataSet.h"
-#include "core/data/DataTypes.h"
 #include "core/experiment/Experiment.h"
 #include "core/peak/Peak3D.h"
+#include "core/shape/PeakCollection.h"
 #include "gui/MainWin.h"
 #include "gui/items/PeakCollectionItem.h"
 #include "gui/models/PeakCollectionModel.h"

@@ -16,22 +16,19 @@
 
 #include "base/utils/Units.h"
 #include "cmtzlib.h"
-#include "core/data/DataTypes.h"
+#include "core/data/DataSet.h"
+#include "core/gonio/Axis.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/InterpolatedState.h"
-#include "core/shape/PeakCollection.h"
+#include "core/peak/Peak3D.h"
 #include "core/statistics/MergedPeakCollection.h"
-#include "core/statistics/PeakMerger.h"
+#include "tables/crystal/UnitCell.h"
 #include "mtzdata.h"
 
 #include <Eigen/src/Core/Matrix.h>
 #include <Eigen/src/Geometry/Quaternion.h>
 
-#include <functional>
 #include <regex>
-#include <stdexcept>
-#include <string>
-#include <vector>
 
 namespace ohkl {
 MtzExporter::MtzExporter(
@@ -251,12 +248,6 @@ void MtzExporter::populateColumns(CMtz::MTZCOL** columns, int ncol)
 {
     MergedPeakSet peaks = _merged_data->mergedPeakSet();
 
-    int npeaks;
-    if (_merged)
-        npeaks = _merged_data->nUnique();
-    else
-        npeaks = _merged_data->totalSize();
-
     float adata[ncol];
     int irefl = 0;
     if (_merged) {
@@ -277,8 +268,6 @@ void MtzExporter::populateColumns(CMtz::MTZCOL** columns, int ncol)
             InstrumentStateList states = _ohkl_data->instrumentStates();
             for (auto unmerged_peak : peak.peaks()) {
                 int m_isym = 1;
-                const UnitCell& cell = *(unmerged_peak->unitCell());
-                const ReciprocalVector& q = unmerged_peak->q();
                 const MillerIndex hkl = unmerged_peak->hkl();
                 double frame = unmerged_peak->shape().center()[2];
                 int frame_int = std::floor(frame);

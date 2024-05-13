@@ -14,10 +14,10 @@
 
 #include "gui/subframe_refiner/SubframeRefiner.h"
 
+#include "core/data/DataSet.h"
 #include "core/experiment/Experiment.h"
+#include "core/instrument/Diffractometer.h"
 #include "core/peak/Qs2Events.h"
-#include "core/shape/PeakCollection.h"
-#include "core/shape/PeakFilter.h"
 #include "gui/MainWin.h" // gGui
 #include "gui/connect/Sentinel.h"
 #include "gui/frames/ProgressView.h"
@@ -41,14 +41,13 @@
 #include "gui/widgets/PeakViewWidget.h"
 #include "gui/widgets/PlotCheckBox.h"
 
-#include <QFileInfo>
+#include <QCheckBox>
+#include <QComboBox>
 #include <QGridLayout>
 #include <QGroupBox>
-#include <QHeaderView>
-#include <QItemDelegate>
-#include <QLabel>
-#include <QScrollBar>
-#include <QSpacerItem>
+#include <QPushButton>
+#include <QSplitter>
+#include <QVBoxLayout>
 
 SubframeRefiner::SubframeRefiner()
     : _refine_success(false)

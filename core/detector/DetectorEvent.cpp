@@ -15,9 +15,7 @@
 #include <cmath>
 #include <stdexcept>
 
-#include "core/detector/Detector.h"
-#include "core/detector/DetectorFactory.h"
-#include "core/gonio/Gonio.h"
+#include "core/detector/DetectorEvent.h"
 
 namespace ohkl {
 

@@ -14,16 +14,13 @@
 
 #include "gui/widgets/LogWidget.h"
 
-#include "base/utils/Logger.h"
 #include "base/utils/StringIO.h" // datetime_str
 #include "gui/MainWin.h"
+
 #include <chrono>
 #include <iomanip>
 #include <sstream>
 #include <string>
-
-#include <QColor>
-#include <QTextEdit>
 
 LogWidget::LogWidget(QWidget* parent) : QTextEdit(parent)
 {

@@ -14,7 +14,9 @@
 
 #include "core/statistics/PeakStatistics.h"
 
+#include "core/peak/Peak3D.h"
 #include "core/shape/PeakCollection.h"
+
 #include <algorithm>
 #include <gsl/gsl_histogram.h>
 

@@ -14,15 +14,21 @@
 
 #include "gui/subwindows/PeakWindow.h"
 
-#include "core/peak/IntegrationRegion.h"
 #include "core/peak/Peak3D.h"
+#include "core/peak/RegionData.h"
 #include "gui/MainWin.h" // gGui
 #include "gui/models/ColorMap.h"
 #include "gui/utility/ColorButton.h"
 
+#include <QComboBox>
+#include <QDoubleSpinBox>
+#include <QGraphicsPixmapItem>
+#include <QGraphicsView>
+#include <QGridLayout>
 #include <QLineEdit>
 #include <QPixmap>
 #include <QSignalBlocker>
+#include <QSlider>
 #include <QTextStream>
 #include <QVBoxLayout>
 

@@ -15,14 +15,11 @@
 #ifndef OHKL_CORE_DATA_DATASET_H
 #define OHKL_CORE_DATA_DATASET_H
 
-#include "base/mask/IMask.h"
-#include "core/data/DataTypes.h"
 #include "core/data/ImageGradient.h"
 #include "core/instrument/InstrumentState.h"
 #include "core/loader/IDataReader.h"
-#include "core/peak/Peak3D.h"
 #include "core/raw/DataKeys.h"
-// #include "core/loader/TiffDataReader.h"
+#include "core/raw/MetaData.h"
 
 #include <gsl/gsl_histogram.h>
 
@@ -30,12 +27,15 @@
 
 namespace ohkl {
 
+enum class RejectionFlag;
+class AABB;
 class Detector;
 class DetectorEvent;
 class Diffractometer;
+class IMask;
 class InstrumentStateSet;
-struct DataReaderParameters;
-struct tif_file_metadata;
+class Peak3D;
+class ReciprocalVector;
 
 enum class BitDepth { u8b = 8, u16b = 16, u32b = 32 };
 

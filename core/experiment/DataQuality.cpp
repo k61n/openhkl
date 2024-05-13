@@ -17,7 +17,6 @@
 #include "base/utils/Logger.h"
 #include "core/shape/PeakCollection.h"
 #include "core/statistics/CC.h"
-#include "core/statistics/MergedPeakCollection.h"
 #include "core/statistics/RFactor.h"
 #include "core/statistics/ResolutionShell.h"
 #include "tables/crystal/SpaceGroup.h"

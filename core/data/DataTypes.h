@@ -24,6 +24,16 @@ class DataSet;
 using sptrDataSet = std::shared_ptr<DataSet>;
 using DataList = std::vector<sptrDataSet>;
 
+class UnitCell;
+using sptrUnitCell = std::shared_ptr<UnitCell>;
+
+class Peak3D;
+using sptrPeak3D = std::shared_ptr<Peak3D>;
+using PeakList = std::vector<sptrPeak3D>;
+
+class ProgressHandler;
+using sptrProgressHandler = std::shared_ptr<ProgressHandler>;
+
 } // namespace ohkl
 
 #endif // OHKL_CORE_DATA_DATATYPES_H

@@ -15,14 +15,11 @@
 #ifndef OHKL_GUI_GRAPHICS_ITEMS_PEAKITEMGRAPHIC_H
 #define OHKL_GUI_GRAPHICS_ITEMS_PEAKITEMGRAPHIC_H
 
-#include "core/peak/Peak3D.h"
 #include "gui/graphics_items/PlottableItem.h"
 #include "gui/widgets/PeakViewWidget.h"
 
 #include <Eigen/Dense>
 #include <QColor>
-
-class Peak3D;
 
 //! Plottable graphics item that represents a peak in the detector image
 class PeakItemGraphic : public PlottableItem {

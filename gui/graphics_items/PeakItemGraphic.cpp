@@ -14,6 +14,7 @@
 
 #include "gui/graphics_items/PeakItemGraphic.h"
 
+#include "base/geometry/DirectVector.h"
 #include "base/geometry/Ellipsoid.h"
 #include "base/geometry/ReciprocalVector.h"
 #include "base/utils/Units.h"
@@ -22,10 +23,12 @@
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/InstrumentState.h"
 #include "core/peak/IntegrationRegion.h"
+#include "core/peak/Peak3D.h"
 #include "core/raw/DataKeys.h"
 #include "core/raw/MetaData.h"
 #include "gui/graphics/PeakPlot.h"
 #include "gui/utility/ColorButton.h"
+#include "gui/widgets/PeakViewWidget.h"
 #include "tables/crystal/MillerIndex.h"
 #include "tables/crystal/UnitCell.h"
 

@@ -19,15 +19,14 @@
 #include "base/utils/ProgressHandler.h"
 #include "base/utils/Units.h"
 #include "core/data/DataSet.h"
-#include "core/data/DataTypes.h"
+#include "core/detector/Detector.h"
+#include "core/gonio/Axis.h"
 #include "core/instrument/Diffractometer.h"
+#include "core/instrument/InstrumentStateSet.h"
 #include "core/instrument/Monochromator.h"
-#include "core/integration/IIntegrator.h"
 #include "core/peak/Peak3D.h"
 #include "core/peak/Qs2Events.h"
-#include "tables/crystal/MillerIndex.h"
-
-#include <stdexcept>
+#include "tables/crystal/UnitCell.h"
 
 namespace ohkl {
 

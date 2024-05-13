@@ -18,7 +18,6 @@
 #include <QDialog>
 
 class DataComboBox;
-class QGridLayout;
 class QSpinBox;
 class QLineEdit;
 

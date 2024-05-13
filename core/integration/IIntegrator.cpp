@@ -15,10 +15,10 @@
 #include "core/integration/IIntegrator.h"
 
 #include "base/geometry/Ellipsoid.h"
+#include "base/mask/IMask.h"
 #include "base/utils/Logger.h"
+#include "base/utils/ProgressHandler.h"
 #include "core/data/DataSet.h"
-#include "core/peak/IntegrationRegion.h"
-#include "core/peak/Intensity.h"
 #include "core/peak/Peak3D.h"
 #include "core/shape/Octree.h"
 #include "core/shape/ShapeModel.h"

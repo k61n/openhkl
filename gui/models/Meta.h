@@ -16,8 +16,7 @@
 #define OHKL_GUI_MODELS_META_H
 
 #include "core/data/DataTypes.h"
-#include "core/peak/Peak3D.h"
-#include "tables/crystal/UnitCell.h"
+
 #include <QMetaType>
 
 Q_DECLARE_METATYPE(ohkl::PeakList)

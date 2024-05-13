@@ -14,21 +14,12 @@
 #ifndef OHKL_GUI_GRAPHICS_DETECTORSCENE_H
 #define OHKL_GUI_GRAPHICS_DETECTORSCENE_H
 
-#include "base/mask/IMask.h"
-#include "core/data/DataSet.h"
 #include "core/data/DataTypes.h"
 #include "core/detector/DetectorEvent.h"
-#include "core/peak/IntegrationRegion.h"
-#include "core/peak/Peak3D.h"
 #include "gui/graphics/DataSetGraphics.h"
 #include "gui/graphics/DetectorSceneParams.h"
 #include "gui/graphics/PeakCollectionGraphics.h"
-#include "gui/graphics_items/CircleGraphic.h"
-#include "gui/graphics_items/CrosshairGraphic.h"
-#include "gui/graphics_items/PeakCenterGraphic.h"
-#include "gui/models/ColorMap.h"
 
-#include <QGraphicsPixmapItem>
 #include <QGraphicsScene>
 #include <QStack>
 
@@ -36,14 +27,20 @@
 
 namespace ohkl {
 class KeyPointCollection;
-class UnitCell;
+class Peak3D;
 class PeakCenterDataSet;
+class UnitCell;
 }
+class CircleGraphic;
+class CrosshairGraphic;
 class CutterItem;
 class PeakItemGraphic;
 class PeakCollectionModel;
 class PeakViewWidget;
 class MaskItem;
+class SXGraphicsItem;
+
+class QGraphicsPixmapItem;
 
 //! Master Scene containing the pixmap of the detector counts
 //! and overlayed graphics items (peaks, data cutters, masks ...)

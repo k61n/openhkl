@@ -16,6 +16,7 @@
 
 #include "core/data/DataSet.h"
 #include "core/peak/Peak3D.h"
+#include "core/shape/PeakCollection.h"
 #include "gui/items/PeakCollectionItem.h"
 #include "gui/items/PeakItem.h"
 

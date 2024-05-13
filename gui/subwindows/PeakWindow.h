@@ -15,27 +15,21 @@
 #ifndef OHKL_GUI_SUBWINDOWS_PEAKWINDOW_H
 #define OHKL_GUI_SUBWINDOWS_PEAKWINDOW_H
 
-#include "core/peak/RegionData.h"
-
 #include "core/peak/IntegrationRegion.h"
 
-#include <Eigen/Core>
-
-#include <QComboBox>
 #include <QDialog>
-#include <QDoubleSpinBox>
-#include <QGraphicsPixmapItem>
-#include <QGraphicsView>
-#include <QGridLayout>
-#include <QLabel>
-#include <QSlider>
-#include <QWidget>
 
 class ColorButton;
 class ColorMap;
+class QComboBox;
+class QDoubleSpinBox;
+class QGraphicsView;
+class QGridLayout;
+class QSlider;
 
 namespace ohkl {
 class Peak3D;
+class RegionData;
 }
 
 struct PeakWindowParameters {

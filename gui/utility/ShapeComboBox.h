@@ -15,8 +15,6 @@
 #ifndef OHKL_GUI_UTILITY_SHAPECOMBO_H
 #define OHKL_GUI_UTILITY_SHAPECOMBO_H
 
-#include "core/shape/ShapeModel.h"
-
 #include <QComboBox>
 
 namespace ohkl {

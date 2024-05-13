@@ -15,10 +15,10 @@
 #ifndef OHKL_GUI_GRAPHICS_ITEMS_PEAKCENTERGRAPHIC_H
 #define OHKL_GUI_GRAPHICS_ITEMS_PEAKCENTERGRAPHIC_H
 
-#include "gui/graphics_items/PlottableItem.h"
-
 #include <Eigen/Dense>
+
 #include <QColor>
+#include <QGraphicsItem>
 
 //! Plottable graphics item that represents a peak centre from a 3rd party code in the detector
 //! image

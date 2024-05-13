@@ -15,20 +15,19 @@
 #include "gui/subframe_experiment/SubframeExperiment.h"
 
 #include "base/utils/Logger.h"
+#include "base/utils/Units.h"
 #include "core/algo/AutoIndexer.h"
 #include "core/convolve/Convolver.h"
-#include "core/convolve/ConvolverFactory.h"
 #include "core/data/DataSet.h"
-#include "core/data/DataTypes.h"
 #include "core/experiment/DataQuality.h"
 #include "core/experiment/Experiment.h"
 #include "core/experiment/MaskExporter.h"
 #include "core/experiment/MaskImporter.h"
 #include "core/experiment/PeakFinder2D.h"
+#include "core/instrument/Diffractometer.h"
 #include "core/peak/Qs2Events.h"
-#include "core/shape/PeakCollection.h"
-#include "core/shape/PeakFilter.h"
 #include "core/shape/Predictor.h"
+#include "core/statistics/PeakMerger.h"
 #include "gui/MainWin.h" // gGui
 #include "gui/connect/Sentinel.h"
 #include "gui/dialogs/ListNameDialog.h"
@@ -38,6 +37,7 @@
 #include "gui/graphics_items/MaskItem.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
+#include "gui/utility/CellComboBox.h"
 #include "gui/utility/DataComboBox.h"
 #include "gui/utility/GridFiller.h"
 #include "gui/utility/PropertyScrollArea.h"
@@ -62,8 +62,6 @@
 #include <QMessageBox>
 #include <QPushButton>
 #include <QScrollBar>
-#include <QSlider>
-#include <QSpinBox>
 #include <QSplitter>
 #include <QTabWidget>
 #include <QTableWidget>

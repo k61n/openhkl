@@ -13,14 +13,17 @@
 //  ***********************************************************************************************
 
 #include "test/cpp/catch.hpp"
-#include <cmath>
 
-#include <Eigen/Dense>
-
+#include "base/geometry/DirectVector.h"
+#include "base/geometry/ReciprocalVector.h"
 #include "base/utils/Units.h"
 #include "core/detector/CylindricalDetector.h"
+#include "core/detector/DetectorEvent.h"
 #include "core/gonio/Gonio.h"
 #include "core/instrument/InstrumentState.h"
+
+#include <cmath>
+#include <Eigen/Dense>
 
 const double tolerance = 1e-3;
 

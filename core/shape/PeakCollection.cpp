@@ -20,6 +20,7 @@
 #include "core/integration/ShapeIntegrator.h"
 #include "core/peak/Peak3D.h"
 #include "core/raw/DataKeys.h"
+#include "tables/crystal/UnitCell.h"
 
 #include <string>
 #include <typeindex>

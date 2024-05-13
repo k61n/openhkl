@@ -15,31 +15,17 @@
 #ifndef OHKL_GUI_DIALOG_PEAKEXPORTDIALOG
 #define OHKL_GUI_DIALOG_PEAKEXPORTDIALOG
 
-#include "core/experiment/Experiment.h"
 #include "core/statistics/PeakExporter.h"
-#include "gui/models/PeakCollectionModel.h"
-#include "gui/models/Project.h"
-#include "gui/models/Session.h"
-#include "gui/utility/GridFiller.h"
-#include "tables/crystal/UnitCell.h"
 
-#include <QCheckBox>
-#include <QComboBox>
 #include <QDialog>
-#include <QDialogButtonBox>
-#include <QDir>
-#include <QDoubleSpinBox>
-#include <QGridLayout>
-#include <QGroupBox>
-#include <QHBoxLayout>
-#include <QLabel>
-#include <QLayout>
-#include <QRadioButton>
-#include <QTextEdit>
-#include <QVBoxLayout>
-#include <QWidget>
 
-#include <string>
+class QCheckBox;
+class QComboBox;
+class QDialogButtonBox;
+class QDoubleSpinBox;
+class QRadioButton;
+class QSpinBox;
+class QTextEdit;
 
 class DataComboBox;
 class IntegratedPeakComboBox;

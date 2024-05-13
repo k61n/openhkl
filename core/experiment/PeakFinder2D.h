@@ -15,11 +15,10 @@
 #ifndef OHKL_CORE_EXPERIMENT_PEAKFINDER2D_H
 #define OHKL_CORE_EXPERIMENT_PEAKFINDER2D_H
 
+#include "base/utils/LogLevel.h"
 #include "core/convolve/Convolver.h"
-#include "core/data/DataSet.h"
 #include "core/data/DataTypes.h"
 #include "core/shape/KeyPointCollection.h"
-#include "core/shape/PeakCollection.h"
 
 #include <opencv2/core/types.hpp>
 #include <opencv2/features2d.hpp>
@@ -29,6 +28,9 @@ namespace ohkl {
 /*! \addtogroup python_api
  *  @{*/
 
+enum class ConvolutionKernelType;
+class Convolver;
+class Peak3D;
 class ProgressHandler;
 
 using sptrProgressHandler = std::shared_ptr<ProgressHandler>;

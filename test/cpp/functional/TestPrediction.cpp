@@ -17,6 +17,7 @@
 #include "core/experiment/Experiment.h"
 #include "core/experiment/PeakFinder.h"
 #include "core/loader/RawDataReader.h"
+#include "core/shape/Predictor.h"
 #include "core/convolve/AnnularConvolver.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/peak/Peak3D.h"

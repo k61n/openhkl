@@ -16,11 +16,13 @@
 #define OHKL_CORE_ALGO_GONIOFIT_H
 
 #include "core/data/DataTypes.h"
-#include "core/gonio/Gonio.h"
+
 #include <cstddef>
 #include <vector>
 
 namespace ohkl {
+
+class Gonio;
 
 //! Stores the result of fitting parameters of a Gonio.
 

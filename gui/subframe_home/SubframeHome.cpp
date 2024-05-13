@@ -15,14 +15,20 @@
 #include "gui/subframe_home/SubframeHome.h"
 
 #include "base/utils/Units.h"
+#include "core/data/DataSet.h"
 #include "core/data/DataTypes.h"
 #include "core/experiment/Experiment.h"
+#include "core/instrument/Diffractometer.h"
 #include "core/shape/PeakCollection.h"
 #include "gui/MainWin.h"
 #include "gui/dialogs/ExperimentDialog.h"
+#include "gui/models/ExperimentModel.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
+#include "gui/subwindows/InputFilesWindow.h"
+#include "gui/subwindows/PeaklistWindow.h"
 #include "gui/utility/SideBar.h"
+#include "gui/views/ExperimentTableView.h"
 #include "tables/crystal/UnitCell.h"
 
 #include <QAbstractItemModel>
@@ -36,8 +42,10 @@
 #include <QListWidgetItem>
 #include <QMenu>
 #include <QMessageBox>
+#include <QPushButton>
 #include <QSettings>
 #include <QSpacerItem>
+#include <QTableWidget>
 
 // Icon attributions:
 // save.svg: folder open by Loudoun Design Co from the Noun Project

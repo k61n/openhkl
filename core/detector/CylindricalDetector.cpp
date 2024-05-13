@@ -16,6 +16,7 @@
 
 #include "base/geometry/DirectVector.h"
 #include "base/geometry/ReciprocalVector.h"
+#include "core/detector/DetectorEvent.h"
 #include "base/utils/Units.h"
 #include "core/gonio/Gonio.h"
 #include "core/gonio/RotAxis.h"

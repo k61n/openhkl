@@ -14,17 +14,27 @@
 
 #include "PeakExportDialog.h"
 
-#include "core/statistics/PeakExporter.h"
+#include "core/algo/Refiner.h"
+#include "core/data/DataSet.h"
+#include "core/experiment/Experiment.h"
 #include "core/statistics/PeakMerger.h"
 #include "gui/MainWin.h" // gGui
+#include "gui/models/Project.h"
+#include "gui/models/Session.h"
 #include "gui/utility/DataComboBox.h"
 #include "gui/utility/IntegratedPeakComboBox.h"
 #include "tables/crystal/SpaceGroup.h"
 
+#include <QCheckBox>
+#include <QComboBox>
+#include <QDialogButtonBox>
+#include <QDoubleSpinBox>
 #include <QFileDialog>
+#include <QGridLayout>
+#include <QGroupBox>
+#include <QRadioButton>
 #include <QSettings>
-
-#include <string>
+#include <QTextEdit>
 
 PeakExportDialog::PeakExportDialog() : QDialog(), _exporter()
 {

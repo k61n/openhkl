@@ -17,7 +17,9 @@
 #include "core/raw/DataKeys.h"
 #include "core/data/DataSet.h"
 #include "core/experiment/Experiment.h"
+#include "core/instrument/Diffractometer.h"
 #include "core/instrument/InstrumentState.h"
+#include "core/instrument/InterpolatedState.h"
 #include "core/loader/IDataReader.h"
 
 #include <iostream>

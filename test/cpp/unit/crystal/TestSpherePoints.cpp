@@ -14,11 +14,10 @@
 
 #include "test/cpp/catch.hpp"
 
-#include <fstream>
-#include <iostream>
-
 #include "core/algo/FFTIndexing.h"
 
+#include <fstream>
+#include <iostream>
 
 TEST_CASE("test/crystal/TestSpherePoints.cpp", "")
 {

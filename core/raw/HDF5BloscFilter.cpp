@@ -13,6 +13,7 @@
 //  ***********************************************************************************************
 
 #include "core/raw/HDF5BloscFilter.h"
+
 #include "base/utils/Logger.h"
 
 #include <stdexcept>

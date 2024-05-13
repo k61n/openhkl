@@ -14,6 +14,8 @@
 
 #include "gui/utility/CellComboBox.h"
 
+#include "tables/crystal/UnitCell.h"
+
 #include <QSignalBlocker>
 
 CellList CellComboBox::_unit_cells;

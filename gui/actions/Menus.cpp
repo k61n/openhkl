@@ -22,10 +22,8 @@
 #include "gui/utility/SideBar.h"
 
 #include <QAction>
+#include <QKeySequence>
 #include <QMenu>
-#include <qkeysequence.h>
-
-class Project;
 
 //! Initialize the menu bar.
 Menus::Menus(QMenuBar* menu_bar) : _menu_bar{menu_bar}

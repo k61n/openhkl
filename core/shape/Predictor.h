@@ -15,18 +15,16 @@
 #ifndef OHKL_CORE_SHAPE_PREDICTOR_H
 #define OHKL_CORE_SHAPE_PREDICTOR_H
 
-#include "base/utils/ProgressHandler.h"
 #include "core/data/DataTypes.h"
-#include "core/instrument/Diffractometer.h"
-#include "core/instrument/InstrumentStateSet.h"
 #include "core/integration/IIntegrator.h"
-#include "core/shape/ShapeModel.h"
+#include "tables/crystal/MillerIndex.h"
 
 #include <vector>
 
-class Peak3D;
-
 namespace ohkl {
+
+class Diffractometer;
+class InstrumentStateSet;
 
 /*! \addtogroup python_api
  *  @{*/

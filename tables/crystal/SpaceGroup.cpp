@@ -15,7 +15,6 @@
 #include "tables/crystal/SpaceGroup.h"
 
 #include "base/utils/StringIO.h"
-#include "tables/crystal/MillerIndex.h"
 #include "tables/crystal/UnitCell.h"
 
 #include <algorithm>

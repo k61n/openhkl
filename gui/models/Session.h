@@ -31,7 +31,6 @@ class FoundPeakComboBox;
 class PredictedPeakComboBox;
 class IntegratedPeakComboBox;
 class ShapeComboBox;
-struct tif_file_metadata;
 namespace ohkl {
 enum class DataFormat;
 }

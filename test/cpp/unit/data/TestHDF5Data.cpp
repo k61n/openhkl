@@ -12,13 +12,15 @@
 //
 //  ***********************************************************************************************
 
-#include "core/loader/IDataReader.h"
 #include "test/cpp/catch.hpp"
-#include <Eigen/Dense>
 
 #include "core/data/DataSet.h"
+#include "core/data/DataTypes.h"
+#include "core/loader/IDataReader.h"
 #include "core/raw/DataKeys.h"
 #include "core/instrument/Diffractometer.h"
+
+#include <Eigen/Dense>
 
 TEST_CASE("test/data/TestHDF5Data.cpp", "")
 {

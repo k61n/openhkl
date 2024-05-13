@@ -1,5 +1,21 @@
-#include "PeaklistWindow.h"
+//  ***********************************************************************************************
+//
+//  OpenHKL: data reduction for single crystal diffraction
+//
+//! @file      gui/actions/Actions.cpp
+//! @brief     Implements class Actions
+//!
+//! @homepage  https://openhkl.org
+//! @license   GNU General Public License v3 or higher (see COPYING)
+//! @copyright Institut Laue-Langevin and Forschungszentrum Jülich GmbH 2016-
+//! @authors   see CITATION, MAINTAINER
+//
+//  ***********************************************************************************************
+
+#include "gui/subwindows/PeaklistWindow.h"
+
 #include "gui/widgets/PeakProperties.h"
+
 #include <QVBoxLayout>
 
 PeaklistWindow::PeaklistWindow(QWidget* parent) : QDialog(parent)
@@ -13,30 +29,6 @@ PeaklistWindow::PeaklistWindow(QWidget* parent) : QDialog(parent)
 
 void PeaklistWindow::refreshAll()
 {
-    //
-    /*
-     if (gSession->hasProject()){
-        Project* prj = gSession->currentProject();
-        auto expt = prj->experiment();
-        auto allData = prj->allData();
-        auto N = prj->allData().size();
-        int id;
-
-        if (_data_selector->count() > 0 ){//clear combobox -- needed both clear() and removeItem to
-     be stable working _data_selector->clear(); for (int i=0; i<=_data_selector->count();i++)
-                _data_selector->removeItem(i);
-            _data_selector->setCurrentIndex(-1);
-        }
-        if (N > 0){
-            for (int i=0; i<N; i++){
-                _data_selector->addItem(QString::fromStdString(prj->getData(i)->name()));
-            }
-            id = _data_selector->currentIndex();
-            if ((id == -1)||(id >= N)) id = 0;//selects dataset by selected row in table
-
-            auto dataset = prj->allData()[id];
-            }
-        }  */
     _peak_properties->refreshInput();
 }
 

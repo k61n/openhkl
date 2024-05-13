@@ -13,7 +13,9 @@
 //  ***********************************************************************************************
 
 #include "core/instrument/Monochromator.h"
+
 #include "base/utils/Units.h"
+#include "base/geometry/ReciprocalVector.h"
 #include "core/raw/DataKeys.h"
 
 namespace ohkl {

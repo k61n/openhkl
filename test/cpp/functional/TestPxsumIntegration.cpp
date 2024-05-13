@@ -12,19 +12,20 @@
 //
 //  ***********************************************************************************************
 
+#include "core/convolve/AnnularConvolver.h"
 #include "core/data/DataSet.h"
+#include "core/experiment/Experiment.h"
+#include "core/experiment/Integrator.h"
+#include "core/experiment/PeakFinder.h"
+#include "core/instrument/Diffractometer.h"
+#include "core/loader/RawDataReader.h"
+#include "core/peak/Peak3D.h"
 #include "core/shape/PeakCollection.h"
+#include "core/shape/PeakFilter.h"
 #include "core/shape/ShapeModel.h"
 #include "core/statistics/PeakMerger.h"
-#include "tables/crystal/SpaceGroup.h"
+#include "tables/crystal/UnitCell.h"
 #include "test/cpp/catch.hpp"
-#include "core/experiment/Experiment.h"
-#include "core/experiment/PeakFinder.h"
-#include "core/loader/RawDataReader.h"
-#include "core/convolve/AnnularConvolver.h"
-#include "core/instrument/Diffractometer.h"
-#include "core/peak/Peak3D.h"
-#include "core/shape/PeakFilter.h"
 
 
 #include <Eigen/Dense>

@@ -15,12 +15,14 @@
 #ifndef OHKL_CORE_PEAK_QS2EVENTS_H
 #define OHKL_CORE_PEAK_QS2EVENTS_H
 
-#include "base/utils/ProgressHandler.h"
-#include "core/detector/Detector.h"
+#include "core/data/DataTypes.h"
+#include "core/detector/DetectorEvent.h"
 #include "core/instrument/InstrumentState.h"
-#include "tables/crystal/MillerIndex.h"
 
 namespace ohkl {
+
+class Detector;
+class MillerIndex;
 
 namespace algo {
 

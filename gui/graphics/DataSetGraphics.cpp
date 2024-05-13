@@ -14,14 +14,18 @@
 
 #include "gui/graphics/DataSetGraphics.h"
 
+#include "base/geometry/DirectVector.h"
 #include "base/mask/BoxMask.h"
 #include "base/mask/EllipseMask.h"
 #include "base/utils/Units.h"
 #include "core/convolve/Convolver.h"
 #include "core/convolve/ConvolverFactory.h"
+#include "core/data/DataSet.h"
 #include "core/detector/Detector.h"
 #include "core/instrument/Diffractometer.h"
+#include "core/instrument/InstrumentState.h"
 #include "core/instrument/InterpolatedState.h"
+#include "gui/graphics/DetectorSceneParams.h"
 #include "gui/graphics_items/BoxMaskItem.h"
 #include "gui/graphics_items/EllipseMaskItem.h"
 #include "gui/graphics_items/SXGraphicsItem.h"

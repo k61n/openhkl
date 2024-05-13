@@ -15,7 +15,8 @@
 #ifndef OHKL_GUI_UTILITY_CELLCOMBO_H
 #define OHKL_GUI_UTILITY_CELLCOMBO_H
 
-#include "tables/crystal/UnitCell.h"
+#include "core/data/DataTypes.h"
+
 #include <QComboBox>
 
 namespace ohkl {

@@ -15,15 +15,13 @@
 #ifndef OHKL_CORE_INSTRUMENT_INSTRUMENTSTATE_H
 #define OHKL_CORE_INSTRUMENT_INSTRUMENTSTATE_H
 
-#include "base/geometry/DirectVector.h"
-#include "base/geometry/ReciprocalVector.h"
-
-#include <vector>
-
+#include <Eigen/Dense>
 
 namespace ohkl {
 
 class Diffractometer;
+class DirectVector;
+class ReciprocalVector;
 
 /*! \addtogroup python_api
  *  @{*/

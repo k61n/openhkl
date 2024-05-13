@@ -14,6 +14,7 @@
 
 #include "gui/actions/Actions.h"
 
+#include "core/data/DataSet.h"
 #include "core/experiment/Experiment.h"
 #include "core/shape/PeakCollection.h"
 #include "gui/MainWin.h" // for gGui
@@ -28,14 +29,17 @@
 #include "gui/subframe_home/SubframeHome.h"
 #include "gui/subframe_merge/SubframeMerge.h"
 #include "gui/subwindows/DetectorWindow.h"
+#include "gui/subwindows/InputFilesWindow.h"
+#include "gui/subwindows/InstrumentStateWindow.h"
 #include "gui/subwindows/LogWindow.h"
 #include "gui/subwindows/PeakWindow.h"
+#include "gui/subwindows/PeaklistWindow.h"
 #include "gui/utility/SideBar.h"
 #include "gui/widgets/LogWidget.h"
 #include "tables/crystal/SpaceGroup.h"
 
 #include <QDesktopServices>
-#include <qaction.h>
+#include <QScrollBar>
 
 Actions::Actions()
 {

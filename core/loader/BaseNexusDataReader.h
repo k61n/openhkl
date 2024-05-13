@@ -19,6 +19,8 @@
 
 #include <H5Cpp.h>
 
+#include <memory>
+
 namespace ohkl {
 
 //! IDataReader for Nexus files. Base class for NexusDataReader and FakeDataReader.

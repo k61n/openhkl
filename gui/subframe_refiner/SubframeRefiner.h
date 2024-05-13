@@ -18,24 +18,12 @@
 
 #include "core/algo/Refiner.h"
 #include "core/shape/PeakCollection.h"
-#include "core/shape/ShapeModel.h"
 #include "gui/items/PeakCollectionItem.h"
 #include "gui/models/PeakCollectionModel.h"
 
-#include <QCheckBox>
-#include <QComboBox>
-#include <QGroupBox>
-#include <QHBoxLayout>
-#include <QPushButton>
 #include <QRandomGenerator>
-#include <QSizePolicy>
-#include <QSplitter>
-#include <QVBoxLayout>
 #include <QWidget>
 
-namespace ohkl {
-class PeakCollection;
-}
 class CellComboBox;
 class DataComboBox;
 class PeakComboBox;
@@ -45,9 +33,13 @@ class Spoiler;
 class SXPlot;
 class PeakViewWidget;
 class PlotCheckBox;
+class QCheckBox;
+class QComboBox;
+class QPushButton;
+class QSplitter;
 class QTabWidget;
+class QVBoxLayout;
 class SafeSpinBox;
-class SafeDoubleSpinBox;
 
 //! Frame containing interface to refine cell parameters and intstrument states
 class SubframeRefiner : public QWidget {

@@ -13,6 +13,9 @@
 //  ***********************************************************************************************
 
 #include "core/peak/PeakCoordinateSystem.h"
+
+#include "base/geometry/DirectVector.h"
+#include "base/geometry/Ellipsoid.h"
 #include "core/data/DataSet.h"
 #include "core/detector/Detector.h"
 #include "core/instrument/Diffractometer.h"

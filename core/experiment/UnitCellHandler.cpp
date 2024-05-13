@@ -13,10 +13,12 @@
 //  ***********************************************************************************************
 
 #include "core/experiment/UnitCellHandler.h"
+
 #include "base/utils/Logger.h"
+#include "base/utils/Units.h"
 #include "core/algo/AutoIndexer.h"
 #include "core/experiment/PeakHandler.h"
-#include "core/raw/DataKeys.h"
+#include "core/peak/Peak3D.h"
 #include "core/shape/PeakCollection.h"
 #include "tables/crystal/UnitCell.h"
 

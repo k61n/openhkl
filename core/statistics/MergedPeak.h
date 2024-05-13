@@ -16,9 +16,11 @@
 #define OHKL_CORE_STATISTICS_MERGEDPEAK_H
 
 #include "core/peak/Intensity.h"
-#include "core/peak/Peak3D.h"
+#include "tables/crystal/SpaceGroup.h"
 
 namespace ohkl {
+
+class Peak3D;
 
 enum class MergeFlag { Added, Inequivalent, Invalid };
 

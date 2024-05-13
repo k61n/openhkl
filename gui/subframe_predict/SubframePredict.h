@@ -22,15 +22,6 @@
 #include "gui/items/PeakCollectionItem.h"
 #include "gui/models/PeakCollectionModel.h"
 
-#include <QCheckBox>
-#include <QComboBox>
-#include <QHBoxLayout>
-#include <QLabel>
-#include <QPushButton>
-#include <QSizePolicy>
-#include <QSplitter>
-#include <QTableWidget>
-#include <QVBoxLayout>
 #include <QWidget>
 
 class CellComboBox;
@@ -41,13 +32,18 @@ class PeakComboBox;
 class PeakItemGraphic;
 class PeakTableView;
 class PeakViewWidget;
+class QCheckBox;
+class QComboBox;
+class QPushButton;
+class QSplitter;
+class QVBoxLayout;
 class SafeSpinBox;
 class SafeDoubleSpinBox;
 class Spoiler;
 class ShapeComboBox;
+enum class ComboType;
 
 namespace ohkl {
-struct PredictionParameters;
 struct ShapeModelParameters;
 }
 

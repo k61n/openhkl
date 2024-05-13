@@ -15,15 +15,10 @@
 #ifndef OHKL_GUI_SUBWINDOWS_INPUT_FILES_WINDOWS_H
 #define OHKL_GUI_SUBWINDOWS_INPUT_FILES_WINDOWS_H
 
-
 #include <QDialog>
 
-#include <QComboBox>
-#include <QSize>
-#include <QTableWidget>
-#include <QWidget>
-
-#include "gui/models/Session.h"
+class QTableWidget;
+class QComboBox;
 
 class InputFilesWindow : public QDialog {
 

@@ -11,11 +11,11 @@
 //! @authors   see CITATION, MAINTAINER
 //
 //  ***********************************************************************************************
-#include "core/loader/TiffDataReader.h"
-#include "gui/utility/SafeSpinBox.h"
 
 #ifndef OHKL_GUI_DIALOGS_DATADIALOG_H
 #define OHKL_GUI_DIALOGS_DATADIALOG_H
+
+#include "core/loader/IDataReader.h"
 
 #include <QCheckBox>
 #include <QComboBox>
@@ -26,10 +26,12 @@
 #include <QLineEdit>
 #include <QString>
 
-#include "core/loader/IDataReader.h" // DataReaderParameters
-#include "gui/utility/SafeSpinBox.h"
-
 #include <string>
+
+class SafeDoubleSpinBox;
+namespace ohkl {
+class DataReaderParameters;
+}
 
 //! Dialog to either get *.raw or *.tif files
 class ImageReaderDialog : public QDialog {

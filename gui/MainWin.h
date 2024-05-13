@@ -15,7 +15,6 @@
 #ifndef OHKL_GUI_MAINWIN_H
 #define OHKL_GUI_MAINWIN_H
 
-#include "gui/subwindows/InstrumentStateWindow.h"
 #include <QMainWindow>
 
 #include <QLabel>
@@ -24,14 +23,12 @@
 #include <QStackedWidget>
 #include <QStatusBar>
 
-class DetectorScene;
 class DetectorWindow;
 class LogWindow;
 class PeakWindow;
 class InputFilesWindow;
 class InstrumentStateWindow;
 class PeaklistWindow;
-class AxisWindow;
 class PlottableItem;
 class Sentinel;
 class SideBar;

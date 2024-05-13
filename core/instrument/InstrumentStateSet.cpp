@@ -18,8 +18,8 @@
 #include "base/utils/Logger.h"
 #include "core/data/DataSet.h"
 #include "core/data/DataTypes.h"
+#include "core/detector/Detector.h"
 #include "core/instrument/Diffractometer.h"
-#include "core/instrument/InstrumentState.h"
 
 namespace ohkl {
 

@@ -14,9 +14,13 @@
 
 #include "core/peak/Qs2Events.h"
 
+#include "base/geometry/DirectVector.h"
 #include "base/utils/Logger.h"
+#include "base/utils/ProgressHandler.h"
 #include "core/data/DataSet.h" // TODO mv interpolatedState
+#include "core/detector/Detector.h"
 #include "core/instrument/InterpolatedState.h"
+#include "tables/crystal/MillerIndex.h"
 
 namespace ohkl {
 

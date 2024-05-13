@@ -14,21 +14,17 @@
 #ifndef OHKL_CORE_EXPERIMENT_PEAKHANDLER_H
 #define OHKL_CORE_EXPERIMENT_PEAKHANDLER_H
 
-#include <map>
-#include <string>
-#include <vector>
-
-#include "core/data/DataSet.h"
 #include "core/data/DataTypes.h"
-#include "core/shape/PeakCollection.h"
+
+#include <map>
 
 namespace ohkl {
 
-using PeakCollectionMap = std::map<std::string, std::unique_ptr<PeakCollection>>;
-
+enum class PeakCollectionType;
 class Peak3D;
+class PeakCollection;
 
-using PeakList = std::vector<sptrPeak3D>;
+using PeakCollectionMap = std::map<std::string, std::unique_ptr<PeakCollection>>;
 
 class PeakHandler {
 

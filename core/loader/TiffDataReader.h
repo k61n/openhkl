@@ -15,15 +15,10 @@
 #ifndef OHKL_CORE_LOADER_TIFFDATAREADER_H
 #define OHKL_CORE_LOADER_TIFFDATAREADER_H
 
-#include "base/utils/Logger.h"
+#include "base/utils/LogLevel.h"
 #include "core/loader/IDataReader.h"
-#include "core/loader/RawDataReader.h"
-#include "core/raw/DataKeys.h"
 
 #include "tiffio.h"
-#include <filesystem>
-#include <string>
-#include <vector>
 
 namespace ohkl {
 

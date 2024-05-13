@@ -15,41 +15,33 @@
 #ifndef OHKL_GUI_SUBFRAME_SHAPES_SUBFRAMESHAPES_H
 #define OHKL_GUI_SUBFRAME_SHAPES_SUBFRAMESHAPES_H
 
-#include "core/data/DataSet.h"
-#include "core/integration/IIntegrator.h"
-#include "core/peak/Peak3D.h"
-#include "core/peak/RegionData.h"
-#include "core/shape/PeakCollection.h"
-#include "core/shape/Profile3D.h"
-#include "core/shape/ShapeModel.h"
 #include "gui/items/PeakCollectionItem.h"
 #include "gui/models/PeakCollectionModel.h"
-#include "gui/utility/PredictedPeakComboBox.h"
 
-#include <QCheckBox>
-#include <QComboBox>
-#include <QGroupBox>
-#include <QHBoxLayout>
-#include <QPushButton>
-#include <QRandomGenerator>
-#include <QSizePolicy>
-#include <QSplitter>
-#include <QTableWidget>
-#include <QVBoxLayout>
 #include <QWidget>
 
 class PeakComboBox;
-class FoundPeakComboBox;
 class DataComboBox;
 class DetectorWidget;
 class PeakItemGraphic;
 class PeakTableView;
 class PeakViewWidget;
-class Spoiler;
 class SafeSpinBox;
 class SafeDoubleSpinBox;
 class ShapeComboBox;
+class QCheckBox;
+class QComboBox;
 class QGraphicsView;
+class QGroupBox;
+class QPushButton;
+class QSplitter;
+class QVBoxLayout;
+namespace ohkl {
+class Peak3D;
+class RegionData;
+class ShapeModel;
+struct ShapeModelParameters;
+}
 
 //! Frame containing interface to integrate peaks
 class SubframeShapes : public QWidget {

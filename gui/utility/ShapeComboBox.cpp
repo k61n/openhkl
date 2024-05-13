@@ -13,7 +13,9 @@
 //  ***********************************************************************************************
 
 #include "gui/utility/ShapeComboBox.h"
+
 #include "core/integration/IIntegrator.h"
+#include "core/shape/ShapeModel.h"
 
 #include <QSignalBlocker>
 

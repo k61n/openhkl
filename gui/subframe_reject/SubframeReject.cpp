@@ -17,8 +17,8 @@
 
 #include "core/experiment/Experiment.h"
 #include "core/peak/Peak3D.h"
+#include "core/shape/PeakCollection.h"
 #include "core/shape/PeakFilter.h"
-#include "core/statistics/PeakStatistics.h"
 #include "gui/MainWin.h" // gGui
 #include "gui/frames/ProgressView.h"
 #include "gui/graphics/DetectorScene.h"
@@ -41,16 +41,15 @@
 #include "gui/widgets/PlotPanel.h"
 #include "tables/crystal/MillerIndex.h"
 
-#include <QFileInfo>
+#include <QCheckBox>
+#include <QComboBox>
+#include <QPushButton>
+#include <QRadioButton>
+#include <QSplitter>
+#include <QVBoxLayout>
 #include <QGridLayout>
 #include <QGroupBox>
-#include <QHeaderView>
 #include <QItemSelectionModel>
-#include <QLabel>
-#include <QMessageBox>
-#include <QScrollBar>
-#include <QSpacerItem>
-#include <qradiobutton.h>
 
 SubframeReject::SubframeReject() : QWidget()
 {

@@ -14,7 +14,6 @@
 
 #include "gui/frames/ProgressView.h"
 
-#include "base/utils/ProgressHandler.h"
 #include <QApplication>
 #include <QDebug>
 #include <QPushButton>

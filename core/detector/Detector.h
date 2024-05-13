@@ -17,12 +17,12 @@
 
 #include "core/gonio/Component.h" // inheriting from
 
-#include "base/geometry/ReciprocalVector.h"
-#include "core/detector/DetectorEvent.h"
-
 #include <vector>
 
 namespace ohkl {
+
+class DetectorEvent;
+class ReciprocalVector;
 
 //! Pure virtual base class for detectors of different geometry.
 

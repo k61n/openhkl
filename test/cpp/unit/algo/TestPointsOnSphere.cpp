@@ -14,7 +14,9 @@
 
 #include "test/cpp/catch.hpp"
 
+#include "base/geometry/ReciprocalVector.h"
 #include "core/algo/FFTIndexing.h"
+
 #include <iostream>
 
 // For the time being, we check the distribution of points by visual inspection.

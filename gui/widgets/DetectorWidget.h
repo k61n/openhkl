@@ -16,18 +16,8 @@
 #define OHKL_GUI_UTILITY_DETECTORWIDGET_H
 
 #include "core/data/DataTypes.h"
-#include "gui/graphics/PeakCollectionGraphics.h"
 
-#include <QApplication>
-#include <QFileInfo>
 #include <QGridLayout>
-#include <QKeyEvent>
-#include <QMenu>
-#include <QPainter>
-#include <QString>
-#include <QWidget>
-
-#include <fstream>
 
 class DetectorScene;
 class DetectorView;
@@ -40,6 +30,7 @@ class QSpinBox;
 class QScrollBar;
 class QComboBox;
 class QSlider;
+class QWidget;
 enum class VisualisationType;
 
 class DetectorWidget : public QGridLayout {

@@ -14,16 +14,18 @@
 
 #include "core/peak/Peak3D.h"
 
+#include "base/geometry/DirectVector.h"
 #include "base/geometry/ReciprocalVector.h"
 #include "base/utils/LogLevel.h"
 #include "core/data/DataSet.h"
+#include "core/detector/Detector.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/InstrumentState.h"
 #include "core/instrument/InterpolatedState.h"
 #include "core/integration/IIntegrator.h"
 #include "core/peak/IntegrationRegion.h"
 #include "core/peak/Intensity.h"
-#include "tables/crystal/MillerIndex.h"
+#include "tables/crystal/UnitCell.h"
 
 #include <algorithm>
 #include <cmath>

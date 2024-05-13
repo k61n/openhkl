@@ -15,35 +15,35 @@
 #ifndef OHKL_CORE_EXPERIMENT_EXPERIMENT_H
 #define OHKL_CORE_EXPERIMENT_EXPERIMENT_H
 
-#include "core/algo/AutoIndexer.h"
-#include "core/algo/Refiner.h"
 #include "core/data/DataTypes.h"
-#include "core/experiment/DataQuality.h"
-#include "core/experiment/InstrumentStateHandler.h"
-#include "core/experiment/Integrator.h"
-#include "core/experiment/PeakFinder.h"
-#include "core/experiment/PeakFinder2D.h"
-#include "core/instrument/Diffractometer.h"
-#include "core/integration/IIntegrator.h"
-#include "core/loader/RawDataReader.h"
-#include "core/loader/TiffDataReader.h"
+#include "core/instrument/InstrumentState.h"
 #include "core/raw/DataKeys.h"
-#include "core/shape/PeakFilter.h"
-#include "core/shape/Predictor.h"
-#include "core/shape/ShapeModel.h"
-#include "core/statistics/MergedPeakCollection.h"
-#include "core/statistics/PeakMerger.h"
-#include "core/statistics/ResolutionShell.h"
-#include "tables/crystal/UnitCell.h"
-#include <memory>
 
+#include <map>
+#include <memory>
 
 namespace ohkl {
 
+enum class PeakCollectionType;
+class AutoIndexer;
 class DataHandler;
+class Diffractometer;
+class InstrumentStateSet;
+class InstrumentStateHandler;
+class Integrator;
+class Peak3D;
+class PeakCollection;
+class PeakFilter;
+class PeakFinder;
+class PeakFinder2D;
 class PeakHandler;
+class PeakMerger;
+class Predictor;
+class Refiner;
 class ShapeHandler;
+class ShapeModel;
 class UnitCellHandler;
+struct ShapeModelParameters;
 
 using DataMap = std::map<std::string, sptrDataSet>;
 

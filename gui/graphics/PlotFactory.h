@@ -18,8 +18,6 @@
 #include "base/utils/Factory.h"
 #include "gui/graphics/SXPlot.h"
 
-class SXPlot;
-
 //! A creator for SXPlot%s
 class PlotFactory : public ohkl::Factory<PlotFactory, SXPlot, std::string, QWidget*> {
  public:

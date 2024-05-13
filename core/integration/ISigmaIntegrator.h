@@ -16,9 +16,10 @@
 #define OHKL_CORE_INTEGRATION_ISIGMAINTEGRATOR_H
 
 #include "core/integration/PixelSumIntegrator.h"
-#include "core/shape/ShapeModel.h"
 
 namespace ohkl {
+
+class ShapeModel;
 
 /*! \addtogroup python_api
  *  @{*/

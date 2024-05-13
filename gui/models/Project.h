@@ -26,7 +26,6 @@ namespace ohkl {
 class DataSet;
 class Experiment;
 class Peak3D;
-class PeakCollection;
 class UnitCell;
 enum class PeakCollectionType;
 }

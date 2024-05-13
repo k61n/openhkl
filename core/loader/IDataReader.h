@@ -15,14 +15,10 @@
 #ifndef OHKL_CORE_RAW_IDATAREADER_H
 #define OHKL_CORE_RAW_IDATAREADER_H
 
-#include "core/data/DataTypes.h"
-#include "core/instrument/InstrumentState.h"
-#include "core/instrument/InstrumentStateSet.h"
-#include "core/raw/MetaData.h"
+#include "base/utils/LogLevel.h"
+#include "core/raw/DataKeys.h"
 
 #include <Eigen/Dense>
-#include <string>
-#include <vector>
 
 namespace ohkl {
 

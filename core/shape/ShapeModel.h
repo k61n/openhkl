@@ -15,7 +15,6 @@
 #ifndef OHKL_CORE_SHAPE_SHAPECOLLECTION_H
 #define OHKL_CORE_SHAPE_SHAPECOLLECTION_H
 
-#include "base/utils/ProgressHandler.h"
 #include "core/data/DataTypes.h"
 #include "core/integration/IIntegrator.h"
 #include "core/shape/Profile1D.h"

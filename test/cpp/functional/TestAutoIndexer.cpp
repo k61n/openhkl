@@ -12,15 +12,19 @@
 //
 //  ***********************************************************************************************
 
-#include "core/data/DataSet.h"
 #include "test/cpp/catch.hpp"
+
+#include "base/utils/Units.h"
+#include "core/algo/AutoIndexer.h"
+#include "core/convolve/AnnularConvolver.h"
+#include "core/data/DataSet.h"
 #include "core/experiment/Experiment.h"
 #include "core/experiment/PeakFinder.h"
-#include "core/loader/RawDataReader.h"
-#include "core/convolve/AnnularConvolver.h"
 #include "core/instrument/Diffractometer.h"
+#include "core/loader/RawDataReader.h"
 #include "core/peak/Peak3D.h"
 #include "core/shape/PeakFilter.h"
+#include "tables/crystal/UnitCell.h"
 
 
 #include <Eigen/Dense>
@@ -66,5 +70,4 @@ TEST_CASE("test/data/TestAutoIndexer.cpp", "")
         }
     }
     CHECK(found_cell);
-
 }

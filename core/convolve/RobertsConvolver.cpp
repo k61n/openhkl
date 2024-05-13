@@ -13,7 +13,6 @@
 //  ***********************************************************************************************
 
 #include "core/convolve/RobertsConvolver.h"
-#include "core/convolve/GradientConvolver.h"
 
 namespace ohkl {
 

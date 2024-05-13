@@ -12,15 +12,19 @@
 //
 //  ***********************************************************************************************
 
-#include <QStandardItemModel>
-#include <QTableWidgetItem>
+#include "core/data/DataTypes.h"
+
+#include <QTabWidget>
 
 #ifndef OHKL_GUI_SUBFRAME_REFINER_REFINERTABLES_H
 #define OHKL_GUI_SUBFRAME_REFINER_TABLES_REFINERTABLES_H
 
-class DataSet;
-class Refiner;
+class QStandardItemModel;
+class QTableView;
 enum class TableType;
+namespace ohkl {
+class Refiner;
+}
 
 class RefinerTables : public QTabWidget {
 

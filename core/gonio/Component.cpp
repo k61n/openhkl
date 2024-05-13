@@ -15,7 +15,6 @@
 #include "core/gonio/Component.h"
 #include "base/utils/Units.h"
 #include "base/utils/YAMLType.h"
-#include "core/gonio/Gonio.h"
 #include "core/raw/DataKeys.h"
 
 namespace ohkl {

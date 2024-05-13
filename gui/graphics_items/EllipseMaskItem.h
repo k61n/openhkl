@@ -15,13 +15,12 @@
 #ifndef OHKL_GUI_GRAPHICS_ITEMS_ELLIPSEMASKITEM_H
 #define OHKL_GUI_GRAPHICS_ITEMS_ELLIPSEMASKITEM_H
 
-#include "base/geometry/AABB.h"
-#include "base/mask/BoxMask.h"
-#include "base/mask/EllipseMask.h"
 #include "core/data/DataTypes.h"
 #include "gui/graphics_items/MaskItem.h"
 
-//! Creates an ellipse mask
+namespace ohkl {
+class AABB;
+}
 
 //! Creates a mask that will be used to unselect/select peaks whether their intercept or
 //! not the mask

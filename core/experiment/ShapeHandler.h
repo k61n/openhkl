@@ -14,17 +14,14 @@
 #ifndef OHKL_CORE_EXPERIMENT_SHAPEHANDLER_H
 #define OHKL_CORE_EXPERIMENT_SHAPEHANDLER_H
 
-#include <map>
-#include <string>
-#include <vector>
-
 #include "core/data/DataTypes.h"
-#include "core/shape/ShapeModel.h"
+
+#include <map>
 
 namespace ohkl {
 
 
-class Peak3D;
+class ShapeModel;
 
 using ShapeModelMap = std::map<std::string, std::unique_ptr<ShapeModel>>;
 

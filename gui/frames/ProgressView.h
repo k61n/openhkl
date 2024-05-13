@@ -16,8 +16,8 @@
 #define OHKL_GUI_FRAMES_PROGRESSVIEW_H
 
 #include "base/utils/ProgressHandler.h"
+
 #include <QProgressDialog>
-#include <memory>
 
 class QTimer;
 

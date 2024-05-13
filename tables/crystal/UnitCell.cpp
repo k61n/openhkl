@@ -21,7 +21,6 @@
 #include "core/data/DataTypes.h"
 #include "tables/crystal/GruberReduction.h"
 #include "tables/crystal/MillerIndex.h"
-#include "tables/crystal/NiggliCharacter.h"
 #include "tables/crystal/NiggliReduction.h"
 
 #include <cmath>

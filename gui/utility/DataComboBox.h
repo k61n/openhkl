@@ -15,7 +15,6 @@
 #ifndef OHKL_GUI_UTILITY_DATACOMBO_H
 #define OHKL_GUI_UTILITY_DATACOMBO_H
 
-#include "core/data/DataSet.h"
 #include "core/data/DataTypes.h"
 
 #include <QComboBox>

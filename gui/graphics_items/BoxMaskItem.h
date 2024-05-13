@@ -15,12 +15,12 @@
 #ifndef OHKL_GUI_GRAPHICS_ITEMS_BOXMASKITEM_H
 #define OHKL_GUI_GRAPHICS_ITEMS_BOXMASKITEM_H
 
-#include "base/geometry/AABB.h"
-#include "base/mask/BoxMask.h"
 #include "core/data/DataTypes.h"
 #include "gui/graphics_items/MaskItem.h"
 
-//! Creates a mask
+namespace ohkl {
+class AABB;
+}
 
 //! Creates a mask that will be used to unselect/select peaks whether their intercept or
 //! not the mask

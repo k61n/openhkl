@@ -15,13 +15,13 @@
 #include "core/statistics/PeakMerger.h"
 
 #include "base/utils/Logger.h"
+#include "base/utils/ProgressHandler.h"
 #include "core/data/DataSet.h"
-#include "core/experiment/DataQuality.h"
 #include "core/peak/Peak3D.h"
 #include "core/shape/PeakCollection.h"
 #include "core/statistics/MergedPeakCollection.h"
+#include "core/statistics/ResolutionShell.h"
 #include "core/statistics/RotationSlice.h"
-#include "tables/crystal/SpaceGroup.h"
 
 #include <fstream>
 #include <iomanip>

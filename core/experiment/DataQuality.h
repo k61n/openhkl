@@ -15,19 +15,12 @@
 #ifndef OHKL_CORE_EXPERIMENT_DATAQUALITY_H
 #define OHKL_CORE_EXPERIMENT_DATAQUALITY_H
 
-#include "base/utils/Logger.h"
+#include "core/statistics/MergedPeakCollection.h" // Required for SWIG?
 
 #include <string>
 #include <vector>
 
 namespace ohkl {
-
-class MergedPeakCollection;
-class RFactor;
-class CC;
-class PeakCollection;
-class ResolutionShell;
-class SpaceGroup;
 
 enum class FigureOfMerit { d = 0, Rmerge, Rmeas, Rpim, CChalf, CCstar, Completeness };
 

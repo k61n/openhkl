@@ -15,8 +15,7 @@
 #ifndef OHKL_CORE_EXPERIMENT_PEAKFINDER_H
 #define OHKL_CORE_EXPERIMENT_PEAKFINDER_H
 
-#include "core/convolve/Convolver.h"
-#include "core/data/DataSet.h"
+#include "core/data/DataTypes.h"
 #include "core/shape/PeakCollection.h"
 
 namespace ohkl {
@@ -28,6 +27,7 @@ using EquivalencePair = std::pair<int, int>;
 using EquivalenceList = std::vector<EquivalencePair>;
 
 class Blob3D;
+class Convolver;
 class ProgressHandler;
 
 using sptrProgressHandler = std::shared_ptr<ProgressHandler>;
@@ -139,11 +139,11 @@ class PeakFinder {
     //! Current label
     int _current_label;
     //! Vector of found peaks
-    ohkl::PeakList _current_peaks;
+    PeakList _current_peaks;
     //! Current DataSet
     sptrDataSet _current_data;
     //! PeakCollection attached to PeakFinder
-    ohkl::PeakCollection _peak_collection;
+    PeakCollection _peak_collection;
     //! Number of found peaks
     unsigned int _peaks_found;
     //! stores value of integration state
