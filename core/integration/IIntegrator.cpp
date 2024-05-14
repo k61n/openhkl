@@ -54,23 +54,25 @@ void IntegrationParameters::log(const Level& level) const
     ohklLog(level, "max_width              = ", max_width);
 }
 
-IIntegrator::IIntegrator()
-    : _sumBackground()
-    , _profileBackground()
-    , _meanBkgGradient()
-    , _sumIntensity()
-    , _profileIntensity()
-    , _rockingCurve()
-    , _handler(nullptr)
-    , _params{}
+ComputeResult::ComputeResult()
+    : integration_flag(RejectionFlag::NotRejected)
+    , sum_intensity()
+    , profile_intensity()
+    , sum_background()
+    , profile_background()
+    , bkg_gradient()
+    , rocking_curve()
+    , integrator_type(IntegratorType::PixelSum)
+    , shape()
 {
 }
 
-IIntegrator::~IIntegrator() = default;
-
-const std::vector<Intensity>& IIntegrator::rockingCurve() const
+IIntegrator::IIntegrator()
+    : _handler(nullptr)
+    , _params{}
+    , _thread_parallel(true)
+    , _max_threads(8)
 {
-    return _rockingCurve;
 }
 
 void IIntegrator::integrate(
@@ -93,38 +95,40 @@ void IIntegrator::integrate(
         _handler->setProgress(0);
     }
 
-    bool profile_integration = false;
+    _profile_integration = false;
     if (_params.integrator_type == IntegratorType::Profile1D
         || _params.integrator_type == IntegratorType::Profile3D
-        || _params.integrator_type == IntegratorType::Gaussian)
-        profile_integration = true;
+        || _params.integrator_type == IntegratorType::Gaussian
+        || _params.integrator_type == IntegratorType::ISigma)
+        _profile_integration = true;
 
 
     size_t idx = 0;
-    int num_frames_done = 0;
+    _n_frames_done = 0;
 
     std::map<Peak3D*, std::unique_ptr<IntegrationRegion>> regions;
     std::map<Peak3D*, bool> integrated;
 
-    double peak_end, bkg_begin, bkg_end;
     if (_params.region_type == ohkl::RegionType::VariableEllipsoid) {
-        peak_end = _params.peak_end;
-        bkg_begin = _params.bkg_begin;
-        bkg_end = _params.bkg_end;
+        _peak_end = _params.peak_end;
+        _bkg_begin = _params.bkg_begin;
+        _bkg_end = _params.bkg_end;
     } else {
-        peak_end = _params.fixed_peak_end;
-        bkg_begin = _params.fixed_bkg_begin;
-        bkg_end = _params.fixed_bkg_end;
+        _peak_end = _params.fixed_peak_end;
+        _bkg_begin = _params.fixed_bkg_begin;
+        _bkg_end = _params.fixed_bkg_end;
     }
 
     for (auto peak : peaks) {
-        if (!peak->enabled() && peak->isRejectedFor(RejectionFlag::Extinct))
-            continue;
+        if (peak->isRejectedFor(RejectionFlag::Extinct)) {
+            if (!peak->enabled())
+                continue;
+        }
 
         regions.emplace(std::make_pair(
             peak,
             std::make_unique<IntegrationRegion>(
-                peak, peak_end, bkg_begin, bkg_end, _params.region_type)));
+                peak, _peak_end, _bkg_begin, _bkg_end, _params.region_type)));
         integrated.emplace(std::make_pair(peak, false));
 
         // ignore partials
@@ -154,7 +158,7 @@ void IIntegrator::integrate(
         removeOverlaps(regions);
 
     ohklLog(Level::Debug, "IIntegrator::integrate: frames loop");
-    int nfailures = 0;
+    _n_failures = 0;
     for (idx = 0; idx < data->nFrames(); ++idx) {
         Eigen::MatrixXd current_frame, gradient;
         Eigen::MatrixXi mask;
@@ -167,42 +171,43 @@ void IIntegrator::integrate(
 
         for (auto peak : peaks) {
             assert(peak != nullptr);
-            auto* current_peak = regions.at(peak).get();
-            // assert(current_peak != regions.end());
-            current_peak->updateMask(mask, idx);
+            auto* current_region = regions.at(peak).get();
+            current_region->updateMask(mask, idx);
         }
 
         for (auto peak : peaks) {
-            auto* current_peak = regions.at(peak).get();
+            auto* current_region = regions.at(peak).get();
             // Check whether the peak intersects a mask
             if (_params.skip_masked) {
                 Ellipsoid shape = peak->shape();
-                shape.scale(bkg_end);
+                shape.scale(_bkg_end);
                 for (const auto* mask : data->masks()) {
                     if (mask->collide(shape)) {
-                        peak->setRejectionFlag(RejectionFlag::Masked);
-                        ++nfailures;
+                        peak->setMasked();
                         continue;
                     }
                 }
             }
             // Check for saturated pixels
-            const auto& counts = current_peak->peakData().counts();
+            const auto& counts = current_region->peakData().counts();
             double max = 0;
             if (!counts.empty()) // std::max on empty vector segfaults under MacOS
                 max = *std::max_element(counts.begin(), counts.end());
-            bool saturated = _params.discard_saturated && (max > _params.max_counts);
+            const bool saturated = _params.discard_saturated && (max > _params.max_counts);
 
-            bool result;
+            bool result = false;
             if (_params.use_gradient)
-                result = current_peak->advanceFrame(current_frame, mask, idx, gradient);
+                result = current_region->advanceFrame(current_frame, mask, idx, &gradient);
             else
-                result = current_peak->advanceFrame(current_frame, mask, idx);
+                result = current_region->advanceFrame(current_frame, mask, idx);
 
-            // Skip strong and low resolution peaks during profile integration
-            if (profile_integration && !reintegrate(peak)) {
-                result = false;
-                integrated[peak] = true;
+            bool reintegrate = true;
+            if (_profile_integration) {
+                if (_params.use_max_strength && peak->sumIntensity().strength() >
+                    _params.max_strength)
+                    reintegrate = false;
+                if (_params.use_max_d && peak->d() > _params.max_d)
+                    reintegrate = false;
             }
 
             // this allows for partials at end of data
@@ -210,34 +215,38 @@ void IIntegrator::integrate(
 
             // done reading peak data
             if (result && !integrated[peak]) {
-                current_peak->peakData().standardizeCoords();
-                if (compute(peak, shape_model, *current_peak)) {
-                    peak->updateIntegration(
-                        _rockingCurve, _sumBackground, _profileBackground, _meanBkgGradient,
-                        _sumIntensity, _profileIntensity, _params.peak_end, _params.bkg_begin,
-                        _params.bkg_end, _params.region_type);
-                    if (saturated)
-                        peak->setIntegrationFlag(
-                            RejectionFlag::SaturatedPixel, _params.integrator_type);
-                } else {
-                    ++nfailures;
-                    // This is a fallback. The RejectionFlag should have been set by this point.
-                    peak->setIntegrationFlag(
-                        RejectionFlag::IntegrationFailure, _params.integrator_type);
+                ComputeResult compute_result;
+                if (!reintegrate) { // do not reintegrate using profile fitting
+                    compute_result.integrator_type = _params.integrator_type;
+                    compute_result.rocking_curve = peak->rockingCurve();
+                    compute_result.profile_intensity = peak->sumIntensity();
+                    compute_result.profile_background = peak->sumBackground();
+                    compute_result.integration_flag = peak->sumRejectionFlag();
+                    integrated[peak] = true;
+                } else { // do the integration
+                    current_region->peakData().standardizeCoords();
+                    compute_result = compute(peak, shape_model, *current_region);
                 }
-                // free memory (important!!)
-                current_peak->reset();
+
+                if (saturated)
+                    compute_result.integration_flag = RejectionFlag::SaturatedPixel;
+                if (compute_result.integration_flag != RejectionFlag::NotRejected)
+                    ++_n_failures;
                 integrated[peak] = true;
+                peak->updateIntegration(
+                    compute_result, _params.peak_end, _params.bkg_begin, _params.bkg_end,
+                    _params.region_type);
+                current_region->reset();
             }
         }
 
         if (_handler) {
-            ++num_frames_done;
-            double progress = num_frames_done * 100.0 / data->nFrames();
+            ++_n_frames_done;
+            double progress = _n_frames_done * 100.0 / data->nFrames();
             _handler->setProgress(progress);
         }
     }
-    ohklLog(Level::Info, "IIntegrator::integrate: end; ", nfailures, " failures");
+    ohklLog(Level::Info, "IIntegrator::integrate: end; ", _n_failures, " failures");
 }
 
 void IIntegrator::setHandler(sptrProgressHandler handler)
@@ -293,30 +302,6 @@ void IIntegrator::removeOverlaps(
         nrejected += 2;
     }
     ohklLog(Level::Info, "IIntegrator::removeOverlaps: ", nrejected, " overlapping peaks rejected");
-}
-
-bool IIntegrator::reintegrate(Peak3D* peak)
-{
-    bool reintegrate = true;
-    if (_params.use_max_strength) // Skip strong peaks
-        if (peak->sumIntensity().strength() > _params.max_strength)
-            reintegrate = false;
-    if (_params.use_max_d) // Skip low resolution peaks
-        if (peak->d() > _params.max_d)
-            reintegrate = false;
-
-    if (!reintegrate) {
-        if (peak->sumRejectionFlag() == RejectionFlag::NotRejected) {
-            peak->updateIntegration(
-                _rockingCurve, peak->sumBackground(), peak->sumBackground(),
-                peak->meanBkgGradient(), peak->sumIntensity(), peak->sumIntensity(),
-                _params.peak_end, _params.bkg_begin, _params.bkg_end, _params.region_type);
-        } else {
-            peak->setIntegrationFlag(peak->sumRejectionFlag(), IntegratorType::Profile3D);
-        }
-    }
-
-    return reintegrate;
 }
 
 } // namespace ohkl

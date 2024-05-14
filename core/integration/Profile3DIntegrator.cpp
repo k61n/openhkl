@@ -18,10 +18,10 @@
 #include "core/peak/Peak3D.h"
 #include "core/shape/ShapeModel.h"
 
-namespace ohkl {
+namespace {
 
-static void updateFit(
-    Intensity& I, Intensity& B, const std::vector<double>& profile,
+void updateFit(
+    ohkl::Intensity& I, ohkl::Intensity& B, const std::vector<double>& profile,
     const std::vector<double>& counts)
 {
     Eigen::Matrix2d A;
@@ -43,7 +43,7 @@ static void updateFit(
         b(1) += M * p / var;
     }
 
-    Eigen::Matrix2d AI = A.inverse();
+    const Eigen::Matrix2d AI = A.inverse();
     const Eigen::Vector2d& x = AI * b;
 
     const double new_B = x(0);
@@ -54,33 +54,37 @@ static void updateFit(
 
     // Note: this error estimate assumes the variances are correct (i.e., gain and
     // baseline accounted for)
-    B = Intensity(new_B, cov(0, 0));
-    I = Intensity(new_I, cov(1, 1));
+    B = ohkl::Intensity(new_B, cov(0, 0));
+    I = ohkl::Intensity(new_I, cov(1, 1));
 }
 
-bool Profile3DIntegrator::compute(
+}
+
+namespace ohkl {
+
+ComputeResult Profile3DIntegrator::compute(
     Peak3D* peak, ShapeModel* shape_model, const IntegrationRegion& region)
 {
-    if (!shape_model) {
-        peak->setIntegrationFlag(RejectionFlag::NoShapeModel, IntegratorType::Profile3D);
-        return false;
-    }
+    ComputeResult result;
+    result.integrator_type = IntegratorType::Profile3D;
 
-    if (!peak)
-        return false;
+    if (!shape_model) {
+        result.integration_flag = RejectionFlag::NoShapeModel;
+        return result;
+    }
 
     const auto& events = region.peakData().events();
     const auto& counts = region.peakData().counts();
 
     // TODO: should this be hard-coded??
     if (events.size() < 29) {
-        peak->setIntegrationFlag(RejectionFlag::TooFewPoints, IntegratorType::Profile3D);
-        return false;
+        result.integration_flag = RejectionFlag::TooFewPoints;
+        return result;
     }
 
     // dummy value for initial guess
-    _profileBackground = Intensity(1.0, 1.0);
-    _profileIntensity = Intensity(0.0, 0.0);
+    result.profile_background = Intensity(1.0, 1.0);
+    result.profile_intensity = Intensity(0.0, 0.0);
 
     std::vector<double> profile;
     std::vector<double> obs_counts;
@@ -90,11 +94,9 @@ bool Profile3DIntegrator::compute(
 
     const double tolerance = 1e-5;
 
-    DetectorEvent event(peak->shape().center());
-
-    Profile3D model_profile = shape_model->meanProfile(event);
-
-    PeakCoordinateSystem coord(peak);
+    const DetectorEvent event(peak->shape().center());
+    const Profile3D model_profile = shape_model->meanProfile(event);
+    const PeakCoordinateSystem coord(peak);
 
     // evaluate the model profile at the given events
     for (int i = 0; i < events.size(); ++i) {
@@ -116,13 +118,13 @@ bool Profile3DIntegrator::compute(
 
     // todo: stopping criterion
     for (auto i = 0; i < 20; ++i) {
-        Intensity old_intensity = _profileIntensity;
-        const double I0 = _profileIntensity.value();
-        updateFit(_profileIntensity, _profileBackground, profile, obs_counts);
-        const double I1 = _profileIntensity.value();
+        const Intensity old_intensity = result.profile_intensity;
+        const double I0 = result.profile_intensity.value();
+        updateFit(result.profile_intensity, result.profile_background, profile, obs_counts);
+        const double I1 = result.profile_intensity.value();
 
-        if (std::isnan(I1) || std::isnan(_profileBackground.value())) {
-            _profileIntensity = old_intensity;
+        if (std::isnan(I1) || std::isnan(result.profile_background.value())) {
+            result.profile_intensity = old_intensity;
             break;
         }
 
@@ -130,16 +132,16 @@ bool Profile3DIntegrator::compute(
             break;
     }
 
-    double sigma = _profileIntensity.sigma();
+    const double sigma = result.profile_intensity.sigma();
 
     if (std::isnan(sigma) && sigma > 0) {
-        peak->setIntegrationFlag(RejectionFlag::InvalidSigma, IntegratorType::Profile3D);
-        return false;
+        result.integration_flag = RejectionFlag::InvalidSigma;
+        return result;
     }
-    _sumIntensity = {};
-    _sumBackground = {};
+    result.sum_intensity = {};
+    result.sum_background = {};
 
-    return true;
+    return result;
 }
 
 } // namespace ohkl

@@ -33,7 +33,7 @@ class PixelSumIntegrator : public IIntegrator {
 
  protected:
     //! Integrate a peak
-    bool compute(Peak3D* peak, ShapeModel*, const IntegrationRegion& region) override;
+    ComputeResult compute(Peak3D* peak, ShapeModel*, const IntegrationRegion& region) override;
 };
 
 /*! @}*/

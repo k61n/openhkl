@@ -19,6 +19,7 @@
 #include "core/instrument/Diffractometer.h"
 #include "core/integration/IIntegrator.h"
 #include "core/peak/Peak3D.h"
+#include "core/peak/PeakData.h"
 #include "tables/crystal/UnitCell.h"
 
 namespace ohkl {
@@ -26,14 +27,14 @@ namespace ohkl {
 IntegrationRegion::IntegrationRegion(
     Peak3D* peak, double peak_end, double bkg_begin, double bkg_end,
     RegionType region_type /* = RegionType::VariableEllipsoid */)
-    : _bkgBegin(bkg_begin)
+    : _shape(peak->shape())
+    , _bkgBegin(bkg_begin)
     , _bkgEnd(bkg_end)
     , _data(peak)
     , _regionType(region_type)
     , _peak(peak)
     , _valid(true)
 {
-    _shape = peak->shape();
     if (_shape.aabb().lower().hasNaN() || _shape.aabb().upper().hasNaN()) {
         peak->setIntegrationFlag(RejectionFlag::InvalidShape, IntegratorType::PixelSum);
         peak->setIntegrationFlag(RejectionFlag::InvalidShape, IntegratorType::Profile3D);
@@ -132,7 +133,7 @@ void IntegrationRegion::updateMask(Eigen::MatrixXi& mask, double z) const
             if (val == EventType::FORBIDDEN)
                 continue;
 
-            DetectorEvent ev(x, y, z);
+            const DetectorEvent ev(x, y, z);
             auto ev_type = classify(ev);
 
             switch (ev_type) {
@@ -168,8 +169,8 @@ RegionData* IntegrationRegion::getRegion()
     xmax = std::min(xmax, long(data->nCols()));
     ymax = std::min(ymax, long(data->nRows()));
 
-    int zmin = std::ceil(lower[2]);
-    int zmax = std::floor(upper[2]);
+    const int zmin = std::ceil(lower[2]);
+    const int zmax = std::floor(upper[2]);
 
 
     _region_data = RegionData(this, xmin, xmax, ymin, ymax, zmin, zmax);
@@ -185,7 +186,7 @@ RegionData* IntegrationRegion::getRegion()
             for (auto y = ymin; y < ymax; ++y) {
                 EventType val = EventType::EXCLUDED;
 
-                DetectorEvent ev(x, y, z);
+                const DetectorEvent ev(x, y, z);
                 auto ev_type = classify(ev);
 
                 switch (ev_type) {
@@ -237,53 +238,8 @@ IntegrationRegion::EventType IntegrationRegion::classify(const DetectorEvent& ev
 }
 
 bool IntegrationRegion::advanceFrame(
-    const Eigen::MatrixXd& image, const Eigen::MatrixXi& mask, double frame)
-{
-    const auto aabb = _hull.aabb();
-    auto lower = aabb.lower();
-    auto upper = aabb.upper();
-
-    if (frame < lower[2])
-        return false;
-
-    if (frame > upper[2])
-        return true;
-
-    long xmin = std::max(0L, std::lround(lower[0]));
-    long ymin = std::max(0L, std::lround(lower[1]));
-
-    long xmax = std::min(long(image.cols()), std::lround(upper[0]));
-    long ymax = std::min(long(image.rows()), std::lround(upper[1]));
-
-    for (auto x = xmin; x < xmax; ++x) {
-        for (auto y = ymin; y < ymax; ++y) {
-            EventType mask_type = EventType(mask(y, x));
-            if (mask_type == EventType::FORBIDDEN)
-                continue;
-            DetectorEvent ev(x, y, frame);
-            Eigen::Vector3d p(x, y, frame);
-            auto event_type = classify(ev);
-
-            if (event_type == EventType::PEAK) {
-                _data.addEvent(ev, image(y, x));
-            }
-
-            if (event_type == EventType::BACKGROUND && mask_type == EventType::BACKGROUND) {
-                _data.addEvent(ev, image(y, x));
-            }
-
-            // check if point is in Brillouin zone (or AABB if no UC available)
-            // if (_hull.contains(p)) {
-            //    _data.addEvent(ev, image(y,x));
-            //}
-        }
-    }
-    return false;
-}
-
-bool IntegrationRegion::advanceFrame(
     const Eigen::MatrixXd& image, const Eigen::MatrixXi& mask, double frame,
-    const Eigen::MatrixXd& gradient)
+    const Eigen::MatrixXd* gradient /* = nullptr */)
 {
     const auto aabb = _hull.aabb();
     auto lower = aabb.lower();
@@ -295,28 +251,30 @@ bool IntegrationRegion::advanceFrame(
     if (frame > upper[2])
         return true;
 
-    long xmin = std::max(0L, std::lround(lower[0]));
-    long ymin = std::max(0L, std::lround(lower[1]));
+    const long xmin = std::max(0L, std::lround(lower[0]));
+    const long ymin = std::max(0L, std::lround(lower[1]));
 
-    long xmax = std::min(long(image.cols()), std::lround(upper[0]));
-    long ymax = std::min(long(image.rows()), std::lround(upper[1]));
+    const long xmax = std::min(long(image.cols()), std::lround(upper[0]));
+    const long ymax = std::min(long(image.rows()), std::lround(upper[1]));
 
     for (auto x = xmin; x < xmax; ++x) {
         for (auto y = ymin; y < ymax; ++y) {
-            EventType mask_type = EventType(mask(y, x));
+            const EventType mask_type = EventType(mask(y, x));
             if (mask_type == EventType::FORBIDDEN)
                 continue;
-            DetectorEvent ev(x, y, frame);
-            Eigen::Vector3d p(x, y, frame);
+            const DetectorEvent ev(x, y, frame);
+            const Eigen::Vector3d p(x, y, frame);
             auto event_type = classify(ev);
 
-            if (event_type == EventType::PEAK) {
-                _data.addEvent(ev, image(y, x), gradient(y, x));
-            }
+            double grad = 0;
+            if (gradient)
+                grad = (*gradient)(y, x);
 
-            if (event_type == EventType::BACKGROUND && mask_type == EventType::BACKGROUND) {
-                _data.addEvent(ev, image(y, x), gradient(y, x));
-            }
+            if (event_type == EventType::PEAK)
+                _data.addEvent(ev, image(y, x), grad);
+
+            if (event_type == EventType::BACKGROUND && mask_type == EventType::BACKGROUND)
+                _data.addEvent(ev, image(y, x), grad);
 
             // check if point is in Brillouin zone (or AABB if no UC available)
             // if (_hull.contains(p)) {
@@ -327,6 +285,50 @@ bool IntegrationRegion::advanceFrame(
     return false;
 }
 
+PeakData IntegrationRegion::threadSafeAdvanceFrame(
+    const Eigen::MatrixXd& image, const Eigen::MatrixXi& mask, double frame,
+    const Eigen::MatrixXd* gradient /* = nullptr */)
+{
+    PeakData peak_data(_peak);
+
+    const auto aabb = _hull.aabb();
+    auto lower = aabb.lower();
+    auto upper = aabb.upper();
+
+    if (frame < lower[2])
+        return peak_data;
+
+    if (frame > upper[2])
+        return peak_data;
+
+    const long xmin = std::max(0L, std::lround(lower[0]));
+    const long ymin = std::max(0L, std::lround(lower[1]));
+
+    const long xmax = std::min(long(image.cols()), std::lround(upper[0]));
+    const long ymax = std::min(long(image.rows()), std::lround(upper[1]));
+
+    for (auto x = xmin; x < xmax; ++x) {
+        for (auto y = ymin; y < ymax; ++y) {
+            const EventType mask_type = EventType(mask(y, x));
+            if (mask_type == EventType::FORBIDDEN)
+                continue;
+            const DetectorEvent ev(x, y, frame);
+            const Eigen::Vector3d p(x, y, frame);
+            auto event_type = classify(ev);
+
+            double grad = 0;
+            if (gradient)
+                grad = (*gradient)(y, x);
+
+            if (event_type == EventType::PEAK)
+                peak_data.addEvent(ev, image(y, x), grad);
+
+            if (event_type == EventType::BACKGROUND && mask_type == EventType::BACKGROUND)
+                peak_data.addEvent(ev, image(y, x), grad);
+        }
+    }
+    return peak_data;
+}
 
 void IntegrationRegion::reset()
 {
@@ -341,6 +343,12 @@ const PeakData& IntegrationRegion::peakData() const
 PeakData& IntegrationRegion::peakData()
 {
     return _data;
+}
+
+void IntegrationRegion::appendPeakData(const PeakData& peak_data)
+{
+    if (!peak_data.empty())
+        _data.append(peak_data);
 }
 
 const Ellipsoid& IntegrationRegion::shape() const

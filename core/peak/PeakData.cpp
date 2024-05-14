@@ -46,11 +46,6 @@ const std::deque<double>& PeakData::gradients() const
 
 void PeakData::standardizeCoords()
 {
-    if (_peak == nullptr) {
-        throw std::runtime_error(
-            "PeakData::standardizeCoords() cannot be called if _peak is nullptr");
-    }
-
     _coords.resize(_events.size());
 
     for (size_t i = 0; i < _events.size(); ++i)
@@ -64,6 +59,13 @@ void PeakData::addEvent(const DetectorEvent& ev, double count, double gradient /
     _gradients.push_back(gradient);
 }
 
+void PeakData::append(const PeakData& other)
+{
+    _events.insert(_events.end(), other._events.begin(), other._events.end());
+    _counts.insert(_counts.end(), other._counts.begin(), other._counts.end());
+    _gradients.insert(_gradients.end(), other._gradients.begin(), other._gradients.end());
+}
+
 void PeakData::reset()
 {
     std::deque<DetectorEvent> e;
@@ -75,6 +77,11 @@ void PeakData::reset()
     std::swap(_counts, c);
     std::swap(_gradients, g);
     std::swap(_coords, crds);
+}
+
+bool PeakData::empty() const
+{
+    return _events.empty();
 }
 
 } // namespace ohkl

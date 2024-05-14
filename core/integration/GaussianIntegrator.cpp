@@ -13,6 +13,7 @@
 //  ***********************************************************************************************
 
 #include "core/integration/GaussianIntegrator.h"
+
 #include "base/fit/FitParameters.h"
 #include "base/fit/Minimizer.h"
 #include "base/geometry/Ellipsoid.h"
@@ -23,15 +24,9 @@
 
 #include <Eigen/Cholesky>
 
-namespace ohkl {
+namespace {
 
-GaussianIntegrator::GaussianIntegrator() : IIntegrator()
-{
-    _params.fit_center = true;
-    _params.fit_cov = true;
-}
-
-static Eigen::Matrix3d from_cholesky(const Eigen::VectorXd a)
+Eigen::Matrix3d from_cholesky(const Eigen::VectorXd a)
 {
     // Reconstruct Cholesky L factor
     Eigen::Matrix3d L;
@@ -46,7 +41,7 @@ static Eigen::Matrix3d from_cholesky(const Eigen::VectorXd a)
     return L * L.transpose();
 }
 
-static void residuals(
+void residuals(
     Eigen::VectorXd& res, double B, double I, const Eigen::Vector3d x0, const Eigen::VectorXd& a,
     const std::vector<Eigen::Vector3d>& x, const std::vector<double>& M, double* pearson)
 {
@@ -59,7 +54,7 @@ static void residuals(
     double u = 0, v = 0, uu = 0, vv = 0, uv = 0;
 
     for (size_t i = 0; i < n; ++i) {
-        Eigen::Vector3d dx = x[i] - x0;
+        const Eigen::Vector3d dx = x[i] - x0;
         const double xAx = dx.dot(A * dx);
         const double M_pred = B + I * std::exp(-0.5 * xAx);
         const double M_obs = M[i];
@@ -85,11 +80,21 @@ static void residuals(
     }
 }
 
-bool GaussianIntegrator::compute(
+} // namespace
+
+namespace ohkl {
+
+GaussianIntegrator::GaussianIntegrator() : IIntegrator()
+{
+    _params.fit_center = true;
+    _params.fit_cov = true;
+}
+
+ComputeResult GaussianIntegrator::compute(
     Peak3D* peak, ShapeModel* /*shape_model*/, const IntegrationRegion& region)
 {
-    if (!peak)
-        return false;
+    ComputeResult result;
+    result.integrator_type = IntegratorType::Gaussian;
 
     const size_t N = region.peakData().events().size();
 
@@ -149,39 +154,41 @@ bool GaussianIntegrator::compute(
     min.setWeights(wts);
 
     try {
-        bool success = min.fit(100);
-        if (!success)
-            return false;
+        const bool success = min.fit(100);
+        if (!success) {
+            result.integration_flag = RejectionFlag::BadGaussianFit;
+            return result;
+        }
     } catch (std::exception& e) {
-        ohklLog(Level::Warning, __FUNCTION__, ": Gaussian fit failed: ", e.what());
-        return false;
+        result.integration_flag = RejectionFlag::BadGaussianFit;
+        return result;
     }
 
     // consistency check: center should still be in dataset!
     if (x0(0) < 0 || x0(0) >= peak->dataSet()->nCols()) {
-        peak->setIntegrationFlag(RejectionFlag::CentreOutOfBounds, IntegratorType::Gaussian);
-        return false;
+        result.integration_flag = RejectionFlag::CentreOutOfBounds;
+        return result;
     }
     if (x0(1) < 0 || x0(1) >= peak->dataSet()->nRows()) {
-        peak->setIntegrationFlag(RejectionFlag::CentreOutOfBounds, IntegratorType::Gaussian);
-        return false;
+        result.integration_flag = RejectionFlag::CentreOutOfBounds;
+        return result;
     }
     if (x0(2) < 0 || x0(2) >= peak->dataSet()->nFrames()) {
-        peak->setIntegrationFlag(RejectionFlag::CentreOutOfBounds, IntegratorType::Gaussian);
-        return false;
+        result.integration_flag = RejectionFlag::CentreOutOfBounds;
+        return result;
     }
 
     // consistency check: covariance matrix should be positive definite
-    Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d> solver(from_cholesky(a));
+    const Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d> solver(from_cholesky(a));
 
     if (solver.eigenvalues().minCoeff() <= 0) {
-        peak->setIntegrationFlag(RejectionFlag::InvalidCovariance, IntegratorType::Gaussian);
-        return false;
+        result.integration_flag = RejectionFlag::InvalidCovariance;
+        return result;
     }
 
     const auto& covar = min.covariance();
-    _profileBackground = {B, covar(0, 0)};
-    _profileIntensity = {I, covar(1, 1)};
+    result.profile_background = {B, covar(0, 0)};
+    result.profile_intensity = {I, covar(1, 1)};
 
     // Gets pearson coefficient of fit
     double pearson;
@@ -189,14 +196,15 @@ bool GaussianIntegrator::compute(
     residuals(r, B, I, x0, a, x, counts, &pearson);
 
     if (pearson <= 0.75) {
-        peak->setIntegrationFlag(RejectionFlag::BadIntegrationFit, IntegratorType::Gaussian);
-        return false;
+        result.integration_flag = RejectionFlag::BadIntegrationFit;
+        return result;
     }
-    _sumIntensity = {};
-    _sumBackground = {};
+    result.sum_background = {};
+    result.sum_intensity = {};
 
-    peak->setShape({x0, from_cholesky(a)});
-    return true;
+    result.shape = {x0, from_cholesky(a)};
+
+    return result;
 }
 
 std::vector<double> GaussianIntegrator::profile(Peak3D* peak, const IntegrationRegion& region)

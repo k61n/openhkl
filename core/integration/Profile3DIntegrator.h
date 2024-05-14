@@ -54,7 +54,8 @@ class Profile3DIntegrator : public IIntegrator {
 
  protected:
     //! Do the integration
-    bool compute(Peak3D* peak, ShapeModel* shape_model, const IntegrationRegion& region) override;
+    ComputeResult compute(
+        Peak3D* peak, ShapeModel* shape_model, const IntegrationRegion& region) override;
 };
 
 /*! @}*/

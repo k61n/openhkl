@@ -29,6 +29,7 @@ enum class RegionType;
 enum class IntegratorType;
 class ReciprocalVector;
 class UnitCell;
+struct ComputeResult;
 
 /*! \addtogroup python_api
  *  @{*/
@@ -61,6 +62,7 @@ enum class RejectionFlag {
     NoShapeModel,
     NoISigmaMinimum,
     TooWide,
+    BadGaussianFit,
     PredictionUpdateFailure, // from refiner
     ManuallyRejected,
     OutsideIndexingTol,
@@ -175,9 +177,7 @@ class Peak3D {
 
     //! Update the integration parameters for this peak
     void updateIntegration(
-        const std::vector<Intensity>& rockingCurve, const Intensity& sumBkg,
-        const Intensity& profBkg, const Intensity& meanBkgGradient, const Intensity& sumInt,
-        const Intensity& profInt, double peakEnd, double bkgBegin, double bkgEnd,
+        const ComputeResult& result, double peakEnd, double bkgBegin, double bkgEnd,
         const RegionType& regionType);
     //! Return the q vector of the peak, transformed into sample coordinates.
     ReciprocalVector q() const;
@@ -203,6 +203,8 @@ class Peak3D {
     //! Set the reason for rejection during integration
     void setIntegrationFlag(
         const RejectionFlag& flag, const IntegratorType& integrator, bool overwrite = false);
+    //! Label the peak as masked
+    void setMasked();
     //! Return the rejection flag only
     RejectionFlag getRejectionFlag() const { return _rejection_flag; };
     //! Return the sum integration flag only
