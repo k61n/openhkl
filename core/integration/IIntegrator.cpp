@@ -172,7 +172,6 @@ void IIntegrator::integrate(
             current_peak->updateMask(mask, idx);
         }
 
-#pragma omp parallel for
         for (auto peak : peaks) {
             auto* current_peak = regions.at(peak).get();
             // Check whether the peak intersects a mask
@@ -221,7 +220,6 @@ void IIntegrator::integrate(
                         peak->setIntegrationFlag(
                             RejectionFlag::SaturatedPixel, _params.integrator_type);
                 } else {
-#pragma omp atomic
                     ++nfailures;
                     // This is a fallback. The RejectionFlag should have been set by this point.
                     peak->setIntegrationFlag(

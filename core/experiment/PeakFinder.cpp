@@ -238,7 +238,6 @@ void PeakFinder::findPrimaryBlobs(
 
     // Iterate on all pixels in the image
     int nframes = 0;
-#pragma omp for schedule(dynamic, DYNAMIC_CHUNK)
     for (size_t idx = begin; idx < end; ++idx) {
         ++nframes;
 
@@ -318,15 +317,12 @@ void PeakFinder::findPrimaryBlobs(
                 labels[index2D] = labels2[index2D] = label;
                 index2D++;
                 auto value = frame_data(row, col);
-#pragma omp critical(dataupdate)
-                {
-                    // Create a new blob if necessary
-                    if (newlabel)
-                        blobs.insert(std::make_pair(label, Blob3D(col, row, idx, value)));
-                    else {
-                        auto it = blobs.find(label);
-                        it->second.addPoint(col, row, idx, value);
-                    }
+                // Create a new blob if necessary
+                if (newlabel)
+                    blobs.insert(std::make_pair(label, Blob3D(col, row, idx, value)));
+                else {
+                    auto it = blobs.find(label);
+                    it->second.addPoint(col, row, idx, value);
                 }
             }
         }

@@ -446,7 +446,6 @@ void ShapeModel::setPredictedShapes(PeakCollection* peaks)
         _handler->setProgress(0);
     }
 
-#pragma omp parallel for
     for (auto peak : peaks->getPeakList()) {
         // Skip the peak if any error occur when computing its mean covariance (e.g.
         // too few or no neighbouring peaks found)

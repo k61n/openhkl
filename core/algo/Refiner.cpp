@@ -273,10 +273,8 @@ bool Refiner::refine(sptrDataSet data, const std::vector<Peak3D*> peaks, sptrUni
         return false;
 
     unsigned int failed_batches = 0;
-    // #pragma omp parallel for
     for (auto&& batch : _batches) {
         if (!batch.refine(_params->max_iter)) {
-            // #pragma omp atomic
             ++failed_batches;
         }
     }

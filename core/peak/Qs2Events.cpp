@@ -54,15 +54,11 @@ std::vector<std::pair<MillerIndex, DetectorEvent>> algo::qMap2Events(
     }
 
 // for each sample q, determine the rotation that makes it intersect the Ewald sphere
-#pragma omp parallel for
     for (const auto& [hkl, sample_q] : sample_qs) {
         std::vector<DetectorEvent> new_events =
             qVector2Events(sample_q, states, detector, n_intervals);
-#pragma omp critical(dataupdate)
-        {
-            for (auto event : new_events)
-                events.push_back({hkl, event});
-        }
+        for (auto event : new_events)
+            events.push_back({hkl, event});
         if (handler)
             handler->setProgress(++count * 100.0 / sample_qs.size());
     }
@@ -93,15 +89,11 @@ std::vector<DetectorEvent> algo::qVectorList2Events(
     }
 
 // for each sample q, determine the rotation that makes it intersect the Ewald sphere
-#pragma omp parallel for
     for (const ReciprocalVector& sample_q : sample_qs) {
         std::vector<DetectorEvent> new_events =
             qVector2Events(sample_q, states, detector, n_intervals);
-#pragma omp critical(dataupdate)
-        {
-            for (auto event : new_events)
-                events.emplace_back(event);
-        }
+        for (auto event : new_events)
+            events.emplace_back(event);
         if (handler)
             handler->setProgress(++count * 100.0 / sample_qs.size());
     }
