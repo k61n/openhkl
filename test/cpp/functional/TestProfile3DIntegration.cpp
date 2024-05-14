@@ -38,16 +38,19 @@ TEST_CASE("test/data/TestProfile3DIntegration.cpp", "")
 {
     // reference values
     const int ref_n_peaks = 59209;
-    const int ref_n_integrated_peaks = 56160;
-    const double ref_rpim_overall = 0.0798;
-    const double ref_ccstar_overall = 0.9972;
+    const int ref_n_integrated_peaks = 55986;
+    const double ref_rpim_overall = 0.0763;
+    const double ref_ccstar_overall = 0.9973;
+    const double ref_cchalf_overall = 0.9892;
     const std::vector<double> ref_rpim =
-        {0.0267, 0.0605,  0.1028, 0.1362, 0.1766, 0.2219, 0.2649, 0.3084, 0.3632, 0.4278};
+        {0.0267, 0.0605,  0.1019, 0.1325, 0.1729, 0.2113, 0.2474, 0.2790, 0.3272, 0.3974};
     const std::vector<double> ref_ccstar =
-        {0.9988, 0.9957, 0.9871, 0.9778, 0.9670, 0.9406, 0.9223, 0.9002, 0.8395, 0.7645};
+        {0.9988, 0.9956, 0.9873, 0.9786, 0.9685, 0.9464, 0.9330, 0.9283, 0.8837, 0.8071};
+    const std::vector<double> ref_cchalf =
+        {0.9953, 0.9826, 0.9507, 0.9187, 0.8833, 0.8114, 0.7707, 0.7570, 0.6406, 0.4831};
 
     const int eps_peaks = 100;
-    const double eps_stats = 0.02;
+    const double eps_stats = 0.01;
 
     const std::string filename = "Trypsin-pxsum.ohkl";
     ohkl::Experiment experiment("Trypsin", "BioDiff");
@@ -66,7 +69,7 @@ TEST_CASE("test/data/TestProfile3DIntegration.cpp", "")
     shape_params.sigma_d = found->sigmaD();
     shape_params.sigma_m = found->sigmaM();
     shape_params.strength_min = 1.0;
-    shape_params.neighbour_range_pixels = 200;
+    shape_params.neighbour_range_pixels = 50;
     shape_params.neighbour_range_frames = 10;
     found->buildShapeModel(data, shape_params);
     ohkl::ShapeModel* shapes = found->shapeModel();
@@ -80,9 +83,9 @@ TEST_CASE("test/data/TestProfile3DIntegration.cpp", "")
     params->discard_saturated = true;
     params->skip_masked = true;
     params->use_max_strength = true;
-    params->max_strength = 5.0;
+    params->max_strength = 1.0;
     params->use_max_d = true;
-    params->max_d = 2.56;
+    params->max_d = 2.5;
 
     integrator->integratePeaks(data, peaks, params, shapes);
 
@@ -111,19 +114,28 @@ TEST_CASE("test/data/TestProfile3DIntegration.cpp", "")
     auto* shell_quality = merger->profileShellQuality();
     const double rpim_overall = overall_quality->shells[0].Rpim;
     const double ccstar_overall = overall_quality->shells[0].CCstar;
+    const double cchalf_overall = overall_quality->shells[0].CChalf;
     std::vector<double> rpim;
     std::vector<double> ccstar;
+    std::vector<double> cchalf;
     for (int i = 0; i < merge_params->n_shells; ++i) {
         rpim.push_back(shell_quality->shells[i].Rpim);
         ccstar.push_back(shell_quality->shells[i].CCstar);
+        cchalf.push_back(shell_quality->shells[i].CChalf);
     }
 
     CHECK(rpim_overall < ref_rpim_overall + eps_stats);
-    CHECK(ccstar_overall < ref_ccstar_overall + eps_stats);
+    CHECK(ccstar_overall > ref_ccstar_overall - eps_stats);
+    CHECK(cchalf_overall > ref_cchalf_overall - eps_stats);
+    std::cout << "rpim_overall = " << rpim_overall << std::endl;
+    std::cout << "ccstar_overall = " << ccstar_overall << std::endl;
+    std::cout << "cchalf_overall = " << cchalf_overall << std::endl;
     for (int i = 0; i < rpim.size(); ++i) {
         CHECK(rpim[i] < ref_rpim[i] + eps_stats);
-        CHECK(ccstar[i] < ref_ccstar[i] + eps_stats);
+        CHECK(ccstar[i] > ref_ccstar[i] - eps_stats);
+        CHECK(cchalf[i] > ref_cchalf[i] - eps_stats);
         std::cout << rpim[i] << " " << ref_rpim[i] << std::endl;
         std::cout << ccstar[i] << " " << ref_ccstar[i] << std::endl;
+        std::cout << cchalf[i] << " " << ref_cchalf[i] << std::endl << std::endl;
     }
 }
