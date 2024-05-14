@@ -85,10 +85,10 @@ std::pair<Intensity, Intensity> compute_background(
 } // namespace
 
 
-PixelSumIntegrator::PixelSumIntegrator(bool fit_center, bool fit_covariance) : IIntegrator()
+PixelSumIntegrator::PixelSumIntegrator() : IIntegrator()
 {
-    _params.fit_center = fit_center;
-    _params.fit_cov = fit_covariance;
+    _params.fit_center = true;
+    _params.fit_cov = true;
 }
 
 bool PixelSumIntegrator::compute(Peak3D* peak, ShapeModel*, const IntegrationRegion& region)

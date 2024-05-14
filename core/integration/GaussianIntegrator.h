@@ -25,7 +25,7 @@ namespace ohkl {
 /*! \brief Compute integrated intensity by fitting to an analytic 3D Gaussian.*/
 class GaussianIntegrator : public IIntegrator {
  public:
-    GaussianIntegrator(bool fit_center, bool fit_cov);
+    GaussianIntegrator();
 
  protected:
     //! Integrate a peak

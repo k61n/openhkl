@@ -15,19 +15,19 @@
 #define OPENHKL_CORE_EXPERIMENT_INTEGRATOR_H
 
 #include "core/data/DataTypes.h"
-#include "core/integration/IIntegrator.h"
+#include "core/integration/IntegratorFactory.h"
 
 #include <map>
 #include <string>
 
 namespace ohkl {
 
-using IntegratorMap = std::map<IntegratorType, std::unique_ptr<ohkl::IIntegrator>>;
-
 class PeakCollection;
 class PeakFinder;
 class DataHandler;
+class IIntegrator;
 struct ShapeModelParameters;
+struct IntegrationParameters;
 
 /*! \addtogroup python_api
  *  @{*/
@@ -75,12 +75,13 @@ class Integrator {
 
  private:
     sptrProgressHandler _handler;
-    IntegratorMap _integrator_map;
     std::shared_ptr<DataHandler> _data_handler;
     std::shared_ptr<IntegrationParameters> _params;
 
     unsigned int _n_peaks;
     unsigned int _n_valid;
+
+    IntegratorFactory _factory;
 };
 
 /*! @}*/

@@ -17,11 +17,7 @@
 #include "base/utils/Logger.h"
 #include "core/experiment/DataHandler.h"
 #include "core/experiment/PeakFinder.h"
-#include "core/integration/GaussianIntegrator.h"
-#include "core/integration/ISigmaIntegrator.h"
-#include "core/integration/PixelSumIntegrator.h"
-#include "core/integration/Profile1DIntegrator.h"
-#include "core/integration/Profile3DIntegrator.h"
+#include "core/integration/IIntegrator.h"
 #include "core/integration/ShapeIntegrator.h"
 #include "core/peak/Peak3D.h"
 #include "core/shape/PeakCollection.h"
@@ -30,19 +26,8 @@
 namespace ohkl {
 
 Integrator::Integrator(std::shared_ptr<DataHandler> data_handler)
-    : _handler(nullptr), _data_handler(data_handler)
+    : _handler(nullptr), _data_handler(data_handler), _factory()
 {
-    _integrator_map.clear();
-    _integrator_map.insert(
-        std::make_pair(IntegratorType::PixelSum, std::make_unique<PixelSumIntegrator>(true, true)));
-    _integrator_map.insert(
-        std::make_pair(IntegratorType::Gaussian, std::make_unique<GaussianIntegrator>(true, true)));
-    _integrator_map.insert(
-        std::make_pair(IntegratorType::ISigma, std::make_unique<ISigmaIntegrator>()));
-    _integrator_map.insert(
-        std::make_pair(IntegratorType::Profile1D, std::make_unique<Profile1DIntegrator>()));
-    _integrator_map.insert(
-        std::make_pair(IntegratorType::Profile3D, std::make_unique<Profile3DIntegrator>()));
     _params = std::make_unique<IntegrationParameters>();
 }
 
@@ -53,12 +38,7 @@ DataHandler* Integrator::getDataHandler()
 
 IIntegrator* Integrator::getIntegrator(const IntegratorType integrator_type) const
 {
-    std::map<IntegratorType, std::unique_ptr<IIntegrator>>::const_iterator it;
-    for (it = _integrator_map.begin(); it != _integrator_map.end(); ++it) {
-        if (it->first == integrator_type)
-            return it->second.get();
-    }
-    return nullptr;
+    return _factory.create(integrator_type);
 }
 
 void Integrator::integratePeaks(
@@ -82,6 +62,8 @@ void Integrator::integratePeaks(
         if (peak->enabled())
             ++_n_valid;
     }
+
+    delete integrator;
 }
 
 void Integrator::integratePeaks(
@@ -105,6 +87,8 @@ void Integrator::integratePeaks(
         if (peak->enabled())
             ++_n_valid;
     }
+
+    delete integrator;
 }
 
 void Integrator::integrateFoundPeaks(PeakFinder* peak_finder)
@@ -125,6 +109,8 @@ void Integrator::integrateFoundPeaks(PeakFinder* peak_finder)
     peak_finder->setIntegrated(true);
     if (_params->use_gradient)
         peak_finder->setBkgGradient(true);
+
+    delete integrator;
 }
 
 void Integrator::integrateShapeModel(

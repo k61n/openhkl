@@ -26,7 +26,7 @@ namespace ohkl {
 
 ShapeIntegrator::ShapeIntegrator(
     ShapeModel* lib, const AABB& aabb, int nx, int ny, int nz, int subdiv)
-    : PixelSumIntegrator(false, false)
+    : PixelSumIntegrator()
     , _shape_model(lib)
     , _aabb(aabb)
     , _nx(nx)

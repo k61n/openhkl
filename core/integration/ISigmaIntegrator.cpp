@@ -23,7 +23,7 @@
 
 namespace ohkl {
 
-ISigmaIntegrator::ISigmaIntegrator() : PixelSumIntegrator(false, false) { }
+ISigmaIntegrator::ISigmaIntegrator() : PixelSumIntegrator() { }
 
 bool ISigmaIntegrator::compute(
     Peak3D* peak, ShapeModel* shape_model, const IntegrationRegion& region)

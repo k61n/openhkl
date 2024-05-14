@@ -25,10 +25,10 @@
 
 namespace ohkl {
 
-GaussianIntegrator::GaussianIntegrator(bool fit_center, bool fit_cov)
+GaussianIntegrator::GaussianIntegrator() : IIntegrator()
 {
-    _params.fit_center = fit_center;
-    _params.fit_cov = fit_cov;
+    _params.fit_center = true;
+    _params.fit_cov = true;
 }
 
 static Eigen::Matrix3d from_cholesky(const Eigen::VectorXd a)
