@@ -174,6 +174,8 @@ class DataSet {
     void initBuffer(bool bufferAll = true);
     //! Clear the frame buffer
     void clearBuffer();
+    //! Check whether all frames are buffered
+    bool allFramesBuffered() const { return _all_frames_buffered; };
 
     virtual void setNFrames(std::size_t nframes) { std::ignore = nframes; };
 
@@ -204,8 +206,10 @@ class DataSet {
 
     //! Buffer for image data
     std::vector<std::unique_ptr<Eigen::MatrixXi>> _frame_buffer;
-    //! Whether or not the buffer is active
+    //! Buffer is active
     bool _buffered;
+    //! All frames are buffered
+    bool _all_frames_buffered;
 };
 
 /*! @}*/

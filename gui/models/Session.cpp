@@ -572,6 +572,8 @@ void Session::onDataChanged()
     if (!gSession->currentProject()->hasDataSet())
         return;
 
+    _data_combo->currentData()->initBuffer(true);
+
     double x_offset =
         _data_combo->currentData()->diffractometer()->source().selectedMonochromator().xOffset();
     double y_offset =

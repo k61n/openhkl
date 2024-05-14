@@ -53,7 +53,11 @@
 namespace ohkl {
 
 DataSet::DataSet(const std::string& dataset_name, Diffractometer* diffractometer)
-    : _diffractometer{diffractometer}, _states(nullptr), _total_histogram(nullptr), _buffered(false)
+    : _diffractometer{diffractometer}
+    , _states(nullptr)
+    , _total_histogram(nullptr)
+    , _buffered(false)
+    , _all_frames_buffered(true)
 {
     setName(dataset_name);
     if (!_diffractometer)
@@ -513,6 +517,7 @@ void DataSet::initBuffer(bool bufferAll)
             _frame_buffer.at(idx) = std::make_unique<Eigen::MatrixXi>(_reader->data(idx));
     }
     _buffered = true;
+    _all_frames_buffered = bufferAll;
     ohklLog(Level::Debug, "DataSet::initBuffer: ", _name, " buffered");
 }
 
