@@ -60,8 +60,6 @@ TEST_CASE("test/data/TestProfile3DIntegration.cpp", "")
     const ohkl::sptrDataSet data = experiment.getData("Scan I");
     ohkl::PeakCollection* peaks = experiment.getPeakCollection("predicted");
 
-    data->initBuffer(true);
-
     auto* integrator = experiment.integrator();
     auto* params = integrator->parameters();
 

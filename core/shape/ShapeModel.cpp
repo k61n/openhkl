@@ -121,8 +121,14 @@ struct FitData {
     }
 };
 
-ShapeModel::ShapeModel()
-    : _id(0), _profiles(), _choleskyD(), _choleskyM(), _choleskyS(), _handler(nullptr)
+ShapeModel::ShapeModel(bool thread_parallel)
+    : _id(0)
+    , _profiles()
+    , _choleskyD()
+    , _choleskyM()
+    , _choleskyS()
+    , _handler(nullptr)
+    , _thread_parallel(thread_parallel)
 {
     _choleskyD.fill(1e-6);
     _choleskyM.fill(1e-6);
@@ -135,7 +141,7 @@ ShapeModel::ShapeModel(const std::string& name) : ShapeModel()
     _name = name;
 }
 
-ShapeModel::ShapeModel(std::shared_ptr<ShapeModelParameters> params)
+ShapeModel::ShapeModel(std::shared_ptr<ShapeModelParameters> params, bool thread_parallel)
     : _id(0)
     , _profiles()
     , _choleskyD()
@@ -143,6 +149,7 @@ ShapeModel::ShapeModel(std::shared_ptr<ShapeModelParameters> params)
     , _choleskyS()
     , _params(params)
     , _handler(nullptr)
+    , _thread_parallel(thread_parallel)
 
 {
     _choleskyD.fill(1e-6);
@@ -522,9 +529,9 @@ void ShapeModel::integrate(
     int_params.fixed_bkg_begin = _params->fixed_bkg_begin;
     int_params.fixed_bkg_end = _params->fixed_bkg_end;
     integrator.setHandler(handler);
+    integrator.setParallel(_thread_parallel);
     integrator.setParameters(int_params);
-
-    integrator.integrate(peaks, this, data);
+    integrator.parallelIntegrate(peaks, this, data);
     ohklLog(Level::Info, "ShapeModel::integrate: finished integrating shapes");
 }
 
@@ -564,7 +571,8 @@ void ShapeModel::build(PeakCollection* peaks, sptrDataSet data)
     int_params.fixed_bkg_end = _params->fixed_bkg_end;
     int_params.region_type = _params->region_type;
     integrator.setParameters(int_params);
-    integrator.integrate(fit_peaks, this, data);
+    integrator.setParallel(_thread_parallel);
+    integrator.parallelIntegrate(fit_peaks, this, data);
     ohklLog(Level::Info, "ShapeModel::build: finished integrating shapes");
     // ohklLog(Level::Info, "ShapeModel::build: updating fit");
     // updateFit(1000);
