@@ -40,6 +40,7 @@ TEST_CASE("test/data/TestShapeModel.cpp", "")
 
     ohkl::sptrUnitCell cell = experiment.getSptrUnitCell("accepted");
     ohkl::sptrDataSet data = experiment.getData("testdata");
+    data->initBuffer(true);
 
     auto* found_peaks = experiment.getPeakCollection("found");
     found_peaks->computeSigmas();

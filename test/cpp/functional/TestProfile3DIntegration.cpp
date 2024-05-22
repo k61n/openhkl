@@ -57,7 +57,11 @@ TEST_CASE("test/data/TestProfile3DIntegration.cpp", "")
     experiment.loadFromFile(filename);
 
     const ohkl::sptrUnitCell cell = experiment.getSptrUnitCell("indexed");
-    const ohkl::sptrDataSet data = experiment.getData("Scan I"); ohkl::PeakCollection* peaks = experiment.getPeakCollection("predicted");
+    const ohkl::sptrDataSet data = experiment.getData("Scan I");
+    ohkl::PeakCollection* peaks = experiment.getPeakCollection("predicted");
+
+    data->initBuffer(true);
+
     auto* integrator = experiment.integrator();
     auto* params = integrator->parameters();
 

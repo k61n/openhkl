@@ -17,6 +17,7 @@
 #include "base/geometry/Ellipsoid.h"
 #include "base/mask/IMask.h"
 #include "base/utils/Logger.h"
+#include "base/utils/ParallelFor.h"
 #include "base/utils/ProgressHandler.h"
 #include "core/data/DataSet.h"
 #include "core/peak/Peak3D.h"
@@ -25,6 +26,7 @@
 #include "tables/crystal/UnitCell.h"
 
 #include <algorithm>
+#include <mutex>
 
 namespace ohkl {
 
@@ -247,6 +249,223 @@ void IIntegrator::integrate(
         }
     }
     ohklLog(Level::Info, "IIntegrator::integrate: end; ", _n_failures, " failures");
+}
+
+void IIntegrator::parallelIntegrate(
+    std::vector<Peak3D*> peaks, ShapeModel* shape_model, sptrDataSet data)
+{
+    ohklLog(Level::Info, "IIntegrator::parallelIntegrate: integrating ", peaks.size(), " peaks");
+    _params.log(Level::Info);
+    if (shape_model)
+        shape_model->parameters()->log(Level::Info);
+
+    // integrate only those peaks that belong to the specified dataset
+    auto it = std::remove_if(peaks.begin(), peaks.end(), [&](const Peak3D* peak) {
+        return peak->dataSet() != data;
+    });
+    peaks.erase(it, peaks.end());
+    std::ostringstream oss;
+    oss << "Integrating " << peaks.size() << " peaks";
+    ohklLog(Level::Info, "IIntegrator::parallelIntegrate: integrating ", peaks.size(), " peaks");
+    if (_handler) {
+        _handler->setStatus(oss.str().c_str());
+        _handler->setProgress(0);
+    }
+
+    _profile_integration = false;
+    if (_params.integrator_type == IntegratorType::Profile1D
+        || _params.integrator_type == IntegratorType::Profile3D
+        || _params.integrator_type == IntegratorType::Gaussian
+        || _params.integrator_type == IntegratorType::ISigma)
+        _profile_integration = true;
+
+
+    size_t idx = 0;
+    _n_frames_done = 0;
+
+    std::map<Peak3D*, std::unique_ptr<IntegrationRegion>> regions;
+    std::map<Peak3D*, bool> integrated;
+
+    if (_params.region_type == ohkl::RegionType::VariableEllipsoid) {
+        _peak_end = _params.peak_end;
+        _bkg_begin = _params.bkg_begin;
+        _bkg_end = _params.bkg_end;
+    } else {
+        _peak_end = _params.fixed_peak_end;
+        _bkg_begin = _params.fixed_bkg_begin;
+        _bkg_end = _params.fixed_bkg_end;
+    }
+
+    for (auto peak : peaks) {
+        if (peak->isRejectedFor(RejectionFlag::Extinct)) {
+            if (!peak->enabled())
+                continue;
+        }
+
+        regions.emplace(std::make_pair(
+            peak,
+            std::make_unique<IntegrationRegion>(
+                peak, _peak_end, _bkg_begin, _bkg_end, _params.region_type)));
+        integrated.emplace(std::make_pair(peak, false));
+
+        // ignore partials
+        auto bb = regions.at(peak)->peakBB();
+        auto data = peak->dataSet();
+        auto lo = bb.lower();
+        auto hi = bb.upper();
+
+        double width = hi[2] - lo[2];
+        if (_params.use_max_width && width > _params.max_width)
+            peak->setIntegrationFlag(RejectionFlag::TooWide, _params.integrator_type);
+
+        if (lo[0] < 0 || lo[1] < 0 || lo[2] < 0 || hi[0] >= data->nCols() || hi[1] >= data->nRows()
+            || hi[2] >= data->nFrames())
+            peak->setIntegrationFlag(RejectionFlag::InvalidRegion, _params.integrator_type);
+    }
+
+    // only integrate the peaks with valid integration regions
+    ohklLog(Level::Debug, "IIntegrator::integrate: remove invalid regions");
+    it = std::remove_if(peaks.begin(), peaks.end(), [&](Peak3D*& p) {
+        return regions.find(p) == regions.end();
+    });
+    peaks.erase(it, peaks.end());
+
+    // check for overlaps if requested
+    if (_params.remove_overlaps)
+        removeOverlaps(regions);
+
+    oss << "Building " << peaks.size() << " integration regions";
+    if (_handler) {
+        _handler->setStatus(oss.str().c_str());
+        _handler->setProgress(0);
+    }
+    ohklLog(Level::Debug, "IIntegrator::parallelIntegrate: integration region loop");
+    std::mutex mut1;
+
+    parallel_for(data->nFrames(), [&](int start, int end) {
+        for (int idx = start; idx < end; ++idx) {
+
+            Eigen::MatrixXd current_frame, gradient;
+            Eigen::MatrixXi mask;
+            current_frame = data->transformedFrame(idx);
+            if (_params.use_gradient)
+                gradient =
+                    data->gradientFrame(idx, _params.gradient_type, !_params.fft_gradient);
+
+            mask.resize(data->nRows(), data->nCols());
+            mask.setConstant(int(IntegrationRegion::EventType::EXCLUDED));
+
+            for (auto peak : peaks)
+                regions.at(peak)->updateMask(mask, idx);
+
+            std::vector<std::unique_ptr<PeakData>> peak_data_vector;
+            for (auto peak : peaks) {
+                auto* current_region = regions.at(peak).get();
+                PeakData peak_data(peak);
+                if (_params.use_gradient)
+                    peak_data =
+                        current_region->threadSafeAdvanceFrame(current_frame, mask, idx, &gradient);
+                else
+                    peak_data =
+                        current_region->threadSafeAdvanceFrame(current_frame, mask, idx);
+                if (!peak_data.empty())
+                    peak_data_vector.push_back(std::make_unique<PeakData>(peak_data));
+            }
+
+            {
+                const std::lock_guard<std::mutex> lock(mut1);
+                for (auto& peak_data : peak_data_vector)
+                    regions[peak_data->peak()]->appendPeakData(*peak_data);
+            }
+
+            if (_handler) {
+                const double progress = _n_frames_done++ * 100.0 / data->nFrames();
+                _handler->setProgress(progress);
+            }
+        }
+    }, _thread_parallel, _max_threads);
+
+    if (_handler)
+        _handler->setProgress(100);
+
+    _n_peaks_done = 0;
+    if (_handler)
+        _handler->setProgress(0);
+
+    ohklLog(Level::Debug, "IIntegrator::parallelIntegrate: compute loop");
+    _n_failures = 0;
+    std::mutex mut2;
+    parallel_for(peaks.size(), [&](int start, int end) {
+        for (int idx = start; idx < end; ++idx) {
+            auto* peak = peaks.at(idx);
+            auto* current_region = regions.at(peak).get();
+            const auto& counts = current_region->peakData().counts();
+
+            RejectionFlag reject(RejectionFlag::NotRejected);
+
+            if (_params.discard_saturated) {
+                double max = 0;
+                if (!counts.empty()) // std::max on empty vector segfaults under MacOS
+                    max = *std::max_element(counts.begin(), counts.end());
+                if (max > _params.max_counts)
+                    reject = RejectionFlag::SaturatedPixel;
+            }
+
+            if (_params.use_max_width) {
+                auto aabb = current_region->peakBB();
+                const auto lower = aabb.lower();
+                const auto upper = aabb.upper();
+                const double width = upper[2] - lower[2];
+                if (width > static_cast<double>(_params.max_width))
+                    reject = RejectionFlag::TooWide;
+            }
+
+            bool reintegrate = true;
+            if (_profile_integration) {
+                if (_params.use_max_strength
+                    && peak->sumIntensity().strength() > _params.max_strength)
+                    reintegrate = false;
+                if (_params.use_max_d && peak->d() > _params.max_d)
+                    reintegrate = false;
+            }
+
+            ComputeResult compute_result;
+            if (!reintegrate) {
+                compute_result.integrator_type = _params.integrator_type;
+                compute_result.rocking_curve = peak->rockingCurve();
+                compute_result.profile_intensity = peak->sumIntensity();
+                compute_result.profile_background = peak->sumBackground();
+                compute_result.integration_flag = peak->sumRejectionFlag();
+            } else {
+                if (reject == RejectionFlag::NotRejected) {
+                    current_region->peakData().standardizeCoords();
+                    compute_result = compute(peak, shape_model, *current_region);
+                } else
+                    compute_result.integration_flag = reject;
+
+                if (compute_result.integration_flag != RejectionFlag::NotRejected)
+                    ++_n_failures;
+            }
+
+            {
+                const std::lock_guard<std::mutex> lock(mut2);
+                peak->updateIntegration(
+                    compute_result, _params.peak_end, _params.bkg_begin, _params.bkg_end,
+                    _params.region_type);
+                current_region->reset();
+            }
+
+            if (_handler) {
+                const double progress = _n_peaks_done++ * 100.0 / peaks.size();
+                _handler->setProgress(progress);
+            }
+        }
+    }, _thread_parallel, _max_threads);
+
+    if (_handler)
+        _handler->setProgress(100);
+
+    ohklLog(Level::Info, "IIntegrator::parallelIntegrate: end; ", _n_failures, " failures");
 }
 
 void IIntegrator::setHandler(sptrProgressHandler handler)

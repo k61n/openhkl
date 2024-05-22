@@ -125,10 +125,14 @@ class IIntegrator {
     virtual ~IIntegrator() = default;
     //! Integrate a vector of peaks
     void integrate(std::vector<Peak3D*> peaks, ShapeModel* shape_model, sptrDataSet data);
+    //! Thread-parallel integrate
+    void parallelIntegrate(std::vector<Peak3D*> peaks, ShapeModel* shape_model, sptrDataSet data);
     //! Set the progress handler.
     void setHandler(sptrProgressHandler handler);
     //! Assign a parameter set to the integrator
     void setParameters(const IntegrationParameters& params);
+    //! Toggle parallel integration
+    void setParallel(bool parallel) { _thread_parallel = parallel; };
     //! Remove overlapping peak intensity regions
     void removeOverlaps(const std::map<Peak3D*, std::unique_ptr<IntegrationRegion>>& regions);
 

@@ -36,7 +36,7 @@ struct ComputeResult;
 
 //! Specifies reason why a peak was rejected
 enum class RejectionFlag {
-    NotRejected,
+    NotRejected = 0,
     Masked,
     OutsideThreshold,
     OutsideFrames,
