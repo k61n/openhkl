@@ -135,6 +135,11 @@ void ExperimentYAML::grabIntegrationParameters(IntegrationParameters* params)
     params->skip_masked = getNode<bool>(branch, "skip_masked");
     params->remove_overlaps = getNode<bool>(branch, "remove_overlaps");
     params->use_max_strength = getNode<bool>(branch, "use_max_strength");
+    params->max_strength = getNode<double>(branch, "max_strength");
+    params->use_max_d = getNode<bool>(branch, "use_max_d");
+    params->max_d = getNode<double>(branch, "max_d");
+    params->discard_saturated = getNode<bool>(branch, "discard_saturated");
+    params->max_counts = getNode<double>(branch, "max_counts");
 }
 
 void ExperimentYAML::setIntegrationParameters(IntegrationParameters* params)
@@ -162,6 +167,11 @@ void ExperimentYAML::setIntegrationParameters(IntegrationParameters* params)
     int_node["skip_masked"] = params->skip_masked;
     int_node["remove_overlaps"] = params->remove_overlaps;
     int_node["use_max_strength"] = params->use_max_strength;
+    int_node["max_strength"] = params->max_strength;
+    int_node["use_max_d"] = params->use_max_d;
+    int_node["max_d"] = params->max_d;
+    int_node["discard_saturated"] = params->discard_saturated;
+    int_node["max_counts"] = params->max_counts;
 }
 
 void ExperimentYAML::grabPeakFinderParameters(PeakFinderParameters* params)
