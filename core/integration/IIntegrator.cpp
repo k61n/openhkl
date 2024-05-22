@@ -280,7 +280,6 @@ void IIntegrator::parallelIntegrate(
         _profile_integration = true;
 
 
-    size_t idx = 0;
     _n_frames_done = 0;
 
     std::map<Peak3D*, std::unique_ptr<IntegrationRegion>> regions;
@@ -297,6 +296,7 @@ void IIntegrator::parallelIntegrate(
     }
 
     for (auto peak : peaks) {
+        peak->setIntegrationFlag(RejectionFlag::NotRejected, _params.integrator_type, true);
         if (peak->isRejectedFor(RejectionFlag::Extinct)) {
             if (!peak->enabled())
                 continue;
@@ -391,6 +391,19 @@ void IIntegrator::parallelIntegrate(
     _n_peaks_done = 0;
     if (_handler)
         _handler->setProgress(0);
+
+    for (auto peak : peaks) {
+        if (_params.skip_masked) {
+            Ellipsoid shape = peak->shape();
+            shape.scale(_bkg_end);
+            for (const auto* mask : data->masks()) {
+                if (mask->collide(shape)) {
+                    peak->setMasked();
+                    continue;
+                }
+            }
+        }
+    }
 
     ohklLog(Level::Debug, "IIntegrator::parallelIntegrate: compute loop");
     _n_failures = 0;
