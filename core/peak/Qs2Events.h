@@ -48,7 +48,7 @@ namespace algo {
 std::vector<std::pair<MillerIndex, DetectorEvent>> qMap2Events(
     const std::vector<std::pair<MillerIndex, ReciprocalVector>>& sample_qs,
     const InstrumentStateList& states, const Detector& detector, const int n_intervals,
-    sptrProgressHandler handler = nullptr);
+    sptrProgressHandler handler = nullptr, bool thread_parallel = true);
 //! Returns detector events corresponding to the list of q values.
 std::vector<DetectorEvent> qVectorList2Events(
     const std::vector<ReciprocalVector>& sample_qs, const InstrumentStateList& states,

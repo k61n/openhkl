@@ -14,6 +14,7 @@
 
 #include "core/loader/XFileHandler.h"
 
+#include <string>
 #include <fstream>
 #include <iterator>
 #include <sstream>
@@ -88,9 +89,8 @@ void XFileHandler::readXFile(int frame)
         if (stop) {
             _mask = Eigen::MatrixXi(refl.maskx, refl.masky);
             break;
-        } else {
-            _reflections.emplace_back(refl);
         }
+        _reflections.emplace_back(refl);
     }
 
     // The integration mask
