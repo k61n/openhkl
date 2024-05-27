@@ -19,6 +19,7 @@
 #include "base/geometry/Ellipsoid.h"
 #include "base/geometry/ReciprocalVector.h"
 #include "base/utils/Logger.h"
+#include "base/utils/ParallelFor.h"
 #include "base/utils/ProgressHandler.h"
 #include "core/data/DataSet.h"
 #include "core/data/DataTypes.h"
@@ -453,18 +454,21 @@ void ShapeModel::setPredictedShapes(PeakCollection* peaks)
         _handler->setProgress(0);
     }
 
-    for (auto peak : peaks->getPeakList()) {
-        // Skip the peak if any error occur when computing its mean covariance (e.g.
-        // too few or no neighbouring peaks found)
-        auto cov = meanCovariance(peak);
-        Eigen::Vector3d center = peak->shape().center();
-        peak->setShape(Ellipsoid(center, cov.inverse()));
+    auto peaklist = peaks->getPeakList();
+    parallel_for(peaklist.size(), [&](int start, int end) {
+        for (int idx = start; idx < end; ++idx) {
+            Peak3D* peak = peaklist.at(idx);
+            const auto cov = meanCovariance(peak);
+            const Eigen::Vector3d center = peak->shape().center();
+            peak->setShape(Ellipsoid(center, cov.inverse()));
 
-        if (_handler) {
-            double progress = ++count * 100.0 / npeaks;
-            _handler->setProgress(progress);
+            if (_handler) {
+                const double progress = ++count * 100.0 / npeaks;
+                _handler->setProgress(progress);
+            }
         }
-    }
+    }, _thread_parallel);
+
     ohklLog(Level::Info, "ShapeModel: finished computing shapes");
 }
 

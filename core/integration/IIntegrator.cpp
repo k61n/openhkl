@@ -265,12 +265,7 @@ void IIntegrator::parallelIntegrate(
     });
     peaks.erase(it, peaks.end());
     std::ostringstream oss;
-    oss << "Integrating " << peaks.size() << " peaks";
     ohklLog(Level::Info, "IIntegrator::parallelIntegrate: integrating ", peaks.size(), " peaks");
-    if (_handler) {
-        _handler->setStatus(oss.str().c_str());
-        _handler->setProgress(0);
-    }
 
     _profile_integration = false;
     if (_params.integrator_type == IntegratorType::Profile1D
@@ -387,9 +382,14 @@ void IIntegrator::parallelIntegrate(
     if (_handler)
         _handler->setProgress(100);
 
-    _n_peaks_done = 0;
-    if (_handler)
+    oss.str(std::string()); // clear the stream
+    oss << "Integrating " << peaks.size() << " integration regions";
+    if (_handler) {
+        _handler->setStatus(oss.str().c_str());
         _handler->setProgress(0);
+    }
+
+    _n_peaks_done = 0;
 
     ohklLog(Level::Debug, "IIntegrator::parallelIntegrate: compute loop");
     _n_failures = 0;
