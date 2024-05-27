@@ -296,7 +296,6 @@ void IIntegrator::parallelIntegrate(
     }
 
     for (auto peak : peaks) {
-        peak->setIntegrationFlag(RejectionFlag::NotRejected, _params.integrator_type, true);
         if (peak->isRejectedFor(RejectionFlag::Extinct)) {
             if (!peak->enabled())
                 continue;
@@ -392,19 +391,6 @@ void IIntegrator::parallelIntegrate(
     if (_handler)
         _handler->setProgress(0);
 
-    for (auto peak : peaks) {
-        if (_params.skip_masked) {
-            Ellipsoid shape = peak->shape();
-            shape.scale(_bkg_end);
-            for (const auto* mask : data->masks()) {
-                if (mask->collide(shape)) {
-                    peak->setMasked();
-                    continue;
-                }
-            }
-        }
-    }
-
     ohklLog(Level::Debug, "IIntegrator::parallelIntegrate: compute loop");
     _n_failures = 0;
     std::mutex mut2;
@@ -431,6 +417,17 @@ void IIntegrator::parallelIntegrate(
                 const double width = upper[2] - lower[2];
                 if (width > static_cast<double>(_params.max_width))
                     reject = RejectionFlag::TooWide;
+            }
+
+            if (_params.skip_masked) {
+                Ellipsoid shape = peak->shape();
+                shape.scale(_bkg_end);
+                for (const auto* mask : data->masks()) {
+                    if (mask->collide(shape)) {
+                        reject = RejectionFlag::Masked;
+                        break;
+                    }
+                }
             }
 
             bool reintegrate = true;
@@ -465,6 +462,8 @@ void IIntegrator::parallelIntegrate(
                 peak->updateIntegration(
                     compute_result, _params.peak_end, _params.bkg_begin, _params.bkg_end,
                     _params.region_type);
+                if (reject == RejectionFlag::Masked)
+                    peak->setMasked();
                 current_region->reset();
             }
 
