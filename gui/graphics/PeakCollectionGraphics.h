@@ -87,7 +87,8 @@ class PeakCollectionGraphics {
 
  private:
     //! Generate a mask of integration regions (a matrix of integers classifying pixels)
-    void getIntegrationMask(Eigen::MatrixXi& mask, std::size_t frame_idx);
+    void getIntegrationMask(
+        Eigen::MatrixXi& mask, std::size_t frame_idx, bool thread_parallel = true);
     //! Generate a mask for a single peak only
     void getSinglePeakIntegrationMask(
         ohkl::Peak3D* peak, Eigen::MatrixXi& mask, std::size_t frame_idx);

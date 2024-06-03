@@ -34,7 +34,7 @@ class PeakCollectionItem {
 
  public:
     //! Set the peak collection
-    void setPeakCollection(const ohkl::PeakCollection* peak_collection);
+    void setPeakCollection(const ohkl::PeakCollection* peak_collection, bool thread_parallel = true);
     //! Retrieve the name of the collection if present
     std::string name() const;
     //! Retrieve the number of children of this item

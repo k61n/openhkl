@@ -15,10 +15,12 @@
 #include "gui/items/PeakCollectionItem.h"
 
 #include "base/geometry/ReciprocalVector.h"
+#include "base/utils/ParallelFor.h"
 #include "core/data/DataSet.h"
 #include "core/detector/Detector.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/InstrumentState.h"
+#include "core/peak/Peak3D.h"
 #include "core/raw/DataKeys.h"
 #include "core/raw/MetaData.h"
 #include "core/shape/PeakCollection.h"
@@ -27,6 +29,10 @@
 #include "gui/items/PeakItem.h"
 #include "tables/crystal/MillerIndex.h"
 #include "tables/crystal/UnitCell.h"
+
+#include <Eigen/Dense>
+
+#include <mutex>
 
 PeakCollectionItem::PeakCollectionItem()
 {
@@ -46,7 +52,8 @@ PeakCollectionItem::PeakCollectionItem(const ohkl::PeakCollection* peak_collecti
     }
 }
 
-void PeakCollectionItem::setPeakCollection(const ohkl::PeakCollection* peak_collection)
+void PeakCollectionItem::setPeakCollection(
+    const ohkl::PeakCollection* peak_collection, bool thread_parallel /* = true */)
 {
     if (!peak_collection) {
         throw std::runtime_error(
@@ -55,11 +62,19 @@ void PeakCollectionItem::setPeakCollection(const ohkl::PeakCollection* peak_coll
     _peak_collection = peak_collection;
 
     std::vector<ohkl::Peak3D*> peak_list = _peak_collection->getPeakList();
-    _peak_items.clear();
-    for (auto* peak : peak_list) {
-        auto item = std::make_unique<PeakItem>(peak);
-        _peak_items.push_back(std::move(item));
-    }
+    std::mutex mutex;
+
+    ohkl::parallel_for(peak_list.size(), [&](int start, int end) {
+        for (int idx = start; idx < end; ++idx) {
+            ohkl::Peak3D* peak = peak_list.at(idx);
+            auto item = std::make_unique<PeakItem>(peak);
+
+            {
+                const std::lock_guard<std::mutex> lock(mutex);
+                _peak_items.push_back(std::move(item));
+            }
+        }
+    }, thread_parallel);
 }
 
 std::string PeakCollectionItem::name() const
