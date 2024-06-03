@@ -208,4 +208,15 @@ double MergedPeakCollection::dMax() const
     return _d_max;
 }
 
+std::string MergedPeakCollection::toStringUnmerged() const
+{
+    std::string peaklist = "";
+    for (auto merged_peak : _merged_peak_set) {
+        peaklist += merged_peak.toString();
+        peaklist += "\n";
+    }
+
+    return peaklist;
+}
+
 } // namespace ohkl

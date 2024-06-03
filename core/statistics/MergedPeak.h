@@ -61,6 +61,9 @@ class MergedPeak {
     //! split the merged peak randomly into two, for calculation of CC
     std::pair<MergedPeak, MergedPeak> split(bool sum_intensity) const;
 
+    //! Return list of symmetry-related peaks as a string
+    std::string toString() const;
+
  private:
     //! Update the hkl that represents the set of equivalences.
     void determineRepresentativeHKL();

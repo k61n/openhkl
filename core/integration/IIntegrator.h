@@ -32,7 +32,7 @@ enum class IntegratorType { PixelSum = 0, Gaussian, ISigma, Profile1D, Profile3D
 /*! \addtogroup python_api
  *  @{*/
 
-    //! Return value of all integrator compute methods. Contains any mutable data from integration.
+//! Return value of all integrator compute methods. Contains any mutable data from integration.
 struct ComputeResult {
     //! Construct an invalid result by default
     ComputeResult();

@@ -483,14 +483,15 @@ std::string Peak3D::rejectionString() const
 std::string Peak3D::toString() const
 {
     std::ostringstream oss;
-    // h, k, l, x, y, frame, intensity, sigma
-    oss << std::fixed << std::setw(5) << _hkl.h() << std::fixed << std::setw(5) << _hkl.k()
-        << std::fixed << std::setw(5) << _hkl.l() << std::fixed << std::setw(10)
-        << std::setprecision(2) << shape().center()[0] << std::fixed << std::setw(10)
-        << std::setprecision(2) << shape().center()[1] << std::fixed << std::setw(10)
-        << std::setprecision(2) << shape().center()[2] << std::fixed << std::setw(10)
-        << std::setprecision(2) << correctedSumIntensity().value() << std::fixed << std::setw(10)
-        << std::setprecision(2) << correctedSumIntensity().sigma();
+    // d, h, k, l, x, y, frame, intensity, sigma
+    oss << std::fixed << std::setw(8) << std::setprecision(3) << d()
+        << std::fixed << std::setw(5) << _hkl.h()
+        << std::fixed << std::setw(5) << _hkl.k() << std::fixed << std::setw(5) << _hkl.l()
+        << std::fixed << std::setw(10) << std::setprecision(2) << shape().center()[0]
+        << std::fixed << std::setw(10) << std::setprecision(2) << shape().center()[1]
+        << std::fixed << std::setw(10) << std::setprecision(2) << shape().center()[2]
+        << std::fixed << std::setw(14) << std::setprecision(2) << correctedSumIntensity().value()
+        << std::fixed << std::setw(10) << std::setprecision(2) << correctedSumIntensity().sigma();
     return oss.str();
 }
 

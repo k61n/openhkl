@@ -97,6 +97,9 @@ class PeakMerger {
     //! Saves the shell information to file.
     bool saveStatistics(std::string filename);
 
+    //! Save peaks grouped by symmetry relations to file
+    bool savePeaks(std::string filename, bool sum_intensities) const;
+
     //! Return a vector containing the resolution-dependent figure of merit
     std::vector<double> getFigureOfMerit(FigureOfMerit fom, IntegratorType integrator);
 

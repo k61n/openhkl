@@ -208,4 +208,15 @@ double MergedPeak::pValue() const
     return gsl_cdf_chisq_P(x, k);
 }
 
+std::string MergedPeak::toString() const
+{
+    std::string peaklist = "";
+    for (auto* peak : _peaks) {
+        peaklist += peak->toString();
+        peaklist += "\n";
+    }
+
+    return peaklist;
+}
+
 } // namespace ohkl
