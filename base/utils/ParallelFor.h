@@ -20,8 +20,6 @@
 #include <thread>
 #include <vector>
 
-#include <iostream>
-
 namespace ohkl {
 
 /// @param[in] nb_elements : size of your for loop

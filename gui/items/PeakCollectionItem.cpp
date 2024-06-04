@@ -62,19 +62,13 @@ void PeakCollectionItem::setPeakCollection(
     _peak_collection = peak_collection;
 
     std::vector<ohkl::Peak3D*> peak_list = _peak_collection->getPeakList();
-    std::mutex mutex;
 
-    ohkl::parallel_for(peak_list.size(), [&](int start, int end) {
-        for (int idx = start; idx < end; ++idx) {
-            ohkl::Peak3D* peak = peak_list.at(idx);
-            auto item = std::make_unique<PeakItem>(peak);
+    _peak_items.clear();
 
-            {
-                const std::lock_guard<std::mutex> lock(mutex);
-                _peak_items.push_back(std::move(item));
-            }
-        }
-    }, thread_parallel);
+    for (auto* peak : peak_list) {
+        auto item = std::make_unique<PeakItem>(peak);
+        _peak_items.push_back(std::move(item));
+    }
 }
 
 std::string PeakCollectionItem::name() const
