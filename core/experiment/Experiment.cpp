@@ -34,6 +34,7 @@
 #include "core/instrument/InstrumentStateSet.h"
 #include "core/instrument/Monochromator.h"
 #include "core/raw/DataKeys.h"
+#include "core/loader/IDataReader.h"
 #include "core/raw/MetaData.h"
 #include "core/shape/PeakCollection.h"
 #include "core/shape/PeakFilter.h"
@@ -72,6 +73,7 @@ Experiment::Experiment() : _diffractometer(nullptr), _strategy(false)
     _peak_merger = std::make_unique<PeakMerger>();
 
     _shape_params = std::make_shared<ShapeModelParameters>();
+    _data_reader_params = std::make_unique<DataReaderParameters>();
 }
 
 Experiment::~Experiment() = default;
@@ -106,6 +108,7 @@ void Experiment::readFromYaml(const std::string& filename)
 {
     ohklLog(Level::Info, "Experiment::readFromYaml:  ", filename);
     ExperimentYAML yaml(filename);
+    yaml.grabDataReaderParameters(_data_reader_params.get());
     yaml.grabPeakFinderParameters(_peak_finder->parameters());
     yaml.grabAutoindexerParameters(_auto_indexer->parameters());
     yaml.grabShapeParameters(_shape_params.get());
@@ -118,6 +121,7 @@ void Experiment::saveToYaml(const std::string& filename)
 {
     ohklLog(Level::Info, "Experiment::saveToYaml:  ", filename);
     ExperimentYAML yaml(filename);
+    yaml.setDataReaderParameters(_data_reader_params.get());
     yaml.setPeakFinderParameters(_peak_finder->parameters());
     yaml.setAutoindexerParameters(_auto_indexer->parameters());
     yaml.setShapeParameters(_shape_params.get());
