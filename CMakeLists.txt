@@ -33,6 +33,7 @@ option(BUILD_PDF_DOCUMENTATION "Build Sphinx documentation using LaTeX" ON)
 option(OHKL_TIDY "Upon 'make', clang-tidy will print warnings as specified in .clang-tidy" OFF)
 option(OHKL_FULL_WORKFLOW_TEST "Add full workflow test to ctest" OFF)
 option(BUILD_WITH_QT6 "Build using QT6" OFF)
+option(TEST_INTEGRATORS "Build intensive integrator tests" OFF)
 
 # Path to test data directory must provided via -DOHKL_TESTDATA_DIR or from cache.
 set(OHKL_TESTDATA_URL https://computing.mlz-garching.de/download/testdata/nsx)
@@ -226,7 +227,9 @@ if(OHKL_PYTHON AND NOT MSVC AND BUILD_TESTING)
 endif()
 
 # Ignore tests specified in CTestCustom.cmake
-configure_file(${CMAKE_SOURCE_DIR}/cmake/CTestCustom.cmake ${CMAKE_BINARY_DIR})
+if (NOT TEST_INTEGRATORS)
+  configure_file(${CMAKE_SOURCE_DIR}/cmake/CTestCustom.cmake ${CMAKE_BINARY_DIR})
+endif()
 
 ###################################################################################################
 #  Build documentation
