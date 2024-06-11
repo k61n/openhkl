@@ -160,14 +160,14 @@ void Diffractometer::addDetectorAngles(const std::vector<double>& angles)
 void Diffractometer::setSampleAngles(const RowMatrixXd& mat, std::size_t nframes)
 {
     _sample_angles.resize(nframes);
-    for (std::size_t idx = 0; idx < _sample.gonio().nAxes(); ++idx)
+    for (std::size_t idx = 0; idx < nframes; ++idx)
         _sample_angles[idx] = eigenToVector(mat.col(idx));
 }
 
 void Diffractometer::setDetectorAngles(const RowMatrixXd& mat, std::size_t nframes)
 {
     _detector_angles.resize(nframes);
-    for (std::size_t idx = 0; idx < _detector->gonio().nAxes(); ++idx)
+    for (std::size_t idx = 0; idx < nframes; ++idx)
         _detector_angles[idx] = eigenToVector(mat.col(idx));
 }
 
