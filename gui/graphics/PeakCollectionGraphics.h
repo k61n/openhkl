@@ -26,10 +26,10 @@ class KeyPointCollection;
 class PeakCenterDataSet;
 class Peak3D;
 }
-class DetectorSceneParams;
 class PeakItemGraphic;
 class PeakCenterGraphic;
 class PeakViewWidget;
+struct DetectorSceneParams;
 
 class QImage;
 

@@ -79,16 +79,52 @@ ImageReaderDialog::ImageReaderDialog(
     _rebin_size->addItem(QString("2 x 2 ") + (QChar)0x2192 + QString(" 1"));
     _rebin_size->addItem(QString("4 x 4 ") + (QChar)0x2192 + QString(" 1"));
 
+    QLabel* label;
 
-    _chi = gridfiller.addDoubleSpinBox(
-        QString((QChar)0x0394) + " " + QString((QChar)0x03C7),
-        "Angle increment about the chi instrument axis");
-    _omega = gridfiller.addDoubleSpinBox(
-        QString((QChar)0x0394) + " " + QString((QChar)0x03C9),
-        "Angle increment about the omega instrument axis");
-    _phi = gridfiller.addDoubleSpinBox(
-        QString((QChar)0x0394) + " " + QString((QChar)0x03C6),
-        "Angle increment about the phi instrument axis");
+    QGroupBox* sample_gonio_group = new QGroupBox("Sample goniometer");
+    QGridLayout* sample_gonio_grid = new QGridLayout;
+
+    label = new QLabel(QString((QChar)0x0394) + " " + QString((QChar)0x03C7));
+    label->setAlignment(Qt::AlignRight | Qt::AlignCenter);
+    _chi = new SafeDoubleSpinBox;
+    _chi->setToolTip("Angle increment about the chi sample axis");
+    sample_gonio_grid->addWidget(label, 0, 0, 1, 1);
+    sample_gonio_grid->addWidget(_chi, 0, 1, 1, 1);
+    label = new QLabel(QString((QChar)0x0394) + " " + QString((QChar)0x03C9));
+    label->setAlignment(Qt::AlignRight | Qt::AlignCenter);
+    _omega = new SafeDoubleSpinBox;
+    _omega->setToolTip("Angle increment about the omega sample axis");
+    sample_gonio_grid->addWidget(label, 1, 0, 1, 1);
+    sample_gonio_grid->addWidget(_omega, 1, 1, 1, 1);
+    label = new QLabel(QString((QChar)0x0394) + " " + QString((QChar)0x03C6));
+    label->setAlignment(Qt::AlignRight | Qt::AlignCenter);
+    _phi = new SafeDoubleSpinBox;
+    _phi->setToolTip("Angle increment about the phi sample axis");
+    sample_gonio_grid->addWidget(label, 2, 0, 1, 1);
+    sample_gonio_grid->addWidget(_phi, 2, 1, 1, 1);
+
+    sample_gonio_group->setLayout(sample_gonio_grid);
+    gridfiller.addWidget(sample_gonio_group);
+
+    QGroupBox* detector_gonio_group = new QGroupBox("Detector goniometer");
+    QGridLayout* detector_gonio_grid = new QGridLayout;
+    label = new QLabel("2" + QString((QChar)0x03B8) + " (" + QString((QChar)0x03B3) + ")");
+    label->setAlignment(Qt::AlignRight | Qt::AlignCenter);
+    _2theta_gamma = new SafeDoubleSpinBox;
+    _2theta_gamma->setToolTip("Detector goniometer gamma angle");
+    detector_gonio_grid->addWidget(label, 0, 0, 1, 1);
+    detector_gonio_grid->addWidget(_2theta_gamma, 0, 1, 1, 1);
+    label = new QLabel("2" + QString((QChar)0x03B8) + " (" + QString((QChar)0x03BD) + ")");
+    label->setAlignment(Qt::AlignRight | Qt::AlignCenter);
+    _2theta_nu = new SafeDoubleSpinBox;
+    _2theta_nu->setToolTip("Detector goniometer nu angle");
+    detector_gonio_grid->addWidget(label, 1, 0, 1, 1);
+    detector_gonio_grid->addWidget(_2theta_nu, 1, 1, 1, 1);
+
+    detector_gonio_group->setLayout(detector_gonio_grid);
+    gridfiller.addWidget(detector_gonio_group);
+
+
     _wavelength = gridfiller.addDoubleSpinBox("Wavelength", "Wavelength of the incident beam");
 
     _set_baseline_and_gain = new QGroupBox("Use baseline/gain");

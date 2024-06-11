@@ -33,8 +33,8 @@ class Convolver;
 class InstrumentState;
 }
 
-class DetectorSceneParams;
 class MaskItem;
+struct DetectorSceneParams;
 // Make it easier to remove direct beam
 class DirectBeamGraphic : public QGraphicsEllipseItem { };
 // Make it easier to remove contour text

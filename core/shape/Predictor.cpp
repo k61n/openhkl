@@ -145,8 +145,8 @@ InstrumentStateSet Predictor::generateStates(const sptrDataSet data)
     params.delta_omega = _strategy_params->delta_omega;
     params.delta_chi = _strategy_params->delta_chi;
     params.delta_phi = _strategy_params->delta_phi;
-    params.gamma = _strategy_params->gamma;
-    params.nu = _strategy_params->nu;
+    params.twotheta_gamma = _strategy_params->gamma;
+    params.twotheta_nu = _strategy_params->nu;
 
     for (std::size_t idx = 0; idx < _strategy_params->nframes; ++idx) {
         _strategy_diffractometer->addSampleAngles(idx, params);
