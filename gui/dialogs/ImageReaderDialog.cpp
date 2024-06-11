@@ -171,6 +171,8 @@ ImageReaderDialog::ImageReaderDialog(
     _chi->setValue(_parameters0->delta_chi);
     _omega->setValue(_parameters0->delta_omega);
     _phi->setValue(_parameters0->delta_phi);
+    _2theta_gamma->setValue(_parameters0->twotheta_gamma);
+    _2theta_nu->setValue(_parameters0->twotheta_nu);
     _wavelength->setValue(_parameters0->wavelength);
     _baseline->setValue(detector->baseline());
     _gain->setValue(detector->gain());
@@ -313,6 +315,8 @@ ohkl::DataReaderParameters ImageReaderDialog::dataReaderParameters()
     parameters.delta_omega = _omega->value();
     parameters.delta_chi = _chi->value();
     parameters.delta_phi = _phi->value();
+    parameters.twotheta_gamma = _2theta_gamma->value();
+    parameters.twotheta_nu = _2theta_nu->value();
     parameters.swap_endian = _swapEndianness->isChecked();
     parameters.bytes_per_pixel = bytesPerPixel();
 
