@@ -19,6 +19,7 @@
 #include "core/experiment/Experiment.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/loader/TiffDataReader.h"
+#include "core/raw/DataKeys.h"
 #include "gui/dialogs/ConfirmOverwriteDialog.h"
 #include "gui/models/Project.h"
 #include "gui/models/Session.h"
@@ -64,7 +65,8 @@ ImageReaderDialog::ImageReaderDialog(
         "Rebinning:", "Reduce resolution by averaging over a square pixel grid");
 
     // Poppulate the resolution combo boxes
-    auto detector = gSession->currentProject()->experiment()->getDiffractometer()->detector();
+    auto* diffractometer = gSession->currentProject()->experiment()->getDiffractometer();
+    auto detector = diffractometer->detector();
     std::vector<std::pair<int, int>> resolutions = detector->getResolutions();
 
     QString det_res, data_bin;
@@ -87,19 +89,19 @@ ImageReaderDialog::ImageReaderDialog(
     label = new QLabel(QString((QChar)0x0394) + " " + QString((QChar)0x03C7));
     label->setAlignment(Qt::AlignRight | Qt::AlignCenter);
     _chi = new SafeDoubleSpinBox;
-    _chi->setToolTip("Angle increment about the chi sample axis");
+    _chi->setToolTip("Angle increment about the chi sample axis (degrees)");
     sample_gonio_grid->addWidget(label, 0, 0, 1, 1);
     sample_gonio_grid->addWidget(_chi, 0, 1, 1, 1);
     label = new QLabel(QString((QChar)0x0394) + " " + QString((QChar)0x03C9));
     label->setAlignment(Qt::AlignRight | Qt::AlignCenter);
     _omega = new SafeDoubleSpinBox;
-    _omega->setToolTip("Angle increment about the omega sample axis");
+    _omega->setToolTip("Angle increment about the omega sample axis (degrees)");
     sample_gonio_grid->addWidget(label, 1, 0, 1, 1);
     sample_gonio_grid->addWidget(_omega, 1, 1, 1, 1);
     label = new QLabel(QString((QChar)0x0394) + " " + QString((QChar)0x03C6));
     label->setAlignment(Qt::AlignRight | Qt::AlignCenter);
     _phi = new SafeDoubleSpinBox;
-    _phi->setToolTip("Angle increment about the phi sample axis");
+    _phi->setToolTip("Angle increment about the phi sample axis (degrees)");
     sample_gonio_grid->addWidget(label, 2, 0, 1, 1);
     sample_gonio_grid->addWidget(_phi, 2, 1, 1, 1);
 
@@ -111,13 +113,13 @@ ImageReaderDialog::ImageReaderDialog(
     label = new QLabel("2" + QString((QChar)0x03B8) + " (" + QString((QChar)0x03B3) + ")");
     label->setAlignment(Qt::AlignRight | Qt::AlignCenter);
     _2theta_gamma = new SafeDoubleSpinBox;
-    _2theta_gamma->setToolTip("Detector goniometer gamma angle");
+    _2theta_gamma->setToolTip("Detector goniometer gamma angle (degrees)");
     detector_gonio_grid->addWidget(label, 0, 0, 1, 1);
     detector_gonio_grid->addWidget(_2theta_gamma, 0, 1, 1, 1);
     label = new QLabel("2" + QString((QChar)0x03B8) + " (" + QString((QChar)0x03BD) + ")");
     label->setAlignment(Qt::AlignRight | Qt::AlignCenter);
     _2theta_nu = new SafeDoubleSpinBox;
-    _2theta_nu->setToolTip("Detector goniometer nu angle");
+    _2theta_nu->setToolTip("Detector goniometer nu angle (degrees)");
     detector_gonio_grid->addWidget(label, 1, 0, 1, 1);
     detector_gonio_grid->addWidget(_2theta_nu, 1, 1, 1, 1);
 
@@ -224,6 +226,22 @@ ImageReaderDialog::ImageReaderDialog(
             throw std::runtime_error(
                 "ImageReaderDialog::ImageReaderDialog: Unexpected DataFormat Encountered");
     }
+
+    auto sample_axes = diffractometer->sample().gonio().axisNames();
+    auto detector_axes = diffractometer->detector()->gonio().axisNames();
+
+    if (std::find(sample_axes.begin(), sample_axes.end(), ohkl::ax_chi) == sample_axes.end())
+        _chi->setDisabled(true);
+    if (std::find(sample_axes.begin(), sample_axes.end(), ohkl::ax_omega) == sample_axes.end())
+        _omega->setDisabled(true);
+    if (std::find(sample_axes.begin(), sample_axes.end(), ohkl::ax_chi) == sample_axes.end())
+        _phi->setDisabled(true);
+    if (std::find(detector_axes.begin(), detector_axes.end(), ohkl::ax_2thetaGamma) ==
+        detector_axes.end())
+        _2theta_gamma->setDisabled(true);
+    if (std::find(detector_axes.begin(), detector_axes.end(), ohkl::ax_2thetaNu)
+        == detector_axes.end())
+        _2theta_nu->setDisabled(true);
 
     connect(_buttons, &QDialogButtonBox::accepted, this, &ImageReaderDialog::verify);
     connect(_buttons, &QDialogButtonBox::rejected, this, &QDialog::reject);
