@@ -42,6 +42,8 @@ struct StrategyParameters : public PredictionParameters {
     double delta_chi = 0.0;
     double delta_omega = 0.5;
     double delta_phi = 0.0;
+    double gamma = 0.0;
+    double nu = 0.0;
     std::size_t nframes = 200;
     bool friedel = true;
 

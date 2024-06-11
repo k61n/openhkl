@@ -190,7 +190,7 @@ bool BaseNexusDataReader::initRead()
             const auto& detector_gonio = _dataset_out->diffractometer()->detector()->gonio();
             size_t n_detector_gonio_axes = detector_gonio.nAxes();
             std::vector<double> det_states(n_detector_gonio_axes);
-            _dataset_out->diffractometer()->detectorStates.emplace_back(std::move(det_states));
+            _dataset_out->diffractometer()->addDetectorAngles(det_states);
 
             std::vector<double> sample_states(n_sample_gonio_axes);
             std::fill(sample_states.begin(), sample_states.end(), 0.);
@@ -210,7 +210,7 @@ bool BaseNexusDataReader::initRead()
 
             // std::cout << sample_states[omega_idx] << " " << sample_states[chi_idx] << " " <<
             // sample_states[phi_idx] << std::endl;
-            _dataset_out->diffractometer()->sampleStates.emplace_back(std::move(sample_states));
+            _dataset_out->diffractometer()->addSampleAngles(sample_states);
         }
 
 

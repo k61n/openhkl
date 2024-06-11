@@ -83,7 +83,7 @@ void MtzExporter::buildBatches(CMtz::MTZSET* mtz_set)
         axis3 = sample_gonio.axis(2).axis();
 
     const std::vector<std::vector<double>>& sample_states =
-        _ohkl_data->diffractometer()->sampleStates;
+        _ohkl_data->diffractometer()->sampleAngles();
 
     double fwhm =
         _ohkl_data->diffractometer()->source().selectedMonochromator().fullWidthHalfMaximum();
@@ -272,7 +272,7 @@ void MtzExporter::populateColumns(CMtz::MTZCOL** columns, int ncol)
                 double frame = unmerged_peak->shape().center()[2];
                 int frame_int = std::floor(frame);
                 const std::vector<std::vector<double>>& sample_states =
-                    _ohkl_data->diffractometer()->sampleStates;
+                    _ohkl_data->diffractometer()->sampleAngles();
 
                 Intensity intensity;
                 if (_sum_intensities)

@@ -24,6 +24,7 @@
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/InstrumentStateSet.h"
 #include "core/instrument/Monochromator.h"
+#include "core/loader/IDataReader.h"
 #include "core/peak/Peak3D.h"
 #include "core/peak/Qs2Events.h"
 #include "tables/crystal/UnitCell.h"
@@ -42,11 +43,13 @@ void StrategyParameters::log(const Level& level) const
 {
     PredictionParameters::log(level);
     ohklLog(level, "Strategy parameters: ");
-    ohklLog(level, "delta_chi = ", delta_chi);
+    ohklLog(level, "delta_chi   = ", delta_chi);
     ohklLog(level, "delta_omega = ", delta_omega);
-    ohklLog(level, "delta_phi = ", delta_phi);
-    ohklLog(level, "nframes = ", nframes);
-    ohklLog(level, "friedel = ", friedel);
+    ohklLog(level, "delta_phi   = ", delta_phi);
+    ohklLog(level, "gamma       = ", gamma);
+    ohklLog(level, "nu          = ", nu);
+    ohklLog(level, "nframes     = ", nframes);
+    ohklLog(level, "friedel     = ", friedel);
 }
 
 Predictor::Predictor() : _handler(nullptr)
@@ -138,34 +141,16 @@ void Predictor::strategyPredict(sptrDataSet data, const sptrUnitCell unit_cell)
 InstrumentStateSet Predictor::generateStates(const sptrDataSet data)
 {
     _strategy_diffractometer.reset(Diffractometer::create(data->diffractometer()->name()));
-    const auto& detector_gonio = _strategy_diffractometer->detector()->gonio();
-    const auto& sample_gonio = _strategy_diffractometer->sample().gonio();
-    std::size_t n_detector_axes = detector_gonio.nAxes();
-    std::size_t n_sample_axes = sample_gonio.nAxes();
-
-    int omega_idx = -1, phi_idx = -1, chi_idx = -1;
-    for (std::size_t idx = 0; idx < n_sample_axes; ++idx) {
-        const std::string axis_name = sample_gonio.axis(idx).name();
-        omega_idx = axis_name == ohkl::ax_omega ? int(idx) : omega_idx;
-        chi_idx = axis_name == ohkl::ax_chi ? int(idx) : chi_idx;
-        phi_idx = axis_name == ohkl::ax_phi ? int(idx) : phi_idx;
-    }
-
-    if (omega_idx == -1 || phi_idx == -1 || chi_idx == -1)
-        throw std::runtime_error(
-            "Predictor::generateStates: could not parse rotation axis indices");
+    DataReaderParameters params;
+    params.delta_omega = _strategy_params->delta_omega;
+    params.delta_chi = _strategy_params->delta_chi;
+    params.delta_phi = _strategy_params->delta_phi;
+    params.gamma = _strategy_params->gamma;
+    params.nu = _strategy_params->nu;
 
     for (std::size_t idx = 0; idx < _strategy_params->nframes; ++idx) {
-        std::vector<double> det_states(n_detector_axes);
-        std::fill(det_states.begin(), det_states.end(), 0.0);
-        _strategy_diffractometer->detectorStates.emplace_back(std::move(det_states));
-
-        std::vector<double> sample_states(n_sample_axes);
-        std::fill(sample_states.begin(), sample_states.end(), 0.0);
-        sample_states[omega_idx] = idx * _strategy_params->delta_omega * deg;
-        sample_states[phi_idx] = idx * _strategy_params->delta_phi * deg;
-        sample_states[chi_idx] = idx * _strategy_params->delta_chi * deg;
-        _strategy_diffractometer->sampleStates.emplace_back(std::move(sample_states));
+        _strategy_diffractometer->addSampleAngles(idx, params);
+        _strategy_diffractometer->addDetectorAngles(params);
     }
 
     std::string name = "strategy";

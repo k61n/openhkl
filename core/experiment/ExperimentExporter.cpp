@@ -81,12 +81,12 @@ void writeDetectorState(
     const H5::DataType stateValueType{H5::PredType::NATIVE_DOUBLE};
     Eigen::VectorXd values(n_frames);
 
-    const statesVec& detectorStates = dataset->diffractometer()->detectorStates;
+    const statesVec& detectorAngles = dataset->diffractometer()->detectorAngles();
     const ohkl::Gonio& detector_gonio = dataset->diffractometer()->detector()->gonio();
     const std::size_t n_detector_gonio_axes = detector_gonio.nAxes();
     for (std::size_t i_axis = 0; i_axis < n_detector_gonio_axes; ++i_axis) {
         for (std::size_t i_frame = 0; i_frame < n_frames; ++i_frame)
-            values(i_frame) = detectorStates[i_frame][i_axis] / ohkl::deg; // TODO: check the unit
+            values(i_frame) = detectorAngles[i_frame][i_axis] / ohkl::deg; // TODO: check the unit
 
         H5::DataSet detector_scan(file.createDataSet(
             std::string(detectorKey + "/" + detector_gonio.axis(i_axis).name()), stateValueType,
@@ -104,7 +104,7 @@ void writeSampleState(
     Eigen::VectorXd values(n_frames);
     const H5::DataSpace scanSpace(1, nf);
     const H5::DataType stateValueType{H5::PredType::NATIVE_DOUBLE};
-    const statesVec& sampleStates = dataset->diffractometer()->sampleStates;
+    const statesVec& sampleAngles = dataset->diffractometer()->sampleAngles();
     const ohkl::Gonio& sample_gonio = dataset->diffractometer()->sample().gonio();
     std::size_t n_sample_gonio_axes = sample_gonio.nAxes();
 
@@ -112,7 +112,7 @@ void writeSampleState(
     for (std::size_t i_axis = 0; i_axis < n_sample_gonio_axes; ++i_axis) {
         const auto& axis = sample_gonio.axis(i_axis);
         for (std::size_t i_frame = 0; i_frame < n_frames; ++i_frame)
-            values(i_frame) = sampleStates[i_frame][i_axis] / ohkl::deg; // TODO: check the unit
+            values(i_frame) = sampleAngles[i_frame][i_axis] / ohkl::deg; // TODO: check the unit
         H5::DataSet sample_scan(file.createDataSet(
             std::string(sampleKey + "/" + axis.name()), stateValueType, scanSpace));
         sample_scan.write(&values(0), stateValueType, scanSpace, scanSpace);

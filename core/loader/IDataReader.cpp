@@ -29,7 +29,8 @@ void DataReaderParameters::log(const Level& level) const
     ohklLog(level, "delta_omega     = ", delta_omega);
     ohklLog(level, "delta_chi       = ", delta_chi);
     ohklLog(level, "delta_phi       = ", delta_phi);
-    ohklLog(level, "swap_endian     = ", swap_endian);
+    ohklLog(level, "twotheta_gamma  = ", twotheta_gamma);
+    ohklLog(level, "twotheta_nu     = ", twotheta_nu);
     ohklLog(level, "baseline        = ", baseline);
     ohklLog(level, "gain            = ", gain);
     ohklLog(level, "bytes_per_pixel = ", bytes_per_pixel);
