@@ -89,15 +89,14 @@ DirectVector CylindricalDetector::pixelPosition(double px, double py) const
         throw std::runtime_error("Detector: distance must be >0");
 
     // The coordinates are defined relative to the detector origin
-    double x = px - _minCol;
-    double y = py - _minRow;
+    const double x = px - _minCol;
+    const double y = py - _minRow;
 
-    double gamma = (x / (_nCols - 1.0) - 0.5) * _angularWidth;
+    const double gamma = 0.5 * _angularWidth * ((2 * x + 1) / _nCols - 1); // take the center of the bin
     Eigen::Vector3d result;
     result[0] = _distance * sin(gamma);
     result[1] = _distance * cos(gamma);
-    // take the center of the bin
-    result[2] = (y / (_nRows - 1.0) - 0.5) * _height;
+    result[2] = 0.5 * _height * ((2 * y + 1) / _nRows - 1); // take the center of the bin
     return DirectVector(result);
 }
 
