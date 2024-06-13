@@ -4,8 +4,8 @@ instrument:
         type: flat
         name: poli_psd
         sample_distance:
-            value: 2600.0
-            units: mm
+            value: 0.5
+            units: m
         width:
             value: 0.25
             units: m
