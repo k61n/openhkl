@@ -885,7 +885,7 @@ ohkl::sptrUnitCell SubframeMerge::singleBatchRefine()
     params->set_unit_cell = false;
 
     try {
-        expt->refine(peaks, data.get());
+        refiner->refine(states, peaks->getPeakList());
         gSession->onUnitCellChanged();
         toggleUnsafeWidgets();
     } catch (const std::exception& ex) {

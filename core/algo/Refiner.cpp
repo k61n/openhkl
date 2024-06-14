@@ -250,9 +250,10 @@ void Refiner::refineUB()
         batch.refineUB();
 }
 
-bool Refiner::refine()
+bool Refiner::refine(InstrumentStateList& states, const std::vector<Peak3D*> peaks, sptrUnitCell cell)
 {
     _params->log(Level::Info);
+    makeBatches(states, peaks, cell);
 
     if (_params->refine_ub)
         refineUB();

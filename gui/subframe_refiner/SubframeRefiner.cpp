@@ -238,13 +238,9 @@ void SubframeRefiner::refine()
         if (params->refine_ki)
             ++n_checked;
         if (n_checked > 0) { // Check that we have selected at least one parameter set
-            // TODO: Work out why calling the refiner directly doesn't work
-            // refiner->makeBatches(states, peaks->getPeakList(), cell);
-            // _refine_success = refiner->refine();
-            if (_batch_cell_check->isChecked())
-                _refine_success = expt->refine(peaks, data.get());
-            else
-                _refine_success = expt->refine(peaks, data.get(), cell);
+            if (!_batch_cell_check->isChecked())
+                cell = nullptr;
+            _refine_success = refiner->refine(states, peaks->getPeakList(), cell);
         }
 
         states = data->instrumentStates();

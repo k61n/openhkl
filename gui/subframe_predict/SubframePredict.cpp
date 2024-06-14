@@ -395,8 +395,7 @@ void SubframePredict::refineKi()
     params->refine_sample_position = false;
     params->refine_sample_orientation = false;
 
-    refiner->makeBatches(states, peaks->getPeakList(), cell);
-    bool success = refiner->refine();
+    bool success = refiner->refine(states, peaks->getPeakList(), cell);
     if (success) {
         gGui->statusBar()->showMessage("Direct beam positions refined");
         showDirectBeamEvents();

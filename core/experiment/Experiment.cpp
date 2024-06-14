@@ -224,89 +224,6 @@ void Experiment::loadFromFile(const std::string& path)
     setDefaultDMin();
 }
 
-void Experiment::autoIndex(PeakCollection* peaks, sptrDataSet data)
-{
-
-    auto params = _auto_indexer->parameters();
-
-    std::string collection_name = ohkl::kw_autoindexingCollection;
-
-    _peak_filter->resetFiltering(peaks);
-    _peak_filter->resetFilterFlags();
-    _peak_filter->flags()->strength = true;
-    _peak_filter->flags()->d_range = true;
-    _peak_filter->flags()->frames = true;
-    _peak_filter->parameters()->d_min = params->d_min;
-    _peak_filter->parameters()->d_max = params->d_max;
-    _peak_filter->parameters()->strength_min = params->strength_min;
-    _peak_filter->parameters()->strength_max = params->strength_max;
-    _peak_filter->parameters()->frame_min = params->first_frame;
-    _peak_filter->parameters()->frame_max = params->last_frame;
-
-    ohklLog(
-        Level::Info, "Experiment::autoIndex: attempting with frames ", params->first_frame, " - ",
-        params->last_frame);
-    _peak_filter->filter(peaks);
-    double npeaks = peaks->numberOfPeaks();
-    double ncaught = peaks->numberCaughtByFilter();
-    ohklLog(Level::Info, "Indexing using ", ncaught, " / ", npeaks, " peaks");
-    _peak_handler->acceptFilter(collection_name, peaks, PeakCollectionType::INDEXING, data);
-    PeakCollection* indexing_collection = getPeakCollection(collection_name);
-    _auto_indexer->autoIndex(indexing_collection, data);
-    _peak_handler->removePeakCollection(collection_name);
-}
-
-void Experiment::buildShapeModel(
-    PeakCollection* peaks, sptrDataSet data, const ShapeModelParameters& params)
-{
-    ohklLog(Level::Info, "Experiment::buildShapeModel");
-    params.log(Level::Info);
-    peaks->computeSigmas();
-
-    _peak_filter->resetFiltering(peaks);
-    _peak_filter->resetFilterFlags();
-    _peak_filter->flags()->d_range = true;
-    _peak_filter->flags()->strength = true;
-    _peak_filter->parameters()->d_min = params.d_min;
-    _peak_filter->parameters()->d_max = params.d_max;
-    _peak_filter->parameters()->strength_min = params.strength_min;
-    _peak_filter->parameters()->strength_max = params.strength_max;
-    _peak_filter->filter(peaks);
-    std::string collection_name = ohkl::kw_fitCollection;
-    PeakCollection fit_peaks(collection_name, peaks->type(), data);
-    fit_peaks.populateFromFiltered(peaks);
-
-    if (fit_peaks.numberOfPeaks() == 0) {
-        ohklLog(Level::Info, "Experiment::buildShapeModel: no fit peaks found");
-        return;
-    }
-
-    ohklLog(
-        Level::Info, "Experiment::buildShapeModel: ", fit_peaks.numberOfPeaks(), " / ",
-        peaks->numberOfPeaks(), " fit peaks");
-
-    ohkl::AABB aabb;
-
-    if (params.kabsch_coords) {
-        const Eigen::Vector3d sigma(peaks->sigmaD(), peaks->sigmaD(), peaks->sigmaM());
-        aabb.setLower(-params.peak_end * sigma);
-        aabb.setUpper(params.peak_end * sigma);
-    } else {
-        const Eigen::Vector3d dx(params.nbins_x, params.nbins_y, params.nbins_z);
-        aabb.setLower(-0.5 * dx);
-        aabb.setUpper(0.5 * dx);
-    }
-
-    std::unique_ptr<ShapeModel> shapes = std::make_unique<ShapeModel>();
-
-    std::vector<Peak3D*> fit_peak_list = fit_peaks.getPeakList();
-    _integrator->integrateShapeModel(fit_peak_list, data, shapes.get(), aabb, params);
-    peaks->setShapeModel(shapes);
-
-    // shape_model.updateFit(1000); // This does nothing!! - zamaan
-    ohklLog(Level::Info, "Experiment::buildShapeModel finished");
-}
-
 const UnitCell* Experiment::getAcceptedCell() const
 {
     return getUnitCell(ohkl::kw_acceptedUnitcell);
@@ -315,28 +232,6 @@ const UnitCell* Experiment::getAcceptedCell() const
 const UnitCell* Experiment::getReferenceCell() const
 {
     return getUnitCell(ohkl::kw_referenceUnitcell);
-}
-
-bool Experiment::refine(
-    const PeakCollection* peaks, DataSet* data, sptrUnitCell cell /* = nullptr */)
-{
-    ohklLog(Level::Info, "Experiment::refine: Refining peak collection ", peaks->name());
-    std::vector<Peak3D*> peak_list = peaks->getPeakList();
-    _refiner->makeBatches(getInstrumentStateSet(data)->instrumentStates(), peak_list, cell);
-    bool success = _refiner->refine();
-    if (success) {
-        ohklLog(Level::Info, "Refinement succeeded");
-    } else {
-        ohklLog(Level::Info, "Refinement failed");
-    }
-    return success;
-}
-
-void Experiment::updatePredictions(PeakCollection* predicted_peaks)
-{
-    auto peak_list = predicted_peaks->getPeakList();
-    int update = _refiner->updatePredictions(peak_list);
-    ohklLog(Level::Info, update, " peaks updated");
 }
 
 Integrator* Experiment::integrator()
