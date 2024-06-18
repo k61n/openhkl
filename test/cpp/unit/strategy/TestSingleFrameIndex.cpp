@@ -54,10 +54,10 @@ TEST_CASE("test/data/TestSingleFrameIndex.cpp", "")
         "CrChiA_c01runab_28612.raw",
         "CrChiA_c01runab_28613.raw"};
 
-        ohkl::Experiment experiment("test", "BioDiff");
+        ohkl::Experiment experiment("CrChiA", "BioDiff");
 
     ohkl::sptrDataSet data =
-        std::make_shared<ohkl::DataSet>(ohkl::kw_datasetDefaultName, experiment.getDiffractometer());
+        std::make_shared<ohkl::DataSet>("CrChiA", experiment.getDiffractometer());
 
     ohkl::DataReaderParameters data_params;
     data_params.data_format = ohkl::DataFormat::RAW;

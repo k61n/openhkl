@@ -469,7 +469,7 @@ bool Experiment::addInstrumentStateSet(
 
 std::string Experiment::generateUnitCellName()
 {
-    return _cell_handler->generateUnitCellName();
+    return _cell_handler->generateName();
 }
 
 InstrumentStateSet* Experiment::getInstrumentStateSet(const sptrDataSet& data)

@@ -31,14 +31,14 @@
 #include "core/instrument/Source.h"
 #include "core/loader/IDataReader.h"
 
-void run_test(const char* filename, const char* instrument)
+void run_test(const char* filename, const char* dataset, const char* instrument)
 {
     ohkl::Experiment experiment("test", instrument);
     auto diffractometer = experiment.getDiffractometer();
     const auto* detector = diffractometer->detector();
 
     const ohkl::sptrDataSet dataset_ptr { std::make_shared<ohkl::DataSet>
-         (ohkl::kw_datasetDefaultName, experiment.getDiffractometer()) };
+         (dataset, experiment.getDiffractometer()) };
 
     dataset_ptr->addDataFile(filename, ohkl::DataFormat::OHKL);
     dataset_ptr->finishRead();
@@ -93,6 +93,6 @@ void run_test(const char* filename, const char* instrument)
 
 TEST_CASE("test/instrument/TestInterpolatedState.cpp", "")
 {
-    run_test("gal3.hdf", "BioDiff");
-    run_test("d19_test.hdf", "D19");
+    run_test("gal3.hdf", "gal3", "BioDiff");
+    run_test("d19_test.hdf", "d19_test", "D19");
 }

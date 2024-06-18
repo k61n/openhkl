@@ -23,7 +23,7 @@ namespace ohkl {
 // TODO: Add documentation: Describe the keywords and their units (if any)
 
 //-- HDF5 Group keys
-const std::string gr_DataCollections{"DataCollections"};
+const std::string gr_DataSets{"DataSets"};
 const std::string gr_Detector{"Detector"};
 const std::string gr_Instrument{"Instrument"};
 const std::string gr_Sample{"Sample"};

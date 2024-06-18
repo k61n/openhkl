@@ -28,7 +28,7 @@ TEST_CASE("test/peak_find/TestGradient.cpp", "")
 
     ohkl::Experiment experiment("test", "BioDiff");
     ohkl::sptrDataSet data = std::make_shared<ohkl::DataSet>(
-        ohkl::kw_datasetDefaultName, experiment.getDiffractometer());
+        "CrChiA", experiment.getDiffractometer());
     ohkl::DataReaderParameters data_params;
 
     data_params.data_format = ohkl::DataFormat::RAW;

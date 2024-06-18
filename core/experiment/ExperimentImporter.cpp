@@ -106,7 +106,7 @@ void ExperimentImporter::loadData(Experiment* experiment)
 
     try {
         H5::H5File file(_file_name.c_str(), H5F_ACC_RDONLY);
-        H5::Group data_collections(file.openGroup(ohkl::gr_DataCollections));
+        H5::Group data_collections(file.openGroup(ohkl::gr_DataSets));
 
         hsize_t object_num = data_collections.getNumObjs();
         for (int i = 0; i < object_num; ++i) {

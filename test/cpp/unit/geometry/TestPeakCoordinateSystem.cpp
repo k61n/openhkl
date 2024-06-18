@@ -31,12 +31,12 @@
 #include "core/peak/Peak3D.h"
 #include "core/peak/PeakCoordinateSystem.h"
 
-void run_test(const char* filename, const char* instrument)
+void run_test(const char* filename, const char* dataset, const char* instrument)
 {
     ohkl::Experiment experiment("test", instrument);
 
     const ohkl::sptrDataSet dataset_ptr { std::make_shared<ohkl::DataSet>
-          (ohkl::kw_datasetDefaultName, experiment.getDiffractometer()) };
+          (dataset, experiment.getDiffractometer()) };
 
     dataset_ptr->addDataFile(filename, ohkl::DataFormat::OHKL);
     dataset_ptr->finishRead();
@@ -110,6 +110,6 @@ void run_test(const char* filename, const char* instrument)
 
 TEST_CASE("test/geometry/TestPeakCoordinateSystem.cpp", "")
 {
-    run_test("gal3.hdf", "BioDiff");
-    run_test("d19_test.hdf", "D19");
+    run_test("gal3.hdf", "gal3", "BioDiff");
+    run_test("d19_test.hdf", "d19_test", "D19");
 }

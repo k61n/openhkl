@@ -43,27 +43,27 @@ bool pathExists(hid_t id, const std::string& path)
 // aux. functions to produce the group keys
 std::string _metaKey(const std::string& dataset_name)
 {
-    return ohkl::gr_DataCollections + "/" + dataset_name + "/" + ohkl::gr_Metadata;
+    return ohkl::gr_DataSets + "/" + dataset_name + "/" + ohkl::gr_Metadata;
 }
 
 std::string _detectorKey(const std::string& dataset_name)
 {
-    return ohkl::gr_DataCollections + "/" + dataset_name + "/" + ohkl::gr_Detector;
+    return ohkl::gr_DataSets + "/" + dataset_name + "/" + ohkl::gr_Detector;
 }
 
 std::string _sampleKey(const std::string& dataset_name)
 {
-    return ohkl::gr_DataCollections + "/" + dataset_name + "/" + ohkl::gr_Sample;
+    return ohkl::gr_DataSets + "/" + dataset_name + "/" + ohkl::gr_Sample;
 }
 
 std::string _dataKey(const std::string& dataset_name)
 {
-    return ohkl::gr_DataCollections + "/" + dataset_name + "/" + ohkl::ds_Dataset;
+    return ohkl::gr_DataSets + "/" + dataset_name + "/" + ohkl::ds_Dataset;
 }
 
 std::string _maskKey(const std::string& dataset_name)
 {
-    return ohkl::gr_DataCollections + "/" + dataset_name + "/" + ohkl::gr_Masks;
+    return ohkl::gr_DataSets + "/" + dataset_name + "/" + ohkl::gr_Masks;
 }
 
 } // namespace
@@ -94,7 +94,7 @@ bool BaseHDF5DataReader::initRead()
 
         // If the given dataset name is empty, find the name of the first DataCollection
         if (dataset_name.empty()) {
-            H5::Group data_collections(_file->openGroup(ohkl::gr_DataCollections));
+            H5::Group data_collections(_file->openGroup(ohkl::gr_DataSets));
             hsize_t object_num = data_collections.getNumObjs();
             if (object_num < 1) {
                 throw std::runtime_error("HDF5 file '" + _filename + "' has no DataCollections");
@@ -296,7 +296,7 @@ bool BaseHDF5DataReader::initRead()
         ohkl::Level::Debug, "Reading detector masks of '", _filename, "', data set '", dataset_name,
         "'");
 
-    H5::Group data_group = _file->openGroup(gr_DataCollections);
+    H5::Group data_group = _file->openGroup(gr_DataSets);
     if (pathExists(_file->getId(), _maskKey(dataset_name))) {
         H5::Group maskGroup = _file->openGroup("/" + _maskKey(dataset_name));
         std::size_t nmasks = _dataset_out->metadata().key<int>(ohkl::at_nMasks);
