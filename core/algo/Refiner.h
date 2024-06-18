@@ -16,6 +16,7 @@
 #define OHKL_CORE_ALGO_REFINER_H
 
 #include "core/algo/RefinementBatch.h"
+#include "core/data/DataTypes.h"
 #include "core/integration/IIntegrator.h"
 #include "tables/crystal/UnitCell.h"
 
@@ -98,7 +99,7 @@ class Refiner {
     //! Perform the refinement with the maximum number of iterations as given. N.B. the four
     //! previous functions set the number of free parameters and at least one must be run
     //! *before* refine
-    bool refine(InstrumentStateList& states, const std::vector<Peak3D*> peaks, sptrUnitCell cell = nullptr);
+    bool refine(sptrDataSet data, const std::vector<Peak3D*> peaks, sptrUnitCell cell = nullptr);
 
     //! Updates the centers of predicted peaks, after refinement.
     //! Returns the number of remaining peaks

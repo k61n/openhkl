@@ -214,8 +214,8 @@ void SubframeRefiner::refine()
     gGui->setReady(false);
     try {
         auto expt = gSession->currentProject()->experiment();
-        auto* peaks = _peak_combo->currentPeakCollection();
-        const auto data = _data_combo->currentData();
+        auto peaks = _peak_combo->currentPeakCollection()->getPeakList();
+        auto data = _data_combo->currentData();
         auto cell = _cell_combo->currentCell();
         auto states = expt->getInstrumentStateSet(data)->instrumentStates();
         auto* refiner = expt->refiner();
@@ -241,7 +241,7 @@ void SubframeRefiner::refine()
         if (n_checked > 0) { // Check that we have selected at least one parameter set
             if (_batch_cell_check->isChecked())
                 cell = nullptr;
-            _refine_success = refiner->refine(states, peaks->getPeakList(), cell);
+            _refine_success = refiner->refine(data, peaks, cell);
         }
 
         _direct_beam_events = ohkl::algo::getDirectBeamEvents(states, *detector);

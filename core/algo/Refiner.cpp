@@ -18,6 +18,7 @@
 #include "base/utils/Logger.h"
 #include "core/algo/Refiner.h"
 #include "core/data/DataSet.h"
+#include "core/data/DataTypes.h"
 #include "core/detector/DetectorEvent.h"
 #include "core/experiment/UnitCellHandler.h"
 #include "core/instrument/InstrumentState.h"
@@ -250,9 +251,10 @@ void Refiner::refineUB()
         batch.refineUB();
 }
 
-bool Refiner::refine(InstrumentStateList& states, const std::vector<Peak3D*> peaks, sptrUnitCell cell)
+bool Refiner::refine(sptrDataSet data, const std::vector<Peak3D*> peaks, sptrUnitCell cell)
 {
     _params->log(Level::Info);
+    auto& states = data->instrumentStates();
     makeBatches(states, peaks, cell);
 
     if (_params->refine_ub)

@@ -868,9 +868,8 @@ void SubframeMerge::toggleUnsafeWidgets()
 ohkl::sptrUnitCell SubframeMerge::singleBatchRefine()
 {
     auto expt = gSession->currentProject()->experiment();
-    auto* peaks = _peak_combo_1->currentPeakCollection();
-    const auto data = peaks->getPeakList()[0]->dataSet();
-    auto states = data->instrumentStates();
+    auto peaks = _peak_combo_1->currentPeakCollection()->getPeakList();
+    auto data = peaks[0]->dataSet();
     auto* refiner = expt->refiner();
     auto* params = refiner->parameters();
 
@@ -885,7 +884,7 @@ ohkl::sptrUnitCell SubframeMerge::singleBatchRefine()
     params->set_unit_cell = false;
 
     try {
-        refiner->refine(states, peaks->getPeakList());
+        refiner->refine(data, peaks);
         gSession->onUnitCellChanged();
         toggleUnsafeWidgets();
     } catch (const std::exception& ex) {
