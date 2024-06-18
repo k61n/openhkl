@@ -16,6 +16,7 @@
 #define OHKL_CORE_ALGO_REFINER_H
 
 #include "core/algo/RefinementBatch.h"
+#include "core/data/DataTypes.h"
 #include "core/integration/IIntegrator.h"
 #include "tables/crystal/UnitCell.h"
 
@@ -77,10 +78,6 @@ class Refiner {
  public:
     Refiner(UnitCellHandler* cell_handler);
 
-    //! Generate batches of peaks per frame range with the given peak list
-    void makeBatches(
-        InstrumentStateList& states, const std::vector<ohkl::Peak3D*>& peaks, sptrUnitCell cell);
-
     //! Rebuild old batches if refinement failed
     void reconstructBatches(std::vector<Peak3D*> peaks);
 
@@ -102,7 +99,7 @@ class Refiner {
     //! Perform the refinement with the maximum number of iterations as given. N.B. the four
     //! previous functions set the number of free parameters and at least one must be run
     //! *before* refine
-    bool refine();
+    bool refine(sptrDataSet data, const std::vector<Peak3D*> peaks, sptrUnitCell cell = nullptr);
 
     //! Updates the centers of predicted peaks, after refinement.
     //! Returns the number of remaining peaks
@@ -140,6 +137,10 @@ class Refiner {
     void assignPredictedCells(std::vector<Peak3D*> predicted_peaks);
 
  private:
+    //! Generate batches of peaks per frame range with the given peak list
+    void makeBatches(
+        InstrumentStateList& states, const std::vector<Peak3D*>& peaks, sptrUnitCell cell);
+
     //! Determine which unit cell to use in a batch
     sptrUnitCell _getUnitCell(const std::vector<Peak3D*> peaks_subset);
 

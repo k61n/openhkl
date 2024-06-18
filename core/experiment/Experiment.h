@@ -237,8 +237,6 @@ class Experiment {
     // Autoindexer
     //! Get a pointer to the AutoIndexer object
     AutoIndexer* autoIndexer() const { return _auto_indexer.get(); };
-    //! attempt to autoindex the data
-    void autoIndex(PeakCollection* peaks, sptrDataSet data);
     //! Get a pointer to the accepted/assigned unit cell
     const UnitCell* getAcceptedCell() const;
     //! Get a pointer to the reference unit cell
@@ -257,15 +255,8 @@ class Experiment {
     // Prediction
     //! Get a pointer to the predictor
     Predictor* predictor() { return _predictor.get(); };
-    //! Construct the collection used to fit the shapes of predicted peaks
-    void buildShapeModel(
-        PeakCollection* peaks, sptrDataSet data, const ShapeModelParameters& params);
     //! Get a pointer to the refiner
     Refiner* refiner() { return _refiner.get(); };
-    //! Refine unit cell and instrument parameters
-    bool refine(const PeakCollection* peaks, DataSet* data, sptrUnitCell cell = nullptr);
-    //! Update the predicted peaks post-refinement
-    void updatePredictions(PeakCollection* predicted_peaks);
 
     // Integration
     //! Get a pointer to the integrator module

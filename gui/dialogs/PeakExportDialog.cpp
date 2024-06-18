@@ -17,6 +17,7 @@
 #include "core/algo/Refiner.h"
 #include "core/data/DataSet.h"
 #include "core/experiment/Experiment.h"
+#include "core/shape/PeakCollection.h"
 #include "core/statistics/PeakMerger.h"
 #include "gui/MainWin.h" // gGui
 #include "gui/models/Project.h"
@@ -259,8 +260,8 @@ void PeakExportDialog::processMerge()
 ohkl::sptrUnitCell PeakExportDialog::singleBatchRefine()
 {
     auto expt = gSession->currentProject()->experiment();
-    auto* peaks = _peak_combo_1->currentPeakCollection();
-    const auto data = _data_combo->currentData();
+    auto peaks = _peak_combo_1->currentPeakCollection()->getPeakList();
+    auto data = _data_combo->currentData();
     auto states = data->instrumentStates();
     auto* refiner = expt->refiner();
     auto* params = refiner->parameters();
@@ -276,7 +277,7 @@ ohkl::sptrUnitCell PeakExportDialog::singleBatchRefine()
     params->set_unit_cell = false;
 
     try {
-        expt->refine(peaks, data.get());
+        refiner->refine(data, peaks);
         gSession->onUnitCellChanged();
     } catch (const std::exception& ex) {
         gGui->statusBar()->showMessage("Error: " + QString(ex.what()));

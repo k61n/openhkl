@@ -17,6 +17,7 @@
 #include "core/data/DataSet.h"
 #include "core/experiment/Experiment.h"
 #include "core/instrument/Diffractometer.h"
+#include "core/instrument/InstrumentStateSet.h"
 #include "core/peak/Qs2Events.h"
 #include "gui/MainWin.h" // gGui
 #include "gui/connect/Sentinel.h"
@@ -213,10 +214,10 @@ void SubframeRefiner::refine()
     gGui->setReady(false);
     try {
         auto expt = gSession->currentProject()->experiment();
-        auto* peaks = _peak_combo->currentPeakCollection();
-        const auto data = _data_combo->currentData();
+        auto peaks = _peak_combo->currentPeakCollection()->getPeakList();
+        auto data = _data_combo->currentData();
         auto cell = _cell_combo->currentCell();
-        auto states = data->instrumentStates();
+        auto states = expt->getInstrumentStateSet(data)->instrumentStates();
         auto* refiner = expt->refiner();
         auto* params = refiner->parameters();
 
@@ -238,16 +239,11 @@ void SubframeRefiner::refine()
         if (params->refine_ki)
             ++n_checked;
         if (n_checked > 0) { // Check that we have selected at least one parameter set
-            // TODO: Work out why calling the refiner directly doesn't work
-            // refiner->makeBatches(states, peaks->getPeakList(), cell);
-            // _refine_success = refiner->refine();
             if (_batch_cell_check->isChecked())
-                _refine_success = expt->refine(peaks, data.get());
-            else
-                _refine_success = expt->refine(peaks, data.get(), cell);
+                cell = nullptr;
+            _refine_success = refiner->refine(data, peaks, cell);
         }
 
-        states = data->instrumentStates();
         _direct_beam_events = ohkl::algo::getDirectBeamEvents(states, *detector);
         _detector_widget->scene()->linkDirectBeam(&_direct_beam_events, &_old_direct_beam_events);
         _detector_widget->refresh();

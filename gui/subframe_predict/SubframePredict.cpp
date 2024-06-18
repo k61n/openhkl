@@ -369,7 +369,7 @@ void SubframePredict::refineKi()
 {
     gGui->setReady(false);
     auto expt = gSession->currentProject()->experiment();
-    auto* peaks = _peak_combo->currentPeakCollection();
+    auto peaks = _peak_combo->currentPeakCollection()->getPeakList();
     auto data = _data_combo->currentData();
     auto* detector = data->diffractometer()->detector();
     auto& states = data->instrumentStates();
@@ -395,8 +395,7 @@ void SubframePredict::refineKi()
     params->refine_sample_position = false;
     params->refine_sample_orientation = false;
 
-    refiner->makeBatches(states, peaks->getPeakList(), cell);
-    bool success = refiner->refine();
+    bool success = refiner->refine(data, peaks, cell);
     if (success) {
         gGui->statusBar()->showMessage("Direct beam positions refined");
         showDirectBeamEvents();
@@ -404,7 +403,7 @@ void SubframePredict::refineKi()
         gGui->statusBar()->showMessage("Direct beam position refinement failed");
 
     refiner->setParameters(tmp_params);
-    for (auto* peak : peaks->getPeakList()) // Assign original unit cell to all peaks
+    for (auto* peak : peaks) // Assign original unit cell to all peaks
         peak->setUnitCell(cell);
 
     _old_direct_beam_events = _direct_beam_events;
