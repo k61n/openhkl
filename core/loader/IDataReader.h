@@ -34,7 +34,7 @@ struct DataReaderParameters {
     DataFormat data_format = DataFormat::Unknown;
     int rows = -1;
     int cols = -1;
-    std::string dataset_name = kw_datasetDefaultName;
+    std::string dataset_name = "";
     double wavelength = 0.0;
     double delta_omega = 0.0;
     double delta_chi = 0.0;

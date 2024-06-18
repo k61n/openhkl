@@ -134,7 +134,6 @@ ImageReaderDialog::ImageReaderDialog(
     _omega->setValue(_parameters0->delta_omega);
     _phi->setValue(_parameters0->delta_phi);
     _wavelength->setValue(_parameters0->wavelength);
-    _datasetName->setText(QString::fromStdString(_parameters0->dataset_name));
     _baseline->setValue(detector->baseline());
     _gain->setValue(detector->gain());
 
@@ -185,6 +184,9 @@ ImageReaderDialog::ImageReaderDialog(
             _swapEndianness->setEnabled(false);
             break;
         }
+        default:
+            throw std::runtime_error(
+                "ImageReaderDialog::ImageReaderDialog: Unexpected DataFormat Encountered");
     }
 
     connect(_buttons, &QDialogButtonBox::accepted, this, &ImageReaderDialog::verify);
@@ -219,21 +221,27 @@ int ImageReaderDialog::bytesPerPixel()
 
 void ImageReaderDialog::verify()
 {
-    bool dialog_accepted = true;
-    ;
     // check wavelength
     const double eps = 1e-8;
-    const double waveln = _wavelength->value();
-    if (waveln < eps) {
-        const QString msg{
-            QString::fromStdString("Wavelength, " + std::to_string(waveln) + ", must be > 0")};
-        QMessageBox::critical(nullptr, "Error", msg);
-        dialog_accepted = false;
+
+    if (_wavelength->value() < eps) {
+        QMessageBox::critical(nullptr, "Error", "Positive, non-zero wavelength is required");
         return;
     }
 
-    if (dialog_accepted)
-        this->accept();
+    if (_omega->value() < eps && _chi->value() < eps && _phi->value() < eps) {
+        QMessageBox::critical(nullptr, "Error",
+                              "Positive, non-zero value required for a sample angle increment");
+        return;
+    }
+
+    // check name was given for DataSet
+    if (_datasetName->text().isEmpty()) {
+        QMessageBox::critical(nullptr, "Error", "A data set name is required");
+        return;
+    }
+
+    this->accept();
 }
 
 void ImageReaderDialog::setSingleImageMode()
@@ -293,6 +301,9 @@ ohkl::DataReaderParameters ImageReaderDialog::dataReaderParameters()
             parameters.data_format = ohkl::DataFormat::PLAINTEXT;
             break;
         }
+        default:
+            throw std::runtime_error(
+                "ImageReaderDialog::dataReaderParameters: Unexpected DataFormat Encountered");
     }
 
     return parameters;

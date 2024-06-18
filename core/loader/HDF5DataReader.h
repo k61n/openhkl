@@ -16,7 +16,6 @@
 #define OHKL_CORE_LOADER_HDF5DATAREADER_H
 
 #include "core/loader/BaseHDF5DataReader.h" // inherits from
-#include "core/raw/DataKeys.h" // kw_datasetDefaultName
 
 namespace ohkl {
 

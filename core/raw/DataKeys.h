@@ -123,8 +123,7 @@ const std::string kw_null{"null"};
 const std::string kw_experimentDefaultName{"DEFAULT EXPERIMENT"}; // default name for an experiment
 const std::string kw_diffractometerDefaultName{
     "DEFAULT INSTRUMENT"}; // default name for an experiment
-const std::string kw_datasetDefaultName{"DEFAULT DATASET"}; // default name for an experiment
-const std::string kw_unitcellDefaultName{"DEFAULT UNITCELL"}; // default name for a unit-cell
+const std::string kw_unitcellDefaultName{"DEFAULT UNITCELL"}; // default name for a UnitCell
 const std::string kw_monochromatorDefaultName{
     "DEFAULT MONOCHROMATOR"}; // default name for a monochromator
 const std::string kw_goniometerDefaultName{"DEFAULT GONIOMETER"}; // default name for a goniometer
