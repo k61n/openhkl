@@ -23,8 +23,6 @@
 #include "core/gonio/RotAxis.h"
 #include "core/raw/DataKeys.h"
 
-#include <iostream>
-
 namespace ohkl {
 
 Gonio::Gonio(const Gonio& other) : _name(other._name)
@@ -37,7 +35,6 @@ Gonio::Gonio(const Gonio& other) : _name(other._name)
 Gonio::Gonio(const YAML::Node& node)
 {
     _name = node[ohkl::ym_goniometerName].as<std::string>();
-    std::cout << _name << std::endl;
 
     // Sets the axis of the detector goniometer from the XML node
     for (const auto& axisItem : node[ohkl::ym_axis])
