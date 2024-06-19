@@ -20,23 +20,20 @@
 #include "core/detector/CylindricalDetector.h"
 #include "core/detector/DetectorEvent.h"
 #include "core/gonio/Gonio.h"
+#include "core/instrument/Diffractometer.h"
 #include "core/instrument/InstrumentState.h"
 
-#include <cmath>
 #include <Eigen/Dense>
+#include <cmath>
 
 const double tolerance = 1e-3;
 
 TEST_CASE("test/instrument/TestCylindricalDetector.cpp", "")
 {
-    ohkl::CylindricalDetector d("D19-detector");
-    d.setDistance(764 * ohkl::mm);
-    d.setAngularWidth(120.0 * ohkl::deg);
-    d.setHeight(40.0 * ohkl::cm);
-    d.setNCols(640);
-    d.setNRows(256);
+    ohkl::Diffractometer* diffractometer = ohkl::Diffractometer::create("D19");
+    ohkl::Detector* d = diffractometer->detector();
 
-    const ohkl::DirectVector pixel_position = d.pixelPosition(319.5, 127.5);
+    const ohkl::DirectVector pixel_position = d->pixelPosition(319.5, 127.5);
 
     // This should be the center of the detector at rest at (0,0.764,0)
     const Eigen::Vector3d& center = pixel_position.vector();
@@ -72,17 +69,17 @@ TEST_CASE("test/instrument/TestCylindricalDetector.cpp", "")
     CHECK(q[1] == Approx(-1.0).epsilon(tolerance));
     CHECK(std::abs(q[2]) < tolerance);
 
-    for (int i = d.minRow() + 3; i < d.maxRow() - 3; i += 2) {
-        for (int j = d.minCol() + 3; j < d.maxCol() - 3; j += 2) {
-            CHECK(d.hasPixel(j, i));
+    for (int i = d->minRow() + 3; i < d->maxRow() - 3; i += 2) {
+        for (int j = d->minCol() + 3; j < d->maxCol() - 3; j += 2) {
+            CHECK(d->hasPixel(j, i));
 
-            auto position = d.pixelPosition(j, i);
+            auto position = d->pixelPosition(j, i);
 
             Eigen::Vector3d from(-1, -1, -1);
             from *= ohkl::cm;
             const Eigen::Vector3d kf = position.vector() - from;
 
-            const ohkl::DetectorEvent event = d.constructEvent(
+            const ohkl::DetectorEvent event = d->constructEvent(
                 ohkl::DirectVector(from), ohkl::ReciprocalVector(kf.transpose()), 0.);
 
             // detector has event

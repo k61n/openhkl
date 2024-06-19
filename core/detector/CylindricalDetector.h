@@ -27,11 +27,9 @@ class CylindricalDetector : public Detector {
     static Detector* create(const YAML::Node& node);
 
     //! Construct a CylindricalDetector
-    CylindricalDetector() = default;
+    CylindricalDetector() = delete;
     //! Construct a CylindricalDetector from another one
     CylindricalDetector(const CylindricalDetector& other) = default;
-    //! Constructs a CylindricalDetector with a given name
-    CylindricalDetector(const std::string& name);
     //! Constructs a CylindricalDetector from a property tree node
     CylindricalDetector(const YAML::Node& node);
     //! Returns a pointer to a copy of a CylindricalDetector

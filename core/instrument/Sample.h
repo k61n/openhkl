@@ -25,18 +25,13 @@ namespace ohkl {
 class Sample : public Component {
  public:
     //! Static constructor of a Sample from a property tree node
+    Sample() = delete;
     static Sample* create(const YAML::Node& node);
-    Sample();
-    Sample(const Sample& other) = default;
-
-    //! Constructs a default sample with a given name
-    Sample(const std::string& name);
 
     //! Constructs a sample from a property tree node
     Sample(const YAML::Node& node);
     Sample* clone() const;
-    virtual ~Sample();
-    Sample& operator=(const Sample& other) = default;
+    ~Sample();
 
     //! Sets the sample shape described as a convex hull
     void setShape(const ConvexHull& shape);

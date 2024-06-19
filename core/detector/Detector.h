@@ -32,7 +32,6 @@ class Detector : public Component {
     static Detector* create(const YAML::Node& node);
 
     Detector();
-    Detector(const std::string& name);
     Detector(const YAML::Node& node);
     virtual ~Detector() = 0;
 

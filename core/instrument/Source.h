@@ -24,12 +24,9 @@ namespace ohkl {
 
 class Source : public Component {
  public:
-    Source();
+    Source() = delete;
 
     virtual ~Source() = default;
-
-    //! Constructs a default source with a given name
-    Source(const std::string& name);
 
     //! Constructs a source from a property tree node
     Source(const YAML::Node& node);
@@ -53,6 +50,10 @@ class Source : public Component {
 
     //! Add a new monochromator to this source
     void addMonochromator(Monochromator mono);
+
+    // Source has no goniometer
+    const Gonio& gonio() const = delete;
+    Gonio& gonio() = delete;
 
  protected:
     std::vector<Monochromator> _monochromators;

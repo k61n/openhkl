@@ -23,21 +23,19 @@
 #include "core/detector/DetectorEvent.h"
 #include "core/detector/FlatDetector.h"
 #include "core/gonio/Gonio.h"
+#include "core/instrument/Diffractometer.h"
 #include "core/instrument/InstrumentState.h"
 
 const double tolerance = 1e-3;
 
 TEST_CASE("test/instrument/TestFlatDetector.cpp", "")
 {
-    ohkl::FlatDetector d("D10-detector");
-    d.setDistance(380 * ohkl::mm);
-    d.setWidth(80 * ohkl::mm);
-    d.setHeight(80 * ohkl::mm);
-    d.setNCols(32);
-    d.setNRows(32);
+    ohkl::Diffractometer* diffractometer = ohkl::Diffractometer::create("D10");
+    ohkl::Detector* d = diffractometer->detector();
+    d->setDistance(380 * ohkl::mm);
 
     // This should be the center of the detector at rest at (0,0.764,0)
-    const ohkl::DirectVector pixel_position = d.pixelPosition(15.5, 15.5);
+    const ohkl::DirectVector pixel_position = d->pixelPosition(15.5, 15.5);
 
     const Eigen::Vector3d& center = pixel_position.vector();
     CHECK(std::abs(center[0]) < tolerance);
@@ -74,17 +72,17 @@ TEST_CASE("test/instrument/TestFlatDetector.cpp", "")
     CHECK(q[1] == Approx(-1.0).epsilon(tolerance));
     CHECK(std::abs(q[2]) < tolerance);
 
-    for (int i = d.minRow() + 1; i < d.maxRow() - 1; i++) {
-        for (int j = d.minCol() + 1; j < d.maxCol() - 1; j++) {
-            CHECK(d.hasPixel(j, i));
+    for (int i = d->minRow() + 1; i < d->maxRow() - 1; i++) {
+        for (int j = d->minCol() + 1; j < d->maxCol() - 1; j++) {
+            CHECK(d->hasPixel(j, i));
 
-            auto position = d.pixelPosition(j, i);
+            auto position = d->pixelPosition(j, i);
 
             Eigen::Vector3d from(-1, -1, -1);
             from *= ohkl::cm;
             const Eigen::Vector3d kf = position.vector() - from;
 
-            const ohkl::DetectorEvent event = d.constructEvent(
+            const ohkl::DetectorEvent event = d->constructEvent(
                 ohkl::DirectVector(from), ohkl::ReciprocalVector(kf.transpose()), 0.);
 
             // detector has event

@@ -36,11 +36,8 @@ class DirectVector;
 
 class Gonio {
  public:
-    Gonio();
+    Gonio() = delete;
     Gonio(const Gonio& other);
-
-    //! Constructs a gonio with a given name
-    Gonio(const std::string& name);
 
     //! Constructs a Gonio from a property tree node
     Gonio(const YAML::Node& node);
