@@ -90,7 +90,7 @@ class Diffractometer {
     Diffractometer(const std::string& name);
 
     //! Name of the diffractometer
-    std::string _name = ohkl::kw_diffractometerDefaultName;
+    std::string _name;
 
     //! Pointer to detector
     std::unique_ptr<Detector> _detector;

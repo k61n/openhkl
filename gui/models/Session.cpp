@@ -198,10 +198,9 @@ int Session::numExperiments() const
 
 Project* Session::createProject(QString experimentName, QString instrumentName, bool strategy)
 {
-    for (const QString& name : experimentNames()) { // check name
-        if (name == experimentName) {
+    for (const QString& name : experimentNames()) { // check for duplicate name
+        if (name == experimentName)
             return nullptr;
-        }
     }
     return new Project(experimentName, instrumentName, strategy);
 }
@@ -644,9 +643,8 @@ void Session::onShapesChanged()
 
 void Session::loadExperimentFromFile(QString filename)
 {
-    std::unique_ptr<Project> project_ptr{createProject(
-        QString::fromStdString(ohkl::kw_experimentDefaultName),
-        QString::fromStdString(ohkl::kw_diffractometerDefaultName))};
+    // We don't have the experiment/diffractometer name until we've opened the hdf5 file, so use default
+    std::unique_ptr<Project> project_ptr{new Project()};
 
     if (!project_ptr)
         return;

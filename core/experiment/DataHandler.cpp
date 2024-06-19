@@ -26,27 +26,9 @@
 namespace ohkl {
 
 DataHandler::DataHandler(
-    const std::string& experiment_name, const std::string& diffractometerName,
-    InstrumentStateHandler* instrument_state_handler)
+    const std::string& experiment_name, InstrumentStateHandler* instrument_state_handler)
     : _experiment_name{experiment_name}, _instrument_state_handler(instrument_state_handler)
 {
-    if (diffractometerName == ohkl::kw_diffractometerDefaultName) {
-        ohklLog(
-            Level::Warning,
-            "DataHandler: Diffractometer is not set for the experiment '" + experiment_name + "'");
-    } else {
-        _diffractometer.reset(Diffractometer::create(diffractometerName));
-    }
-}
-
-Diffractometer* DataHandler::getDiffractometer()
-{
-    return _diffractometer.get();
-}
-
-void DataHandler::setDiffractometer(const std::string& diffractometerName)
-{
-    _diffractometer.reset(Diffractometer::create(diffractometerName));
 }
 
 const DataMap* DataHandler::getDataMap() const
@@ -73,7 +55,8 @@ sptrDataSet DataHandler::getData(std::string name) const
     return it->second;
 }
 
-bool DataHandler::addData(sptrDataSet data, std::string name, bool default_states)
+bool DataHandler::addData(
+    sptrDataSet data, Diffractometer* diffractometer, std::string name, bool default_states)
 {
     if (name.empty())
         name = data->name();
@@ -93,24 +76,18 @@ bool DataHandler::addData(sptrDataSet data, std::string name, bool default_state
 
     const std::string diffName = metadata.key<std::string>(ohkl::at_diffractometer);
 
-    if (!(diffName.compare(_diffractometer->name()) == 0)) {
+    if (!(diffName.compare(diffractometer->name()) == 0)) {
         throw std::runtime_error(
             "Mismatch between the diffractometer assigned to "
             "the experiment, '"
-            + _diffractometer->name()
+            + diffractometer->name()
             + "', "
               "and the data, '"
             + diffName + "'");
     }
     const double wav = metadata.key<double>(ohkl::at_wavelength);
 
-    // ensure that there is at least one monochromator; if not, create a new one.
-    if (_diffractometer->source().nMonochromators() == 0) {
-        Monochromator mono(ohkl::kw_monochromatorDefaultName);
-        _diffractometer->source().addMonochromator(mono);
-    }
-
-    auto& mono = _diffractometer->source().selectedMonochromator();
+    auto& mono = diffractometer->source().selectedMonochromator();
 
     if (_data_map.empty())
         mono.setWavelength(wav);

@@ -25,22 +25,9 @@ namespace ohkl {
 
 Axis* Axis::create(const YAML::Node& node)
 {
-    std::string axisType = node[ohkl::ym_axisType].as<std::string>();
+    std::string axisType = node[ym_axisType].as<std::string>();
 
     return AxisFactory::instance().create(axisType, node);
-}
-
-Axis::Axis()
-    : _name(ohkl::kw_axisDefaultName)
-    , _axis(Eigen::Vector3d(0.0, 0.0, 1.0))
-    , _physical(true)
-    , _id(0)
-{
-}
-
-Axis::Axis(const std::string& name)
-    : _name(name), _axis(Eigen::Vector3d(0.0, 0.0, 1.0)), _physical(true), _id(0)
-{
 }
 
 Axis::Axis(const std::string& name, const Eigen::Vector3d& axis)
@@ -51,17 +38,16 @@ Axis::Axis(const std::string& name, const Eigen::Vector3d& axis)
 
 Axis::Axis(const YAML::Node& node)
 {
-    _name = node[ohkl::ym_axisName] ? node[ohkl::ym_axisName].as<std::string>()
-                                    : ohkl::kw_axisDefaultName;
+    _name = node[ym_axisName].as<std::string>();
 
-    Eigen::Vector3d axis = node[ohkl::ym_axisDirection].as<Eigen::Vector3d>();
+    Eigen::Vector3d axis = node[ym_axisDirection].as<Eigen::Vector3d>();
     axis.normalize();
 
     _axis = axis;
 
-    _physical = node[ohkl::ym_axisPhysical].as<bool>();
+    _physical = node[ym_axisPhysical].as<bool>();
 
-    _id = node[ohkl::ym_axisId] ? node[ohkl::ym_axisId].as<unsigned int>() : ohkl::kw_axisDefaultId;
+    _id = node[ym_axisId] ? node[ym_axisId].as<unsigned int>() : 0;
 }
 
 Axis::~Axis() = default;

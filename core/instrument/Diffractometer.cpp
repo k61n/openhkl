@@ -28,19 +28,14 @@ Diffractometer* Diffractometer::create(const std::string& name)
     YAML::Node instrumentDefinition = Instrument::findResource(name);
 
     Diffractometer* diffractometer;
-    try {
-        diffractometer = new Diffractometer(instrumentDefinition[ohkl::ym_instrument]);
-    } catch (std::exception& e) {
-        std::string msg = "Error when reading instrument definition file: ";
-        throw std::runtime_error(msg + e.what());
-    }
+    diffractometer = new Diffractometer(instrumentDefinition[ohkl::ym_instrument]);
 
     return diffractometer;
 }
 
 Diffractometer::Diffractometer(const YAML::Node& node)
-    : _sample(node[ohkl::ym_sample]),
-      _source(node[ohkl::ym_source])
+    : _sample(node[ohkl::ym_sample])
+    , _source(node[ohkl::ym_source])
 {
     // Sets the name of the diffractometer from the YAML node
     _name = node[ohkl::ym_instrumentName].as<std::string>();

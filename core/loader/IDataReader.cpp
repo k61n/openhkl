@@ -53,22 +53,15 @@ IDataReader::~IDataReader() = default;
 bool IDataReader::initRead()
 {
 
-    if (!_dataset_out) {
-        throw std::runtime_error("RawDataReader: No DataSet available for output.");
-    }
+    if (!_dataset_out)
+        throw std::runtime_error("IDataReader::initRead: No DataSet available for output.");
 
-    if (!_dataset_out->diffractometer()) {
-        throw std::runtime_error("RawDataReader: No Diffractometer available.");
-    }
+    if (!_dataset_out->diffractometer())
+        throw std::runtime_error("IDataReader::initRead: No Diffractometer available.");
 
     // Ensure that there is at least one monochromator
-    if (_dataset_out->diffractometer()->source().nMonochromators() == 0) {
-        Monochromator mono(ohkl::kw_monochromatorDefaultName);
-        _dataset_out->diffractometer()->source().addMonochromator(mono);
-        ohklLog(
-            Level::Warning, __FUNCTION__,
-            ": Source had no monochromator. A default monochromator was created.");
-    }
+    if (_dataset_out->diffractometer()->source().nMonochromators() == 0)
+        throw std::runtime_error("IDataReader::initRead: no monochromator found");
 
     return true;
 }

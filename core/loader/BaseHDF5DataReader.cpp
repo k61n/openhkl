@@ -140,12 +140,16 @@ bool BaseHDF5DataReader::initRead()
         }
 
         // store the attributes in the metadata
-        _dataset_out->metadata().add<std::string>(
-            ohkl::at_experiment,
-            experiment_name.empty() ? ohkl::kw_experimentDefaultName : experiment_name);
-        _dataset_out->metadata().add<std::string>(
-            ohkl::at_diffractometer,
-            diffractometer_name.empty() ? ohkl::kw_diffractometerDefaultName : diffractometer_name);
+        if (experiment_name.empty())
+            throw std::runtime_error(
+                "BaseHDF5DataReader::initRead: no experiment name found in file");
+        _dataset_out->metadata().add<std::string>(ohkl::at_experiment, experiment_name);
+
+        if (diffractometer_name.empty())
+            throw std::runtime_error(
+                "BaseHDF5DataReader::initRead: no diffractometer name found in file");
+        _dataset_out->metadata().add<std::string>(ohkl::at_diffractometer, diffractometer_name);
+
         _dataset_out->metadata().add<std::string>(ohkl::at_formatVersion, version_str);
 
     } catch (H5::Exception& e) {

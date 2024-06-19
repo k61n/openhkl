@@ -20,49 +20,33 @@
 
 namespace ohkl {
 
-Monochromator::Monochromator()
-    : _wavelength(1.0), _fwhm(0.1), _width(0.01), _height(0.01), _x_offset(0.0), _y_offset(0.0)
-{
-}
-
-Monochromator::Monochromator(const std::string& name)
-    : _name(name)
-    , _wavelength(1.0)
-    , _fwhm(0.1)
-    , _width(0.01)
-    , _height(0.01)
-    , _x_offset(0.0)
-    , _y_offset(0.0)
-{
-}
-
 Monochromator::Monochromator(const YAML::Node& node)
 {
-    _name = node[ohkl::ym_instrumentName].as<std::string>();
+    _name = node[ym_instrumentName].as<std::string>();
 
     // Sets the source slit width from the yaml tree node
-    auto&& widthNode = node[ohkl::ym_width];
-    _width = widthNode[ohkl::ym_value].as<double>()
-        * UnitsManager::get(widthNode[ohkl::ym_units].as<std::string>());
+    auto&& widthNode = node[ym_width];
+    _width = widthNode[ym_value].as<double>()
+        * UnitsManager::get(widthNode[ym_units].as<std::string>());
 
     // Sets the source slit height from the yaml tree node
-    auto&& heightNode = node[ohkl::ym_height];
-    _height = heightNode[ohkl::ym_value].as<double>()
-        * UnitsManager::get(heightNode[ohkl::ym_units].as<std::string>());
+    auto&& heightNode = node[ym_height];
+    _height = heightNode[ym_value].as<double>()
+        * UnitsManager::get(heightNode[ym_units].as<std::string>());
 
-    auto&& wavelengthNode = node[ohkl::ym_wavelength];
-    _wavelength = wavelengthNode[ohkl::ym_value].as<double>()
-        * UnitsManager::get(wavelengthNode[ohkl::ym_units].as<std::string>()) / ohkl::ang;
+    auto&& wavelengthNode = node[ym_wavelength];
+    _wavelength = wavelengthNode[ym_value].as<double>()
+        * UnitsManager::get(wavelengthNode[ym_units].as<std::string>()) / ang;
 
-    auto&& fwhmNode = node[ohkl::ym_fwhm];
-    _fwhm = fwhmNode[ohkl::ym_value].as<double>()
-        * UnitsManager::get(fwhmNode[ohkl::ym_units].as<std::string>()) / ohkl::ang;
+    auto&& fwhmNode = node[ym_fwhm];
+    _fwhm = fwhmNode[ym_value].as<double>()
+        * UnitsManager::get(fwhmNode[ym_units].as<std::string>()) / ang;
 
-    auto&& xoffsetNode = node[ohkl::ym_xoffset];
-    _x_offset = xoffsetNode[ohkl::ym_value].as<double>();
+    auto&& xoffsetNode = node[ym_xoffset];
+    _x_offset = xoffsetNode[ym_value].as<double>();
 
-    auto&& yoffsetNode = node[ohkl::ym_yoffset];
-    _y_offset = yoffsetNode[ohkl::ym_value].as<double>();
+    auto&& yoffsetNode = node[ym_yoffset];
+    _y_offset = yoffsetNode[ym_value].as<double>();
 }
 
 

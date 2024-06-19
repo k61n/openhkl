@@ -35,7 +35,7 @@ class PeakCollectionModel;
 //! Controls and handles the Experiment and its Peaks and UnitCells
 class Project {
  public:
-    Project() = delete;
+    Project();
     Project(QString name, QString instrument, bool strategy = false);
     Project(const Project&) = delete;
 

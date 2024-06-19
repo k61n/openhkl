@@ -48,6 +48,9 @@ void ExperimentImporter::setFilePath(const std::string path, Experiment* const e
             std::string value;
             attr.read(attr_type, value);
             experiment->setName(value);
+        } else {
+            throw std::runtime_error(
+                "ExperimentImporter::setFilePath: could not find experiment name");
         }
 
         if (file.attrExists(ohkl::at_diffractometer)) {
@@ -56,6 +59,9 @@ void ExperimentImporter::setFilePath(const std::string path, Experiment* const e
             std::string value;
             attr.read(attr_type, value);
             experiment->setDiffractometer(value);
+        } else {
+            throw std::runtime_error(
+                "ExperimentImporter::setFilePath: could not find diffractometer");
         }
 
         std::string version;

@@ -30,11 +30,8 @@ namespace ohkl {
 
 class Axis {
  public:
+    Axis() = delete;
     static Axis* create(const YAML::Node& node);
-    Axis();
-
-    //! Contruct a default z-axis
-    Axis(const std::string& name);
 
     //! Construct an axis from a vector
     Axis(const std::string& name, const Eigen::Vector3d& axis);

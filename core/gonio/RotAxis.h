@@ -31,11 +31,7 @@ class RotAxis : public Axis {
 
     //! Static constructor for a RotAxis
     static Axis* create(const YAML::Node& node);
-    RotAxis();
 
-    //! Constructs an axis with a given name
-    explicit RotAxis(const std::string& label);
-    //! Explicit
     explicit RotAxis(
         const std::string& label, const Eigen::Vector3d& axis,
         Direction direction = Direction::CCW);

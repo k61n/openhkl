@@ -60,7 +60,7 @@ using DataMap = std::map<std::string, sptrDataSet>;
  */
 class Experiment {
  public:
-    Experiment() = delete;
+    Experiment();
     Experiment(const std::string& name, const std::string& diffractometerName);
     ~Experiment();
 
@@ -78,6 +78,11 @@ class Experiment {
     //! Save the parameters of the experiment to yaml
     void saveToYaml(const std::string& filename);
 
+    //! Get a pointer to the diffractometer
+    Diffractometer* getDiffractometer(); 
+    //! Set the named diffractometer from the relevant YAML instrument file
+    void setDiffractometer(const std::string& diffractometerName);
+
     //! set ShapeModel parameters
     void setShapeParameters(std::shared_ptr<ShapeModelParameters> params)
     {
@@ -87,12 +92,6 @@ class Experiment {
     std::shared_ptr<ShapeModelParameters> shapeParameters() const { return _shape_params; };
 
     // Data handler
-    //! Get a pointer to the diffractometer contained in the DataHandler object
-    Diffractometer* getDiffractometer();
-    //! Get a pointer to the diffractometer contained in the DataHandler object
-    const Diffractometer* getDiffractometer() const;
-    //! Set the named diffractometer from the relevant YAML instrument file
-    void setDiffractometer(const std::string& diffractometerName);
     //! Get the map of data sets from the handler
     const DataMap* getDataMap() const;
     //! Get shared pointer to named data set
@@ -275,6 +274,7 @@ class Experiment {
 
  private: // private variables
     std::string _name; //!< The name of this experiment
+    std::unique_ptr<Diffractometer> _diffractometer;
 
     // Handlers for peak collections and unit cells
     std::shared_ptr<DataHandler> _data_handler; // shared because Integrator needs access

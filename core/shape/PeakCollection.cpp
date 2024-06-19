@@ -29,7 +29,7 @@ namespace ohkl {
 
 PeakCollection::PeakCollection()
     : _id(0)
-    , _name{kw_peakCollectionDefaultName}
+    , _name{}
     , _data(nullptr)
     , _type{PeakCollectionType::FOUND}
     , _shape_model(nullptr)

@@ -25,8 +25,7 @@ class ReciprocalVector;
 
 class Monochromator {
  public:
-    Monochromator();
-    Monochromator(const std::string& name);
+    Monochromator() = delete;
     Monochromator(const YAML::Node& node);
 
     //! Returns the name for this monochromator

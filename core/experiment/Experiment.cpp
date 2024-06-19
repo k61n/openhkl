@@ -33,6 +33,7 @@
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/InstrumentStateSet.h"
 #include "core/instrument/Monochromator.h"
+#include "core/raw/DataKeys.h"
 #include "core/raw/MetaData.h"
 #include "core/shape/PeakCollection.h"
 #include "core/shape/PeakFilter.h"
@@ -47,17 +48,16 @@
 
 namespace ohkl {
 
-Experiment::~Experiment() = default;
-
-Experiment::Experiment(const std::string& name, const std::string& diffractometerName) : _name(name)
+Experiment::Experiment() : _diffractometer(nullptr), _strategy(false)
 {
     // start logging
     Logger::instance().start(ohkl::kw_logFilename, Level::Info);
     ohklLog(Level::Info, "Git branch ", GIT_BRANCH, " / commit hash ", COMMIT_HASH);
 
+
     _instrumentstate_handler = std::make_unique<InstrumentStateHandler>();
     _data_handler =
-        std::make_shared<DataHandler>(_name, diffractometerName, _instrumentstate_handler.get());
+        std::make_shared<DataHandler>(_name, _instrumentstate_handler.get());
     _peak_handler = std::make_unique<PeakHandler>();
     _shape_handler = std::make_unique<ShapeHandler>();
     _cell_handler = std::make_unique<UnitCellHandler>();
@@ -72,8 +72,14 @@ Experiment::Experiment(const std::string& name, const std::string& diffractomete
     _peak_merger = std::make_unique<PeakMerger>();
 
     _shape_params = std::make_shared<ShapeModelParameters>();
+}
 
-    _strategy = false;
+Experiment::~Experiment() = default;
+
+Experiment::Experiment(const std::string& name, const std::string& diffractometerName) : Experiment()
+{
+    _name = name;
+    setDiffractometer(diffractometerName);
 }
 
 const std::string& Experiment::name() const
@@ -119,6 +125,16 @@ void Experiment::saveToYaml(const std::string& filename)
     yaml.setIntegrationParameters(_integrator->parameters());
     yaml.setMergeParameters(_peak_merger->parameters());
     yaml.writeFile(filename);
+}
+
+Diffractometer* Experiment::getDiffractometer()
+{
+    return _diffractometer.get();
+}
+
+void Experiment::setDiffractometer(const std::string& diffractometerName)
+{
+    _diffractometer.reset(Diffractometer::create(diffractometerName));
 }
 
 bool Experiment::acceptFoundPeaks(const std::string& name)
@@ -171,7 +187,7 @@ void Experiment::saveToFile(const std::string& path) const
         ohklLog(Level::Debug, "Saving experiment to temporary file '" + filepath + "'");
     }
 
-    exporter.createFile(name(), getDiffractometer()->name(), filepath, _strategy);
+    exporter.createFile(name(), _diffractometer->name(), filepath, _strategy);
 
     std::map<std::string, DataSet*> data_sets;
     for (const auto& it : *_data_handler->getDataMap())
@@ -241,21 +257,6 @@ Integrator* Experiment::integrator()
 
 // Data handler methods
 
-Diffractometer* Experiment::getDiffractometer()
-{
-    return _data_handler->getDiffractometer();
-}
-
-const Diffractometer* Experiment::getDiffractometer() const
-{
-    return _data_handler->getDiffractometer();
-}
-
-void Experiment::setDiffractometer(const std::string& diffractometerName)
-{
-    _data_handler->setDiffractometer(diffractometerName);
-}
-
 const DataMap* Experiment::getDataMap() const
 {
     return _data_handler->getDataMap();
@@ -278,7 +279,7 @@ int Experiment::numData() const
 
 bool Experiment::addData(sptrDataSet data, bool default_states)
 {
-    if (!_data_handler->addData(data, data->name(), default_states)) {
+    if (!_data_handler->addData(data, _diffractometer.get(), data->name(), default_states)) {
         return false;
     }
     setDefaultDMin();
