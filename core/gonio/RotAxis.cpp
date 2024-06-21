@@ -27,10 +27,6 @@ Axis* RotAxis::create(const YAML::Node& node)
     return new RotAxis(node);
 }
 
-RotAxis::RotAxis() : Axis(ohkl::kw_rotationAxisName), _dir(Direction::CCW) { }
-
-RotAxis::RotAxis(const std::string& label) : Axis(label), _dir(Direction::CCW) { }
-
 RotAxis::RotAxis(const std::string& label, const Eigen::Vector3d& axis, Direction direction)
     : Axis(label, axis), _dir(direction)
 {
@@ -38,7 +34,7 @@ RotAxis::RotAxis(const std::string& label, const Eigen::Vector3d& axis, Directio
 
 RotAxis::RotAxis(const YAML::Node& node) : Axis(node)
 {
-    bool clockwise = node[ohkl::ym_rotClockwise].as<bool>();
+    bool clockwise = node[ym_rotClockwise].as<bool>();
     _dir = clockwise ? Direction::CW : Direction::CCW;
 }
 

@@ -26,7 +26,7 @@ TEST_CASE("test/data/TestHDF5Data.cpp", "")
 {
     ohkl::Diffractometer* diffractometer = ohkl::Diffractometer::create("BioDiff");
     const ohkl::sptrDataSet dataset_ptr { std::make_shared<ohkl::DataSet>
-          (ohkl::kw_datasetDefaultName, diffractometer) };
+          ("h5_example", diffractometer) };
     dataset_ptr->addDataFile("H5_example.hdf", ohkl::DataFormat::OHKL);
     dataset_ptr->finishRead();
 

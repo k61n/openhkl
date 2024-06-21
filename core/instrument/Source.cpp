@@ -19,20 +19,13 @@
 
 namespace ohkl {
 
-Source::Source() : Component(ohkl::ym_sample), _monochromators(), _selectedMonochromator(0) { }
-
-Source::Source(const std::string& name)
-    : Component(name), _monochromators(), _selectedMonochromator(0)
-{
-}
-
 Source::Source(const YAML::Node& node) : Component(node), _selectedMonochromator(0)
 {
     // Loop over the "monochromator" nodes and add the corresponding pointer to
     // Monochromator objects to the Source
     for (const auto& subnode : node) {
         std::string subnodeName = subnode.first.as<std::string>();
-        if (subnodeName.compare(ohkl::ym_monochromator) == 0) {
+        if (subnodeName.compare(ym_monochromator) == 0) {
             Monochromator m(subnode.second);
             addMonochromator(m);
         }

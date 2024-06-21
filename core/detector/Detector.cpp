@@ -25,69 +25,39 @@
 
 namespace ohkl {
 
+Detector::~Detector() = default;
+
 Detector* Detector::create(const YAML::Node& node)
 {
-    std::string detectorType = node[ohkl::ym_detectorType].as<std::string>();
+    std::string detectorType = node[ym_detectorType].as<std::string>();
 
     return DetectorFactory::instance().create(detectorType, node);
-}
-
-Detector::Detector()
-    : Component(ohkl::kw_detectorDefaultName)
-    , _height(0.0)
-    , _width(0.0)
-    , _angularHeight(0.0)
-    , _angularWidth(0.0)
-    , _nRows(0)
-    , _nCols(0)
-    , _minRow(0.0)
-    , _minCol(0.0)
-    , _distance(0)
-    , _baseline(0.0)
-    , _gain(1.0)
-{
-}
-
-Detector::Detector(const std::string& name)
-    : Component(name)
-    , _height(0.0)
-    , _width(0.0)
-    , _angularHeight(0.0)
-    , _angularWidth(0.0)
-    , _nRows(0)
-    , _nCols(0)
-    , _minRow(0.0)
-    , _minCol(0.0)
-    , _distance(0)
-    , _baseline(0.0)
-    , _gain(1.0)
-{
 }
 
 Detector::Detector(const YAML::Node& node) : Component(node)
 {
     // detector gain
-    if (node[ohkl::ym_gain])
-        _gain = node[ohkl::ym_gain].as<double>();
+    if (node[ym_gain])
+        _gain = node[ym_gain].as<double>();
     else
         _gain = 1.0;
 
     // detector baseline
-    if (node[ohkl::ym_baseline])
-        _baseline = node[ohkl::ym_baseline].as<double>();
+    if (node[ym_baseline])
+        _baseline = node[ym_baseline].as<double>();
     else
         _baseline = 0.0;
 
     // Sets the detector to sample distance from the property tree node
-    auto&& distanceNode = node[ohkl::ym_sampleDistance];
-    double units = UnitsManager::get(distanceNode[ohkl::ym_units].as<std::string>());
-    double distance = distanceNode[ohkl::ym_value].as<double>();
+    auto&& distanceNode = node[ym_sampleDistance];
+    double units = UnitsManager::get(distanceNode[ym_units].as<std::string>());
+    double distance = distanceNode[ym_value].as<double>();
     distance *= units;
     setDistance(distance);
 
     // supporting multiple resolution for one detector (up to three). 0 is invalid.
-    auto cols = node[ohkl::ym_colCount].as<Eigen::Vector3d>();
-    auto rows = node[ohkl::ym_rowCount].as<Eigen::Vector3d>();
+    auto cols = node[ym_colCount].as<Eigen::Vector3d>();
+    auto rows = node[ym_rowCount].as<Eigen::Vector3d>();
 
     for (int i = 0; i < 3; i++)
         if (cols[i] > 0 && rows[i] > 0)
@@ -100,12 +70,9 @@ Detector::Detector(const YAML::Node& node) : Component(node)
     setNCols(_resolutions[0].first);
     setNRows(_resolutions[0].second);
 
-    _minCol = node[ohkl::ym_originX] ? node[ohkl::ym_originX].as<double>() : 0.0;
-    _minRow = node[ohkl::ym_originY] ? node[ohkl::ym_originY].as<double>() : 0.0;
+    _minCol = node[ym_originX] ? node[ym_originX].as<double>() : 0.0;
+    _minRow = node[ym_originY] ? node[ym_originY].as<double>() : 0.0;
 }
-
-Detector::~Detector() = default;
-
 
 double Detector::baseline() const
 {

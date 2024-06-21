@@ -291,7 +291,7 @@ void ExperimentExporter::writeData(const std::map<std::string, DataSet*> data)
 {
 
     H5::H5File file{_file_name.c_str(), H5F_ACC_RDWR};
-    const std::string dataCollectionsKey = "/" + ohkl::gr_DataCollections;
+    const std::string dataCollectionsKey = "/" + ohkl::gr_DataSets;
     writeFrames(file, dataCollectionsKey, data);
 
     for (const auto& it : data) {

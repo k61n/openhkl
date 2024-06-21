@@ -22,10 +22,6 @@ Sample* Sample::create(const YAML::Node& node)
     return new Sample(node);
 }
 
-Sample::Sample() : Component(ohkl::ym_sample), _sampleShape() { }
-
-Sample::Sample(const std::string& name) : Component(name), _sampleShape() { }
-
 Sample::Sample(const YAML::Node& node) : Component(node) { }
 
 Sample* Sample::clone() const

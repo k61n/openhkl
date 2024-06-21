@@ -26,7 +26,7 @@ instrument:
                   direction: [0.0,0.0,1.0]
                   clockwise: false
                   physical: true
-                  
+
                 - name: 2theta(nu)
                   type: rotation
                   direction: [1.0,0.0,0.0]

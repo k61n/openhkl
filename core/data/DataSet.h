@@ -184,7 +184,7 @@ class DataSet {
  protected:
     void setReader(const DataFormat dataformat, const std::string& filename = "");
 
-    std::string _name = ohkl::kw_datasetDefaultName;
+    std::string _name;
     std::vector<Eigen::MatrixXi> _data;
     std::vector<IMask*> _masks;
     ohkl::MetaData _metadata;

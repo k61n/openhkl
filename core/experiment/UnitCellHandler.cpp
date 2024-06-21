@@ -177,14 +177,11 @@ std::vector<std::string> UnitCellHandler::getCompatibleSpaceGroups() const
     return getSptrUnitCell(ohkl::kw_acceptedUnitcell)->compatibleSpaceGroups();
 }
 
-std::string UnitCellHandler::generateUnitCellName()
+std::string UnitCellHandler::generateName()
 {
     int n = 4; // number of digits
     std::string str = std::to_string(_last_index);
-    if (str.size() > n) { //
-        return "Please enter name for this unit cell";
-    }
-    return std::string("UnitCell") + std::string(n - str.size(), '0').append(str);
+    return std::string("Unit cell ") + std::string(n - str.size(), '0').append(str);
 }
 
 void UnitCellHandler::setLastIndex(unsigned int index)

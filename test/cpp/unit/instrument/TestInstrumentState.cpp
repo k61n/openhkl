@@ -35,10 +35,10 @@ class UnitTest_DataSet {
 
 int ohkl::UnitTest_DataSet::run()
 {
-    ohkl::Experiment experiment("test", "BioDiff");
+    ohkl::Experiment experiment("gal3", "BioDiff");
 
     const ohkl::sptrDataSet dataset_ptr { std::make_shared<ohkl::DataSet>
-          (ohkl::kw_datasetDefaultName, experiment.getDiffractometer()) };
+          ("gal3", experiment.getDiffractometer()) };
 
     dataset_ptr->addDataFile("gal3.hdf", ohkl::DataFormat::OHKL);
     dataset_ptr->finishRead();

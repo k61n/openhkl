@@ -76,7 +76,7 @@ class UnitCellHandler {
     //! Get space groups compatible with unit cell
     std::vector<std::string> getCompatibleSpaceGroups() const;
 
-    std::string generateUnitCellName();
+    std::string generateName();
 
     void setLastIndex(unsigned int index);
     std::vector<UnitCell*> getUnitCells() const;

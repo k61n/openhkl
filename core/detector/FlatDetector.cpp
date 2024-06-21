@@ -31,21 +31,19 @@ Detector* FlatDetector::create(const YAML::Node& node)
     return new FlatDetector(node);
 }
 
-FlatDetector::FlatDetector(const std::string& name) : Detector(name) { }
-
 FlatDetector::FlatDetector(const YAML::Node& node) : Detector(node)
 {
     // Sets the detector width from the property tree node
-    auto&& widthNode = node[ohkl::ym_width];
-    double units = UnitsManager::get(widthNode[ohkl::ym_units].as<std::string>());
-    double width = widthNode[ohkl::ym_value].as<double>();
+    auto&& widthNode = node[ym_width];
+    double units = UnitsManager::get(widthNode[ym_units].as<std::string>());
+    double width = widthNode[ym_value].as<double>();
     width *= units;
     setWidth(width);
 
     // Sets the detector height from the property tree node
-    auto&& heightNode = node[ohkl::ym_height];
-    units = UnitsManager::get(heightNode[ohkl::ym_units].as<std::string>());
-    double height = heightNode[ohkl::ym_value].as<double>();
+    auto&& heightNode = node[ym_height];
+    units = UnitsManager::get(heightNode[ym_units].as<std::string>());
+    double height = heightNode[ym_value].as<double>();
     height *= units;
     setHeight(height);
 }

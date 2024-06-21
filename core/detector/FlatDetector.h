@@ -27,11 +27,9 @@ class FlatDetector : public Detector {
     static Detector* create(const YAML::Node& node);
 
     //! Construct a FlatDetector
-    FlatDetector() = default;
+    FlatDetector() = delete;
     //! Construct a FlatDetector from another one
     FlatDetector(const FlatDetector& other) = default;
-    //! Construct a FlatDetector with a given name
-    FlatDetector(const std::string& name);
     //! Constructs a FlatDetector from a property tree node
     FlatDetector(const YAML::Node& node);
     //! Returns a pointer to a copy of a FlatDetector

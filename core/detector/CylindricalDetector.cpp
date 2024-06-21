@@ -31,21 +31,19 @@ Detector* CylindricalDetector::create(const YAML::Node& node)
     return new CylindricalDetector(node);
 }
 
-CylindricalDetector::CylindricalDetector(const std::string& name) : Detector(name) { }
-
 CylindricalDetector::CylindricalDetector(const YAML::Node& node) : Detector(node)
 {
     // Sets the detector angular width from the property tree node
-    auto&& angularWidthNode = node[ohkl::ym_angularWidth];
-    double units = UnitsManager::get(angularWidthNode[ohkl::ym_units].as<std::string>());
-    double angularWidth = angularWidthNode[ohkl::ym_value].as<double>();
+    auto&& angularWidthNode = node[ym_angularWidth];
+    double units = UnitsManager::get(angularWidthNode[ym_units].as<std::string>());
+    double angularWidth = angularWidthNode[ym_value].as<double>();
     angularWidth *= units;
     setAngularWidth(angularWidth);
 
     // Sets the detector height from the property tree node
-    auto&& heightNode = node[ohkl::ym_height];
-    units = UnitsManager::get(heightNode[ohkl::ym_units].as<std::string>());
-    double height = heightNode[ohkl::ym_value].as<double>();
+    auto&& heightNode = node[ym_height];
+    units = UnitsManager::get(heightNode[ym_units].as<std::string>());
+    double height = heightNode[ym_value].as<double>();
     height *= units;
     setHeight(height);
 }

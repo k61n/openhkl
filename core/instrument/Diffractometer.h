@@ -34,6 +34,7 @@ class InstrumentState;
 
 class Diffractometer {
  public:
+    Diffractometer() = delete;
     static Diffractometer* create(const std::string& name);
 
     Diffractometer(const YAML::Node& node);
@@ -85,13 +86,11 @@ class Diffractometer {
     std::vector<std::vector<double>> detectorStates;
 
  protected:
-    Diffractometer();
-
     //! Constructs a diffractometer with a given name
     Diffractometer(const std::string& name);
 
     //! Name of the diffractometer
-    std::string _name = ohkl::kw_diffractometerDefaultName;
+    std::string _name;
 
     //! Pointer to detector
     std::unique_ptr<Detector> _detector;

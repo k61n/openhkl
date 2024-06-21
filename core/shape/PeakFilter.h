@@ -61,7 +61,7 @@ struct PeakFilterParameters {
     double gradient_max = 1000.0;
     double gradient_sigma_min = 0.0;
     double gradient_sigma_max = 1000.0;
-    std::string unit_cell = kw_unitcellDefaultName; //!< unit cell name
+    std::string unit_cell = ""; //!< unit cell name
     double unit_cell_tolerance = 0.2; //!< indexing tolerance
     double significance = 0.99; //!< signficance
     double sparse = 100; //!< number of peaks in dataset to be kept

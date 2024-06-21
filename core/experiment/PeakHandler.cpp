@@ -144,12 +144,9 @@ bool PeakHandler::clonePeakCollection(std::string name, std::string new_name)
 
 std::string PeakHandler::generateName()
 {
-    int n = 4; // number of digits
+    int n = 2; // number of digits
     std::string str = std::to_string(_last_index);
-    if (str.size() > n) { //
-        return "Please enter name for this collection";
-    }
-    return std::string("PeakCollection") + std::string(n - str.size(), '0').append(str);
+    return std::string("Peak collection ") + std::string(n - str.size(), '0').append(str);
 }
 
 std::vector<PeakCollection*> PeakHandler::getPeakCollections()

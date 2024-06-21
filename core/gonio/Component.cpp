@@ -19,24 +19,22 @@
 
 namespace ohkl {
 
-Component::Component(const std::string& name) : _name(name), _gonio() { }
-
 Component::Component(const YAML::Node& node)
 {
-    // Sets the component name
-    _name = node[ohkl::ym_componentName].as<std::string>();
-
-    _gonio = node[ohkl::ym_goniometer] ? Gonio(node[ohkl::ym_goniometer]) : Gonio();
+    _name = node[ym_componentName].as<std::string>();
+    _gonio = {};
+    if (node[ym_goniometer])
+        _gonio = {node[ym_goniometer]};
 }
 
 const Gonio& Component::gonio() const
 {
-    return _gonio;
+    return _gonio.value();
 }
 
 Gonio& Component::gonio()
 {
-    return _gonio;
+    return _gonio.value();
 }
 
 const std::string& Component::name() const

@@ -25,8 +25,8 @@ class ReciprocalVector;
 
 class Monochromator {
  public:
-    Monochromator();
-    Monochromator(const std::string& name);
+    // TODO: delete the default constructor! It fails to compile as of 21/6/2024 due to a bug in SWIG
+    // Monochromator() = delete;
     Monochromator(const YAML::Node& node);
 
     //! Returns the name for this monochromator

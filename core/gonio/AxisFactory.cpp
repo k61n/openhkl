@@ -23,7 +23,7 @@ namespace ohkl {
 
 AxisFactory::AxisFactory()
 {
-    registerCallback(ohkl::kw_rotationAxisName, &RotAxis::create);
+    registerCallback("rotation", &RotAxis::create);
 }
 
 } // namespace ohkl

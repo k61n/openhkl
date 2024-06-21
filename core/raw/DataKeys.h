@@ -23,7 +23,7 @@ namespace ohkl {
 // TODO: Add documentation: Describe the keywords and their units (if any)
 
 //-- HDF5 Group keys
-const std::string gr_DataCollections{"DataCollections"};
+const std::string gr_DataSets{"DataSets"};
 const std::string gr_Detector{"Detector"};
 const std::string gr_Instrument{"Instrument"};
 const std::string gr_Sample{"Sample"};
@@ -120,21 +120,7 @@ const std::string at_z{"z"};
 
 //-- Default names
 const std::string kw_null{"null"};
-const std::string kw_experimentDefaultName{"DEFAULT EXPERIMENT"}; // default name for an experiment
-const std::string kw_diffractometerDefaultName{
-    "DEFAULT INSTRUMENT"}; // default name for an experiment
-const std::string kw_datasetDefaultName{"DEFAULT DATASET"}; // default name for an experiment
-const std::string kw_unitcellDefaultName{"DEFAULT UNITCELL"}; // default name for a unit-cell
-const std::string kw_monochromatorDefaultName{
-    "DEFAULT MONOCHROMATOR"}; // default name for a monochromator
-const std::string kw_goniometerDefaultName{"DEFAULT GONIOMETER"}; // default name for a goniometer
-const std::string kw_axisDefaultName{"DEFUALT AXIS"}; // default name for an axis
-const unsigned int kw_axisDefaultId{0}; // default axis id
-const std::string kw_detectorDefaultName{"DEFAULT DETECTOR"}; // default name for a detector
-const std::string kw_peakCollectionDefaultName{"DEFAULT PEAKCOLLECTION"};
-const std::string kw_rotationAxisName{"rotation"};
 const std::string kw_autoindexingCollection{"autoindexing"};
-const std::string kw_fitCollection{"fit"};
 const std::string kw_acceptedUnitcell{"accepted"};
 const std::string kw_referenceUnitcell{"reference"};
 const std::string kw_logFilename{"openhkl.log"};

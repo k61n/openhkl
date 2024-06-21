@@ -17,18 +17,17 @@
 
 #include "core/gonio/Gonio.h"
 
+#include <optional>
+
 namespace ohkl {
 
 //! Pure virtual base class for the components of an instrument (Source, Sample, Detector).
 
 class Component {
  public:
-    Component() = default;
+    Component() = delete;
 
     virtual ~Component() = default;
-
-    //! Constructs a component with a given name
-    Component(const std::string& name);
 
     //! Construct a component from a property tree node
     Component(const YAML::Node& node);
@@ -51,7 +50,7 @@ class Component {
     std::string _name;
 
     //! The goniometer attached to the component
-    Gonio _gonio;
+    std::optional<Gonio> _gonio;
 };
 
 } // namespace ohkl

@@ -102,12 +102,9 @@ std::vector<std::string> ShapeHandler::getCollectionNames() const
 
 std::string ShapeHandler::generateName()
 {
-    int n = 4; // number of digits
+    int n = 2; // number of digits
     std::string str = std::to_string(_last_index);
-    if (str.size() > n) { //
-        return "Please enter name for this collection";
-    }
-    return std::string("ShapeModel") + std::string(n - str.size(), '0').append(str);
+    return std::string("Shape model ") + std::string(n - str.size(), '0').append(str);
 }
 
 std::vector<ShapeModel*> ShapeHandler::getShapeModels()
