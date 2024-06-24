@@ -14,6 +14,7 @@
 
 #include "core/convolve/AnnularConvolver.h"
 #include "core/convolve/Convolver.h"
+#include "core/loader/IDataReader.h"
 #include "core/loader/RawDataReader.h"
 #include "core/shape/PeakCollection.h"
 #include "test/cpp/catch.hpp"
@@ -58,7 +59,7 @@ TEST_CASE("test/data/TestPeakFinder2D.cpp", "")
     data_params.delta_omega = 0.3;
     data->setImageReaderParameters(data_params);
     for (const auto& filename : filenames)
-        data->addRawFrame(filename);
+        data->addFrame(filename, ohkl::DataFormat::RAW);
     data->finishRead();
     experiment.addData(data);
 

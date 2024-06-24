@@ -16,6 +16,7 @@
 
 #include "core/data/DataSet.h"
 #include "core/experiment/Experiment.h"
+#include "core/loader/IDataReader.h"
 #include "core/shape/PeakCollection.h"
 #include "gui/MainWin.h" // for gGui
 #include "gui/connect/Sentinel.h" // for sentinel
@@ -117,27 +118,27 @@ void Actions::setupData()
     add_nexus = new QAction("Add Nexus (HDF5) data");
 
     connect(add_raw, &QAction::triggered, []() { // can cause a crash without checking
-        if (gSession->loadRawData())
+        if (gSession->loadImages(ohkl::DataFormat::RAW))
             gGui->sideBar()->refreshCurrent();
     });
     connect(add_tiff, &QAction::triggered, []() { // can cause a crash without checking
-        if (gSession->loadTiffData())
+        if (gSession->loadImages(ohkl::DataFormat::TIFF))
             gGui->sideBar()->refreshCurrent();
     });
     connect(add_text, &QAction::triggered, []() { // can cause a crash without checking
-        if (gSession->loadPlainTextData())
+        if (gSession->loadImages(ohkl::DataFormat::PLAINTEXT))
             gGui->sideBar()->refreshCurrent();
     });
     connect(add_single_raw, &QAction::triggered, []() { // can cause a crash without checking
-        if (gSession->loadRawData(true))
+        if (gSession->loadImages(ohkl::DataFormat::RAW, true))
             gGui->sideBar()->refreshCurrent();
     });
     connect(add_single_tiff, &QAction::triggered, []() { // can cause a crash without checking
-        if (gSession->loadTiffData(true))
+        if (gSession->loadImages(ohkl::DataFormat::TIFF, true))
             gGui->sideBar()->refreshCurrent();
     });
     connect(add_single_text, &QAction::triggered, []() { // can cause a crash without checking
-        if (gSession->loadPlainTextData(true))
+        if (gSession->loadImages(ohkl::DataFormat::PLAINTEXT, true))
             gGui->sideBar()->refreshCurrent();
     });
 

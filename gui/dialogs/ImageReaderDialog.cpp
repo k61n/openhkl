@@ -300,11 +300,11 @@ void ImageReaderDialog::verify()
     this->accept();
 }
 
-void ImageReaderDialog::setSingleImageMode()
+void ImageReaderDialog::setSingleImageMode(bool single_image)
 {
-    _chi->setEnabled(false);
-    _phi->setEnabled(false);
-    _omega->setEnabled(false);
+    _chi->setEnabled(!single_image);
+    _phi->setEnabled(!single_image);
+    _omega->setEnabled(!single_image);
 }
 
 ohkl::DataReaderParameters ImageReaderDialog::dataReaderParameters()

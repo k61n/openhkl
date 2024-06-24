@@ -117,16 +117,8 @@ class DataSet {
     void addDataFile(const std::string& filename, const DataFormat& fmt);
     //! Set the parameters for the image (raw or tiff) reader
     void setImageReaderParameters(const DataReaderParameters& params);
-
-    //! Add a raw file to be read as a single detector image frame. Reading frames will be done only
-    //! upon request.
-    void addRawFrame(const std::string& rawfilename);
-
-    //! Add a plain text file
-    void addPlainTextFrame(const std::string& textfilename);
-
-    //! Add a tiff file
-    void addTiffFrame(const std::string& filename);
+    //! Add an image from a sequence
+    void addFrame(const std::string& filename, const DataFormat& format);
 
     //! Finish reading procedure (must be called before using the data stored in the DataSet).
     void finishRead();

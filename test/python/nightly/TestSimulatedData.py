@@ -56,7 +56,7 @@ class TestSimulatedData(unittest.TestCase):
             # print(file)
         dataset.setRawReaderParameters(data_params)
         for filename in raw_data_files:
-            dataset.addRawFrame(str(filename))
+            dataset.addRawFrame(str(filename), ohkl.DataFormat_RAW)
 
         self.assertEqual(len(raw_data_files), n_files, f"Found {len(raw_data_files)} files")
 

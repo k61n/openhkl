@@ -30,7 +30,7 @@ void SingleFrame::addRawFrame(const std::string& rawfilename)
     if (nFrames() == 1)
         throw std::runtime_error("Can't add more than one frame to a SingleFrame instance");
     else
-        DataSet::addRawFrame(rawfilename);
+        DataSet::addFrame(rawfilename, DataFormat::RAW);
 }
 
 Eigen::MatrixXi SingleFrame::frame(const std::size_t idx) const

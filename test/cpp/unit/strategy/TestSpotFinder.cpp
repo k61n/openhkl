@@ -13,6 +13,7 @@
 //  ***********************************************************************************************
 
 #include "core/convolve/Convolver.h"
+#include "core/loader/IDataReader.h"
 #include "core/loader/RawDataReader.h"
 #include "test/cpp/catch.hpp"
 
@@ -47,7 +48,7 @@ TEST_CASE("test/data/TestPeakFinder2D.cpp", "")
     data_params.wavelength = 2.667;
     data_params.delta_omega = 0.3;
     data->setImageReaderParameters(data_params);
-    data->addRawFrame(filename);
+    data->addFrame(filename, ohkl::DataFormat::RAW);
     data->finishRead();
 
     ohkl::PeakFinder2D* finder = experiment.peakFinder2D();

@@ -57,7 +57,7 @@ data_params.data_format = ohkl.DataFormat_RAW
 dataset.setImageReaderParameters(data_params)
 for filename in files:
     shutil.copyfile(data_dir + filename, filename)
-    dataset.addRawFrame(data_dir + filename)
+    dataset.addFrame(data_dir + filename, ohkl.DataFormat_RAW)
 
 dataset.finishRead()
 expt.addData(dataset)
