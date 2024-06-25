@@ -16,6 +16,7 @@
 #define OHKL_CORE_DATA_SINGLEFRAME_H
 
 #include "core/data/DataSet.h"
+#include "core/loader/IDataReader.h"
 
 namespace ohkl {
 
@@ -34,7 +35,7 @@ class SingleFrame : public DataSet {
 
     //! Add a raw file to be read as a single detector image frame. Only allow one frame to be
     //! added.
-    void addRawFrame(const std::string& rawfilename);
+    void addFrame(const std::string& rawfilename, DataFormat format);
 
     //! Read a single frame
     Eigen::MatrixXi frame(const std::size_t idx) const override;

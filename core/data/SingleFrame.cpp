@@ -25,12 +25,12 @@ SingleFrame::SingleFrame(const std::string& dataset_name, Diffractometer* diffra
 {
 }
 
-void SingleFrame::addRawFrame(const std::string& rawfilename)
+void SingleFrame::addFrame(const std::string& rawfilename, DataFormat format)
 {
-    if (nFrames() == 1)
+    if (nFrames() > 0)
         throw std::runtime_error("Can't add more than one frame to a SingleFrame instance");
     else
-        DataSet::addFrame(rawfilename, DataFormat::RAW);
+        DataSet::addFrame(rawfilename, format);
 }
 
 Eigen::MatrixXi SingleFrame::frame(const std::size_t idx) const
