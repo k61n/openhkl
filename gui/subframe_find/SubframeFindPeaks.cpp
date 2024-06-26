@@ -136,7 +136,7 @@ void SubframeFindPeaks::setBlobUp()
     Spoiler* blob_para = new Spoiler("Peak search parameters");
     GridFiller f(blob_para, true);
 
-    _threshold_spin = f.addSpinBox(
+    _threshold_spin = f.addDoubleSpinBox(
         "Threshold", "(counts) - pixels with fewer counts than the threshold are discarded");
 
     _scale_spin = f.addDoubleSpinBox(
@@ -185,8 +185,9 @@ void SubframeFindPeaks::setBlobUp()
     connect(
         _threshold_check, &QCheckBox::stateChanged, this, &SubframeFindPeaks::showFilteredImage);
     connect(
-        _threshold_spin, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
-        &SubframeFindPeaks::showFilteredImage);
+        _threshold_spin,
+        static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
+        this, &SubframeFindPeaks::showFilteredImage);
     connect(
         _kernel_para_table,
         static_cast<void (QTableWidget::*)(int, int)>(&QTableWidget::cellChanged), this,
