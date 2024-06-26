@@ -111,7 +111,7 @@ class SubframeFindPeaks : public QWidget {
 
     DataComboBox* _data_combo;
 
-    SafeSpinBox* _threshold_spin;
+    SafeDoubleSpinBox* _threshold_spin;
     SafeDoubleSpinBox* _scale_spin;
     SafeSpinBox* _min_size_spin;
     SafeSpinBox* _max_size_spin;
