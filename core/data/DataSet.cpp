@@ -411,7 +411,7 @@ void DataSet::initHistograms(std::size_t nbins)
 {
     double max_count = maxCount();
     for (int i = 0; i < nFrames(); ++i) {
-        gsl_histogram* h;
+        gsl_histogram* h = nullptr;
         _histograms.push_back(h);
     }
     _total_histogram = gsl_histogram_alloc(nbins);
