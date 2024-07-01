@@ -2,7 +2,7 @@
 //
 //  OpenHKL: data reduction for single crystal diffraction
 //
-//! @file      test/cpp/data/TestPeakFinder2D.cpp
+//! @file      test/cpp/data/TestSpotFinder.cpp
 //! @brief     Test ...
 //!
 //! @homepage  https://openhkl.org
@@ -35,7 +35,7 @@
 //#define OUTPUT_INTERMEDIATE 1
 
 
-TEST_CASE("test/data/TestPeakFinder2D.cpp", "")
+TEST_CASE("test/data/TestSpotFinder.cpp", "")
 {
     const std::string filename = "CrChiA_c01runab_28603.raw";
     ohkl::Experiment experiment("CrChiA", "BioDiff");
