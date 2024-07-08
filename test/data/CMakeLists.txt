@@ -29,6 +29,12 @@ set(test_files
     CrChiA_c01runab_28616.raw
     CrChiA_c01runab_28617.raw
     CrChiA.ohkl
+    det_pos1_001.dat
+    det_pos1_002.dat
+    det_pos1_003.dat
+    p11202_00009983.tiff
+    p11202_00009984.tiff
+    p11202_00009985.tiff
     Trypsin.ohkl
     Trypsin-pxsum.ohkl)
 
