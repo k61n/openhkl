@@ -58,19 +58,19 @@ TEST_CASE("test/data/TestTiffDataReader.cpp", "")
     data_params_1.rebin_size = 1;
 
     ohkl::TiffDataReader reader2;
-    reader2.setDataSet(data1.get());
+    reader2.setDataSet(data2.get());
     reader2.initRead();
     reader2.setParameters(data_params_1);
 
     for (const auto& file : filenames)
         reader2.addFrame(file);
 
-    frame1 = reader1.data(0);
-    frame2 = reader1.data(1);
-    frame3 = reader1.data(2);
+    frame1 = reader2.data(0);
+    frame2 = reader2.data(1);
+    frame3 = reader2.data(2);
 
 
-    CHECK(frame1.sum() == 1283428211);
-    CHECK(frame2.sum() == 1283515456);
-    CHECK(frame3.sum() == 1282894670);
+    CHECK(frame1.sum() == 838746650);
+    CHECK(frame2.sum() == 839097405);
+    CHECK(frame3.sum() == 836610423);
 }
