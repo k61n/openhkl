@@ -17,7 +17,7 @@ instrument:
         nrows: [251, 0, 0]
         ncols: [251, 0, 0]
         data_ordering: TopLeftRowMajor
-        gain: 0.0
+        gain: 1.0
         baseline: 0.0
         goniometer:
             name: detector-gonio
