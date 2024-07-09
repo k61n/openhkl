@@ -1,0 +1,6 @@
+axis:
+    name: omega
+    type: rotation
+    direction: [0.0,0.0,1.0]
+    clockwise: true
+    physical: true
