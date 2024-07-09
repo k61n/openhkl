@@ -1,0 +1,59 @@
+instrument:
+    name: HEIDI
+    detector:
+        type: flat
+        name: heidi_psd
+        sample_distance:
+            value: 0.64
+            units: m
+        width:
+            value: 0.25
+            units: m
+        height:
+            value: 0.15
+            units: m
+        row_min: 0
+        col_min: 0
+        nrows: [48, 0, 0]
+        ncols: [80, 0, 0]
+        data_ordering: TopLeftRowMajor
+        gain: 1.0
+        baseline: 0.0
+        goniometer:
+            name: detector-gonio
+            axis:
+                - name: 2theta(gamma)
+                  type: rotation
+                  direction: [0.0,0.0,1.0]
+                  clockwise: true
+                  physical: true
+    sample:
+        name: sample
+        goniometer:
+            name: sample-gonio
+            axis:
+                - name: omega
+                  type: rotation
+                  direction: [0.0,0.0,1.0]
+                  clockwise: true
+                  physical: true
+    source:
+        name: monochromatic source
+        monochromator:
+            name: mono
+            width:
+                value: 1.0
+                units: mm
+            height:
+                value: 1.0
+                units: mm
+            wavelength:
+                value: 1.15
+                units: ang
+            fwhm:
+                value: 0.03
+                units: ang
+            offset_x:
+                value: 0.0
+            offset_y:
+                value:  0.0
