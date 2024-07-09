@@ -35,22 +35,25 @@ set(test_files
     p11202_00009983.tiff
     p11202_00009984.tiff
     p11202_00009985.tiff
+    509192.nxs
+    509193.nxs
+    509194.nxs
     Trypsin.ohkl
     Trypsin-pxsum.ohkl)
 
-list(LENGTH test_files nfiles)
-message(STATUS
-  "Checking ${nfiles} test data files in directory ${CMAKE_BINARY_DIR}/${OHKL_TESTDATA_DIR}:")
+  list(LENGTH test_files nfiles)
+  message(STATUS
+    "Checking ${nfiles} test data files in directory ${CMAKE_BINARY_DIR}/${OHKL_TESTDATA_DIR}:")
 
-foreach(file ${test_files})
+  foreach(file ${test_files})
     if(NOT EXISTS ${CMAKE_BINARY_DIR}/${OHKL_TESTDATA_DIR}/${file})
-        message(STATUS "File ${file} not found, downloading...")
-        execute_process(COMMAND git lfs pull --include ${file})
-        configure_file(${CMAKE_SOURCE_DIR}/test/data/${file} ${file} COPYONLY)
+      message(STATUS "File ${file} not found, downloading...")
+      execute_process(COMMAND git lfs pull --include ${file})
+      configure_file(${CMAKE_SOURCE_DIR}/test/data/${file} ${file} COPYONLY)
     else()
-          if (NOT ${OHKL_TESTDATA_DIR} STREQUAL "test/data")
-              configure_file(${OHKL_TESTDATA_DIR}/${file} ${file} COPYONLY)
-          endif()
+      if (NOT ${OHKL_TESTDATA_DIR} STREQUAL "test/data")
+        configure_file(${OHKL_TESTDATA_DIR}/${file} ${file} COPYONLY)
+      endif()
       endif()
 endforeach()
 
