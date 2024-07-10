@@ -19,6 +19,7 @@
 #include "core/detector/Detector.h"
 #include "core/experiment/Experiment.h"
 #include "core/instrument/Diffractometer.h"
+#include "core/loader/IDataReader.h"
 #include "core/raw/MetaData.h"
 
 #include <gsl/gsl_histogram.h>
@@ -64,7 +65,7 @@ void UnitTest_DataSet::run()
     data_params.delta_omega = 0.3;
     data->setImageReaderParameters(data_params);
     for (const auto& file : filenames)
-        data->addRawFrame(file);
+        data->addFrame(file, DataFormat::RAW);
     data->finishRead();
     expt.addData(data);
 

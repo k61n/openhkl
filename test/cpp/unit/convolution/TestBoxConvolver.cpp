@@ -20,6 +20,7 @@
 #include "core/experiment/Experiment.h"
 #include "core/experiment/PeakFinder2D.h"
 #include "core/instrument/Diffractometer.h"
+#include "core/loader/IDataReader.h"
 #include "core/loader/RawDataReader.h"
 
 #include <opencv2/core/cvstd_wrapper.hpp>
@@ -46,7 +47,7 @@ TEST_CASE("test/data/TestBoxConvolver.cpp", "")
     data_params.wavelength = 2.667;
     data_params.delta_omega = 0.3;
     data->setImageReaderParameters(data_params);
-    data->addRawFrame(filename);
+    data->addFrame(filename, ohkl::DataFormat::RAW);
     data->finishRead();
 
     ohkl::RealMatrix image = data->transformedFrame(0);
