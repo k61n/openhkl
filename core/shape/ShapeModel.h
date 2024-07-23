@@ -148,8 +148,7 @@ class ShapeModel {
     AABB getAABB();
 
     //! Integrate the shape collection
-    void integrate(
-        std::vector<Peak3D*> peaks, const sptrDataSet data, sptrProgressHandler handler = nullptr);
+    void integrate(std::vector<Peak3D*> peaks, const sptrDataSet data);
 
     //! Build a shape model from the given peak collection
     void build(PeakCollection* peaks, sptrDataSet data);
