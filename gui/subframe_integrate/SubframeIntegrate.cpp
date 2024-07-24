@@ -411,7 +411,7 @@ void SubframeIntegrate::setIntegrateUp()
     _use_max_width->setToolTip("Skip integration of peaks spanning too many images");
 
     _max_width = new SafeSpinBox();
-    _max_width->setMaximum(20);
+    _max_width->setMaximum(100);
 
     label = new QLabel("Maximum width");
     label->setToolTip("Maximum width for peak to be integrated");
