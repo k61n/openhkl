@@ -247,7 +247,6 @@ void Peak3D::updateIntegration(
     _regionType = regionType;
     _rockingCurve = result.rocking_curve;
 
-    _rockingCurve = result.rocking_curve;
     if (result.integrator_type == IntegratorType::PixelSum)
         _meanBkgGradient = result.bkg_gradient;
 

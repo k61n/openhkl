@@ -43,7 +43,7 @@ std::vector<std::pair<MillerIndex, DetectorEvent>> algo::qMap2Events(
     sptrProgressHandler handler /* = nullptr */, bool thread_parallel /* = true */)
 {
     ohklLog(
-        Level::Debug, "algo::Qs2Events::qVectorList2Events: processing ", sample_qs.size(),
+        Level::Debug, "algo::Qs2Events::qMap2Events: processing ", sample_qs.size(),
         " q-vectors");
 
     std::vector<std::pair<MillerIndex, DetectorEvent>> events;
@@ -75,7 +75,7 @@ std::vector<std::pair<MillerIndex, DetectorEvent>> algo::qMap2Events(
     if (handler)
         handler->setProgress(100);
     ohklLog(
-        Level::Debug, "algo::Qs2Events::qVectorList2Events: finished; generated ", events.size(),
+        Level::Debug, "algo::Qs2Events::qMap2Events: finished; generated ", events.size(),
         " events");
     return events;
 }

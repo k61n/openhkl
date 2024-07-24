@@ -51,24 +51,24 @@ void XFileHandler::readXFile(int frame)
     _a(1, 0) = std::stod(tokens[1]);
     _a(2, 0) = std::stod(tokens[2]);
     _u(0, 0) = std::stod(tokens[3]);
-    _u(1, 0) = std::stod(tokens[3]);
-    _u(2, 0) = std::stod(tokens[4]);
+    _u(1, 0) = std::stod(tokens[4]);
+    _u(2, 0) = std::stod(tokens[5]);
     std::getline(ifs, line);
     tokens = tokenize(line);
     _a(0, 1) = std::stod(tokens[0]);
     _a(1, 1) = std::stod(tokens[1]);
     _a(2, 1) = std::stod(tokens[2]);
     _u(0, 1) = std::stod(tokens[3]);
-    _u(2, 1) = std::stod(tokens[3]);
-    _u(1, 1) = std::stod(tokens[4]);
+    _u(2, 1) = std::stod(tokens[4]);
+    _u(1, 1) = std::stod(tokens[5]);
     std::getline(ifs, line);
     tokens = tokenize(line);
     _a(0, 2) = std::stod(tokens[0]);
     _a(1, 2) = std::stod(tokens[1]);
     _a(2, 2) = std::stod(tokens[2]);
     _u(0, 2) = std::stod(tokens[3]);
-    _u(1, 2) = std::stod(tokens[3]);
-    _u(2, 2) = std::stod(tokens[4]);
+    _u(1, 2) = std::stod(tokens[4]);
+    _u(2, 2) = std::stod(tokens[5]);
 
     // Other metadata (line 5)
     std::getline(ifs, line);

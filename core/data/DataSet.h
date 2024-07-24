@@ -155,7 +155,7 @@ class DataSet {
     void clearHistograms();
     //! Maximum per pixel count for whole DataSet
     double maxCount();
-    //! getting number of available
+    //! Get number of available histograms
     size_t getNumberHistograms() { return _histograms.size(); }
 
     //! accessing created histograms
