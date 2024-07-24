@@ -77,9 +77,9 @@ class ShapeModel {
     //! Construct an empty collection.
     //! @param detector_coords if true, store profiles in detector coordinates;
     //! otherwise store in Kabsch coordinates
-    ShapeModel();
+    ShapeModel(bool thread_parallel = true);
     ShapeModel(const std::string& name);
-    ShapeModel(std::shared_ptr<ShapeModelParameters> params);
+    ShapeModel(std::shared_ptr<ShapeModelParameters> params, bool thread_parallel = true);
 
     //! Get the integer id
     unsigned int id() const { return _id; };
@@ -185,6 +185,9 @@ class ShapeModel {
 
     //! Progress handler
     sptrProgressHandler _handler;
+
+    //! Parallelise integration
+    bool _thread_parallel;
 };
 
 /*! @}*/

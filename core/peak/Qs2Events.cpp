@@ -16,11 +16,14 @@
 
 #include "base/geometry/DirectVector.h"
 #include "base/utils/Logger.h"
+#include "base/utils/ParallelFor.h"
 #include "base/utils/ProgressHandler.h"
 #include "core/data/DataSet.h" // TODO mv interpolatedState
 #include "core/detector/Detector.h"
 #include "core/instrument/InterpolatedState.h"
 #include "tables/crystal/MillerIndex.h"
+
+#include <mutex>
 
 namespace ohkl {
 
@@ -37,15 +40,14 @@ auto compute_sign = [](const Eigen::RowVector3d& q, const InterpolatedState& sta
 std::vector<std::pair<MillerIndex, DetectorEvent>> algo::qMap2Events(
     const std::vector<std::pair<MillerIndex, ReciprocalVector>>& sample_qs,
     const InstrumentStateList& states, const Detector& detector, const int n_intervals,
-    sptrProgressHandler handler /* = nullptr */)
+    sptrProgressHandler handler /* = nullptr */, bool thread_parallel /* = true */)
 {
     ohklLog(
-        Level::Debug, "algo::Qs2Events::qVectorList2Events: processing ", sample_qs.size(),
+        Level::Debug, "algo::Qs2Events::qMap2Events: processing ", sample_qs.size(),
         " q-vectors");
 
     std::vector<std::pair<MillerIndex, DetectorEvent>> events;
 
-    int count = 1;
     if (handler) {
         std::ostringstream oss;
         oss << "Transforming " << sample_qs.size() << " q-vectors to detector events";
@@ -53,23 +55,27 @@ std::vector<std::pair<MillerIndex, DetectorEvent>> algo::qMap2Events(
         handler->setProgress(0);
     }
 
-// for each sample q, determine the rotation that makes it intersect the Ewald sphere
-#pragma omp parallel for
-    for (const auto& [hkl, sample_q] : sample_qs) {
-        std::vector<DetectorEvent> new_events =
-            qVector2Events(sample_q, states, detector, n_intervals);
-#pragma omp critical(dataupdate)
-        {
-            for (auto event : new_events)
-                events.push_back({hkl, event});
+    // for each sample q, determine the rotation that makes it intersect the Ewald sphere
+    std::mutex mutex;
+    std::atomic_int count = 1;
+    parallel_for(sample_qs.size(), [&](int start, int end) {
+        for (int idx = start; idx < end; ++idx) {
+            std::vector<DetectorEvent> new_events =
+                qVector2Events(sample_qs.at(idx).second, states, detector, n_intervals);
+            {
+                std::lock_guard<std::mutex> lock(mutex);
+                for (auto event : new_events)
+                    events.push_back({sample_qs.at(idx).first, event});
+            }
+            if (handler)
+                handler->setProgress(++count * 100.0 / sample_qs.size());
         }
-        if (handler)
-            handler->setProgress(++count * 100.0 / sample_qs.size());
-    }
+    }, thread_parallel);
+
     if (handler)
         handler->setProgress(100);
     ohklLog(
-        Level::Debug, "algo::Qs2Events::qVectorList2Events: finished; generated ", events.size(),
+        Level::Debug, "algo::Qs2Events::qMap2Events: finished; generated ", events.size(),
         " events");
     return events;
 }
@@ -93,15 +99,11 @@ std::vector<DetectorEvent> algo::qVectorList2Events(
     }
 
 // for each sample q, determine the rotation that makes it intersect the Ewald sphere
-#pragma omp parallel for
     for (const ReciprocalVector& sample_q : sample_qs) {
         std::vector<DetectorEvent> new_events =
             qVector2Events(sample_q, states, detector, n_intervals);
-#pragma omp critical(dataupdate)
-        {
-            for (auto event : new_events)
-                events.emplace_back(event);
-        }
+        for (auto event : new_events)
+            events.emplace_back(event);
         if (handler)
             handler->setProgress(++count * 100.0 / sample_qs.size());
     }

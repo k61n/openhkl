@@ -32,7 +32,8 @@ class ShapeIntegrator : public PixelSumIntegrator {
 
  protected:
     //! Integrate a peak
-    bool compute(Peak3D* peak, ShapeModel* shape_model, const IntegrationRegion& region) override;
+    ComputeResult compute(
+        Peak3D* peak, ShapeModel* shape_model, const IntegrationRegion& region) override;
     //! Returns the collection of cached peak shapes
     const ShapeModel* shapeModel() const;
 

@@ -78,8 +78,10 @@ TEST_CASE("test/integrate/Test_6_12_38.cpp", "")
 
     std::vector<ohkl::Peak3D*> peaks;
     peaks.push_back(&peak);
-    ohkl::PixelSumIntegrator integrator(false, false);
+    ohkl::PixelSumIntegrator integrator;
     ohkl::IntegrationParameters params{};
+    params.fit_center = false;
+    params.fit_cov = false;
     params.peak_end = 2.7;
     params.bkg_begin = 3.0;
     params.bkg_end = 4.0;

@@ -37,8 +37,14 @@ class PeakData {
     void standardizeCoords();
     //! Add an event to the list of events.
     void addEvent(const DetectorEvent& ev, double count, double gradient = 0);
+    //! Append a PeakData object to this one
+    void append(const PeakData& other);
     //! Clear the events
     void reset();
+    //! Is this PeakData empty?:
+    bool empty() const;
+    //! Get the peak pointer
+    Peak3D* peak() const { return _peak; };
 
  private:
     Peak3D* _peak;

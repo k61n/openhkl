@@ -41,7 +41,8 @@ class Profile1DIntegrator : public IIntegrator {
 
  protected:
     //! Integrate a peak
-    bool compute(Peak3D* peak, ShapeModel* shape_model, const IntegrationRegion& region) override;
+    ComputeResult compute(
+        Peak3D* peak, ShapeModel* shape_model, const IntegrationRegion& region) override;
 };
 
 /*! @}*/

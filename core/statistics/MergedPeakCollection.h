@@ -71,6 +71,9 @@ class MergedPeakCollection {
     //! Get maximum d
     double dMax() const;
 
+    //! Output a list of unmerged peaks as a string, sorted by symmetry relations
+    std::string toStringUnmerged() const;
+
     SpaceGroup spaceGroup() const { return _group; };
 
  private:

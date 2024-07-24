@@ -57,17 +57,21 @@ class IntegrationRegion {
     //! Classify a detector event (peak, background, forbidden, etc.)
     EventType classify(const DetectorEvent& ev) const;
     //! Update the region with the next frame
-    bool advanceFrame(const Eigen::MatrixXd& image, const Eigen::MatrixXi& mask, double frame);
-    //! Update the region with the next frame
     bool advanceFrame(
         const Eigen::MatrixXd& image, const Eigen::MatrixXi& mask, double frame,
-        const Eigen::MatrixXd& gradient);
+        const Eigen::MatrixXd* gradient = nullptr);
+    //! Update the region with the next frame (thread safe)
+    PeakData threadSafeAdvanceFrame(
+        const Eigen::MatrixXd& image, const Eigen::MatrixXi& mask, double frame,
+        const Eigen::MatrixXd* gradient = nullptr);
     //! Reset the integration region (i.e. free memory)
     void reset();
     //! Returns the underlying data stored by the region
     const PeakData& peakData() const;
     //! Returns the data stored by the region
     PeakData& peakData();
+    //! Append PeakData to this instance
+    void appendPeakData(const PeakData& peak_data);
     //! Returns the peak shape used by the region
     const Ellipsoid& shape() const;
     //! Returns the convex hull of the region (e.g. BrillouinZone)

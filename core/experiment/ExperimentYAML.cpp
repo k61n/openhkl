@@ -2,8 +2,8 @@
 //
 //  OpenHKL: data reduction for single crystal diffraction
 //
-//! @file      base/parser/ExperimentYAML.cpp
-//! @brief     Defines function eigenToVector
+//! @file      core/experiment/ExperimentYAML.cpp
+//! @brief     Implements class ExperimentYAML
 //!
 //! @homepage  https://openhkl.org
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -124,7 +124,6 @@ void ExperimentYAML::grabIntegrationParameters(IntegrationParameters* params)
     params->fixed_peak_end = getNode<double>(branch, "fixed_peak_end");
     params->fixed_bkg_begin = getNode<double>(branch, "fixed_bkg_begin");
     params->fixed_bkg_end = getNode<double>(branch, "fixed_bkg_end");
-    params->max_strength = getNode<double>(branch, "max_strength");
     params->fit_center = getNode<bool>(branch, "fit_center");
     params->fit_cov = getNode<bool>(branch, "fit_cov");
     params->integrator_type = static_cast<IntegratorType>(getNode<int>(branch, "integrator_type"));
@@ -135,6 +134,13 @@ void ExperimentYAML::grabIntegrationParameters(IntegrationParameters* params)
     params->skip_masked = getNode<bool>(branch, "skip_masked");
     params->remove_overlaps = getNode<bool>(branch, "remove_overlaps");
     params->use_max_strength = getNode<bool>(branch, "use_max_strength");
+    params->max_strength = getNode<double>(branch, "max_strength");
+    params->use_max_d = getNode<bool>(branch, "use_max_d");
+    params->max_d = getNode<double>(branch, "max_d");
+    params->use_max_width = getNode<bool>(branch, "use_max_width");
+    params->max_width = getNode<double>(branch, "max_width");
+    params->discard_saturated = getNode<bool>(branch, "discard_saturated");
+    params->max_counts = getNode<double>(branch, "max_counts");
 }
 
 void ExperimentYAML::setIntegrationParameters(IntegrationParameters* params)
@@ -151,7 +157,6 @@ void ExperimentYAML::setIntegrationParameters(IntegrationParameters* params)
     int_node["fixed_peak_end"] = params->fixed_peak_end;
     int_node["fixed_bkg_begin"] = params->fixed_bkg_begin;
     int_node["fixed_bkg_end"] = params->fixed_bkg_end;
-    int_node["max_strength"] = params->max_strength;
     int_node["fit_center"] = params->fit_center;
     int_node["fit_cov"] = params->fit_cov;
     int_node["integrator_type"] = static_cast<int>(params->integrator_type);
@@ -162,6 +167,13 @@ void ExperimentYAML::setIntegrationParameters(IntegrationParameters* params)
     int_node["skip_masked"] = params->skip_masked;
     int_node["remove_overlaps"] = params->remove_overlaps;
     int_node["use_max_strength"] = params->use_max_strength;
+    int_node["max_strength"] = params->max_strength;
+    int_node["use_max_d"] = params->use_max_d;
+    int_node["max_d"] = params->max_d;
+    int_node["use_max_width"] = params->use_max_width;
+    int_node["max_width"] = params->max_width;
+    int_node["discard_saturated"] = params->discard_saturated;
+    int_node["max_counts"] = params->max_counts;
 }
 
 void ExperimentYAML::grabPeakFinderParameters(PeakFinderParameters* params)

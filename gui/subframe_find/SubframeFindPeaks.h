@@ -28,6 +28,7 @@ class PeakTableView;
 class PeakViewWidget;
 class QCheckBox;
 class QComboBox;
+class QGroupBox;
 class QPushButton;
 class QSplitter;
 class QTableWidget;
@@ -128,6 +129,8 @@ class SubframeFindPeaks : public QWidget {
     SafeDoubleSpinBox* _peak_end;
     SafeDoubleSpinBox* _bkg_begin;
     SafeDoubleSpinBox* _bkg_end;
+    SafeSpinBox* _max_width;
+    QGroupBox* _use_max_width;
     QCheckBox* _gradient_check;
     QCheckBox* _fft_gradient_check;
     QComboBox* _gradient_kernel;

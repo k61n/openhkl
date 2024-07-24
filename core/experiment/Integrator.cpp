@@ -17,11 +17,7 @@
 #include "base/utils/Logger.h"
 #include "core/experiment/DataHandler.h"
 #include "core/experiment/PeakFinder.h"
-#include "core/integration/GaussianIntegrator.h"
-#include "core/integration/ISigmaIntegrator.h"
-#include "core/integration/PixelSumIntegrator.h"
-#include "core/integration/Profile1DIntegrator.h"
-#include "core/integration/Profile3DIntegrator.h"
+#include "core/integration/IIntegrator.h"
 #include "core/integration/ShapeIntegrator.h"
 #include "core/peak/Peak3D.h"
 #include "core/shape/PeakCollection.h"
@@ -30,19 +26,8 @@
 namespace ohkl {
 
 Integrator::Integrator(std::shared_ptr<DataHandler> data_handler)
-    : _handler(nullptr), _data_handler(data_handler)
+    : _handler(nullptr), _data_handler(data_handler), _factory()
 {
-    _integrator_map.clear();
-    _integrator_map.insert(
-        std::make_pair(IntegratorType::PixelSum, std::make_unique<PixelSumIntegrator>(true, true)));
-    _integrator_map.insert(
-        std::make_pair(IntegratorType::Gaussian, std::make_unique<GaussianIntegrator>(true, true)));
-    _integrator_map.insert(
-        std::make_pair(IntegratorType::ISigma, std::make_unique<ISigmaIntegrator>()));
-    _integrator_map.insert(
-        std::make_pair(IntegratorType::Profile1D, std::make_unique<Profile1DIntegrator>()));
-    _integrator_map.insert(
-        std::make_pair(IntegratorType::Profile3D, std::make_unique<Profile3DIntegrator>()));
     _params = std::make_unique<IntegrationParameters>();
 }
 
@@ -53,12 +38,7 @@ DataHandler* Integrator::getDataHandler()
 
 IIntegrator* Integrator::getIntegrator(const IntegratorType integrator_type) const
 {
-    std::map<IntegratorType, std::unique_ptr<IIntegrator>>::const_iterator it;
-    for (it = _integrator_map.begin(); it != _integrator_map.end(); ++it) {
-        if (it->first == integrator_type)
-            return it->second.get();
-    }
-    return nullptr;
+    return _factory.create(integrator_type);
 }
 
 void Integrator::integratePeaks(
@@ -70,7 +50,7 @@ void Integrator::integratePeaks(
     peaks->resetIntegrationFlags(integrator_type);
     IIntegrator* integrator = getIntegrator(integrator_type);
     integrator->setParameters(*_params);
-    integrator->integrate(peaks->getPeakList(), peaks->shapeModel(), data);
+    integrator->parallelIntegrate(peaks->getPeakList(), peaks->shapeModel(), data);
     peaks->setIntegrated(true);
     if (_params->use_gradient)
         peaks->setBkgGradient(true);
@@ -82,18 +62,22 @@ void Integrator::integratePeaks(
         if (peak->enabled())
             ++_n_valid;
     }
+
+    delete integrator;
 }
 
 void Integrator::integratePeaks(
-    sptrDataSet data, PeakCollection* peaks, IntegrationParameters* params, ShapeModel* shapes)
+    sptrDataSet data, PeakCollection* peaks, IntegrationParameters* params, ShapeModel* shapes,
+    bool parallel)
 {
     ohklLog(
         Level::Info,
         "Integrator::integratePeaks: integrating PeakCollection '" + peaks->name() + "'");
     peaks->resetIntegrationFlags(_params->integrator_type);
     IIntegrator* integrator = getIntegrator(_params->integrator_type);
+    integrator->setParallel(parallel);
     integrator->setParameters(*params);
-    integrator->integrate(peaks->getPeakList(), shapes, data);
+    integrator->parallelIntegrate(peaks->getPeakList(), shapes, data);
     peaks->setIntegrated(true);
     if (params->use_gradient)
         peaks->setBkgGradient(true);
@@ -105,15 +89,18 @@ void Integrator::integratePeaks(
         if (peak->enabled())
             ++_n_valid;
     }
+
+    delete integrator;
 }
 
-void Integrator::integrateFoundPeaks(PeakFinder* peak_finder)
+    void Integrator::integrateFoundPeaks(PeakFinder* peak_finder, bool parallel)
 {
     ohklLog(Level::Info, "Integrator::integrateFoundPeaks");
     IIntegrator* integrator = getIntegrator(IntegratorType::PixelSum);
+    integrator->setParallel(parallel);
     integrator->setParameters(*_params);
 
-    integrator->integrate(peak_finder->currentPeaks(), nullptr, peak_finder->currentData());
+    integrator->parallelIntegrate(peak_finder->currentPeaks(), nullptr, peak_finder->currentData());
 
     _n_peaks = 0;
     _n_valid = 0;
@@ -125,18 +112,21 @@ void Integrator::integrateFoundPeaks(PeakFinder* peak_finder)
     peak_finder->setIntegrated(true);
     if (_params->use_gradient)
         peak_finder->setBkgGradient(true);
+
+    delete integrator;
 }
 
 void Integrator::integrateShapeModel(
     std::vector<Peak3D*> fit_peaks, sptrDataSet data, ShapeModel* shape_model, const AABB& aabb,
-    const ShapeModelParameters& params)
+    const ShapeModelParameters& params, bool parallel)
 {
     ohklLog(Level::Info, "Integrator::integrateShapeModel");
     ShapeIntegrator integrator{shape_model, aabb, params.nbins_x, params.nbins_y, params.nbins_z};
+    integrator.setParallel(parallel);
     if (_handler)
         integrator.setHandler(_handler);
     integrator.setParameters(params);
-    integrator.integrate(fit_peaks, shape_model, data);
+    integrator.parallelIntegrate(fit_peaks, shape_model, data);
 }
 
 void Integrator::setParameters(std::shared_ptr<IntegrationParameters> params)

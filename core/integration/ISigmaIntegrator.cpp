@@ -23,35 +23,35 @@
 
 namespace ohkl {
 
-ISigmaIntegrator::ISigmaIntegrator() : PixelSumIntegrator(false, false) { }
+ISigmaIntegrator::ISigmaIntegrator() : PixelSumIntegrator() { }
 
-bool ISigmaIntegrator::compute(
+ComputeResult ISigmaIntegrator::compute(
     Peak3D* peak, ShapeModel* shape_model, const IntegrationRegion& region)
 {
+    ComputeResult result;
+    result.integrator_type = IntegratorType::ISigma;
+
     if (!shape_model) {
-        peak->setIntegrationFlag(RejectionFlag::NoShapeModel, IntegratorType::ISigma);
-        return false;
+        result.integration_flag = RejectionFlag::NoShapeModel;
+        return result;
     }
 
-    if (!peak)
-        return false;
-
     // first get mean background
-    PixelSumIntegrator::compute(peak, shape_model, region);
-    const double mean_bkg = _sumBackground.value();
-    const double var_bkg = _sumBackground.variance();
+    const ComputeResult pxsum_result = PixelSumIntegrator::compute(peak, shape_model, region);
+    const double mean_bkg = pxsum_result.sum_background.value();
+    const double var_bkg = pxsum_result.sum_background.variance();
 
     const auto& events = region.peakData().events();
     const auto& counts = region.peakData().counts();
 
     // TODO: should this be hard-coded??
     if (events.size() < 29) {
-        peak->setIntegrationFlag(RejectionFlag::TooFewPoints, IntegratorType::ISigma);
-        return false;
+        result.integration_flag = RejectionFlag::TooFewPoints;
+        return result;
     }
 
-    Eigen::Vector3d c = peak->shape().center();
-    Eigen::Matrix3d A = peak->shape().metric();
+    const Eigen::Vector3d c = peak->shape().center();
+    const Eigen::Matrix3d A = peak->shape().metric();
 
     Profile1D profile;
     std::vector<Intensity> mean_profile = shape_model->meanProfile1D(DetectorEvent(c));
@@ -87,26 +87,26 @@ bool ISigmaIntegrator::compute(
 
     // something went wrong (nans?)
     if (best_idx < 0) {
-        peak->setIntegrationFlag(RejectionFlag::NoISigmaMinimum, IntegratorType::ISigma);
-        return false;
+        result.integration_flag = RejectionFlag::NoISigmaMinimum;
+        return result;
     }
 
     const double M = profile.counts()[best_idx];
     const int n = profile.npoints()[best_idx];
 
-    _profileIntensity = Intensity(M - n * mean_bkg, M + n * n * var_bkg);
-    _profileIntensity = _profileIntensity / mean_profile[best_idx];
+    result.profile_intensity = Intensity(M - n * mean_bkg, M + n * n * var_bkg);
+    result.profile_intensity = result.profile_intensity / mean_profile[best_idx];
 
-    double sigma = _profileIntensity.sigma();
+    const double sigma = result.profile_intensity.sigma();
 
     if (std::isnan(sigma) && sigma > 0) {
-        peak->setIntegrationFlag(RejectionFlag::InvalidSigma, IntegratorType::ISigma);
-        return false;
+        result.integration_flag = RejectionFlag::InvalidSigma;
+        return result;
     }
-    _sumIntensity = {};
-    _sumBackground = {};
+    result.sum_intensity = {};
+    result.sum_background = {};
 
-    return true;
+    return result;
 }
 
 } // namespace ohkl

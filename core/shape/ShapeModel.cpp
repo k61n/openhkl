@@ -19,6 +19,7 @@
 #include "base/geometry/Ellipsoid.h"
 #include "base/geometry/ReciprocalVector.h"
 #include "base/utils/Logger.h"
+#include "base/utils/ParallelFor.h"
 #include "base/utils/ProgressHandler.h"
 #include "core/data/DataSet.h"
 #include "core/data/DataTypes.h"
@@ -121,8 +122,14 @@ struct FitData {
     }
 };
 
-ShapeModel::ShapeModel()
-    : _id(0), _profiles(), _choleskyD(), _choleskyM(), _choleskyS(), _handler(nullptr)
+ShapeModel::ShapeModel(bool thread_parallel)
+    : _id(0)
+    , _profiles()
+    , _choleskyD()
+    , _choleskyM()
+    , _choleskyS()
+    , _handler(nullptr)
+    , _thread_parallel(thread_parallel)
 {
     _choleskyD.fill(1e-6);
     _choleskyM.fill(1e-6);
@@ -135,7 +142,7 @@ ShapeModel::ShapeModel(const std::string& name) : ShapeModel()
     _name = name;
 }
 
-ShapeModel::ShapeModel(std::shared_ptr<ShapeModelParameters> params)
+ShapeModel::ShapeModel(std::shared_ptr<ShapeModelParameters> params, bool thread_parallel)
     : _id(0)
     , _profiles()
     , _choleskyD()
@@ -143,6 +150,7 @@ ShapeModel::ShapeModel(std::shared_ptr<ShapeModelParameters> params)
     , _choleskyS()
     , _params(params)
     , _handler(nullptr)
+    , _thread_parallel(thread_parallel)
 
 {
     _choleskyD.fill(1e-6);
@@ -446,19 +454,21 @@ void ShapeModel::setPredictedShapes(PeakCollection* peaks)
         _handler->setProgress(0);
     }
 
-#pragma omp parallel for
-    for (auto peak : peaks->getPeakList()) {
-        // Skip the peak if any error occur when computing its mean covariance (e.g.
-        // too few or no neighbouring peaks found)
-        auto cov = meanCovariance(peak);
-        Eigen::Vector3d center = peak->shape().center();
-        peak->setShape(Ellipsoid(center, cov.inverse()));
+    auto peaklist = peaks->getPeakList();
+    parallel_for(peaklist.size(), [&](int start, int end) {
+        for (int idx = start; idx < end; ++idx) {
+            Peak3D* peak = peaklist.at(idx);
+            const auto cov = meanCovariance(peak);
+            const Eigen::Vector3d center = peak->shape().center();
+            peak->setShape(Ellipsoid(center, cov.inverse()));
 
-        if (_handler) {
-            double progress = ++count * 100.0 / npeaks;
-            _handler->setProgress(progress);
+            if (_handler) {
+                const double progress = ++count * 100.0 / npeaks;
+                _handler->setProgress(progress);
+            }
         }
-    }
+    }, _thread_parallel);
+
     ohklLog(Level::Info, "ShapeModel: finished computing shapes");
 }
 
@@ -523,9 +533,9 @@ void ShapeModel::integrate(
     int_params.fixed_bkg_begin = _params->fixed_bkg_begin;
     int_params.fixed_bkg_end = _params->fixed_bkg_end;
     integrator.setHandler(handler);
+    integrator.setParallel(_thread_parallel);
     integrator.setParameters(int_params);
-
-    integrator.integrate(peaks, this, data);
+    integrator.parallelIntegrate(peaks, this, data);
     ohklLog(Level::Info, "ShapeModel::integrate: finished integrating shapes");
 }
 
@@ -565,7 +575,8 @@ void ShapeModel::build(PeakCollection* peaks, sptrDataSet data)
     int_params.fixed_bkg_end = _params->fixed_bkg_end;
     int_params.region_type = _params->region_type;
     integrator.setParameters(int_params);
-    integrator.integrate(fit_peaks, this, data);
+    integrator.setParallel(_thread_parallel);
+    integrator.parallelIntegrate(fit_peaks, this, data);
     ohklLog(Level::Info, "ShapeModel::build: finished integrating shapes");
     // ohklLog(Level::Info, "ShapeModel::build: updating fit");
     // updateFit(1000);

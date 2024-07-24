@@ -328,6 +328,23 @@ bool PeakMerger::saveStatistics(std::string filename)
     return true;
 }
 
+bool PeakMerger::savePeaks(std::string filename, bool sum_intensities) const
+{
+    std::string data;
+    if (sum_intensities)
+        data = _sum_merged_data->toStringUnmerged();
+    else
+        data = _profile_merged_data->toStringUnmerged();
+
+    std::fstream file(filename, std::ios::out);
+    if (!file.is_open())
+        return false;
+
+    file << data;
+    file.close();
+    return true;
+}
+
 std::vector<double> PeakMerger::getFigureOfMerit(FigureOfMerit fom, IntegratorType integrator)
 {
     DataResolution* resolution;

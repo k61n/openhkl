@@ -14,6 +14,7 @@
 
 #include "gui/graphics/PeakCollectionGraphics.h"
 
+#include "base/utils/ParallelFor.h"
 #include "core/data/DataSet.h"
 #include "core/loader/XFileHandler.h"
 #include "core/peak/IntegrationRegion.h"
@@ -150,32 +151,42 @@ QVector<PeakCenterGraphic*> PeakCollectionGraphics::detectorSpots(std::size_t fr
     return graphics;
 }
 
-void PeakCollectionGraphics::getIntegrationMask(Eigen::MatrixXi& mask, std::size_t frame_idx)
+void PeakCollectionGraphics::getIntegrationMask(
+    Eigen::MatrixXi& mask, std::size_t frame_idx, bool thread_parallel /* = true */)
 {
     std::vector<PeakItem*> peak_items = _peak_model->root()->peakItems();
 
     std::mutex mutex;
-    for (auto* peak_item : peak_items) {
-        ohkl::Peak3D* peak = peak_item->peak();
-        double peak_end, bkg_begin, bkg_end;
-        if (_preview_int_regions) {
-            if (_int_params.region_type == ohkl::RegionType::VariableEllipsoid) {
-                peak_end = _int_params.peak_end;
-                bkg_begin = _int_params.bkg_begin;
-                bkg_end = _int_params.bkg_end;
+
+    ohkl::parallel_for(peak_items.size(), [&](int start, int end) {
+        for (int idx = start; idx < end; ++idx) {
+            PeakItem* peak_item = peak_items.at(idx);
+            ohkl::Peak3D* peak = peak_item->peak();
+
+            double peak_end, bkg_begin, bkg_end;
+            if (_preview_int_regions) {
+                if (_int_params.region_type == ohkl::RegionType::VariableEllipsoid) {
+                    peak_end = _int_params.peak_end;
+                    bkg_begin = _int_params.bkg_begin;
+                    bkg_end = _int_params.bkg_end;
+                } else {
+                    peak_end = _int_params.fixed_peak_end;
+                    bkg_begin = _int_params.fixed_bkg_begin;
+                    bkg_end = _int_params.fixed_bkg_end;
+                }
             } else {
-                peak_end = _int_params.fixed_peak_end;
-                bkg_begin = _int_params.fixed_bkg_begin;
-                bkg_end = _int_params.fixed_bkg_end;
+                peak_end = peak_item->peak()->peakEnd();
+                bkg_begin = peak_item->peak()->bkgBegin();
+                bkg_end = peak_item->peak()->bkgEnd();
             }
-        } else {
-            peak_end = peak_item->peak()->peakEnd();
-            bkg_begin = peak_item->peak()->bkgBegin();
-            bkg_end = peak_item->peak()->bkgEnd();
+            ohkl::IntegrationRegion region(
+                peak, peak_end, bkg_begin, bkg_end, _int_params.region_type);
+            {
+                std::lock_guard<std::mutex> lock(mutex);
+                region.updateMask(mask, frame_idx);
+            }
         }
-        ohkl::IntegrationRegion region(peak, peak_end, bkg_begin, bkg_end, _int_params.region_type);
-        region.updateMask(mask, frame_idx);
-    }
+    }, thread_parallel);
 }
 
 void PeakCollectionGraphics::getSinglePeakIntegrationMask(

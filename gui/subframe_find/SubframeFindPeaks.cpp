@@ -217,6 +217,23 @@ void SubframeFindPeaks::setIntegrateUp()
         "Background end",
         "(" + QString(QChar(0x03C3)) + ") - scaling factor for upper limit of background");
 
+    _use_max_width = new QGroupBox("Maximum width for integration");
+    _use_max_width->setAlignment(Qt::AlignLeft);
+    _use_max_width->setCheckable(true);
+    _use_max_width->setChecked(false);
+    _use_max_width->setToolTip("Skip integration of peaks spanning too many images");
+
+    _max_width = new SafeSpinBox();
+    _max_width->setMaximum(100);
+
+    QLabel* label = new QLabel("Maximum width");
+    label->setToolTip("Maximum width for peak to be integrated");
+    QGridLayout* grid = new QGridLayout();
+    _use_max_width->setLayout(grid);
+    grid->addWidget(label, 0, 0, 1, 1);
+    grid->addWidget(_max_width, 0, 1, 1, 1);
+    f.addWidget(_use_max_width);
+
     _gradient_check = f.addCheckBox(
         "Compute gradient", "Compute mean gradient and sigma of background region", 1);
 
@@ -451,6 +468,8 @@ void SubframeFindPeaks::grabIntegrationParameters()
         _bkg_end->setValue(params->fixed_bkg_end);
     }
 
+    _use_max_width->setChecked(params->use_max_width);
+    _max_width->setValue(params->max_width);
     _gradient_check->setChecked(params->use_gradient);
     _fft_gradient_check->setChecked(params->fft_gradient);
     _gradient_kernel->setCurrentIndex(static_cast<int>(params->gradient_type));
@@ -473,6 +492,8 @@ void SubframeFindPeaks::setIntegrationParameters()
         params->fixed_bkg_begin = _bkg_begin->value();
         params->fixed_bkg_end = _bkg_end->value();
     }
+    params->use_max_width = _use_max_width->isChecked();
+    params->max_width = _max_width->value();
     params->use_gradient = _gradient_check->isChecked();
     params->fft_gradient = _fft_gradient_check->isChecked();
     params->gradient_type = static_cast<ohkl::GradientKernel>(_gradient_kernel->currentIndex());

@@ -21,13 +21,11 @@
 #include "core/peak/PeakCoordinateSystem.h"
 #include "core/shape/ShapeModel.h"
 
-namespace ohkl {
-
-Profile1DIntegrator::Profile1DIntegrator() : IIntegrator() { }
-
-static void updateFit(
-    Intensity& I, Intensity& B, const std::vector<double>& dp, const std::vector<double>& dM,
-    const std::vector<int>& dn)
+namespace {
+    
+void updateFit(
+    ohkl::Intensity& I, ohkl::Intensity& B, const std::vector<double>& dp,
+    const std::vector<double>& dM, const std::vector<int>& dn)
 {
     Eigen::Matrix2d A;
     A.setZero();
@@ -72,36 +70,42 @@ static void updateFit(
 
     // Note: this error estimate assumes the variances are correct (i.e., gain and
     // baseline accounted for)
-    B = Intensity(new_B, cov(0, 0));
-    I = Intensity(new_I, cov(1, 1));
+    B = ohkl::Intensity(new_B, cov(0, 0));
+    I = ohkl::Intensity(new_I, cov(1, 1));
 }
 
-bool Profile1DIntegrator::compute(
+} // namespace
+
+namespace ohkl {
+
+Profile1DIntegrator::Profile1DIntegrator() : IIntegrator() { }
+
+ComputeResult Profile1DIntegrator::compute(
     Peak3D* peak, ShapeModel* shape_model, const IntegrationRegion& region)
 {
-    if (!shape_model) {
-        peak->setIntegrationFlag(RejectionFlag::NoShapeModel, IntegratorType::Profile1D);
-        return false;
-    }
+    ComputeResult result;
+    result.integrator_type = IntegratorType::Profile1D;
 
-    if (!peak)
-        return false;
+    if (!shape_model) {
+        result.integration_flag = RejectionFlag::NoShapeModel;
+        return result;
+    }
 
     const auto& events = region.peakData().events();
     const auto& counts = region.peakData().counts();
 
     // TODO: should this be hard-coded??
     if (events.size() < 29) {
-        peak->setIntegrationFlag(RejectionFlag::TooFewPoints, IntegratorType::Profile1D);
-        return false;
+        result.integration_flag = RejectionFlag::TooFewPoints;
+        return result;
     }
 
 
-    Eigen::Vector3d c = peak->shape().center();
-    Eigen::Matrix3d A = peak->shape().metric();
+    const Eigen::Vector3d c = peak->shape().center();
+    const Eigen::Matrix3d A = peak->shape().metric();
 
     Profile1D profile(0.0, region.peakEnd());
-    std::vector<Intensity> mean_profile = shape_model->meanProfile1D(DetectorEvent(c));
+    const std::vector<Intensity> mean_profile = shape_model->meanProfile1D(DetectorEvent(c));
 
     // construct the observed profile
     for (size_t i = 0; i < events.size(); ++i) {
@@ -134,22 +138,22 @@ bool Profile1DIntegrator::compute(
     for (auto i = 0; i < 10 && I.value() > 0; ++i)
         updateFit(I, B, dp, dm, dn);
 
-    double sigma = I.sigma();
+    const double sigma = I.sigma();
 
     if (std::isnan(sigma) || sigma <= 0.0) {
-        peak->setIntegrationFlag(RejectionFlag::InvalidSigma, IntegratorType::Profile1D);
-        return false;
+        result.integration_flag = RejectionFlag::InvalidSigma;
+        return result;
     }
 
-    _profileIntensity = I;
-    _profileBackground = B;
+    result.profile_intensity = I;
+    result.profile_background = B;
 
-    _sumIntensity = {};
-    _sumBackground = {};
+    result.sum_intensity = {};
+    result.sum_background = {};
 
     // TODO: rocking curve!
 
-    return true;
+    return result;
 }
 
 } // namespace ohkl

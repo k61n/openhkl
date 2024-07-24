@@ -13,6 +13,7 @@
 //  ***********************************************************************************************
 
 #include "core/integration/PixelSumIntegrator.h"
+
 #include "base/geometry/Ellipsoid.h"
 #include "base/utils/Logger.h"
 #include "core/data/DataSet.h"
@@ -85,37 +86,40 @@ std::pair<Intensity, Intensity> compute_background(
 } // namespace
 
 
-PixelSumIntegrator::PixelSumIntegrator(bool fit_center, bool fit_covariance) : IIntegrator()
+PixelSumIntegrator::PixelSumIntegrator() : IIntegrator()
 {
-    _params.fit_center = fit_center;
-    _params.fit_cov = fit_covariance;
+    _params.fit_center = true;
+    _params.fit_cov = true;
 }
 
-bool PixelSumIntegrator::compute(Peak3D* peak, ShapeModel*, const IntegrationRegion& region)
+ComputeResult PixelSumIntegrator::compute(Peak3D* peak, ShapeModel*, const IntegrationRegion& region)
 {
+    ComputeResult result;
+    result.integrator_type = IntegratorType::PixelSum;
+
     const auto& events = region.peakData().events();
     const auto& counts = region.peakData().counts();
 
     if (events.empty()) {
-        peak->setIntegrationFlag(RejectionFlag::TooFewPoints, IntegratorType::PixelSum);
-        return false;
+        result.integration_flag = RejectionFlag::TooFewPoints;
+        return result;
     }
 
     auto [meanBackground, bkgGradient] = compute_background(region, _params.use_gradient);
     if (!meanBackground.isValid()) {
-        peak->setIntegrationFlag(RejectionFlag::TooFewPoints, IntegratorType::PixelSum);
-        return false;
+        result.integration_flag = RejectionFlag::TooFewPoints;
+        return result;
     }
-    _sumBackground = meanBackground;
-    _meanBkgGradient = bkgGradient;
+    result.sum_background = meanBackground;
+    result.bkg_gradient = bkgGradient;
 
-    PeakCoordinateSystem frame(peak);
+    const PeakCoordinateSystem frame(peak);
 
     double sum_peak = 0.0;
-    const double mean_bkg = _sumBackground.value();
+    const double mean_bkg = result.sum_background.value();
     // note that this is the std of the _estimate_ of the background
     // should be approximately mean_bkg / num_bkg for Poisson statistics
-    const double std_bkg = _sumBackground.sigma();
+    const double std_bkg = result.sum_background.sigma();
     size_t npeak = 0.0;
     Blob3D blob;
 
@@ -126,9 +130,8 @@ bool PixelSumIntegrator::compute(Peak3D* peak, ShapeModel*, const IntegrationReg
         const auto& ev = events[i];
         auto ev_type = region.classify(ev);
 
-        if (ev_type == IntegrationRegion::EventType::BACKGROUND) {
+        if (ev_type == IntegrationRegion::EventType::BACKGROUND)
             continue;
-        }
 
         if (ev_type == IntegrationRegion::EventType::PEAK) {
             sum_peak += counts[i];
@@ -140,11 +143,11 @@ bool PixelSumIntegrator::compute(Peak3D* peak, ShapeModel*, const IntegrationReg
         }
     }
 
-    sum_peak -= npeak * _sumBackground.value();
+    sum_peak -= npeak * result.sum_background.value();
 
     // TODO: ERROR ESTIMATE!!
     // This INCORRECTLY assumes Poisson statistics (no gain or baseline)
-    _sumIntensity =
+    result.sum_intensity =
         Intensity(sum_peak, sum_peak + npeak * mean_bkg + npeak * npeak * std_bkg * std_bkg);
 
     // TODO: compute rocking curve
@@ -164,8 +167,8 @@ bool PixelSumIntegrator::compute(Peak3D* peak, ShapeModel*, const IntegrationReg
         if (blob.isValid()) {
             center = blob.center();
         } else {
-            peak->setIntegrationFlag(RejectionFlag::InvalidCentroid, IntegratorType::PixelSum);
-            return false;
+            result.integration_flag = RejectionFlag::InvalidCentroid;
+            return result;
         }
     } else {
         center = peak->shape().center();
@@ -175,8 +178,8 @@ bool PixelSumIntegrator::compute(Peak3D* peak, ShapeModel*, const IntegrationReg
         if (blob.isValid()) {
             cov = blob.covariance();
         } else {
-            peak->setIntegrationFlag(RejectionFlag::InvalidCentroid, IntegratorType::PixelSum);
-            return false;
+            result.integration_flag = RejectionFlag::InvalidCentroid;
+            return result;
         }
     } else {
         cov = peak->shape().inverseMetric();
@@ -184,37 +187,37 @@ bool PixelSumIntegrator::compute(Peak3D* peak, ShapeModel*, const IntegrationReg
 
     // center of mass is consistent
     if (std::isnan(center.norm())) {
-        peak->setIntegrationFlag(RejectionFlag::InvalidCentroid, IntegratorType::PixelSum);
-        return false;
+        result.integration_flag = RejectionFlag::InvalidCentroid;
+        return result;
     }
 
     if (!peak->shape().isInside(center)) {
-        peak->setIntegrationFlag(RejectionFlag::InvalidCentroid, IntegratorType::PixelSum);
-        return false;
+        result.integration_flag = RejectionFlag::InvalidCentroid;
+        return result;
     }
 
-    Eigen::Matrix3d A0 = peak->shape().metric();
-    Eigen::Matrix3d A1 = cov.inverse();
+    const Eigen::Matrix3d A0 = peak->shape().metric();
+    const Eigen::Matrix3d A1 = cov.inverse();
     const double dA = (A1 - A0).norm() / A0.norm();
 
     // check that the covariance is consistent
     if (!(dA < 2.0)) {
-        peak->setIntegrationFlag(RejectionFlag::InvalidCovariance, IntegratorType::PixelSum);
-        return false;
+        result.integration_flag = RejectionFlag::InvalidCovariance;
+        return result;
     }
 
     // shape is not too small or too large
-    Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d> solver(cov);
+    const Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d> solver(cov);
     const auto& w = solver.eigenvalues();
     if (w.minCoeff() < 0.1 || w.maxCoeff() > 100) {
-        peak->setIntegrationFlag(RejectionFlag::InvalidShape, IntegratorType::PixelSum);
-        return false;
+        result.integration_flag = RejectionFlag::InvalidShape;
+        return result;
     }
 
-    peak->setShape(Ellipsoid(center, A1));
+    result.shape = Ellipsoid(center, A1);
 
-    size_t nframes = size_t(f_max - f_min) + 1;
-    _rockingCurve.resize(nframes);
+    const size_t nframes = size_t(f_max - f_min) + 1;
+    result.rocking_curve.resize(nframes);
 
     std::vector<double> intensity_per_frame(nframes, 0.0);
     std::vector<double> n_peak_points_per_frame(nframes, 0.0);
@@ -236,12 +239,12 @@ bool PixelSumIntegrator::compute(Peak3D* peak, ShapeModel*, const IntegrationReg
     for (int i = 0; i < nframes; ++i) {
         const double corrected_intensity =
             intensity_per_frame[i] - n_peak_points_per_frame[i] * mean_bkg;
-        _rockingCurve[i] = Intensity(corrected_intensity, sqrt(corrected_intensity));
+        result.rocking_curve[i] = Intensity(corrected_intensity, sqrt(corrected_intensity));
     }
-    _profileIntensity = {};
-    _profileBackground = {};
+    result.profile_intensity = {};
+    result.profile_background = {};
 
-    return true;
+    return result;
 }
 
 } // namespace ohkl

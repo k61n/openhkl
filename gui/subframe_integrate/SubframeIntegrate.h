@@ -165,7 +165,8 @@ class SubframeIntegrate : public QWidget {
         {ohkl::IntegratorType::Gaussian, "Gaussian integrator"},
         {ohkl::IntegratorType::ISigma, "I/Sigma integrator"},
         {ohkl::IntegratorType::Profile1D, "1D Profile integrator"},
-        {ohkl::IntegratorType::Profile3D, "3D Profile integrator"}};
+        {ohkl::IntegratorType::Profile3D, "3D Profile integrator"},
+        {ohkl::IntegratorType::Shape, "Shape model integrator"}};
 
     const std::map<ohkl::GradientKernel, QString> _kernel_description{
         {ohkl::GradientKernel::CentralDifference, "Central difference"},

@@ -20,14 +20,46 @@
 #include "core/peak/IntegrationRegion.h"
 #include "core/peak/Intensity.h"
 
+#include <optional>
+
 namespace ohkl {
 
 enum class Level;
+enum class RejectionFlag;
 
-enum class IntegratorType { PixelSum = 0, Gaussian, ISigma, Profile1D, Profile3D, Count };
+enum class IntegratorType { PixelSum = 0, Gaussian, ISigma, Profile1D, Profile3D, Shape, Count };
 
 /*! \addtogroup python_api
  *  @{*/
+
+//! Return value of all integrator compute methods. Contains any mutable data from integration.
+struct ComputeResult {
+    //! Construct an invalid result by default
+    ComputeResult();
+    ComputeResult(const ComputeResult& other) = default;
+    ComputeResult& operator=(const ComputeResult& other) = default;
+
+    //! Rejection flag for integration
+    RejectionFlag integration_flag;
+    //! Pixel sum integrated intensity after background subtraction
+    Intensity sum_intensity;
+    //! Profile integrated intensity after background correction
+    Intensity profile_intensity;
+    //! Mean local pixel sum background of peak. The uncertainty is the uncertainty of the
+    //! _estimate_ of the background.
+    Intensity sum_background;
+    //! Profile integrated background of peak. The uncertainty is the uncertainty of the
+    //! _estimate_ of the background.
+    Intensity profile_background;
+    //! Mean gradient of background (Gaussian statistics)
+    Intensity bkg_gradient;
+    //! The rocking curve of the peak.
+    std::vector<Intensity> rocking_curve;
+    //! Type of integrator used
+    IntegratorType integrator_type;
+    //! Shape of peak when centre/covariance are changed during integration
+    std::optional<Ellipsoid> shape;
+};
 
 //! Structure containing parameters for all integrators
 struct IntegrationParameters {
@@ -90,46 +122,41 @@ class ShapeModel;
 class IIntegrator {
  public:
     IIntegrator();
-    virtual ~IIntegrator();
-    //! Integrate all peaks in the list which are contained in the specified data set.
+    virtual ~IIntegrator() = default;
+    //! Integrate a vector of peaks
     void integrate(std::vector<Peak3D*> peaks, ShapeModel* shape_model, sptrDataSet data);
-    const std::vector<Intensity>& rockingCurve() const;
+    //! Thread-parallel integrate
+    void parallelIntegrate(std::vector<Peak3D*> peaks, ShapeModel* shape_model, sptrDataSet data);
     //! Set the progress handler.
     void setHandler(sptrProgressHandler handler);
+    //! Assign a parameter set to the integrator
+    void setParameters(const IntegrationParameters& params);
+    //! Toggle parallel integration
+    void setParallel(bool parallel) { _thread_parallel = parallel; };
+    //! Remove overlapping peak intensity regions
+    void removeOverlaps(const std::map<Peak3D*, std::unique_ptr<IntegrationRegion>>& regions);
 
  protected:
-    //! If IntegratorType != PixelSum, check whether we should profile integrate this peak
-    bool reintegrate(Peak3D* peak);
-
-    //! Mean local pixel sum background of peak. The uncertainty is the uncertainty of the
-    //! _estimate_ of the background.
-    Intensity _sumBackground;
-    //! Profile integrated background of peak. The uncertainty is the uncertainty of the
-    //! _estimate_ of the background.
-    Intensity _profileBackground;
-    //! Mean gradient of background (Gaussian statistics)
-    Intensity _meanBkgGradient;
-    //! Pixel sum integrated intensity, after background correction.
-    Intensity _sumIntensity;
-    //! Profile integrated intensity, after background correction.
-    Intensity _profileIntensity;
-    //! The rocking curve of the peak.
-    std::vector<Intensity> _rockingCurve;
     //! Optional pointer to progress handler.
     sptrProgressHandler _handler;
     //! Container for user-defined integration parameters
     IntegrationParameters _params;
 
- public:
-    //! Assign a parameter set to the integrator
-    void setParameters(const IntegrationParameters& params);
+    sptrDataSet _data;
+    std::atomic_int _n_failures;
+    std::atomic_int _n_frames_done;
+    std::atomic_int _n_peaks_done;
+    bool _profile_integration;
+    double _peak_end;
+    double _bkg_begin;
+    double _bkg_end;
 
-    //! Remove overlapping peak intensity regions
-    void removeOverlaps(const std::map<Peak3D*, std::unique_ptr<IntegrationRegion>>& regions);
+    bool _thread_parallel;
+    unsigned int _max_threads;
 
  private:
     //! Compute the integrated intensity of the peak given the integration region.
-    virtual bool compute(
+    virtual ComputeResult compute(
         Peak3D* peak, ShapeModel* shape_model, const IntegrationRegion& region) = 0;
 };
 

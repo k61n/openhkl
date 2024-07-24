@@ -224,7 +224,6 @@ int RefinementBatch::qSpaceResiduals(Eigen::VectorXd& fvec) const
     UnitCell uc = _cell->fromParameters(_u0, _uOffsets, _cellParameters);
     const Eigen::Matrix3d& UB = uc.reciprocalBasis();
 
-    // #pragma omp parallel for
     for (unsigned int i = 0; i < _peaks.size(); ++i) {
         const Eigen::RowVector3d q0 = _peaks[i]->q().rowVector();
         const Eigen::RowVector3d q1 = _hkls[i] * UB;
@@ -249,7 +248,6 @@ int RefinementBatch::realSpaceResiduals(Eigen::VectorXd& fvec) const
     UnitCell uc = _cell->fromParameters(_u0, _uOffsets, _cellParameters);
     const Eigen::Matrix3d& UB = uc.reciprocalBasis();
 
-    // #pragma omp parallel for
     for (unsigned int i = 0; i < _peaks.size(); ++i) {
         const Eigen::RowVector3d x0 = _peaks[i]->shape().center();
         auto data = _peaks[i]->dataSet();

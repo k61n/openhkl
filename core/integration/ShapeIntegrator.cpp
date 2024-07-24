@@ -15,6 +15,7 @@
 #include "core/integration/ShapeIntegrator.h"
 #include "base/geometry/Ellipsoid.h"
 #include "core/data/DataSet.h"
+#include "core/integration/IIntegrator.h"
 #include "core/peak/Intensity.h"
 #include "core/peak/Peak3D.h"
 #include "core/peak/PeakCoordinateSystem.h"
@@ -26,7 +27,7 @@ namespace ohkl {
 
 ShapeIntegrator::ShapeIntegrator(
     ShapeModel* lib, const AABB& aabb, int nx, int ny, int nz, int subdiv)
-    : PixelSumIntegrator(false, false)
+    : PixelSumIntegrator()
     , _shape_model(lib)
     , _aabb(aabb)
     , _nx(nx)
@@ -36,34 +37,32 @@ ShapeIntegrator::ShapeIntegrator(
 {
 }
 
-bool ShapeIntegrator::compute(
+ComputeResult ShapeIntegrator::compute(
     Peak3D* peak, ShapeModel* shape_model, const IntegrationRegion& region)
 {
+    ComputeResult result;
+    result.integrator_type = IntegratorType::Shape;
+
     const UnitCell* uc = peak->unitCell();
     auto data = peak->dataSet();
 
     if (!uc) {
-        peak->setIntegrationFlag(RejectionFlag::NoUnitCell, IntegratorType::PixelSum);
-        return false;
+        result.integration_flag = RejectionFlag::NoUnitCell;
+        return result;
     }
 
-    if (!data) {
-        peak->setIntegrationFlag(RejectionFlag::NoDataSet, IntegratorType::PixelSum);
-        return false;
-    }
+    const ComputeResult pxsum_result = PixelSumIntegrator::compute(peak, shape_model, region);
 
-    PixelSumIntegrator::compute(peak, shape_model, region);
-
-    const double mean_bkg = _sumBackground.value();
+    const double mean_bkg = pxsum_result.sum_background.value();
     const auto& events = region.peakData().events();
     const auto& counts = region.peakData().counts();
 
     Profile3D profile(_aabb, _nx, _ny, _nz);
     // todo: don't use default constructor!
-    Profile1D integrated_profile(_sumBackground, region.peakEnd());
-    PeakCoordinateSystem frame(peak);
+    Profile1D integrated_profile(pxsum_result.sum_background, region.peakEnd());
+    const PeakCoordinateSystem frame(peak);
 
-    Ellipsoid e = peak->shape();
+    const Ellipsoid e = peak->shape();
 
     for (size_t i = 0; i < events.size(); ++i) {
         const auto& ev = events[i];
@@ -87,7 +86,7 @@ bool ShapeIntegrator::compute(
     }
     if (profile.normalize())
         _shape_model->addPeak(peak, std::move(profile), std::move(integrated_profile));
-    return true;
+    return result;
 }
 
 const ShapeModel* ShapeIntegrator::shapeModel() const

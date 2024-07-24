@@ -17,6 +17,7 @@
 
 #include "core/experiment/Experiment.h"
 #include "core/experiment/Integrator.h"
+#include "core/integration/IIntegrator.h"
 #include "core/shape/PeakCollection.h"
 #include "core/shape/ShapeModel.h"
 #include "gui/MainWin.h" // gGui
@@ -410,7 +411,7 @@ void SubframeIntegrate::setIntegrateUp()
     _use_max_width->setToolTip("Skip integration of peaks spanning too many images");
 
     _max_width = new SafeSpinBox();
-    _max_width->setMaximum(20);
+    _max_width->setMaximum(100);
 
     label = new QLabel("Maximum width");
     label->setToolTip("Maximum width for peak to be integrated");
@@ -441,6 +442,8 @@ void SubframeIntegrate::setIntegrateUp()
     for (std::size_t idx = 0; idx < static_cast<int>(ohkl::IntegratorType::Count); ++idx) {
         const std::string integrator_type =
             _integrator_strings.at(static_cast<ohkl::IntegratorType>(idx));
+        if (static_cast<ohkl::IntegratorType>(idx) == ohkl::IntegratorType::Shape)
+            continue;
         _integrator_combo->addItem(QString::fromStdString(integrator_type));
     }
 

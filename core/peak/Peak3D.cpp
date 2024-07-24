@@ -61,6 +61,7 @@ const std::map<RejectionFlag, std::string> Peak3D::_rejection_map{
     {RejectionFlag::NoShapeModel, "No shape model found"},
     {RejectionFlag::NoISigmaMinimum, "Failed to find minimum of I/Sigma"},
     {RejectionFlag::TooWide, "Bounding box spans too many images"},
+    {RejectionFlag::BadGaussianFit, "Unable to fit Gaussian to peak"},
     {RejectionFlag::PredictionUpdateFailure, "Failure updating prediction post-refinement"},
     {RejectionFlag::ManuallyRejected, "Manually unselected by user"},
     {RejectionFlag::OutsideIndexingTol, "Outside indexing tolerance"},
@@ -110,26 +111,26 @@ Peak3D::Peak3D(sptrDataSet data, const MillerIndex& hkl)
 }
 
 Peak3D::Peak3D(std::shared_ptr<ohkl::Peak3D> peak)
+    : _sumIntensity(peak->sumIntensity())
+    , _profileIntensity(peak->profileIntensity())
+    , _sumBackground(peak->sumBackground())
+    , _profileBackground(peak->profileBackground())
+    , _meanBkgGradient(peak->meanBkgGradient())
+    , _peakEnd(peak->peakEnd())
+    , _bkgBegin(peak->bkgBegin())
+    , _bkgEnd(peak->bkgEnd())
+    , _regionType(peak->regionType())
+    , _hkl(peak->hkl())
+    , _unitCell(peak->_unitCell)
+    , _scale(peak->scale())
+    , _caught_by_filter(false)
+    , _rejected_by_filter(false)
+    , _transmission(peak->transmission())
+    , _data(peak->dataSet())
+    , _rockingCurve(peak->rockingCurve())
+
 {
     setShape(peak->shape());
-    _sumIntensity = peak->sumIntensity();
-    _profileIntensity = peak->profileIntensity();
-    _sumBackground = peak->sumBackground();
-    _profileBackground = peak->profileBackground();
-    _meanBkgGradient = peak->meanBkgGradient();
-    _peakEnd = peak->peakEnd();
-    _bkgBegin = peak->bkgBegin();
-    _bkgEnd = peak->bkgEnd();
-    _regionType = peak->regionType();
-    _unitCell = peak->_unitCell;
-    _scale = peak->scale();
-    _transmission = peak->transmission();
-    _data = peak->dataSet();
-    _rockingCurve = peak->rockingCurve();
-    _hkl = peak->hkl();
-
-    _caught_by_filter = false;
-    _rejected_by_filter = false;
 }
 
 void Peak3D::setShape(const Ellipsoid& shape)
@@ -164,8 +165,7 @@ const UnitCell* Peak3D::unitCell() const
 {
     if (auto uc = _unitCell.lock())
         return uc.get();
-    else
-        return nullptr;
+    return nullptr;
 }
 
 Intensity Peak3D::correctedIntensity(const Intensity& intensity) const
@@ -173,16 +173,16 @@ Intensity Peak3D::correctedIntensity(const Intensity& intensity) const
     auto c = _shape.center();
     auto state = InterpolatedState::interpolate(_data->instrumentStates(), c[2]);
     if (!state.isValid()) // Interpolation error
-        return Intensity();
+        return {};
 
     auto diff = state.diffractometer();
     if (diff == nullptr) {
-        return Intensity();
+        return {};
     }
 
     auto detector = diff->detector();
     if (detector == nullptr) {
-        return Intensity();
+        return {};
     }
 
     const double lorentz = state.lorentzFactor(c[0], c[1]);
@@ -235,35 +235,39 @@ void Peak3D::reject(RejectionFlag flag)
 }
 
 void Peak3D::updateIntegration(
-    const std::vector<Intensity>& rockingCurve, const Intensity& sumBkg, const Intensity& profBkg,
-    const Intensity& meanBkgGradient, const Intensity& sumInt, const Intensity& profInt,
-    double peakEnd, double bkgBegin, double bkgEnd, const RegionType& regionType)
+    const ComputeResult& result, double peakEnd, double bkgBegin, double bkgEnd,
+    const RegionType& regionType)
 {
-    _rockingCurve = rockingCurve;
-    _meanBkgGradient = meanBkgGradient;
-    if (sumBkg.isValid())
-        _sumBackground = sumBkg;
-    if (sumInt.isValid()) { // Default intensity constructor is zero, _valid = false
-        if (sumInt.sigma() < _sigma2_eps) // NaN sigma handled by Intensity constructor
-            setIntegrationFlag(RejectionFlag::InvalidSigma, IntegratorType::PixelSum);
-        else
-            _sumIntensity = sumInt;
-    }
-    if (profBkg.isValid())
-        _profileBackground = profBkg;
-    if (profInt.isValid()) {
-        if (profInt.sigma() < _sigma2_eps) // NaN sigma handled by Intensity constructor
-            setIntegrationFlag(RejectionFlag::InvalidSigma, IntegratorType::Profile3D);
-        else
-            _profileIntensity = profInt;
-    }
+    if (result.integrator_type == IntegratorType::Shape)
+        return;
 
-    //_sumIntensity = integrator.peakIntensity(); // TODO: test, reactivate ???
-    //_shape = integrator.fitShape(); // TODO: test, reactivate ???
     _peakEnd = peakEnd;
     _bkgBegin = bkgBegin;
     _bkgEnd = bkgEnd;
     _regionType = regionType;
+    _rockingCurve = result.rocking_curve;
+
+    if (result.integrator_type == IntegratorType::PixelSum)
+        _meanBkgGradient = result.bkg_gradient;
+
+    if (result.shape)
+        setShape(result.shape.value());
+
+    setIntegrationFlag(result.integration_flag, result.integrator_type, true);
+
+    if (result.sum_background.isValid())
+        _sumBackground = result.sum_background;
+
+    if (result.sum_intensity.isValid())
+        _sumIntensity = result.sum_intensity;
+
+    if (result.profile_background.isValid())
+        _profileBackground = result.profile_background;
+
+    if (result.profile_intensity.isValid())
+        _profileIntensity = result.profile_intensity;
+
+    //_shape = integrator.fitShape(); // TODO: test, reactivate ???
 }
 
 ReciprocalVector Peak3D::q() const
@@ -276,7 +280,7 @@ ReciprocalVector Peak3D::q() const
 
 double Peak3D::d() const
 {
-    double modq = q().rowVector().norm();
+    const double modq = q().rowVector().norm();
     if (modq < _sigma2_eps)
         return 0.0;
     return 1.0 / modq;
@@ -311,15 +315,15 @@ Ellipsoid Peak3D::qShape() const
         throw std::range_error("Interpolation error");
     }
 
-    Eigen::Vector3d q0 = q().rowVector();
+    const Eigen::Vector3d q0 = q().rowVector();
 
     // Jacobian of map from detector coords to sample q space
-    Eigen::Matrix3d J = state.jacobianQ(p[0], p[1]);
+    const Eigen::Matrix3d J = state.jacobianQ(p[0], p[1]);
     const Eigen::Matrix3d JI = J.inverse();
 
     // inverse covariance matrix in sample q space
     const Eigen::Matrix3d q_inv_cov = JI.transpose() * _shape.metric() * JI;
-    return Ellipsoid(q0, q_inv_cov);
+    return {q0, q_inv_cov};
 }
 
 bool Peak3D::caughtByFilter() const
@@ -389,7 +393,7 @@ const MillerIndex& Peak3D::hkl() const
 void Peak3D::setMillerIndices()
 {
     if (unitCell()) {
-        ReciprocalVector rv = q();
+        const ReciprocalVector rv = q();
         if (rv.isValid()) {
             _hkl = MillerIndex(q(), *unitCell());
         } else {
@@ -427,6 +431,13 @@ void Peak3D::setIntegrationFlag(
                 _profile_integration_flag = flag;
         }
     }
+}
+
+void Peak3D::setMasked()
+{
+    _rejection_flag = RejectionFlag::Masked;
+    _sum_integration_flag = RejectionFlag::Masked;
+    _profile_integration_flag = RejectionFlag::Masked;
 }
 
 RejectionFlag Peak3D::rejectionFlag() const
@@ -471,14 +482,15 @@ std::string Peak3D::rejectionString() const
 std::string Peak3D::toString() const
 {
     std::ostringstream oss;
-    // h, k, l, x, y, frame, intensity, sigma
-    oss << std::fixed << std::setw(5) << _hkl.h() << std::fixed << std::setw(5) << _hkl.k()
-        << std::fixed << std::setw(5) << _hkl.l() << std::fixed << std::setw(10)
-        << std::setprecision(2) << shape().center()[0] << std::fixed << std::setw(10)
-        << std::setprecision(2) << shape().center()[1] << std::fixed << std::setw(10)
-        << std::setprecision(2) << shape().center()[2] << std::fixed << std::setw(10)
-        << std::setprecision(2) << correctedSumIntensity().value() << std::fixed << std::setw(10)
-        << std::setprecision(2) << correctedSumIntensity().sigma();
+    // d, h, k, l, x, y, frame, intensity, sigma
+    oss << std::fixed << std::setw(8) << std::setprecision(3) << d()
+        << std::fixed << std::setw(5) << _hkl.h()
+        << std::fixed << std::setw(5) << _hkl.k() << std::fixed << std::setw(5) << _hkl.l()
+        << std::fixed << std::setw(10) << std::setprecision(2) << shape().center()[0]
+        << std::fixed << std::setw(10) << std::setprecision(2) << shape().center()[1]
+        << std::fixed << std::setw(10) << std::setprecision(2) << shape().center()[2]
+        << std::fixed << std::setw(14) << std::setprecision(2) << correctedSumIntensity().value()
+        << std::fixed << std::setw(10) << std::setprecision(2) << correctedSumIntensity().sigma();
     return oss.str();
 }
 

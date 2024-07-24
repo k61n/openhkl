@@ -15,19 +15,19 @@
 #define OPENHKL_CORE_EXPERIMENT_INTEGRATOR_H
 
 #include "core/data/DataTypes.h"
-#include "core/integration/IIntegrator.h"
+#include "core/integration/IntegratorFactory.h"
 
 #include <map>
 #include <string>
 
 namespace ohkl {
 
-using IntegratorMap = std::map<IntegratorType, std::unique_ptr<ohkl::IIntegrator>>;
-
 class PeakCollection;
 class PeakFinder;
 class DataHandler;
+class IIntegrator;
 struct ShapeModelParameters;
+struct IntegrationParameters;
 
 /*! \addtogroup python_api
  *  @{*/
@@ -54,13 +54,14 @@ class Integrator {
     void integratePeaks(IntegratorType integrator_type, sptrDataSet data, PeakCollection* peaks);
     //! Integrate a peak collection
     void integratePeaks(
-        sptrDataSet data, PeakCollection* peaks, IntegrationParameters* params, ShapeModel* shapes);
+        sptrDataSet data, PeakCollection* peaks, IntegrationParameters* params, ShapeModel* shapes,
+        bool parallel = true);
     //! Integrate peaks found by _peak_finder
-    void integrateFoundPeaks(PeakFinder* peak_finder);
+    void integrateFoundPeaks(PeakFinder* peak_finder, bool parallel = true);
     //! Integrate the shape collection
     void integrateShapeModel(
         std::vector<Peak3D*> peaks, sptrDataSet data, ShapeModel* shape_model, const AABB& aabb,
-        const ShapeModelParameters& params);
+        const ShapeModelParameters& params, bool parallel = true);
     //! Set the parameters
     void setParameters(std::shared_ptr<IntegrationParameters> params);
     //! Get the parameters
@@ -75,12 +76,13 @@ class Integrator {
 
  private:
     sptrProgressHandler _handler;
-    IntegratorMap _integrator_map;
     std::shared_ptr<DataHandler> _data_handler;
     std::shared_ptr<IntegrationParameters> _params;
 
     unsigned int _n_peaks;
     unsigned int _n_valid;
+
+    IntegratorFactory _factory;
 };
 
 /*! @}*/

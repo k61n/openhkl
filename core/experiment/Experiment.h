@@ -43,6 +43,7 @@ class Refiner;
 class ShapeHandler;
 class ShapeModel;
 class UnitCellHandler;
+struct DataReaderParameters;
 struct ShapeModelParameters;
 
 using DataMap = std::map<std::string, sptrDataSet>;
@@ -90,6 +91,9 @@ class Experiment {
     };
     //! get pointer to ShapeModel parameters
     std::shared_ptr<ShapeModelParameters> shapeParameters() const { return _shape_params; };
+
+    //! Get a pointer to the data reader parameters
+    DataReaderParameters* dataReaderParameters() const {return _data_reader_params.get(); };
 
     // Data handler
     //! Get the map of data sets from the handler
@@ -295,6 +299,9 @@ class Experiment {
 
     // ShapeModel parameters, since there is no experiment-level container
     std::shared_ptr<ShapeModelParameters> _shape_params;
+
+    // Data reader parameters, since there is nowhere else to store this
+    std::unique_ptr<DataReaderParameters> _data_reader_params;
 
     bool _strategy;
 };
