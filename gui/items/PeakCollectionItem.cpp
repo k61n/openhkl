@@ -65,10 +65,13 @@ void PeakCollectionItem::setPeakCollection(
 
     _peak_items.clear();
 
-    for (auto* peak : peak_list) {
-        auto item = std::make_unique<PeakItem>(peak);
-        _peak_items.push_back(std::move(item));
-    }
+    ohkl::parallel_for(peak_list.size(), [&](int start, int end) {
+        for (std::size_t idx = start; idx < end; ++idx) {
+            ohkl::Peak3D* peak = peak_list.at(idx);
+            auto item = std::make_unique<PeakItem>(peak);
+            _peak_items.push_back(std::move(item));
+        }
+    }, thread_parallel);
 }
 
 std::string PeakCollectionItem::name() const

@@ -55,7 +55,7 @@ void UnitTest_PixelSumIntegrator::run()
         region.advanceFrame(current_frame, mask, idx);
     }
 
-    PixelSumIntegrator integrator(true, true);
+    PixelSumIntegrator integrator;
     integrator.compute(ref_peak, nullptr, region);
 
     CHECK(ref_peak->sumIntensity().value() == Approx(3794.3458457107).epsilon(eps));
