@@ -14,6 +14,7 @@
 
 #include "core/experiment/Experiment.h"
 
+#include "InstrumentParameters.h"
 #include "base/utils/Logger.h"
 #include "base/utils/Path.h" // tempFilename
 #include "core/algo/AutoIndexer.h"
@@ -140,7 +141,15 @@ Diffractometer* Experiment::getDiffractometer()
 
 void Experiment::setDiffractometer(const std::string& diffractometerName)
 {
-    _diffractometer.reset(Diffractometer::create(diffractometerName));
+    YAML::Node instrumentDefinition = Instrument::findResource(diffractometerName);
+    _diffractometer.reset(new Diffractometer(instrumentDefinition[ohkl::ym_instrument]));
+    ExperimentYAML yaml(instrumentDefinition);
+    yaml.grabPeakFinderParameters(_peak_finder->parameters());
+    yaml.grabAutoindexerParameters(_auto_indexer->parameters());
+    yaml.grabShapeParameters(_shape_params.get());
+    yaml.grabPredictorParameters(_predictor->parameters());
+    yaml.grabIntegrationParameters(_integrator->parameters());
+    yaml.grabMergeParameters(_peak_merger->parameters());
 }
 
 bool Experiment::acceptFoundPeaks(const std::string& name)

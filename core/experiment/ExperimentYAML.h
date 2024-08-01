@@ -17,6 +17,7 @@
 
 #include "base/utils/Logger.h"
 
+#include <yaml-cpp/node/node.h>
 #include <yaml-cpp/yaml.h>
 
 #include <string>
@@ -43,6 +44,7 @@ struct ShapeModelParameters;
 class ExperimentYAML {
  public:
     ExperimentYAML(const std::string& filename);
+    ExperimentYAML(const YAML::Node& node);
 
     //! Get parameters from data reader
     void grabDataReaderParameters(DataReaderParameters* params) const;

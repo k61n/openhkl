@@ -45,6 +45,13 @@ ExperimentYAML::ExperimentYAML(const std::string& filename)
     }
 }
 
+ExperimentYAML::ExperimentYAML(const YAML::Node& node)
+{
+    if (!node["Experiment"])
+        _node["Experiment"] = YAML::Null;
+    _node = node;
+}
+
 void ExperimentYAML::grabDataReaderParameters(DataReaderParameters* params) const
 {
     ohklLog(Level::Info, "ExperimentYAML::grabDataReaderParameters: reading parameters from yml");
