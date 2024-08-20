@@ -146,7 +146,7 @@ void Experiment::setDiffractometer(const std::string& diffractometerName)
     ExperimentYAML yaml(instrumentDefinition);
     yaml.grabPeakFinderParameters(_peak_finder->parameters());
     yaml.grabAutoindexerParameters(_auto_indexer->parameters());
-    yaml.grabShapeParameters(_shape_params.get());
+    yaml.grabShapeParameters(_shape_model_builder->parameters());
     yaml.grabPredictorParameters(_predictor->parameters());
     yaml.grabIntegrationParameters(_integrator->parameters());
     yaml.grabMergeParameters(_peak_merger->parameters());

@@ -96,6 +96,7 @@ TEST_CASE("test/data/TestSingleFrameIndex.cpp", "")
     indexer_params->d_min = 1.5;
     indexer_params->d_max = 50.0;
     indexer_params->nVertices = 10000;
+    indexer_params->peaks_integrated = false;
 
     ohkl::UnitCell reference_cell;
     reference_cell.setParameters(
