@@ -43,7 +43,7 @@ class ImageReaderDialog : public QDialog {
     //! Disable widgets that are relevant for multiple images only
     void setSingleImageMode(bool single_image);
     //! Return a copy of the DataReaderParameters object
-    ohkl::DataReaderParameters dataReaderParameters();
+    void grabDataReaderParameters(ohkl::DataReaderParameters* params);
     //! Allows to select Detector resolution
     void selectDetectorResolution();
 

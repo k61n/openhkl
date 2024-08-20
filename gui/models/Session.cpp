@@ -355,7 +355,7 @@ bool Session::loadImages(ohkl::DataFormat format, bool single_file /* = false */
 
     ohkl::Experiment* exp = currentProject()->experiment();
     ohkl::Detector* detector = exp->getDiffractometer()->detector();
-    ohkl::DataReaderParameters params;
+    ohkl::DataReaderParameters* params = exp->dataReaderParameters();
 
     try {
         // Get a list of input filenames from dialog.
@@ -373,11 +373,11 @@ bool Session::loadImages(ohkl::DataFormat format, bool single_file /* = false */
         const QString yml_path = QDir(path).filePath(yml_file);
         const QFileInfo info(yml_path);
         if (info.exists() && info.isFile())
-            params.loadFromYAML(yml_path.toStdString());
+            params->loadFromYAML(yml_path.toStdString());
 
         // Get the experiment parameters
         ImageReaderDialog dialog(
-            filenames, static_cast<ohkl::DataReaderParameters*>(&params), format);
+            filenames, static_cast<ohkl::DataReaderParameters*>(params), format);
 
         dialog.setWindowTitle("Image reader parameters");
         dialog.setSingleImageMode(single_file);
@@ -386,33 +386,33 @@ bool Session::loadImages(ohkl::DataFormat format, bool single_file /* = false */
             return false;
 
         currentProject()->setDirectory(path);
-        params = dialog.dataReaderParameters();
-        detector->setBaseline(params.baseline);
-        detector->setGain(params.gain);
+        dialog.grabDataReaderParameters(params);
+        detector->setBaseline(params->baseline);
+        detector->setGain(params->gain);
 
         if (single_file) {
             const std::shared_ptr<ohkl::DataSet> dataset{
-                std::make_shared<ohkl::SingleFrame>(params.dataset_name, exp->getDiffractometer())};
-            dataset->setImageReaderParameters(params);
+                std::make_shared<ohkl::SingleFrame>(params->dataset_name, exp->getDiffractometer())};
+            dataset->setImageReaderParameters(*params);
             dataset->addFrame(filenames[0].toStdString(), format);
             dataset->finishRead();
-            params.cols = dataset->nCols();
-            params.rows = dataset->nRows();
+            params->cols = dataset->nCols();
+            params->rows = dataset->nRows();
             exp->addData(dataset);
         } else {
             const std::shared_ptr<ohkl::DataSet> dataset{
-                std::make_shared<ohkl::DataSet>(params.dataset_name, exp->getDiffractometer())};
-            dataset->setImageReaderParameters(params);
+                std::make_shared<ohkl::DataSet>(params->dataset_name, exp->getDiffractometer())};
+            dataset->setImageReaderParameters(*params);
             for (const auto& filename : filenames)
                 dataset->addFrame(filename.toStdString(), format);
             dataset->finishRead();
-            params.cols = dataset->nCols();
-            params.rows = dataset->nRows();
+            params->cols = dataset->nCols();
+            params->rows = dataset->nRows();
             exp->addData(dataset);
         }
 
         ohkl::ExperimentYAML yaml(yml_path.toStdString());
-        yaml.setDataReaderParameters(&params);
+        yaml.setDataReaderParameters(params);
         yaml.writeFile(yml_path.toStdString());
         onDataChanged();
     } catch (std::exception& e) {
