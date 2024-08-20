@@ -143,17 +143,17 @@ Diffractometer* InstrumentState::diffractometer()
 InstrumentState InstrumentState::state(
     Diffractometer* const diffractometer, const std::size_t frame_idx)
 {
-    assert(frame_idx < diffractometer->sampleStates.size());
-    assert(frame_idx < diffractometer->detectorStates.size());
+    assert(frame_idx < diffractometer->sampleAngles().size());
+    assert(frame_idx < diffractometer->detectorAngles().size());
 
     // compute transformations
     const auto& detector_gonio = diffractometer->detector()->gonio();
     const auto& sample_gonio = diffractometer->sample().gonio();
 
     Eigen::Transform<double, 3, Eigen::Affine> detector_trans =
-        detector_gonio.affineMatrix(diffractometer->detectorStates[frame_idx]);
+        detector_gonio.affineMatrix(diffractometer->detectorAngles()[frame_idx]);
     Eigen::Transform<double, 3, Eigen::Affine> sample_trans =
-        sample_gonio.affineMatrix(diffractometer->sampleStates[frame_idx]);
+        sample_gonio.affineMatrix(diffractometer->sampleAngles()[frame_idx]);
 
     InstrumentState state_(const_cast<Diffractometer*>(diffractometer));
     state_.detectorOrientation = detector_trans.rotation();

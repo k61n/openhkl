@@ -153,36 +153,10 @@ void TiffDataReader::addFrame(const std::string& filename)
     _dataset_out->metadata().add<int>(ohkl::at_frameCount, nframes);
     _dataset_out->datashape[2] = nframes;
 
-    const auto& detector_gonio = _dataset_out->diffractometer()->detector()->gonio();
-    size_t n_detector_gonio_axes = detector_gonio.nAxes();
-
-    const auto& sample_gonio = _dataset_out->diffractometer()->sample().gonio();
-    size_t n_sample_gonio_axes = sample_gonio.nAxes();
-
-    int omega_idx = -1, phi_idx = -1, chi_idx = -1;
-    for (size_t i = 0; i < n_sample_gonio_axes; ++i) {
-        const std::string axis_name = sample_gonio.axis(i).name();
-        omega_idx = axis_name == ohkl::ax_omega ? int(i) : omega_idx;
-        chi_idx = axis_name == ohkl::ax_chi ? int(i) : chi_idx;
-        phi_idx = axis_name == ohkl::ax_phi ? int(i) : phi_idx;
-    }
-
-    if (omega_idx == -1 || phi_idx == -1 || chi_idx == -1)
-        throw std::runtime_error("TiffDataReader::addFrame: could not find angle indices");
-
     const std::size_t idx = nframes - 1;
 
-    std::vector<double> det_states(n_detector_gonio_axes);
-    std::fill(det_states.begin(), det_states.end(), 0.0);
-    _dataset_out->diffractometer()->detectorStates.emplace_back(std::move(det_states));
-
-    std::vector<double> sample_states(n_sample_gonio_axes);
-    std::fill(sample_states.begin(), sample_states.end(), 0.0);
-    sample_states[omega_idx] = idx * _parameters.delta_omega * deg;
-    sample_states[phi_idx] = idx * _parameters.delta_phi * deg;
-    sample_states[chi_idx] = idx * _parameters.delta_chi * deg;
-
-    _dataset_out->diffractometer()->sampleStates.emplace_back(std::move(sample_states));
+    _dataset_out->diffractometer()->addSampleAngles(idx, _parameters);
+    _dataset_out->diffractometer()->addDetectorAngles(_parameters);
 }
 
 Eigen::MatrixXi TiffDataReader::data(size_t frame)

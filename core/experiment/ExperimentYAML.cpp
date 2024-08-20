@@ -58,6 +58,8 @@ void ExperimentYAML::grabDataReaderParameters(DataReaderParameters* params) cons
     params->delta_chi = getNode<double>(branch, "delta_chi");
     params->delta_omega = getNode<double>(branch, "delta_omega");
     params->delta_phi = getNode<double>(branch, "delta_phi");
+    params->twotheta_gamma = getNode<double>(branch, "twotheta_gamma");
+    params->twotheta_nu = getNode<double>(branch, "twotheta_nu");
     params->bytes_per_pixel = getNode<int>(branch, "bytes_per_pixel");
 
     auto format = getNode<std::string>(branch, "format");
@@ -96,6 +98,8 @@ void ExperimentYAML::setDataReaderParameters(DataReaderParameters* params)
     reader_node["delta_chi"] = params->delta_chi;
     reader_node["delta_omega"] = params->delta_omega;
     reader_node["delta_phi"] = params->delta_phi;
+    reader_node["twotheta_gamma"] = params->twotheta_gamma;
+    reader_node["twotheta_nu"] = params->twotheta_nu;
     reader_node["bytes_per_pixel"] = params->delta_phi;
     if (params->data_format == DataFormat::RAW) {
         reader_node["format"] = "raw";

@@ -126,10 +126,10 @@ const std::string kw_referenceUnitcell{"reference"};
 const std::string kw_logFilename{"openhkl.log"};
 
 //-- Axis names
-// detector gonio
+// detector goniometer
 const std::string ax_2thetaGamma{"2theta(gamma)"};
 const std::string ax_2thetaNu{"2theta(nu)"};
-// sample gonio
+// sample goniometer
 const std::string ax_omega{"omega"};
 const std::string ax_chi{"chi"};
 const std::string ax_phi{"phi"};

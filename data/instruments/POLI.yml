@@ -4,8 +4,8 @@ instrument:
         type: flat
         name: poli_psd
         sample_distance:
-            value: 2600.0
-            units: mm
+            value: 0.5
+            units: m
         width:
             value: 0.25
             units: m
@@ -17,7 +17,7 @@ instrument:
         nrows: [251, 0, 0]
         ncols: [251, 0, 0]
         data_ordering: TopLeftRowMajor
-        gain: 0.0
+        gain: 1.0
         baseline: 0.0
         goniometer:
             name: detector-gonio
@@ -27,30 +27,12 @@ instrument:
                   direction: [0.0,0.0,1.0]
                   clockwise: true
                   physical: true
-
-                - name: 2theta(nu)
-                  type: rotation
-                  direction: [1.0,0.0,0.0]
-                  clockwise: true
-                  physical: true
     sample:
         name: sample
         goniometer:
             name: sample-gonio
             axis:
                 - name: omega
-                  type: rotation
-                  direction: [0.0,0.0,1.0]
-                  clockwise: true
-                  physical: true
-
-                - name: chi
-                  type: rotation
-                  direction: [0.0,1.0,0.0]
-                  clockwise: false
-                  physical: true
-
-                - name: phi
                   type: rotation
                   direction: [0.0,0.0,1.0]
                   clockwise: true

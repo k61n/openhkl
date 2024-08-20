@@ -251,10 +251,7 @@ bool BaseHDF5DataReader::initRead()
         ohkl::Level::Debug, "Reading gonio state of '", _filename, "', dataset '", dataset_name,
         "'");
 
-    _dataset_out->diffractometer()->detectorStates.resize(nframes);
-
-    for (unsigned int i = 0; i < nframes; ++i)
-        _dataset_out->diffractometer()->detectorStates[i] = eigenToVector(dm.col(i));
+    _dataset_out->diffractometer()->setDetectorAngles(dm, nframes);
 
     const auto& sample_gonio = _dataset_out->diffractometer()->sample().gonio();
     size_t n_sample_gonio_axes = sample_gonio.nAxes();
@@ -291,9 +288,7 @@ bool BaseHDF5DataReader::initRead()
     // Use natural units internally (rad)
     dm *= deg;
 
-    _dataset_out->diffractometer()->sampleStates.resize(nframes);
-    for (unsigned int i = 0; i < nframes; ++i)
-        _dataset_out->diffractometer()->sampleStates[i] = eigenToVector(dm.col(i));
+    _dataset_out->diffractometer()->setSampleAngles(dm, nframes);
 
     // Read the masks
     ohklLog(

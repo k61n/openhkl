@@ -39,6 +39,8 @@ struct DataReaderParameters {
     double delta_omega = 0.0;
     double delta_chi = 0.0;
     double delta_phi = 0.0;
+    double twotheta_gamma = 0.0;
+    double twotheta_nu = 0.0;
     bool swap_endian = true;
     double baseline = 0.0;
     double gain = 1.0;

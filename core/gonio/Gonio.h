@@ -53,6 +53,9 @@ class Gonio {
     //! Gets a pointer to axis with name, throw range_error if not found
     const Axis& axis(size_t index) const;
 
+    //! Get a vector of axis names
+    std::vector<std::string> axisNames() const;
+
     //! Returns the homogeneous matrix corresponding to this set of parameters.
     //! Throw if angles outside limits.
     Eigen::Transform<double, 3, Eigen::Affine> affineMatrix(const std::vector<double>& state) const;

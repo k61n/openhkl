@@ -124,6 +124,8 @@ class AutoIndexer {
     sptrUnitCell goodSolution(const UnitCell* reference_cell, double length_tol, double angle_tol);
     //! Get a list of filtered peaks used in indexing
     std::vector<Peak3D*>* filteredPeaks() { return &_filtered_peaks; };
+    //! Filter out solutions that do not meet criteria
+    std::vector<RankedSolution> filterSolutions() const;
 
  private:
     //! Filter the peaks according to AutoIndexerParameters

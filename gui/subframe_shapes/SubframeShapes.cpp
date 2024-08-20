@@ -184,7 +184,7 @@ void SubframeShapes::setInputUp()
     _min_strength->setMaximum(10000);
     _min_d->setMaximum(1000);
     _max_d->setMaximum(10000);
-    _max_width->setMaximum(100);
+    _max_width->setMaximum(500);
     _peak_end->setMinimum(0.1);
     _peak_end->setMaximum(50);
     _peak_end->setSingleStep(0.1);

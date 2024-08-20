@@ -61,6 +61,8 @@ class ImageReaderDialog : public QDialog {
     SafeDoubleSpinBox* _chi;
     SafeDoubleSpinBox* _omega;
     SafeDoubleSpinBox* _phi;
+    SafeDoubleSpinBox* _2theta_gamma;
+    SafeDoubleSpinBox* _2theta_nu;
     SafeDoubleSpinBox* _wavelength;
     QGroupBox* _set_baseline_and_gain;
     SafeDoubleSpinBox* _baseline;

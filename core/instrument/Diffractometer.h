@@ -17,18 +17,21 @@
 
 #include "core/instrument/Sample.h"
 #include "core/instrument/Source.h"
+#include "core/loader/IDataReader.h"
 #include "core/raw/DataKeys.h"
-
 
 namespace ohkl {
 
 class Detector;
 class InstrumentState;
 
+using RowMatrixXd = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
+
 /*! \addtogroup python_api
  *  @{*/
 
-/*! \brief diffractometer setup, consisting of a sample, source, and detector.
+/*! \brief#include "core/loader/IDataReader.h"
+ diffractometer setup, consisting of a sample, source, and detector.
  *
  */
 
@@ -78,12 +81,29 @@ class Diffractometer {
     //! Sets the source of this diffractometer
     void setSource(const Source& source);
 
- public:
-    //! Vector of sample states
-    std::vector<std::vector<double>> sampleStates;
+    //! Add angles for a sample state
+    void addSampleAngles(std::size_t frame_idx, const DataReaderParameters& params);
 
-    //! Vector of detector states
-    std::vector<std::vector<double>> detectorStates;
+    //! Add angles for a given sample state
+    void addSampleAngles(const std::vector<double>& angles);
+
+    //! Add angles for a detector state
+    void addDetectorAngles(const DataReaderParameters& params);
+
+    //! Add angles for a detector state
+    void addDetectorAngles(const std::vector<double>& angles);
+
+    //! Get the sample angles
+    const std::vector<std::vector<double>>& sampleAngles() const { return _sample_angles; };
+
+    //! Get the detector angles
+    const std::vector<std::vector<double>>& detectorAngles() const { return _detector_angles; };
+
+    //! Set the sample angles
+    void setSampleAngles(const RowMatrixXd& mat, std::size_t nframes);
+
+    //! Set the detector angles
+    void setDetectorAngles(const RowMatrixXd& mat, std::size_t nframes);
 
  protected:
     //! Constructs a diffractometer with a given name
@@ -100,6 +120,12 @@ class Diffractometer {
 
     //! The neutron incoming beam
     Source _source;
+
+    //! Vector of sample states
+    std::vector<std::vector<double>> _sample_angles;
+
+    //! Vector of detector states
+    std::vector<std::vector<double>> _detector_angles;
 };
 
 /*! @}*/

@@ -395,4 +395,18 @@ sptrUnitCell AutoIndexer::goodSolution(
     return nullptr;
 }
 
+std::vector<RankedSolution> AutoIndexer::filterSolutions() const
+{
+    std::vector<RankedSolution> filtered;
+    for (const auto& solution : _solutions) {
+        if (solution.first->character().a < _params->maxdim
+            && solution.first->character().b < _params->maxdim
+            && solution.first->character().c < _params->maxdim) {
+            if (solution.first->volume() > _params->minUnitCellVolume)
+                filtered.emplace_back(solution);
+        }
+    }
+    return filtered;
+}
+
 } // namespace ohkl

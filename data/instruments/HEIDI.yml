@@ -1,24 +1,24 @@
 instrument:
-    name: BioDiff
+    name: HEIDI
     detector:
-        type: cylindrical
-        name: banana
+        type: flat
+        name: heidi_psd
         sample_distance:
-            value: 199.0
-            units: mm
-        angular_width:
-            value: 360.0
-            units: deg
+            value: 0.64
+            units: m
+        width:
+            value: 0.25
+            units: m
         height:
-            value: 0.44824
+            value: 0.15
             units: m
         row_min: 0
         col_min: 0
-        nrows: [900, 1800, 3600]
-        ncols: [2500, 5000, 10000]
+        nrows: [48, 0, 0]
+        ncols: [80, 0, 0]
         data_ordering: TopLeftRowMajor
-        gain: 7.0
-        baseline: 227.0
+        gain: 1.0
+        baseline: 0.0
         goniometer:
             name: detector-gonio
             axis:
@@ -48,12 +48,12 @@ instrument:
                 value: 1.0
                 units: mm
             wavelength:
-                value: 2.6734
+                value: 1.15
                 units: ang
             fwhm:
-                value: 0.00901
+                value: 0.03
                 units: ang
             offset_x:
-                value: -1.0
+                value: 0.0
             offset_y:
-                value: -2.0
+                value:  0.0

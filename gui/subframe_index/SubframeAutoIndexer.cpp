@@ -450,7 +450,7 @@ void SubframeAutoIndexer::runAutoIndexer()
     _peak_collection.populate(*autoindexer->filteredPeaks());
     refreshPeakTable();
 
-    _solutions = autoindexer->solutions();
+    _solutions = autoindexer->filterSolutions();
     buildSolutionsTable();
 
     autoindexer->unsetHandler();

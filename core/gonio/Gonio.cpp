@@ -76,12 +76,21 @@ const Axis& Gonio::axis(size_t index) const
     return *_axes[index];
 }
 
+std::vector<std::string> Gonio::axisNames() const
+{
+    std::vector<std::string> axis_names;
+    for (const auto& axis : _axes)
+        axis_names.emplace_back(axis->name());
+    return axis_names;
+}
+
 Eigen::Transform<double, 3, Eigen::Affine> Gonio::affineMatrix(
     const std::vector<double>& state) const
 {
     if (static_cast<size_t>(state.size()) != _axes.size())
         throw std::range_error(
-            "Trying to set Gonio '" + _name + "' with wrong number of parameters");
+            "Gonio::Transform: expected " + std::to_string(_axes.size()) + " axes, got " +
+            std::to_string(state.size()));
 
     Eigen::Transform<double, 3, Eigen::Affine> result =
         Eigen::Transform<double, 3, Eigen::Affine>::Identity();

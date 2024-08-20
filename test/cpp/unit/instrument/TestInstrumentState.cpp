@@ -44,8 +44,8 @@ int ohkl::UnitTest_DataSet::run()
     dataset_ptr->finishRead();
     experiment.addData(dataset_ptr);
 
-    auto detectorStates = dataset_ptr->_diffractometer->detectorStates;
-    auto sampleStates = dataset_ptr->_diffractometer->sampleStates;
+    auto detectorAngles = dataset_ptr->_diffractometer->detectorAngles();
+    auto sampleAngles = dataset_ptr->_diffractometer->sampleAngles();
 
     int good_states = 0;
     int total_states = 0;

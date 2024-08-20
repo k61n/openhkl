@@ -60,7 +60,7 @@ GonioFit fitSampleGonioOffsets(
 
     for (const auto& ds : dataset) {
         auto&& states = ds->instrumentStates();
-        auto&& sample_states = ds->diffractometer()->sampleStates;
+        auto&& sample_states = ds->diffractometer()->sampleAngles();
         for (size_t i = 0; i < states.size(); ++i) {
             auto state = states[i];
             if (state.refined) {
