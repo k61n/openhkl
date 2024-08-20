@@ -13,6 +13,7 @@
 //  ***********************************************************************************************
 
 #include "core/data/DataSet.h"
+#include "core/loader/IDataReader.h"
 #include "test/cpp/catch.hpp"
 #include "core/experiment/Experiment.h"
 #include "core/experiment/PeakFinder.h"
@@ -58,7 +59,7 @@ TEST_CASE("test/data/TestPeakFinder.cpp", "")
     data_params.delta_omega = 0.3;
     data->setImageReaderParameters(data_params);
     for (const auto& file : filenames)
-        data->addRawFrame(file);
+        data->addFrame(file, ohkl::DataFormat::RAW);
     data->finishRead();
     experiment.addData(data);
 

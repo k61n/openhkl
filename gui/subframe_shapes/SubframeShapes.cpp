@@ -546,7 +546,8 @@ void SubframeShapes::buildShapeModel()
         view.watch(handler);
 
         ohkl::sptrDataSet data = _data_combo->currentData();
-        _shape_model->integrate(fit_peaks, data, handler);
+        _shape_model->setHandler(handler);
+        _shape_model->integrate(fit_peaks, data);
 
         // _shape_model->updateFit(1000);
     } catch (std::exception& e) {

@@ -44,6 +44,7 @@ Detector::Detector(const YAML::Node& node) : Component(node)
 
     // detector baseline
     if (node[ym_baseline])
+
         _baseline = node[ym_baseline].as<double>();
     else
         _baseline = 0.0;

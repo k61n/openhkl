@@ -61,9 +61,7 @@ class Session {
     void removeExperiment(unsigned int id);
 
     void loadData(ohkl::DataFormat format);
-    bool loadRawData(bool single_file = false);
-    bool loadTiffData(bool single_file = false);
-    bool loadPlainTextData(bool single_file = false);
+    bool loadImages(ohkl::DataFormat format, bool single_file = false);
     void removeData();
 
     void writeYaml();

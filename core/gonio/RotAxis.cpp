@@ -58,6 +58,7 @@ Eigen::Matrix3d RotAxis::rotationMatrix(double angle) const
     Eigen::Quaterniond temp = quaternion(angle);
     return temp.toRotationMatrix();
 }
+
 Eigen::Transform<double, 3, Eigen::Affine> RotAxis::affineMatrix(double angle) const
 {
     Eigen::Transform<double, 3, Eigen::Affine> hom =

@@ -26,14 +26,7 @@
 
 namespace ohkl {
 
-class UnitTest_DataSet {
- public:
-    static int run();
-};
-
-} // namespace ohkl
-
-int ohkl::UnitTest_DataSet::run()
+TEST_CASE("test/instrument/TestInstrumentState.cpp", "")
 {
     ohkl::Experiment experiment("gal3", "BioDiff");
 
@@ -44,8 +37,8 @@ int ohkl::UnitTest_DataSet::run()
     dataset_ptr->finishRead();
     experiment.addData(dataset_ptr);
 
-    auto detectorAngles = dataset_ptr->_diffractometer->detectorAngles();
-    auto sampleAngles = dataset_ptr->_diffractometer->sampleAngles();
+    auto detectorAngles = dataset_ptr->diffractometer()->detectorAngles();
+    auto sampleAngles = dataset_ptr->diffractometer()->sampleAngles();
 
     int good_states = 0;
     int total_states = 0;
@@ -63,10 +56,6 @@ int ohkl::UnitTest_DataSet::run()
     }
     std::cout << good_states << "/" << total_states << " good states" << std::endl;
     CHECK(good_states == 3000);
-    return 0;
 }
 
-TEST_CASE("test/instrument/TestInstrumentState.cpp", "")
-{
-    ohkl::UnitTest_DataSet::run();
 }

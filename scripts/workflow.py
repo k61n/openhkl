@@ -53,7 +53,7 @@ def load_data(experiment, name, diffractometer, path):
     print(f'{len(raw_data_files)} files read')
     dataset.setRawReaderParameters(data_params)
     for filename in raw_data_files:
-        dataset.addRawFrame(str(filename))
+        dataset.addFrame(str(filename), nsx.DataFormat_RAW)
 
     dataset.finishRead()
     experiment.addData(dataset)

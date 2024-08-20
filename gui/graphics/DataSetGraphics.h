@@ -38,6 +38,8 @@ struct DetectorSceneParams;
 // Make it easier to remove direct beam
 class DirectBeamGraphic : public QGraphicsEllipseItem { };
 // Make it easier to remove contour text
+struct DetectorSceneParams;
+
 class ContourLabelItem : public QGraphicsTextItem {
  public:
     ContourLabelItem(const QString& label);

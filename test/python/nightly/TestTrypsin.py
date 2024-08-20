@@ -63,7 +63,7 @@ class TestFullWorkFlow(unittest.TestCase):
         raw_data_files = sorted(list(dir.glob('soak_9_d2*.raw')))
         dataset.setImageReaderParameters(data_params)
         for filename in raw_data_files:
-            dataset.addRawFrame(str(filename))
+            dataset.addFrame(str(filename), ohkl.DataFormat_RAW)
 
         self.assertEqual(len(raw_data_files), n_files, f"found {n_files} raw data files")
 

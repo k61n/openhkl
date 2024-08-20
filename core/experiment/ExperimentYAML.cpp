@@ -62,7 +62,7 @@ void ExperimentYAML::grabDataReaderParameters(DataReaderParameters* params) cons
     params->twotheta_nu = getNode<double>(branch, "twotheta_nu");
     params->bytes_per_pixel = getNode<int>(branch, "bytes_per_pixel");
 
-    auto format = getNode<std::string>(branch, "format");
+    std::string format = getNode<std::string>(branch, "format");
     if (format.empty())
         throw std::runtime_error("DataReader/format not specified");
     else {

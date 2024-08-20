@@ -1,0 +1,20 @@
+source:
+    name: monochromatic source
+    monochromator:
+        name: mono
+        width:
+            value: 1.0
+            units: mm
+        height:
+            value: 1.0
+            units: mm
+        wavelength:
+            value: 2.6734
+            units: ang
+        fwhm:
+            value: 0.00901
+            units: ang
+        offset_x:
+            value: -1.0
+        offset_y:
+            value: -2.0

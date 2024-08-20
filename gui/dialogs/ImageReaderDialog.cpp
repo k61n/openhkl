@@ -189,6 +189,14 @@ ImageReaderDialog::ImageReaderDialog(
                     throw std::runtime_error(
                         "ImageReaderDialog::ImageReaderDialog: invalid tiff bytes_per_pixel");
             }
+            switch (_parameters0->rebin_size) {
+                case 1: _rebin_size->setCurrentIndex(0); break;
+                case 2: _rebin_size->setCurrentIndex(1); break;
+                case 4: _rebin_size->setCurrentIndex(2); break;
+                default:
+                    throw std::runtime_error(
+                        "ImageReaderDialog::ImageReaderDialog: invalid tiff rebin_size");
+            }
             bool valid_resolution = false;
             for (int idx = 0; idx < resolutions.size(); ++idx) {
                 if (_img_res.first == resolutions[idx].first
@@ -300,43 +308,42 @@ void ImageReaderDialog::verify()
     this->accept();
 }
 
-void ImageReaderDialog::setSingleImageMode()
+void ImageReaderDialog::setSingleImageMode(bool single_image)
 {
-    _chi->setEnabled(false);
-    _phi->setEnabled(false);
-    _omega->setEnabled(false);
+    _chi->setEnabled(!single_image);
+    _phi->setEnabled(!single_image);
+    _omega->setEnabled(!single_image);
 }
 
-ohkl::DataReaderParameters ImageReaderDialog::dataReaderParameters()
+void ImageReaderDialog::grabDataReaderParameters(ohkl::DataReaderParameters* params)
 {
-    ohkl::DataReaderParameters parameters;
-    parameters.dataset_name = _datasetName->text().toStdString();
-    parameters.wavelength = _wavelength->value();
-    parameters.delta_omega = _omega->value();
-    parameters.delta_chi = _chi->value();
-    parameters.delta_phi = _phi->value();
-    parameters.twotheta_gamma = _2theta_gamma->value();
-    parameters.twotheta_nu = _2theta_nu->value();
-    parameters.swap_endian = _swapEndianness->isChecked();
-    parameters.bytes_per_pixel = bytesPerPixel();
+    params->dataset_name = _datasetName->text().toStdString();
+    params->wavelength = _wavelength->value();
+    params->delta_omega = _omega->value();
+    params->delta_chi = _chi->value();
+    params->delta_phi = _phi->value();
+    params->twotheta_gamma = _2theta_gamma->value();
+    params->twotheta_nu = _2theta_nu->value();
+    params->swap_endian = _swapEndianness->isChecked();
+    params->bytes_per_pixel = bytesPerPixel();
 
     if (_set_baseline_and_gain->isChecked()) {
-        parameters.baseline = _baseline->value();
-        parameters.gain = _gain->value();
+        params->baseline = _baseline->value();
+        params->gain = _gain->value();
     } else {
-        parameters.baseline = 0.0;
-        parameters.gain = 1.0;
+        params->baseline = 0.0;
+        params->gain = 1.0;
     }
 
     switch (_data_format) {
         case (ohkl::DataFormat::TIFF): {
-            parameters.data_format = ohkl::DataFormat::TIFF;
-            parameters.cols = _img_res.first;
-            parameters.rows = _img_res.second;
+            params->data_format = ohkl::DataFormat::TIFF;
+            params->cols = _img_res.first;
+            params->rows = _img_res.second;
             switch (_rebin_size->currentIndex()) {
-                case 0: parameters.rebin_size = 1; break;
-                case 1: parameters.rebin_size = 2; break;
-                case 2: parameters.rebin_size = 4; break;
+                case 0: params->rebin_size = 1; break;
+                case 1: params->rebin_size = 2; break;
+                case 2: params->rebin_size = 4; break;
             }
 
             auto detector =
@@ -344,27 +351,25 @@ ohkl::DataReaderParameters ImageReaderDialog::dataReaderParameters()
             auto idx = _image_resolution->currentIndex();
             detector->selectDetectorResolution(idx);
 
-            if (parameters.rebin_size != 1) {
-                detector->setNCols(detector->nCols() / parameters.rebin_size);
-                detector->setNRows(detector->nRows() / parameters.rebin_size);
+            if (params->rebin_size != 1) {
+                detector->setNCols(detector->nCols() / params->rebin_size);
+                detector->setNRows(detector->nRows() / params->rebin_size);
             }
             break;
         }
         case (ohkl::DataFormat::RAW): {
-            parameters.data_format = ohkl::DataFormat::RAW;
-            parameters.row_major = rowMajor();
+            params->data_format = ohkl::DataFormat::RAW;
+            params->row_major = rowMajor();
             break;
         }
         case (ohkl::DataFormat::PLAINTEXT): {
-            parameters.data_format = ohkl::DataFormat::PLAINTEXT;
+            params->data_format = ohkl::DataFormat::PLAINTEXT;
             break;
         }
         default:
             throw std::runtime_error(
-                "ImageReaderDialog::dataReaderParameters: Unexpected DataFormat Encountered");
+                "ImageReaderDialog::grabDataReaderParameters: Unexpected DataFormat Encountered");
     }
-
-    return parameters;
 }
 
 void ImageReaderDialog::selectDetectorResolution()

@@ -2,7 +2,7 @@
 //
 //  OpenHKL: data reduction for single crystal diffraction
 //
-//! @file      test/cpp/integrate/Test_6_12_38.cpp
+//! @file      test/cpp/integrate/TestPeakIntegration.cpp
 //! @brief     Test ...
 //!
 //! @homepage  https://openhkl.org
@@ -39,7 +39,7 @@
 #include "core/shape/ShapeModel.h"
 #include "tables/crystal/UnitCell.h"
 
-TEST_CASE("test/integrate/Test_6_12_38.cpp", "")
+TEST_CASE("test/integrate/TestPeakIntegration.cpp", "")
 {
     ohkl::Experiment experiment("gal3", "BioDiff");
 

@@ -36,6 +36,7 @@
 #include "core/instrument/Sample.h"
 #include "core/instrument/Source.h"
 #include "core/loader/HDF5DataReader.h"
+#include "core/loader/IDataReader.h"
 #include "core/loader/NexusDataReader.h"
 #include "core/loader/PlainTextReader.h"
 #include "core/loader/RawDataReader.h"
@@ -144,49 +145,32 @@ void DataSet::setImageReaderParameters(const DataReaderParameters& params)
     ohklLog(Level::Info, "DataSet '" + _name + "': DataReaderParameters set.");
 }
 
-void DataSet::addTiffFrame(const std::string& tiffilename)
+void DataSet::addFrame(const std::string& filename, const DataFormat& format)
 {
     if (!_reader)
-        setReader(DataFormat::TIFF);
+        setReader(format);
 
-    // no mixing of different data format
-    if (_dataformat != DataFormat::TIFF)
-        throw std::runtime_error(
-            "DataSet '" + _name + "': To read a tiff frame, data format must be tiff.");
+    if (_dataformat != format)
+        throw std::runtime_error("DataSet:addFrame: format does not match existing images");
 
-    TiffDataReader& tiffreader = *static_cast<TiffDataReader*>(_reader.get());
-
-    tiffreader.addFrame(tiffilename);
-}
-
-void DataSet::addRawFrame(const std::string& rawfilename)
-{
-    if (!_reader)
-        setReader(DataFormat::RAW);
-
-    // prevent mixing data formats
-    if (_dataformat != DataFormat::RAW)
-        throw std::runtime_error(
-            "DataSet '" + _name + "': To read a raw frame, data format must be raw.");
-
-    RawDataReader& rawreader = *static_cast<RawDataReader*>(_reader.get());
-
-    rawreader.addFrame(rawfilename);
-}
-
-void DataSet::addPlainTextFrame(const std::string& textfilename)
-{
-    if (!_reader)
-        setReader(DataFormat::PLAINTEXT);
-
-    // prevent mixing data formats
-    if (_dataformat != DataFormat::PLAINTEXT)
-        throw std::runtime_error(
-            "DataSet '" + _name + "': To read a plain text frame, data format must be plain text.");
-
-    PlainTextReader& textreader = *static_cast<PlainTextReader*>(_reader.get());
-
-    textreader.addFrame(textfilename);
+    switch (format) {
+    case DataFormat::TIFF: {
+        TiffDataReader& tiffreader = *static_cast<TiffDataReader*>(_reader.get());
+        tiffreader.addFrame(filename);
+        break;
+    }
+    case DataFormat::RAW: {
+        RawDataReader& rawreader = *static_cast<RawDataReader*>(_reader.get());
+        rawreader.addFrame(filename);
+        break;
+    }
+    case DataFormat::PLAINTEXT: {
+        PlainTextReader& textreader = *static_cast<PlainTextReader*>(_reader.get());
+        textreader.addFrame(filename);
+        break;
+    }
+    default: throw std::runtime_error("DataSet::addFrame: unrecognised data format");
+    }
 }
 
 Eigen::MatrixXi DataSet::frame(const std::size_t idx) const
@@ -427,7 +411,7 @@ void DataSet::initHistograms(std::size_t nbins)
 {
     double max_count = maxCount();
     for (int i = 0; i < nFrames(); ++i) {
-        gsl_histogram* h;
+        gsl_histogram* h = nullptr;
         _histograms.push_back(h);
     }
     _total_histogram = gsl_histogram_alloc(nbins);

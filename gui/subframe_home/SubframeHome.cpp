@@ -19,6 +19,7 @@
 #include "core/data/DataTypes.h"
 #include "core/experiment/Experiment.h"
 #include "core/instrument/Diffractometer.h"
+#include "core/loader/IDataReader.h"
 #include "core/shape/PeakCollection.h"
 #include "gui/MainWin.h"
 #include "gui/dialogs/ExperimentDialog.h"
@@ -833,58 +834,25 @@ void SubframeHome::addDataSet(int index)
 {
     QSignalBlocker blocker(_add_data);
     switch (index) {
-        case 1: {
-            gSession->loadTiffData(false);
-            gGui->sideBar()->refreshCurrent();
-            _add_data->setCurrentIndex(0);
-            break;
-        }
-        case 2: {
-            gSession->loadRawData(false);
-            gGui->sideBar()->refreshCurrent();
-            _add_data->setCurrentIndex(0);
-            break;
-        }
-        case 3: {
-            gSession->loadPlainTextData(false);
-            gGui->sideBar()->refreshCurrent();
-            _add_data->setCurrentIndex(0);
-            break;
-        }
-        case 4: {
-            gSession->loadData(ohkl::DataFormat::NEXUS);
-            gGui->sideBar()->refreshCurrent();
-            _add_data->setCurrentIndex(0);
-            break;
-        }
-        default: {
-        }
+        case 1: gSession->loadImages(ohkl::DataFormat::TIFF, false); break;
+        case 2: gSession->loadImages(ohkl::DataFormat::RAW, false); break;
+        case 3: gSession->loadImages(ohkl::DataFormat::PLAINTEXT, false); break;
+        case 4: gSession->loadData(ohkl::DataFormat::NEXUS); break;
+        default: {};
     }
+    gGui->sideBar()->refreshCurrent();
+    _add_data->setCurrentIndex(0);
 }
 
 void SubframeHome::addSingleImage(int index)
 {
     QSignalBlocker blocker(_add_single_image);
     switch (index) {
-        case 1: {
-            gSession->loadTiffData(true);
-            gGui->sideBar()->refreshCurrent();
-            _add_data->setCurrentIndex(0);
-            break;
-        }
-        case 2: {
-            gSession->loadRawData(true);
-            gGui->sideBar()->refreshCurrent();
-            _add_data->setCurrentIndex(0);
-            break;
-        }
-        case 3: {
-            gSession->loadPlainTextData(true);
-            gGui->sideBar()->refreshCurrent();
-            _add_data->setCurrentIndex(0);
-            break;
-        }
-        default: {
-        }
+        case 1: gSession->loadImages(ohkl::DataFormat::TIFF, true); break;
+        case 2: gSession->loadImages(ohkl::DataFormat::RAW, true); break;
+        case 3: gSession->loadImages(ohkl::DataFormat::PLAINTEXT, true); break;
+        default: {};
     }
+    gGui->sideBar()->refreshCurrent();
+    _add_data->setCurrentIndex(0);
 }

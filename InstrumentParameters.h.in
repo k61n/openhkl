@@ -34,7 +34,7 @@ static const std::map<std::string, std::string> instrument_list = {
     {"POLI", "POLI"},
     {"HEIDI", "HEIDI"},
     {"D9", "D9"},
-    {"D9_lifting arm", "D9 lifting arm"},
+    {"D9_lifting_arm", "D9 lifting arm"},
     {"D9_large", "D9 large"},
     {"D9_large_lifting_arm", "D9 large lifting arm"},
     {"D10", "D10"},

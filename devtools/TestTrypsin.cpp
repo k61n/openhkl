@@ -99,7 +99,7 @@ TEST_CASE("test/data/TestTrypsin.cpp", "")
     data_params.row_major = 900;
     new_data->setImageReaderParameters(data_params);
     for (const auto& file : filenames)
-        new_data->addRawFrame(file);
+        new_data->addFrame(file, ohkl::DataFormat::RAW);
     new_data->finishRead();
     experiment.addData(new_data);
     ohkl::sptrDataSet data = experiment.getData(data_name);

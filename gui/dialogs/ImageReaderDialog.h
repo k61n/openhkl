@@ -30,7 +30,7 @@
 
 class SafeDoubleSpinBox;
 namespace ohkl {
-class DataReaderParameters;
+struct DataReaderParameters;
 }
 
 //! Dialog to either get *.raw or *.tif files
@@ -41,9 +41,9 @@ class ImageReaderDialog : public QDialog {
         const QStringList& filenames, ohkl::DataReaderParameters* parameters0,
         ohkl::DataFormat data_format = ohkl::DataFormat::TIFF);
     //! Disable widgets that are relevant for multiple images only
-    void setSingleImageMode();
+    void setSingleImageMode(bool single_image);
     //! Return a copy of the DataReaderParameters object
-    ohkl::DataReaderParameters dataReaderParameters();
+    void grabDataReaderParameters(ohkl::DataReaderParameters* params);
     //! Allows to select Detector resolution
     void selectDetectorResolution();
 

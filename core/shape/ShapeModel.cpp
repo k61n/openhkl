@@ -517,8 +517,7 @@ AABB ShapeModel::getAABB()
     return aabb;
 }
 
-void ShapeModel::integrate(
-    std::vector<Peak3D*> peaks, const sptrDataSet data, sptrProgressHandler handler)
+void ShapeModel::integrate(std::vector<Peak3D*> peaks, const sptrDataSet data)
 {
     ohklLog(Level::Info, "ShapeModel::integrate: integrating ", peaks.size(), " peaks");
     _data = data;
@@ -532,8 +531,9 @@ void ShapeModel::integrate(
     int_params.fixed_peak_end = _params->fixed_peak_end;
     int_params.fixed_bkg_begin = _params->fixed_bkg_begin;
     int_params.fixed_bkg_end = _params->fixed_bkg_end;
-    integrator.setHandler(handler);
     integrator.setParallel(_thread_parallel);
+    if (_handler)
+        integrator.setHandler(_handler);
     integrator.setParameters(int_params);
     integrator.parallelIntegrate(peaks, this, data);
     ohklLog(Level::Info, "ShapeModel::integrate: finished integrating shapes");

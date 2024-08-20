@@ -23,6 +23,7 @@
 #include "core/instrument/Diffractometer.h"
 #include "core/algo/AutoIndexer.h"
 #include "core/instrument/InstrumentState.h"
+#include "core/loader/IDataReader.h"
 #include "core/loader/RawDataReader.h"
 #include "core/peak/Peak3D.h"
 #include "core/raw/DataKeys.h"
@@ -65,7 +66,7 @@ TEST_CASE("test/data/TestSingleFrameIndex.cpp", "")
     data_params.delta_omega = 0.3;
     data->setImageReaderParameters(data_params);
     for (const auto& filename : filenames)
-        data->addRawFrame(filename);
+        data->addFrame(filename, ohkl::DataFormat::RAW);
     data->finishRead();
     experiment.addData(data);
 

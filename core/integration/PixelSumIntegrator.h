@@ -25,6 +25,7 @@ namespace ohkl {
 /*! \brief Peak integration using naive background estimation and subtraction.
  */
 class PixelSumIntegrator : public IIntegrator {
+    friend class UnitTest_PixelSumIntegrator;
  public:
     //! Construct the pixel sum integrator
     //! @param fit_center update the peak center as part of integration

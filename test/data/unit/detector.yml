@@ -1,0 +1,34 @@
+detector:
+    type: cylindrical
+    name: banana
+    sample_distance:
+        value: 764.0
+        units: mm
+    angular_width:
+        value: 120.0
+        units: deg
+    height:
+        units: m
+        value: 0.4
+    nrows: [256, 0, 0]
+    ncols: [640, 0, 0]
+    row_min: 0
+    col_min: 0
+    data_ordering: TopRightColMajor
+    gain: 0.86
+    baseline: 0.0
+    goniometer:
+        name: detector-gonio
+        axis:
+            - name: 2theta(gamma)
+              type: rotation
+              id: 1
+              direction: [0.0,0.0,1.0]
+              clockwise: true
+              physical: true
+
+            - name: 2theta(nu)
+              type: rotation
+              direction: [1.0,0.0,0.0]
+              clockwise: true
+              physical: false
