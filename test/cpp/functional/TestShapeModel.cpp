@@ -17,6 +17,7 @@
 #include "core/shape/PeakCollection.h"
 #include "core/shape/Profile3D.h"
 #include "core/shape/ShapeModel.h"
+#include "core/experiment/ShapeModelBuilder.h"
 #include "test/cpp/catch.hpp"
 #include "core/experiment/Experiment.h"
 #include "core/loader/RawDataReader.h"
@@ -60,14 +61,15 @@ TEST_CASE("test/data/TestShapeModel.cpp", "")
     ohkl::PeakCollection fit_peaks{"fit", ohkl::PeakCollectionType::FOUND, data};
     fit_peaks.populateFromFiltered(found_peaks);
 
-    auto shape_params = std::make_shared<ohkl::ShapeModelParameters>();
+    auto* shape_builder = experiment.shapeModelBuilder();
+    auto* shape_params = shape_builder->parameters();
+
     shape_params->sigma_d = found_peaks->sigmaD();
     shape_params->sigma_m = found_peaks->sigmaM();
     shape_params->neighbour_range_pixels = 500;
     shape_params->neighbour_range_frames = 5;
 
-    ohkl::ShapeModel shapes(shape_params);
-    shapes.integrate(fit_peaks.getPeakList(), data);
+    ohkl::ShapeModel shapes = shape_builder->integrate(fit_peaks.getPeakList(), data);
     std::cout << shapes.numberOfPeaks() << "/" << found_peaks->numberOfPeaks()
               << " peaks used in ShapeModel" << std::endl;
     CHECK(shapes.numberOfPeaks() == 260);

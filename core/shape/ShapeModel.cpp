@@ -122,19 +122,18 @@ struct FitData {
     }
 };
 
-ShapeModel::ShapeModel(bool thread_parallel)
+ShapeModel::ShapeModel()
     : _id(0)
     , _profiles()
     , _choleskyD()
     , _choleskyM()
     , _choleskyS()
+    , _params()
     , _handler(nullptr)
-    , _thread_parallel(thread_parallel)
 {
     _choleskyD.fill(1e-6);
     _choleskyM.fill(1e-6);
     _choleskyS.fill(1e-6);
-    _params = std::make_shared<ShapeModelParameters>();
 }
 
 ShapeModel::ShapeModel(const std::string& name) : ShapeModel()
@@ -142,7 +141,7 @@ ShapeModel::ShapeModel(const std::string& name) : ShapeModel()
     _name = name;
 }
 
-ShapeModel::ShapeModel(std::shared_ptr<ShapeModelParameters> params, bool thread_parallel)
+ShapeModel::ShapeModel(const ShapeModelParameters& params)
     : _id(0)
     , _profiles()
     , _choleskyD()
@@ -150,13 +149,11 @@ ShapeModel::ShapeModel(std::shared_ptr<ShapeModelParameters> params, bool thread
     , _choleskyS()
     , _params(params)
     , _handler(nullptr)
-    , _thread_parallel(thread_parallel)
-
 {
     _choleskyD.fill(1e-6);
     _choleskyM.fill(1e-6);
     _choleskyS.fill(1e-6);
-    _params->log(Level::Info);
+    _params.log(Level::Info);
 }
 
 void ShapeModel::setId(unsigned int id)
@@ -257,11 +254,10 @@ void ShapeModel::updateFit(int num_iterations)
     min.fit(num_iterations);
 }
 
-void ShapeModel::setParameters(std::shared_ptr<ShapeModelParameters> params)
+void ShapeModel::setParameters(const ShapeModelParameters& params)
 {
-    _params.reset();
     _params = params;
-    _params->log(Level::Info);
+    _params.log(Level::Info);
 }
 
 Eigen::Matrix3d ShapeModel::predictCovariance(Peak3D* peak) const
@@ -304,7 +300,7 @@ Profile3D ShapeModel::meanProfile(const DetectorEvent& ev) const
     for (auto peak : neighbors) {
 
         double weight;
-        switch (_params->interpolation) {
+        switch (_params.interpolation) {
             case (PeakInterpolation::NoInterpolation): {
                 weight = 1.0;
                 break;
@@ -366,7 +362,7 @@ std::vector<Peak3D*> ShapeModel::findNeighbors(const DetectorEvent& ev) const
     Peak3D* nearest;
     double min_dist_sq = _data->nCols() * _data->nCols() + _data->nRows() * _data->nRows();
     double min_frames = _data->nFrames();
-    double radius_sq = _params->neighbour_range_pixels * _params->neighbour_range_pixels;
+    double radius_sq = _params.neighbour_range_pixels * _params.neighbour_range_pixels;
 
     for (const auto& pair : _profiles) {
         auto peak = pair.first;
@@ -381,7 +377,7 @@ std::vector<Peak3D*> ShapeModel::findNeighbors(const DetectorEvent& ev) const
             nearest = peak;
         }
 
-        if (pix_dist_sq < radius_sq && frame_dist < _params->neighbour_range_frames)
+        if (pix_dist_sq < radius_sq && frame_dist < _params.neighbour_range_frames)
             neighbors.push_back(peak);
     }
 
@@ -405,7 +401,7 @@ Eigen::Matrix3d ShapeModel::meanCovariance(Peak3D* reference_peak) const
         Eigen::Matrix3d J = coord.jacobian();
 
         double weight;
-        switch (_params->interpolation) {
+        switch (_params.interpolation) {
             case (PeakInterpolation::NoInterpolation): {
                 weight = 1.0;
                 break;
@@ -439,7 +435,7 @@ Eigen::Matrix3d ShapeModel::meanCovariance(Peak3D* reference_peak) const
     return JI * cov * JI.transpose();
 }
 
-void ShapeModel::setPredictedShapes(PeakCollection* peaks)
+void ShapeModel::setPredictedShapes(PeakCollection* peaks, bool thread_parallel /* = true */)
 {
     ohklLog(
         Level::Info, "ShapeModel: Computing shapes of ", peaks->numberOfPeaks(),
@@ -467,7 +463,7 @@ void ShapeModel::setPredictedShapes(PeakCollection* peaks)
                 _handler->setProgress(progress);
             }
         }
-    }, _thread_parallel);
+    }, thread_parallel);
 
     ohklLog(Level::Info, "ShapeModel: finished computing shapes");
 }
@@ -494,93 +490,12 @@ std::map<Peak3D*, std::pair<Profile3D, Profile1D>> ShapeModel::profiles() const
 
 ShapeModelParameters* ShapeModel::parameters()
 {
-    return _params.get();
+    return &_params;
 }
 
 bool ShapeModel::detectorCoords() const
 {
-    return !_params->kabsch_coords;
-}
-
-AABB ShapeModel::getAABB()
-{
-    AABB aabb;
-    if (_params->kabsch_coords) {
-        const Eigen::Vector3d sigma(_params->sigma_d, _params->sigma_d, _params->sigma_m);
-        aabb.setLower(-_params->peak_end * sigma);
-        aabb.setUpper(_params->peak_end * sigma);
-    } else {
-        const Eigen::Vector3d dx(_params->nbins_x, _params->nbins_y, _params->nbins_z);
-        aabb.setLower(-0.5 * dx);
-        aabb.setUpper(0.5 * dx);
-    }
-    return aabb;
-}
-
-void ShapeModel::integrate(std::vector<Peak3D*> peaks, const sptrDataSet data)
-{
-    ohklLog(Level::Info, "ShapeModel::integrate: integrating ", peaks.size(), " peaks");
-    _data = data;
-    ShapeIntegrator integrator(
-        this, getAABB(), _params->nbins_x, _params->nbins_y, _params->nbins_z);
-    ohkl::IntegrationParameters int_params{};
-    int_params.region_type = _params->region_type;
-    int_params.peak_end = _params->peak_end;
-    int_params.bkg_begin = _params->bkg_begin;
-    int_params.bkg_end = _params->bkg_end;
-    int_params.fixed_peak_end = _params->fixed_peak_end;
-    int_params.fixed_bkg_begin = _params->fixed_bkg_begin;
-    int_params.fixed_bkg_end = _params->fixed_bkg_end;
-    integrator.setParallel(_thread_parallel);
-    if (_handler)
-        integrator.setHandler(_handler);
-    integrator.setParameters(int_params);
-    integrator.parallelIntegrate(peaks, this, data);
-    ohklLog(Level::Info, "ShapeModel::integrate: finished integrating shapes");
-}
-
-void ShapeModel::build(PeakCollection* peaks, sptrDataSet data)
-{
-    ohklLog(Level::Info, "ShapeModel::build: building shape model");
-    _data = data;
-    peaks->computeSigmas();
-    _params->sigma_d = peaks->sigmaD();
-    _params->sigma_m = peaks->sigmaM();
-    std::vector<ohkl::Peak3D*> fit_peaks;
-
-    for (ohkl::Peak3D* peak : peaks->getPeakList()) {
-        if (!peak->enabled())
-            continue;
-        const double d = 1.0 / peak->q().rowVector().norm();
-
-        if (d > _params->d_max || d < _params->d_min)
-            continue;
-
-        const ohkl::Intensity intensity = peak->correctedSumIntensity();
-
-        if (intensity.value() <= _params->strength_min * intensity.sigma())
-            continue;
-        fit_peaks.push_back(peak);
-    }
-
-    ohklLog(Level::Info, "ShapeModel::build: integrating ", fit_peaks.size(), " peaks");
-    ShapeIntegrator integrator(
-        this, getAABB(), _params->nbins_x, _params->nbins_y, _params->nbins_z);
-    ohkl::IntegrationParameters int_params{};
-    int_params.peak_end = _params->peak_end;
-    int_params.bkg_begin = _params->bkg_begin;
-    int_params.bkg_end = _params->bkg_end;
-    int_params.fixed_peak_end = _params->fixed_peak_end;
-    int_params.fixed_bkg_begin = _params->fixed_bkg_begin;
-    int_params.fixed_bkg_end = _params->fixed_bkg_end;
-    int_params.region_type = _params->region_type;
-    integrator.setParameters(int_params);
-    integrator.setParallel(_thread_parallel);
-    integrator.parallelIntegrate(fit_peaks, this, data);
-    ohklLog(Level::Info, "ShapeModel::build: finished integrating shapes");
-    // ohklLog(Level::Info, "ShapeModel::build: updating fit");
-    // updateFit(1000);
-    ohklLog(Level::Info, "ShapeModel::build: done");
+    return !_params.kabsch_coords;
 }
 
 void ShapeModel::setHandler(sptrProgressHandler handler)

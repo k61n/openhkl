@@ -50,18 +50,12 @@ class Integrator {
     ohkl::IIntegrator* getIntegrator(const IntegratorType integrator_type) const;
     //! Return a pointer to the data handler
     DataHandler* getDataHandler();
-    //! Set the found peak integrator
-    void integratePeaks(IntegratorType integrator_type, sptrDataSet data, PeakCollection* peaks);
     //! Integrate a peak collection
     void integratePeaks(
         sptrDataSet data, PeakCollection* peaks, IntegrationParameters* params, ShapeModel* shapes,
         bool parallel = true);
     //! Integrate peaks found by _peak_finder
     void integrateFoundPeaks(PeakFinder* peak_finder, bool parallel = true);
-    //! Integrate the shape collection
-    void integrateShapeModel(
-        std::vector<Peak3D*> peaks, sptrDataSet data, ShapeModel* shape_model, const AABB& aabb,
-        const ShapeModelParameters& params, bool parallel = true);
     //! Set the parameters
     void setParameters(std::shared_ptr<IntegrationParameters> params);
     //! Get the parameters

@@ -28,6 +28,7 @@
 #include "core/experiment/PeakFinder.h"
 #include "core/experiment/PeakFinder2D.h"
 #include "core/experiment/PeakHandler.h"
+#include "core/experiment/ShapeModelBuilder.h"
 #include "core/experiment/ShapeHandler.h"
 #include "core/experiment/UnitCellHandler.h"
 #include "core/instrument/Diffractometer.h"
@@ -67,12 +68,12 @@ Experiment::Experiment() : _diffractometer(nullptr), _strategy(false)
     _peak_finder_2d = std::make_unique<PeakFinder2D>();
     _peak_filter = std::make_unique<PeakFilter>();
     _auto_indexer = std::make_unique<AutoIndexer>();
+    _shape_model_builder = std::make_unique<ShapeModelBuilder>();
     _predictor = std::make_unique<Predictor>();
     _refiner = std::make_unique<Refiner>(_cell_handler.get());
     _integrator = std::make_unique<Integrator>(_data_handler);
     _peak_merger = std::make_unique<PeakMerger>();
 
-    _shape_params = std::make_shared<ShapeModelParameters>();
     _data_reader_params = std::make_unique<DataReaderParameters>();
 }
 
@@ -111,7 +112,7 @@ void Experiment::readFromYaml(const std::string& filename)
     yaml.grabDataReaderParameters(_data_reader_params.get());
     yaml.grabPeakFinderParameters(_peak_finder->parameters());
     yaml.grabAutoindexerParameters(_auto_indexer->parameters());
-    yaml.grabShapeParameters(_shape_params.get());
+    yaml.grabShapeParameters(_shape_model_builder->parameters());
     yaml.grabPredictorParameters(_predictor->parameters());
     yaml.grabIntegrationParameters(_integrator->parameters());
     yaml.grabMergeParameters(_peak_merger->parameters());
@@ -124,7 +125,7 @@ void Experiment::saveToYaml(const std::string& filename)
     yaml.setDataReaderParameters(_data_reader_params.get());
     yaml.setPeakFinderParameters(_peak_finder->parameters());
     yaml.setAutoindexerParameters(_auto_indexer->parameters());
-    yaml.setShapeParameters(_shape_params.get());
+    yaml.setShapeParameters(_shape_model_builder->parameters());
     yaml.setPredictorParameters(_predictor->parameters());
     yaml.setIntegrationParameters(_integrator->parameters());
     yaml.setMergeParameters(_peak_merger->parameters());

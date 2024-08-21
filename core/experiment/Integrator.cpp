@@ -42,31 +42,6 @@ IIntegrator* Integrator::getIntegrator(const IntegratorType integrator_type) con
 }
 
 void Integrator::integratePeaks(
-    IntegratorType integrator_type, sptrDataSet data, PeakCollection* peaks)
-{
-    ohklLog(
-        Level::Info,
-        "Integrator::integratePeaks: integrating PeakCollection '" + peaks->name() + "'");
-    peaks->resetIntegrationFlags(integrator_type);
-    IIntegrator* integrator = getIntegrator(integrator_type);
-    integrator->setParameters(*_params);
-    integrator->parallelIntegrate(peaks->getPeakList(), peaks->shapeModel(), data);
-    peaks->setIntegrated(true);
-    if (_params->use_gradient)
-        peaks->setBkgGradient(true);
-
-    _n_peaks = 0;
-    _n_valid = 0;
-    for (auto peak : peaks->getPeakList()) {
-        ++_n_peaks;
-        if (peak->enabled())
-            ++_n_valid;
-    }
-
-    delete integrator;
-}
-
-void Integrator::integratePeaks(
     sptrDataSet data, PeakCollection* peaks, IntegrationParameters* params, ShapeModel* shapes,
     bool parallel)
 {
@@ -114,19 +89,6 @@ void Integrator::integratePeaks(
         peak_finder->setBkgGradient(true);
 
     delete integrator;
-}
-
-void Integrator::integrateShapeModel(
-    std::vector<Peak3D*> fit_peaks, sptrDataSet data, ShapeModel* shape_model, const AABB& aabb,
-    const ShapeModelParameters& params, bool parallel)
-{
-    ohklLog(Level::Info, "Integrator::integrateShapeModel");
-    ShapeIntegrator integrator{shape_model, aabb, params.nbins_x, params.nbins_y, params.nbins_z};
-    integrator.setParallel(parallel);
-    if (_handler)
-        integrator.setHandler(_handler);
-    integrator.setParameters(params);
-    integrator.parallelIntegrate(fit_peaks, shape_model, data);
 }
 
 void Integrator::setParameters(std::shared_ptr<IntegrationParameters> params)

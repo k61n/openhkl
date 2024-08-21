@@ -17,6 +17,7 @@
 #include "base/utils/Logger.h"
 #include "base/utils/ProgressHandler.h"
 #include "core/data/DataSet.h"
+#include "core/integration/IIntegrator.h"
 #include "core/peak/Peak3D.h"
 #include "core/shape/PeakCollection.h"
 #include "core/statistics/MergedPeakCollection.h"

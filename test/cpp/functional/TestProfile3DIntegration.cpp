@@ -17,6 +17,7 @@
 #include "core/experiment/Experiment.h"
 #include "core/experiment/Integrator.h"
 #include "core/experiment/PeakFinder.h"
+#include "core/experiment/ShapeModelBuilder.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/loader/RawDataReader.h"
 #include "core/peak/Peak3D.h"
@@ -65,16 +66,16 @@ TEST_CASE("test/data/TestProfile3DIntegration.cpp", "")
 
     data->initBuffer(true); // buffer all images (required for parallel integration)
 
-    ohkl::ShapeModelParameters shape_params;
+    ohkl::ShapeModelBuilder* shape_builder = experiment.shapeModelBuilder();
+    ohkl::ShapeModelParameters* shape_params = shape_builder->parameters();
     ohkl::PeakCollection* found = experiment.getPeakCollection("found");
     found->computeSigmas();
-    shape_params.sigma_d = found->sigmaD();
-    shape_params.sigma_m = found->sigmaM();
-    shape_params.strength_min = 1.0;
-    shape_params.neighbour_range_pixels = 50;
-    shape_params.neighbour_range_frames = 10;
-    found->buildShapeModel(data, shape_params);
-    ohkl::ShapeModel* shapes = found->shapeModel();
+    shape_params->sigma_d = found->sigmaD();
+    shape_params->sigma_m = found->sigmaM();
+    shape_params->strength_min = 1.0;
+    shape_params->neighbour_range_pixels = 50;
+    shape_params->neighbour_range_frames = 10;
+    ohkl::ShapeModel shapes = shape_builder->build(found, data);
 
     params->integrator_type = ohkl::IntegratorType::Profile3D;
     params->region_type = ohkl::RegionType::FixedEllipsoid;
@@ -89,7 +90,7 @@ TEST_CASE("test/data/TestProfile3DIntegration.cpp", "")
     params->use_max_d = true;
     params->max_d = 2.5;
 
-    integrator->integratePeaks(data, peaks, params, shapes);
+    integrator->integratePeaks(data, peaks, params, &shapes);
 
     const int n_peaks = integrator->numberOfPeaks();
     const int n_integrated_peaks = integrator->numberOfValidPeaks();
