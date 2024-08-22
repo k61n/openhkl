@@ -30,7 +30,7 @@ ShapeModel ShapeModelBuilder::integrate(
     std::vector<Peak3D*> peaks, const sptrDataSet data, bool thread_parallel)
 {
     ohklLog(Level::Info, "ShapeModelBuilder::integrate: integrating ", peaks.size(), " peaks");
-    ShapeModel shapes;
+    ShapeModel shapes(*_params);
 
     ShapeIntegrator integrator;
     integrator.initialise(getAABB(), _params.get());

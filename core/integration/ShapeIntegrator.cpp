@@ -60,7 +60,6 @@ ComputeResult ShapeIntegrator::compute(
     const auto& counts = region.peakData().counts();
 
     Profile3D profile(_aabb, _nx, _ny, _nz);
-    // todo: don't use default constructor!
     Profile1D integrated_profile(pxsum_result.sum_background, region.peakEnd());
     const PeakCoordinateSystem frame(peak);
 
