@@ -13,6 +13,7 @@
 //  ***********************************************************************************************
 
 #include "core/integration/ShapeIntegrator.h"
+
 #include "base/geometry/Ellipsoid.h"
 #include "core/data/DataSet.h"
 #include "core/integration/IIntegrator.h"
@@ -25,16 +26,17 @@
 
 namespace ohkl {
 
-ShapeIntegrator::ShapeIntegrator(
-    ShapeModel* lib, const AABB& aabb, int nx, int ny, int nz, int subdiv)
-    : PixelSumIntegrator()
-    , _shape_model(lib)
-    , _aabb(aabb)
-    , _nx(nx)
-    , _ny(ny)
-    , _nz(nz)
-    , _nsubdiv(subdiv)
+ShapeIntegrator::ShapeIntegrator() : PixelSumIntegrator()
 {
+}
+
+void ShapeIntegrator::initialise(const AABB& aabb, ShapeModelParameters* params)
+{
+    _aabb = aabb;
+    _nx = params->nbins_x;
+    _ny = params->nbins_y;
+    _nz = params->nbins_z;
+    _nsubdiv = params->n_subdiv;
 }
 
 ComputeResult ShapeIntegrator::compute(
@@ -58,7 +60,6 @@ ComputeResult ShapeIntegrator::compute(
     const auto& counts = region.peakData().counts();
 
     Profile3D profile(_aabb, _nx, _ny, _nz);
-    // todo: don't use default constructor!
     Profile1D integrated_profile(pxsum_result.sum_background, region.peakEnd());
     const PeakCoordinateSystem frame(peak);
 
@@ -71,7 +72,7 @@ ComputeResult ShapeIntegrator::compute(
         // todo: variance here assumes Poisson (no gain or baseline)
         integrated_profile.addPoint(e.r2(x), counts[i]);
 
-        if (_shape_model->detectorCoords()) {
+        if (shape_model->detectorCoords()) {
             x -= peak->shape().center();
             if (_nsubdiv == 1)
                 profile.addValue(x, dI);
@@ -85,13 +86,8 @@ ComputeResult ShapeIntegrator::compute(
         }
     }
     if (profile.normalize())
-        _shape_model->addPeak(peak, std::move(profile), std::move(integrated_profile));
+        shape_model->addPeak(peak, std::move(profile), std::move(integrated_profile));
     return result;
-}
-
-const ShapeModel* ShapeIntegrator::shapeModel() const
-{
-    return _shape_model;
 }
 
 } // namespace ohkl

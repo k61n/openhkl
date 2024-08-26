@@ -120,8 +120,6 @@ class SubframePredict : public QWidget {
     bool _peaks_predicted;
     //! Flag to check whether shapes have been assigned to predicted peaks
     bool _shapes_assigned;
-    //! Shape collection paramters
-    std::shared_ptr<ohkl::ShapeModelParameters> _shape_params;
     //! Saved direct beam positions
     std::vector<ohkl::DetectorEvent> _direct_beam_events;
     //! Current direct beam positions

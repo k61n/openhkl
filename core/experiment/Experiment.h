@@ -42,6 +42,7 @@ class Predictor;
 class Refiner;
 class ShapeHandler;
 class ShapeModel;
+class ShapeModelBuilder;
 class UnitCellHandler;
 struct DataReaderParameters;
 struct ShapeModelParameters;
@@ -83,14 +84,6 @@ class Experiment {
     Diffractometer* getDiffractometer(); 
     //! Set the named diffractometer from the relevant YAML instrument file
     void setDiffractometer(const std::string& diffractometerName);
-
-    //! set ShapeModel parameters
-    void setShapeParameters(std::shared_ptr<ShapeModelParameters> params)
-    {
-        _shape_params = params;
-    };
-    //! get pointer to ShapeModel parameters
-    std::shared_ptr<ShapeModelParameters> shapeParameters() const { return _shape_params; };
 
     //! Get a pointer to the data reader parameters
     DataReaderParameters* dataReaderParameters() const {return _data_reader_params.get(); };
@@ -191,8 +184,6 @@ class Experiment {
     bool addShapeModel(const std::string& name, const ShapeModel& shapes);
     //! Add a shape model from a unique_ptr
     bool addShapeModel(const std::string& name, std::unique_ptr<ShapeModel>& shapes);
-    //! Add an empty shape model
-    bool addEmptyShapeModel(const std::string& name);
     //! Returns true if the experiment has named shape model
     bool hasShapeModel(const std::string& name) const;
     //! Returns the named shape model
@@ -245,6 +236,10 @@ class Experiment {
     //! Get a pointer to the reference unit cell
     const UnitCell* getReferenceCell() const;
 
+    // Shape model builder
+    //! Get a pointer to the ShapeModelBuilder object
+    ShapeModelBuilder* shapeModelBuilder() const { return _shape_model_builder.get(); };
+
     // Peak Merger
     //! get a pointer to the PeakMerger object
     PeakMerger* peakMerger() const { return _peak_merger.get(); };
@@ -292,13 +287,11 @@ class Experiment {
     std::unique_ptr<PeakFinder2D> _peak_finder_2d;
     std::unique_ptr<PeakFilter> _peak_filter;
     std::unique_ptr<AutoIndexer> _auto_indexer;
+    std::unique_ptr<ShapeModelBuilder> _shape_model_builder;
     std::unique_ptr<Predictor> _predictor;
     std::unique_ptr<Refiner> _refiner;
     std::unique_ptr<Integrator> _integrator;
     std::unique_ptr<PeakMerger> _peak_merger;
-
-    // ShapeModel parameters, since there is no experiment-level container
-    std::shared_ptr<ShapeModelParameters> _shape_params;
 
     // Data reader parameters, since there is nowhere else to store this
     std::unique_ptr<DataReaderParameters> _data_reader_params;

@@ -19,6 +19,7 @@
 #include "core/experiment/Experiment.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/InstrumentState.h"
+#include "core/experiment/ShapeModelBuilder.h"
 #include "core/integration/IIntegrator.h"
 #include "core/integration/ShapeIntegrator.h"
 #include "core/peak/Peak3D.h"
@@ -104,8 +105,6 @@ SubframePredict::SubframePredict()
 
     _right_element->setStretchFactor(0, 2);
     _right_element->setStretchFactor(1, 1);
-
-    _shape_params = std::make_shared<ohkl::ShapeModelParameters>();
 
     connect(
         _data_combo, QOverload<int>::of(&QComboBox::currentIndexChanged),
@@ -349,9 +348,11 @@ void SubframePredict::grabShapeModelParameters()
     if (!gSession->hasProject())
         return;
 
-    _radius_pix->setValue(_shape_params->neighbour_range_pixels);
-    _radius_frames->setValue(_shape_params->neighbour_range_frames);
-    _interpolation_combo->setCurrentIndex(static_cast<int>(_shape_params->interpolation));
+    auto* params = gSession->currentProject()->experiment()->shapeModelBuilder()->parameters();
+
+    _radius_pix->setValue(params->neighbour_range_pixels);
+    _radius_frames->setValue(params->neighbour_range_frames);
+    _interpolation_combo->setCurrentIndex(static_cast<int>(params->interpolation));
 }
 
 void SubframePredict::setShapeModelParameters()
@@ -359,9 +360,11 @@ void SubframePredict::setShapeModelParameters()
     if (!gSession->hasProject())
         return;
 
-    _shape_params->neighbour_range_pixels = _radius_pix->value();
-    _shape_params->neighbour_range_frames = _radius_frames->value();
-    _shape_params->interpolation =
+    auto* params = gSession->currentProject()->experiment()->shapeModelBuilder()->parameters();
+
+    params->neighbour_range_pixels = _radius_pix->value();
+    params->neighbour_range_frames = _radius_frames->value();
+    params->interpolation =
         static_cast<ohkl::PeakInterpolation>(_interpolation_combo->currentIndex());
 }
 
@@ -483,7 +486,8 @@ void SubframePredict::applyShapeModel()
 {
 
     gGui->setReady(false);
-    ohkl::ShapeModel* shapes = _shape_combo->currentShapes();
+    auto* shapes = _shape_combo->currentShapes();
+    auto* params = gSession->currentProject()->experiment()->shapeModelBuilder()->parameters();
 
     setShapeModelParameters();
 
@@ -491,7 +495,7 @@ void SubframePredict::applyShapeModel()
     ProgressView progressView(nullptr);
     progressView.watch(handler);
 
-    shapes->setParameters(_shape_params);
+    shapes->setParameters(*params);
     shapes->setHandler(handler);
     _peak_collection.resetRejectionFlags();
     shapes->setPredictedShapes(&_peak_collection);

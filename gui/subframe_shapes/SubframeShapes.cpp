@@ -23,6 +23,7 @@
 #include "core/peak/IntegrationRegion.h"
 #include "core/peak/Peak3D.h"
 #include "core/peak/RegionData.h"
+#include "core/experiment/ShapeModelBuilder.h"
 #include "core/shape/PeakCollection.h"
 #include "core/shape/ShapeModel.h"
 #include "gui/MainWin.h" // gGui
@@ -63,8 +64,6 @@ SubframeShapes::SubframeShapes()
     , _current_peak(nullptr)
     , _preview_peak(nullptr)
 {
-    _params = std::make_shared<ohkl::ShapeModelParameters>();
-
     auto main_layout = new QHBoxLayout(this);
     _right_element = new QSplitter(Qt::Vertical, this);
 
@@ -394,7 +393,6 @@ void SubframeShapes::refreshAll()
         return;
 
     refreshPeakTable();
-    _params = gSession->currentProject()->experiment()->shapeParameters();
     grabShapeParameters();
 }
 
@@ -403,7 +401,9 @@ void SubframeShapes::grabShapeParameters()
     if (!gSession->currentProject()->hasPeakCollection())
         return;
 
-    auto* integration_params = gSession->currentProject()->experiment()->integrator()->parameters();
+    auto* experiment = gSession->currentProject()->experiment();
+    auto* integration_params = experiment->integrator()->parameters();
+    auto* shape_params = experiment->shapeModelBuilder()->parameters();
 
     QSignalBlocker blocker1(_integration_region_type);
     QSignalBlocker blocker2(_peak_end);
@@ -412,9 +412,9 @@ void SubframeShapes::grabShapeParameters()
 
     _peak_combo->currentPeakCollection()->computeSigmas();
 
-    _min_d->setValue(_params->d_min);
-    _max_d->setValue(_params->d_max);
-    _max_width->setValue(_params->max_width);
+    _min_d->setValue(shape_params->d_min);
+    _max_d->setValue(shape_params->d_max);
+    _max_width->setValue(shape_params->max_width);
     if (integration_params->region_type == ohkl::RegionType::VariableEllipsoid) {
         _peak_end->setValue(integration_params->peak_end);
         _bkg_begin->setValue(integration_params->bkg_begin);
@@ -424,17 +424,17 @@ void SubframeShapes::grabShapeParameters()
         _bkg_begin->setValue(integration_params->fixed_bkg_begin);
         _bkg_end->setValue(integration_params->fixed_bkg_end);
     }
-    _min_strength->setValue(_params->strength_min);
-    _kabsch->setChecked(_params->kabsch_coords);
-    _nx->setValue(_params->nbins_x);
-    _ny->setValue(_params->nbins_y);
-    _nz->setValue(_params->nbins_z);
-    _nsubdiv->setValue(_params->n_subdiv);
+    _min_strength->setValue(shape_params->strength_min);
+    _kabsch->setChecked(shape_params->kabsch_coords);
+    _nx->setValue(shape_params->nbins_x);
+    _ny->setValue(shape_params->nbins_y);
+    _nz->setValue(shape_params->nbins_z);
+    _nsubdiv->setValue(shape_params->n_subdiv);
     _sigma_m->setValue(_peak_combo->currentPeakCollection()->sigmaM());
     _sigma_d->setValue(_peak_combo->currentPeakCollection()->sigmaD());
-    _pixel_radius->setValue(_params->neighbour_range_pixels);
-    _frame_radius->setValue(_params->neighbour_range_frames);
-    _interpolation_combo->setCurrentIndex(static_cast<int>(_params->interpolation));
+    _pixel_radius->setValue(shape_params->neighbour_range_pixels);
+    _frame_radius->setValue(shape_params->neighbour_range_frames);
+    _interpolation_combo->setCurrentIndex(static_cast<int>(shape_params->interpolation));
     _integration_region_type->setCurrentIndex(static_cast<int>(integration_params->region_type));
 }
 
@@ -443,43 +443,45 @@ void SubframeShapes::setShapeParameters()
     if (!gSession->hasProject())
         return;
 
-    auto* integration_params = gSession->currentProject()->experiment()->integrator()->parameters();
+    auto* experiment = gSession->currentProject()->experiment();
+    auto* integration_params = experiment->integrator()->parameters();
+    auto* shape_params = experiment->shapeModelBuilder()->parameters();
 
-    _params->d_min = _min_d->value();
-    _params->d_max = _max_d->value();
-    _params->max_width = _max_width->value();
-    _params->use_max_width = true;
+    shape_params->d_min = _min_d->value();
+    shape_params->d_max = _max_d->value();
+    shape_params->max_width = _max_width->value();
+    shape_params->use_max_width = true;
 
     integration_params->region_type =
         static_cast<ohkl::RegionType>(_integration_region_type->currentIndex());
-    _params->region_type = static_cast<ohkl::RegionType>(_integration_region_type->currentIndex());
+    shape_params->region_type = static_cast<ohkl::RegionType>(_integration_region_type->currentIndex());
     if (integration_params->region_type == ohkl::RegionType::VariableEllipsoid) {
         integration_params->peak_end = _peak_end->value();
         integration_params->bkg_begin = _bkg_begin->value();
         integration_params->bkg_end = _bkg_end->value();
-        _params->peak_end = _peak_end->value();
-        _params->bkg_begin = _bkg_begin->value();
-        _params->bkg_end = _bkg_end->value();
+        shape_params->peak_end = _peak_end->value();
+        shape_params->bkg_begin = _bkg_begin->value();
+        shape_params->bkg_end = _bkg_end->value();
     } else {
         integration_params->fixed_peak_end = _peak_end->value();
         integration_params->fixed_bkg_begin = _bkg_begin->value();
         integration_params->fixed_bkg_end = _bkg_end->value();
-        _params->fixed_peak_end = _peak_end->value();
-        _params->fixed_bkg_begin = _bkg_begin->value();
-        _params->fixed_bkg_end = _bkg_end->value();
+        shape_params->fixed_peak_end = _peak_end->value();
+        shape_params->fixed_bkg_begin = _bkg_begin->value();
+        shape_params->fixed_bkg_end = _bkg_end->value();
     }
 
-    _params->strength_min = _min_strength->value();
-    _params->kabsch_coords = _kabsch->isChecked();
-    _params->nbins_x = _nx->value();
-    _params->nbins_y = _ny->value();
-    _params->nbins_z = _nz->value();
-    _params->n_subdiv = _nsubdiv->value();
-    _params->sigma_m = _sigma_m->value();
-    _params->sigma_d = _sigma_d->value();
-    _params->neighbour_range_pixels = _pixel_radius->value();
-    _params->neighbour_range_frames = _frame_radius->value();
-    _params->interpolation =
+    shape_params->strength_min = _min_strength->value();
+    shape_params->kabsch_coords = _kabsch->isChecked();
+    shape_params->nbins_x = _nx->value();
+    shape_params->nbins_y = _ny->value();
+    shape_params->nbins_z = _nz->value();
+    shape_params->n_subdiv = _nsubdiv->value();
+    shape_params->sigma_m = _sigma_m->value();
+    shape_params->sigma_d = _sigma_d->value();
+    shape_params->neighbour_range_pixels = _pixel_radius->value();
+    shape_params->neighbour_range_frames = _frame_radius->value();
+    shape_params->interpolation =
         static_cast<ohkl::PeakInterpolation>(_interpolation_combo->currentIndex());
 }
 
@@ -521,33 +523,19 @@ void SubframeShapes::setPreviewUp()
 void SubframeShapes::buildShapeModel()
 {
     gGui->setReady(false);
+    auto* shape_builder = gSession->currentProject()->experiment()->shapeModelBuilder();
+    auto data = _data_combo->currentData();
+    auto* peaks = _peak_combo->currentPeakCollection();
     setShapeParameters();
+
     try {
-        _shape_model = std::make_unique<ohkl::ShapeModel>(_params);
-        std::vector<ohkl::Peak3D*> fit_peaks;
-
-        for (ohkl::Peak3D* peak : _peak_combo->currentPeakCollection()->getPeakList()) {
-            if (!peak->enabled())
-                continue;
-            const double d = 1.0 / peak->q().rowVector().norm();
-
-            if (d > _params->d_max || d < _params->d_min)
-                continue;
-
-            const ohkl::Intensity intensity = peak->correctedSumIntensity();
-
-            if (intensity.value() <= _params->strength_min * intensity.sigma())
-                continue;
-            fit_peaks.push_back(peak);
-        }
+        _shape_model = std::make_unique<ohkl::ShapeModel>(shape_builder->build(peaks, data));
 
         ohkl::sptrProgressHandler handler(new ohkl::ProgressHandler);
         ProgressView view(this);
         view.watch(handler);
-
-        ohkl::sptrDataSet data = _data_combo->currentData();
-        _shape_model->setHandler(handler);
-        _shape_model->integrate(fit_peaks, data);
+        shape_builder->setHandler(handler);
+        shape_builder->build(peaks, data);
 
         // _shape_model->updateFit(1000);
     } catch (std::exception& e) {
@@ -572,6 +560,7 @@ void SubframeShapes::computeProfile()
     if (!_current_peak)
         return;
 
+    auto* shape_params = gSession->currentProject()->experiment()->shapeModelBuilder()->parameters();
     setShapeParameters();
 
     // const ohkl::DetectorEvent ev(_x->value(), _y->value(), _frame->value());
@@ -580,24 +569,24 @@ void SubframeShapes::computeProfile()
         return;
 
     double peak_end, bkg_begin, bkg_end;
-    if (_params->region_type == ohkl::RegionType::VariableEllipsoid) {
-        peak_end = _params->peak_end;
-        bkg_begin = _params->peak_end;
-        bkg_end = _params->peak_end;
+    if (shape_params->region_type == ohkl::RegionType::VariableEllipsoid) {
+        peak_end = shape_params->peak_end;
+        bkg_begin = shape_params->peak_end;
+        bkg_end = shape_params->peak_end;
     } else {
-        peak_end = _params->fixed_peak_end;
+        peak_end = shape_params->fixed_peak_end;
         bkg_begin = 1.0;
         bkg_end = 1.0;
     }
     // construct the integration region
     ohkl::IntegrationRegion region(
-        _current_peak, peak_end, bkg_begin, bkg_end, _params->region_type);
+        _current_peak, peak_end, bkg_begin, bkg_end, shape_params->region_type);
 
     ohkl::RegionData* region_data = region.getRegion();
     region_data->buildProfile(
-        model, _params->neighbour_range_pixels, _params->neighbour_range_frames);
+        model, shape_params->neighbour_range_pixels, shape_params->neighbour_range_frames);
     QPointF pos = {_current_peak->shape().center()[0], _current_peak->shape().center()[1]};
-    auto* circle = _detector_widget->scene()->addCircle(pos, _params->neighbour_range_pixels);
+    auto* circle = _detector_widget->scene()->addCircle(pos, shape_params->neighbour_range_pixels);
 
     regionData2Image(region_data);
 
@@ -689,8 +678,9 @@ void SubframeShapes::getPreviewPeak(ohkl::Peak3D* selected_peak)
     if (!model)
         return;
 
+    auto* shape_params = gSession->currentProject()->experiment()->shapeModelBuilder()->parameters();
     setShapeParameters();
-    model->setParameters(_params);
+    model->setParameters(*shape_params);
 
     auto cov = model->meanCovariance(selected_peak);
     Eigen::Vector3d center = selected_peak->shape().center();

@@ -17,13 +17,11 @@
 #include "base/utils/Logger.h"
 #include "core/data/DataSet.h"
 #include "core/integration/IIntegrator.h"
-#include "core/integration/ShapeIntegrator.h"
 #include "core/peak/Peak3D.h"
 #include "core/raw/DataKeys.h"
 #include "tables/crystal/UnitCell.h"
 
 #include <string>
-#include <typeindex>
 
 namespace ohkl {
 
@@ -32,7 +30,6 @@ PeakCollection::PeakCollection()
     , _name{}
     , _data(nullptr)
     , _type{PeakCollectionType::FOUND}
-    , _shape_model(nullptr)
     , _cell(nullptr)
     , _indexed(false)
     , _integrated(false)
@@ -45,7 +42,6 @@ PeakCollection::PeakCollection(const std::string& name, PeakCollectionType type,
     , _name{std::string(name)}
     , _data(data)
     , _type{type}
-    , _shape_model(nullptr)
     , _cell(nullptr)
     , _indexed(false)
     , _integrated(false)
@@ -168,12 +164,6 @@ MetaData& PeakCollection::metadata()
     return _metadata;
 }
 
-void PeakCollection::setShapeModel(std::unique_ptr<ShapeModel>& shape_model)
-{
-    resetShapeModel();
-    _shape_model = std::move(shape_model);
-}
-
 void PeakCollection::setName(const std::string& name)
 {
     if (name.empty())
@@ -245,29 +235,6 @@ int PeakCollection::countEnabled() const
             ++nenabled;
     }
     return nenabled;
-}
-
-void PeakCollection::buildShapeModel(sptrDataSet data, const ShapeModelParameters& params)
-{
-    ohklLog(Level::Info, "PeakCollection::buildShapeModel");
-    _shape_model = std::make_unique<ShapeModel>(std::make_shared<ShapeModelParameters>(params));
-    _shape_model->parameters()->log(Level::Info);
-    computeSigmas();
-    _shape_model->parameters()->sigma_d = _sigma_d;
-    _shape_model->parameters()->sigma_m = _sigma_m;
-
-    std::vector<Peak3D*> fit_peak_list = getPeakList();
-    _shape_model->integrate(fit_peak_list, data);
-
-    _shape_model->updateFit(1000); // This does nothing!! - zamaan
-    ohklLog(Level::Info, "PeakCollection::buildShapeModel finished");
-}
-
-void PeakCollection::buildShapeModel(const ShapeModelParameters& params)
-{
-    ohklLog(Level::Info, "PeakCollection::buildShapeModel");
-    _shape_model = std::make_unique<ShapeModel>(std::make_shared<ShapeModelParameters>(params));
-    _shape_model->build(this, _data);
 }
 
 void PeakCollection::setUnitCell(const sptrUnitCell& cell, bool setPeaks)

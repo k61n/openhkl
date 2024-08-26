@@ -15,6 +15,7 @@
 #include "core/experiment/ShapeHandler.h"
 
 #include "base/utils/Logger.h"
+#include "core/data/DataTypes.h"
 #include "core/peak/Peak3D.h"
 #include "core/shape/PeakCollection.h"
 #include "core/shape/ShapeModel.h"
@@ -52,17 +53,6 @@ bool ShapeHandler::addShapeModel(const std::string& name, std::unique_ptr<ohkl::
     shapes->setName(name);
     shapes->setId(_last_index++);
     _shape_models.insert_or_assign(name, std::move(shapes));
-    return hasShapeModel(name); // now name must be in use
-}
-
-bool ShapeHandler::addEmptyModel(const std::string& name)
-{
-    if (hasShapeModel(name))
-        return false;
-    ohklLog(Level::Info, "ShapeHandler::addEmptyCollection '" + name + "'");
-    std::unique_ptr<ShapeModel> ptr = std::make_unique<ShapeModel>(ShapeModel(name));
-    ptr->setId(_last_index++);
-    _shape_models.insert_or_assign(name, std::move(ptr));
     return hasShapeModel(name); // now name must be in use
 }
 

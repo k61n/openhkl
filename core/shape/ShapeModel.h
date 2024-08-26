@@ -46,7 +46,7 @@ struct ShapeModelParameters : public IntegrationParameters {
     int nbins_x = 20; //!< Number of x histogram bins for peak
     int nbins_y = 20; //!< Number of y histogram bins for peak
     int nbins_z = 10; //!< Number of z histogram bins for peak
-    int n_subdiv = 5; //!< Number subdivisions along each axis per pixel
+    int n_subdiv = 1; //!< Number subdivisions along each axis per pixel
     int min_n_neighbors = 10; //!< Minimum number of neighbours required for shape collection
     double sigma_m = 0.1; //!< Variance due to crystal mosaicity
     double sigma_d = 0.1; //!< Variance due to beam divergence
@@ -77,9 +77,9 @@ class ShapeModel {
     //! Construct an empty collection.
     //! @param detector_coords if true, store profiles in detector coordinates;
     //! otherwise store in Kabsch coordinates
-    ShapeModel(bool thread_parallel = true);
-    ShapeModel(const std::string& name);
-    ShapeModel(std::shared_ptr<ShapeModelParameters> params, bool thread_parallel = true);
+    ShapeModel(const sptrDataSet data);
+    ShapeModel(const std::string& name, const sptrDataSet data);
+    ShapeModel(const ShapeModelParameters& params, const sptrDataSet data);
 
     //! Get the integer id
     unsigned int id() const { return _id; };
@@ -100,10 +100,10 @@ class ShapeModel {
     void updateFit(int num_iterations = 1000);
 
     //! Set the shape collection parameters
-    void setParameters(std::shared_ptr<ShapeModelParameters> params);
+    void setParameters(const ShapeModelParameters& params);
 
     //! Set shapes of a predicted peak collection
-    void setPredictedShapes(PeakCollection* peaks);
+    void setPredictedShapes(PeakCollection* peaks, bool thread_parallel = true);
 
     //! Predict the (detector space) covariance of a given peak
     Eigen::Matrix3d predictCovariance(Peak3D* peak) const;
@@ -144,15 +144,6 @@ class ShapeModel {
     //! Whether the collection uses Kabsch (f) or detector(t) coordinates
     bool detectorCoords() const;
 
-    //! Set the bounding box depending on the coordinate type
-    AABB getAABB();
-
-    //! Integrate the shape collection
-    void integrate(std::vector<Peak3D*> peaks, const sptrDataSet data);
-
-    //! Build a shape model from the given peak collection
-    void build(PeakCollection* peaks, sptrDataSet data);
-
     //! Set the progress handler
     void setHandler(sptrProgressHandler handler);
 
@@ -179,8 +170,8 @@ class ShapeModel {
     //! Components of the Cholesky factor of shape covariance matrix
     std::array<double, 6> _choleskyS;
 
-    //! Shape collection parameters
-    std::shared_ptr<ShapeModelParameters> _params;
+    //! Shape model parameters
+    ShapeModelParameters _params;
 
     //! Progress handler
     sptrProgressHandler _handler;

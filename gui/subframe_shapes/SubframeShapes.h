@@ -19,6 +19,7 @@
 #include "gui/models/PeakCollectionModel.h"
 
 #include <QWidget>
+#include <memory>
 
 class PeakComboBox;
 class DataComboBox;
@@ -168,7 +169,6 @@ class SubframeShapes : public QWidget {
     PeakCollectionModel _peak_collection_model;
 
     std::unique_ptr<ohkl::ShapeModel> _shape_model;
-    std::shared_ptr<ohkl::ShapeModelParameters> _params;
     ohkl::Peak3D* _current_peak;
     std::unique_ptr<ohkl::Peak3D> _preview_peak;
 

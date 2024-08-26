@@ -18,7 +18,6 @@
 #include "core/data/DataTypes.h"
 #include "core/peak/Peak3D.h"
 #include "core/raw/MetaData.h"
-#include "core/shape/ShapeModel.h"
 
 namespace ohkl {
 
@@ -115,20 +114,8 @@ class PeakCollection {
     //! Return a fresh generated pointer to metadata
     MetaData& metadata();
 
-    //! Set the shape collection needed for profile integration
-    void setShapeModel(std::unique_ptr<ShapeModel>& shape_model);
-    //! Clear the shape collection
-    void resetShapeModel() { _shape_model.reset(nullptr); };
-    //! Get the shape collection
-    ShapeModel* shapeModel() const { return _shape_model.get(); };
-
     //! Count enabled peaks
     int countEnabled() const;
-
-    //! Build shape collection from strong peaks in this peak collection
-    void buildShapeModel(sptrDataSet data, const ShapeModelParameters& params);
-    //! Build shape collection from strong peaks in this peak collection
-    void buildShapeModel(const ShapeModelParameters& params);
 
     //! Whether PeakCollection has been indexed or not
     bool isIndexed() const { return _indexed; }
@@ -164,8 +151,6 @@ class PeakCollection {
 
     std::string _file_name;
     std::string _parent;
-
-    std::unique_ptr<ShapeModel> _shape_model;
 
     //! Unit cell i) assigned by indexer ii) used to predict peaks (note that after
     //! refinement, different peaks may have different unit cell pointers)
