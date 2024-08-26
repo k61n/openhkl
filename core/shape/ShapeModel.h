@@ -46,7 +46,7 @@ struct ShapeModelParameters : public IntegrationParameters {
     int nbins_x = 20; //!< Number of x histogram bins for peak
     int nbins_y = 20; //!< Number of y histogram bins for peak
     int nbins_z = 10; //!< Number of z histogram bins for peak
-    int n_subdiv = 5; //!< Number subdivisions along each axis per pixel
+    int n_subdiv = 1; //!< Number subdivisions along each axis per pixel
     int min_n_neighbors = 10; //!< Minimum number of neighbours required for shape collection
     double sigma_m = 0.1; //!< Variance due to crystal mosaicity
     double sigma_d = 0.1; //!< Variance due to beam divergence
