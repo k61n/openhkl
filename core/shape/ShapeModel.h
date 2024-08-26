@@ -77,9 +77,9 @@ class ShapeModel {
     //! Construct an empty collection.
     //! @param detector_coords if true, store profiles in detector coordinates;
     //! otherwise store in Kabsch coordinates
-    ShapeModel();
-    ShapeModel(const std::string& name);
-    ShapeModel(const ShapeModelParameters& params);
+    ShapeModel(const sptrDataSet data);
+    ShapeModel(const std::string& name, const sptrDataSet data);
+    ShapeModel(const ShapeModelParameters& params, const sptrDataSet data);
 
     //! Get the integer id
     unsigned int id() const { return _id; };

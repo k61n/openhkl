@@ -19,6 +19,7 @@
 #include "core/algo/AutoIndexer.h"
 #include "core/algo/Refiner.h"
 #include "core/data/DataSet.h"
+#include "core/data/DataTypes.h"
 #include "core/experiment/DataHandler.h"
 #include "core/experiment/ExperimentExporter.h"
 #include "core/experiment/ExperimentImporter.h"
@@ -532,11 +533,6 @@ bool Experiment::addShapeModel(const std::string& name, const ShapeModel& shapes
 bool Experiment::addShapeModel(const std::string& name, std::unique_ptr<ShapeModel>& shapes)
 {
     return _shape_handler->addShapeModel(name, shapes);
-}
-
-bool Experiment::addEmptyShapeModel(const std::string& name)
-{
-    return _shape_handler->addEmptyModel(name);
 }
 
 bool Experiment::hasShapeModel(const std::string& name) const

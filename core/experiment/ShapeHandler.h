@@ -37,8 +37,6 @@ class ShapeHandler {
     bool addShapeModel(const std::string& name, const ohkl::ShapeModel& shapes);
     //! Add a shape model from a unique_ptr
     bool addShapeModel(const std::string& name, std::unique_ptr<ohkl::ShapeModel>& shape);
-    //! Add an empty shape model
-    bool addEmptyModel(const std::string& name);
     //! Returns true if the experiment has named shape model
     bool hasShapeModel(const std::string& name) const;
     //! Returns the named shape model

@@ -122,9 +122,10 @@ struct FitData {
     }
 };
 
-ShapeModel::ShapeModel()
+ShapeModel::ShapeModel(const sptrDataSet data)
     : _id(0)
     , _profiles()
+    , _data(data)
     , _choleskyD()
     , _choleskyM()
     , _choleskyS()
@@ -136,14 +137,15 @@ ShapeModel::ShapeModel()
     _choleskyS.fill(1e-6);
 }
 
-ShapeModel::ShapeModel(const std::string& name) : ShapeModel()
+ShapeModel::ShapeModel(const std::string& name, const sptrDataSet data) : ShapeModel(data)
 {
     _name = name;
 }
 
-ShapeModel::ShapeModel(const ShapeModelParameters& params)
+ShapeModel::ShapeModel(const ShapeModelParameters& params, const sptrDataSet data)
     : _id(0)
     , _profiles()
+    , _data(data)
     , _choleskyD()
     , _choleskyM()
     , _choleskyS()

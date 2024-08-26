@@ -184,8 +184,6 @@ class Experiment {
     bool addShapeModel(const std::string& name, const ShapeModel& shapes);
     //! Add a shape model from a unique_ptr
     bool addShapeModel(const std::string& name, std::unique_ptr<ShapeModel>& shapes);
-    //! Add an empty shape model
-    bool addEmptyShapeModel(const std::string& name);
     //! Returns true if the experiment has named shape model
     bool hasShapeModel(const std::string& name) const;
     //! Returns the named shape model
