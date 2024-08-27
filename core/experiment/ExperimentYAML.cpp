@@ -56,7 +56,7 @@ void ExperimentYAML::grabDataReaderParameters(DataReaderParameters* params) cons
 {
     ohklLog(Level::Info, "ExperimentYAML::grabDataReaderParameters: reading parameters from yml");
     if (!_node["DataReader"])
-        throw std::runtime_error("No DataReader node in this yaml file");
+        return;
 
     YAML::Node branch = _node["DataReader"];
 

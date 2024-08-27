@@ -97,16 +97,6 @@ void Experiment::setName(const std::string& name)
     _name = name;
 }
 
-void Experiment::setDefaultDMin()
-{
-    double lambda = getDiffractometer()->source().selectedMonochromator().wavelength();
-    double d_min = lambda / 2.0;
-    _predictor->parameters()->d_min = d_min;
-    _auto_indexer->parameters()->d_min = d_min;
-    _peak_filter->parameters()->d_min = d_min;
-    _peak_merger->parameters()->d_min = d_min;
-}
-
 void Experiment::readFromYaml(const std::string& filename)
 {
     ohklLog(Level::Info, "Experiment::readFromYaml:  ", filename);
@@ -252,7 +242,6 @@ void Experiment::loadFromFile(const std::string& path)
     importer.loadUnitCells(this);
     importer.loadPeaks(this);
     importer.loadInstrumentStates(this);
-    setDefaultDMin();
 }
 
 const UnitCell* Experiment::getAcceptedCell() const
@@ -297,7 +286,6 @@ bool Experiment::addData(sptrDataSet data, bool default_states)
     if (!_data_handler->addData(data, _diffractometer.get(), data->name(), default_states)) {
         return false;
     }
-    setDefaultDMin();
     return true;
 }
 

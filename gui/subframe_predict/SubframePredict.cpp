@@ -296,6 +296,9 @@ void SubframePredict::refreshAll()
 
 void SubframePredict::grabPredictorParameters()
 {
+    if (!gSession->hasProject())
+        return;
+
     auto params = gSession->currentProject()->experiment()->predictor()->parameters();
 
     _d_min->setValue(params->d_min);
@@ -306,8 +309,6 @@ void SubframePredict::setPredictorParameters()
 {
     if (!gSession->hasProject())
         return;
-    if (!gSession->currentProject()->hasUnitCell())
-        return;
 
     auto params = gSession->currentProject()->experiment()->predictor()->parameters();
 
@@ -317,6 +318,9 @@ void SubframePredict::setPredictorParameters()
 
 void SubframePredict::grabRefinerParameters()
 {
+    if (!gSession->hasProject())
+        return;
+
     auto* params = gSession->currentProject()->experiment()->refiner()->parameters();
 
     _n_batches_spin->setValue(params->nbatches);
@@ -333,6 +337,7 @@ void SubframePredict::setRefinerParameters()
 {
     if (!gSession->hasProject())
         return;
+
     auto* params = gSession->currentProject()->experiment()->refiner()->parameters();
 
     params->nbatches = _n_batches_spin->value();
@@ -359,6 +364,7 @@ void SubframePredict::setShapeModelParameters()
 {
     if (!gSession->hasProject())
         return;
+
 
     auto* params = gSession->currentProject()->experiment()->shapeModelBuilder()->parameters();
 

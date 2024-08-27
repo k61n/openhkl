@@ -72,8 +72,6 @@ class Experiment {
     const std::string& name() const;
     //! Set the name of the Experiment
     void setName(const std::string& name);
-    //! Default d min to lambda/2
-    void setDefaultDMin();
 
     //! Read saved experiment parameters from yaml
     void readFromYaml(const std::string& filename);

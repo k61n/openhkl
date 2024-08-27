@@ -855,14 +855,16 @@ void SubframeMerge::toggleUnsafeWidgets()
     _save_shell->setEnabled(false);
     _save_merged->setEnabled(false);
     _save_unmerged->setEnabled(false);
+    _save_peaks->setEnabled(false);
 
     if (!gSession->hasProject())
         return;
 
-    if (_peak_combo_1->count() > 0) {
+    if (gSession->currentProject()->hasPeakCollection()) {
         _save_shell->setEnabled(true);
         _save_merged->setEnabled(true);
         _save_unmerged->setEnabled(true);
+        _save_peaks->setEnabled(true);
     }
 }
 

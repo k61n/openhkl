@@ -89,12 +89,12 @@ Experiment:
     ShapeModel:
         d_min: 1.5
         d_max: 50
-        strength_min: 5
+        strength_min: 1.0
         kabsch_coords: true
         nbins_x: 20
         nbins_y: 20
         nbins_z: 6
-        n_subdiv: 5
+        n_subdiv: 1
         min_n_neighbors: 10
         sigma_m: 0.2
         sigma_d: 0.3

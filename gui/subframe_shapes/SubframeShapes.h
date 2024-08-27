@@ -37,6 +37,7 @@ class QGroupBox;
 class QPushButton;
 class QSplitter;
 class QVBoxLayout;
+class Spoiler;
 namespace ohkl {
 class Peak3D;
 class RegionData;
@@ -137,6 +138,7 @@ class SubframeShapes : public QWidget {
     QPushButton* _build_collection;
 
     // Preview/Compute shapes box
+    Spoiler* _compute_box;
     SafeDoubleSpinBox* _x;
     SafeDoubleSpinBox* _y;
     SafeDoubleSpinBox* _frame;

@@ -209,8 +209,8 @@ void SubframeShapes::setInputUp()
 
 void SubframeShapes::setComputeShapesUp()
 {
-    auto compute_box = new Spoiler("Preview shapes and apply model");
-    GridFiller f(compute_box, true);
+    _compute_box = new Spoiler("Preview shapes and apply model");
+    GridFiller f(_compute_box, true);
 
     _x = f.addDoubleSpinBox("x coordinate", "(pixels) x coordinate of peak shape to preview");
     _y = f.addDoubleSpinBox("y coordinate", "(pixels) y coordinate of peak shape to preview");
@@ -292,7 +292,7 @@ void SubframeShapes::setComputeShapesUp()
     _assign_peak_shapes =
         f.addButton("Apply shape model", "Apply selected shape model to a peak collection");
 
-    _left_layout->addWidget(compute_box);
+    _left_layout->addWidget(_compute_box);
 
     connect(_assign_peak_shapes, &QPushButton::clicked, this, &SubframeShapes::assignPeakShapes);
     connect(
@@ -398,9 +398,8 @@ void SubframeShapes::refreshAll()
 
 void SubframeShapes::grabShapeParameters()
 {
-    if (!gSession->currentProject()->hasPeakCollection())
+    if (!gSession->hasProject())
         return;
-
     auto* experiment = gSession->currentProject()->experiment();
     auto* integration_params = experiment->integrator()->parameters();
     auto* shape_params = experiment->shapeModelBuilder()->parameters();
@@ -409,8 +408,6 @@ void SubframeShapes::grabShapeParameters()
     QSignalBlocker blocker2(_peak_end);
     QSignalBlocker blocker3(_bkg_begin);
     QSignalBlocker blocker4(_bkg_end);
-
-    _peak_combo->currentPeakCollection()->computeSigmas();
 
     _min_d->setValue(shape_params->d_min);
     _max_d->setValue(shape_params->d_max);
@@ -430,12 +427,17 @@ void SubframeShapes::grabShapeParameters()
     _ny->setValue(shape_params->nbins_y);
     _nz->setValue(shape_params->nbins_z);
     _nsubdiv->setValue(shape_params->n_subdiv);
-    _sigma_m->setValue(_peak_combo->currentPeakCollection()->sigmaM());
-    _sigma_d->setValue(_peak_combo->currentPeakCollection()->sigmaD());
     _pixel_radius->setValue(shape_params->neighbour_range_pixels);
     _frame_radius->setValue(shape_params->neighbour_range_frames);
     _interpolation_combo->setCurrentIndex(static_cast<int>(shape_params->interpolation));
     _integration_region_type->setCurrentIndex(static_cast<int>(integration_params->region_type));
+
+    if (!gSession->currentProject()->hasPeakCollection())
+        return;
+
+    _peak_combo->currentPeakCollection()->computeSigmas();
+    _sigma_m->setValue(_peak_combo->currentPeakCollection()->sigmaM());
+    _sigma_d->setValue(_peak_combo->currentPeakCollection()->sigmaD());
 }
 
 void SubframeShapes::setShapeParameters()
@@ -747,6 +749,7 @@ void SubframeShapes::toggleUnsafeWidgets()
 {
     _build_collection->setEnabled(false);
     _save_shapes->setEnabled(false);
+    _compute_box->setEnabled(false);
     _calculate_mean_profile->setEnabled(false);
     _assign_peak_shapes->setEnabled(false);
 
@@ -755,8 +758,10 @@ void SubframeShapes::toggleUnsafeWidgets()
 
     _build_collection->setEnabled(gSession->currentProject()->hasPeakCollection());
 
-    if (_shape_model)
+    if (_shape_model) {
         _save_shapes->setEnabled(true);
+        _compute_box->setEnabled(true);
+    }
 
     if (gSession->currentProject()->hasShapeModel()
         && gSession->currentProject()->hasPeakCollection()) {

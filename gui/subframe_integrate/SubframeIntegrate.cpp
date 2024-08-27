@@ -17,6 +17,7 @@
 
 #include "core/experiment/Experiment.h"
 #include "core/experiment/Integrator.h"
+#include "core/experiment/ShapeModelBuilder.h"
 #include "core/integration/IIntegrator.h"
 #include "core/shape/PeakCollection.h"
 #include "core/shape/ShapeModel.h"
@@ -181,11 +182,12 @@ void SubframeIntegrate::refreshAll()
     _detector_widget->refresh();
     refreshPeakTable();
     grabIntegrationParameters();
-    toggleUnsafeWidgets();
 }
 
 void SubframeIntegrate::grabIntegrationParameters()
 {
+    if (!gSession->hasProject())
+        return;
 
     auto* expt = gSession->currentProject()->experiment();
     auto* integrator = expt->integrator();
@@ -224,13 +226,11 @@ void SubframeIntegrate::grabIntegrationParameters()
     _max_width->setValue(params->max_width);
     _integrator_combo->setCurrentIndex(static_cast<int>(params->integrator_type));
 
-    if (!gSession->currentProject()->hasShapeModel())
-        return;
-
-    auto* shape_params = _shape_combo->currentShapes()->parameters();
+    auto* shape_params = expt->shapeModelBuilder()->parameters();
     _radius_int->setValue(shape_params->neighbour_range_pixels);
     _n_frames_int->setValue(shape_params->neighbour_range_frames);
     _interpolation_combo->setCurrentIndex(static_cast<int>(shape_params->interpolation));
+    toggleUnsafeWidgets();
 }
 
 void SubframeIntegrate::setIntegrationParameters()
@@ -543,16 +543,10 @@ void SubframeIntegrate::changeSelected(PeakItemGraphic* peak_graphic)
 
 void SubframeIntegrate::toggleUnsafeWidgets()
 {
-    bool isPxsum = _integrator_combo->currentIndex() == 0;
-
     if (!gSession->hasProject())
         return;
 
-    if (!gSession->currentProject()->hasDataSet())
-        return;
-
-    if (!gSession->currentProject()->hasPeakCollection())
-        return;
+    bool isPxsum = _integrator_combo->currentIndex() == 0;
 
     _integrate_button->setToolTip("");
     _integrate_button->setEnabled(isPxsum);
