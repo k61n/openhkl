@@ -65,7 +65,7 @@ Experiment:
         maximum_frames: 10
         frames_begin: 0
         frames_end: -1
-        threshold: 30
+        threshold: 1.0
         convolver: enhanced annular
     Autoindexer:
         maxdim: 100

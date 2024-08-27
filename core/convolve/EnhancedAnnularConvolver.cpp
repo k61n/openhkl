@@ -31,6 +31,7 @@ namespace ohkl {
 EnhancedAnnularConvolver::EnhancedAnnularConvolver()
     : Convolver({{"r1", 5}, {"r2", 10}, {"r3", 15}})
 {
+    _convolver_type = "enhanced annular";
 }
 
 EnhancedAnnularConvolver::EnhancedAnnularConvolver(const std::map<std::string, double>& parameters)

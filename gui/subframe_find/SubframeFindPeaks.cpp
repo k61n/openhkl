@@ -381,6 +381,9 @@ void SubframeFindPeaks::refreshAll()
 
 void SubframeFindPeaks::grabFinderParameters()
 {
+    if (!gSession->hasProject())
+        return;
+
     ohkl::PeakFinder* finder = gSession->currentProject()->experiment()->peakFinder();
 
     auto* params = gSession->currentProject()->experiment()->peakFinder()->parameters();
@@ -393,9 +396,12 @@ void SubframeFindPeaks::grabFinderParameters()
     _end_frame_spin->setValue(params->frames_end);
     _threshold_spin->setValue(params->threshold);
 
+    _kernel_combo->setCurrentText(QString::fromStdString(params->convolver));
+
+    // only change the convolver if it doesn't match the parameters
     ohkl::Convolver* convolver = finder->convolver();
-    std::string convolverType = convolver->type();
-    _kernel_combo->setCurrentText(QString::fromStdString(convolverType));
+    if (convolver->type() != params->convolver)
+        finder->setConvolver(params->convolver, {});
 
     const std::map<std::string, double>& convolver_params = convolver->parameters();
     using mapIterator = std::map<std::string, double>::const_iterator;
@@ -442,6 +448,8 @@ void SubframeFindPeaks::setFinderParameters()
     params->threshold = _threshold_spin->value();
 
     std::string convolverType = _kernel_combo->currentText().toStdString();
+    params->convolver = convolverType;
+
     ohkl::ConvolverFactory factory;
     ohkl::Convolver* convolver = factory.create(convolverType, {});
     convolver->setParameters(convolutionParameters());

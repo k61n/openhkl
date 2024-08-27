@@ -21,6 +21,7 @@ ConstantConvolver::ConstantConvolver() : AtomicConvolver({{"box_size", 3}}) { }
 ConstantConvolver::ConstantConvolver(const std::map<std::string, double>& parameters)
     : ConstantConvolver()
 {
+    _convolver_type = "constant";
     setParameters(parameters);
 }
 

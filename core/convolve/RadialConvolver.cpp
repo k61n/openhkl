@@ -16,7 +16,10 @@
 
 namespace ohkl {
 
-RadialConvolver::RadialConvolver() : AtomicConvolver({{"r_in", 5}, {"r_out", 10}}) { }
+RadialConvolver::RadialConvolver() : AtomicConvolver({{"r_in", 5}, {"r_out", 10}})
+{
+    _convolver_type = "radial";
+}
 
 Convolver* RadialConvolver::clone() const
 {

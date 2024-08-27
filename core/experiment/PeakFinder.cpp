@@ -147,6 +147,12 @@ void PeakFinder::setConvolver(std::unique_ptr<Convolver> convolver)
     _convolver = std::move(convolver);
 }
 
+void PeakFinder::setConvolver(
+        const std::string& convolver, const std::map<std::string, double>& parameters)
+{
+    _convolver.reset(ConvolverFactory{}.create(convolver, parameters));
+}
+
 void PeakFinder::setConvolver(const Convolver& convolver)
 {
     _convolver.reset(convolver.clone());

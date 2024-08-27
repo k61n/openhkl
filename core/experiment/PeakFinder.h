@@ -106,6 +106,9 @@ class PeakFinder {
 #endif
 
     //! Set the convolver flavour for peak/background convolution
+    void setConvolver(const std::string& convolver, const std::map<std::string, double>& parameters);
+
+    //! Set the convolver flavour for peak/background convolution
     void setConvolver(const Convolver& convolver);
     //! Get the convolver
     ohkl::Convolver* convolver() const { return _convolver.get(); }
