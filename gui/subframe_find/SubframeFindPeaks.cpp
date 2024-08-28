@@ -392,8 +392,8 @@ void SubframeFindPeaks::grabFinderParameters()
     _max_size_spin->setValue(params->maximum_size);
     _scale_spin->setValue(params->peak_end);
     _max_width_spin->setValue(params->maximum_frames);
-    _start_frame_spin->setValue(params->frames_begin + 1);
-    _end_frame_spin->setValue(params->frames_end);
+    _start_frame_spin->setValue(params->first_frame + 1);
+    _end_frame_spin->setValue(params->last_frame + 1);
     _threshold_spin->setValue(params->threshold);
 
     _kernel_combo->setCurrentText(QString::fromStdString(params->convolver));
@@ -443,8 +443,8 @@ void SubframeFindPeaks::setFinderParameters()
     params->maximum_size = _max_size_spin->value();
     params->peak_end = _scale_spin->value();
     params->maximum_frames = _max_width_spin->value();
-    params->frames_begin = _start_frame_spin->value() - 1;
-    params->frames_end = _end_frame_spin->value() - 1;
+    params->first_frame = _start_frame_spin->value() - 1;
+    params->last_frame = _end_frame_spin->value() - 1;
     params->threshold = _threshold_spin->value();
 
     std::string convolverType = _kernel_combo->currentText().toStdString();

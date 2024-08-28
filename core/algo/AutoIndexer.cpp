@@ -135,8 +135,9 @@ const std::vector<std::pair<sptrUnitCell, double>>& AutoIndexer::solutions() con
 void AutoIndexer::filterPeaks(const std::vector<Peak3D*>& peaks, const InstrumentState* state)
 {
     std::vector<Peak3D*> tmp_peaks;
+    int last = _params->last_frame == -1 ? _data->nFrames() : _params->last_frame;
     const std::vector<Peak3D*> frame_range_peaks =
-        PeakFilter{}.filterFrameRange(peaks, _params->first_frame, _params->last_frame);
+        PeakFilter{}.filterFrameRange(peaks, _params->first_frame, last);
     ohklLog(
         Level::Info, "AutoIndexer::filterPeaks: ", frame_range_peaks.size(),
         " peaks in frame range");

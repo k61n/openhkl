@@ -63,8 +63,8 @@ Experiment:
         maximum_size: 10000
         peak_end: 1
         maximum_frames: 10
-        frames_begin: 0
-        frames_end: -1
+        first_frame: 0
+        last_frame: -1
         threshold: 1.0
         convolver: enhanced annular
     Autoindexer:

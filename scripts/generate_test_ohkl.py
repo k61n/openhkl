@@ -66,8 +66,8 @@ data = expt.getAllData()[0]
 # Find the peaks
 finder = expt.peakFinder()
 params = finder.parameters()
-params.frames_begin = 0
-params.frames_end = -1
+params.first_frame = 0
+params.last_frame = -1
 params.minimum_size = 30
 params.maximum_size = 10000
 params.peak_end = 1.0

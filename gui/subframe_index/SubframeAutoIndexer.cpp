@@ -194,7 +194,10 @@ void SubframeAutoIndexer::setParametersUp()
         "Minimum fraction of amplitude of the zeroth Fourier frequency to accept as a candidate "
         "lattice vector");
 
+    _min_frame->setMinimum(1);
     _min_frame->setMaximum(10000);
+
+    _max_frame->setMinimum(1);
     _max_frame->setMaximum(10000);
 
     _d_min->setMaximum(100);
@@ -305,7 +308,7 @@ void SubframeAutoIndexer::refreshAll()
     grabIndexerParameters();
 
     auto dataset = _data_combo->currentData();
-    _max_frame->setMaximum(dataset->nFrames() - 1);
+    _max_frame->setMaximum(dataset->nFrames());
     _beam_setter_widget->setSpinLimits(dataset->nCols(), dataset->nRows());
 
     toggleUnsafeWidgets();
@@ -369,8 +372,8 @@ void SubframeAutoIndexer::grabIndexerParameters()
         return;
 
     auto* params = gSession->currentProject()->experiment()->autoIndexer()->parameters();
-    _min_frame->setValue(params->first_frame);
-    _max_frame->setValue(params->last_frame);
+    _min_frame->setValue(params->first_frame + 1);
+    _max_frame->setValue(params->last_frame + 1);
     _d_min->setValue(params->d_min);
     _d_max->setValue(params->d_max);
     _str_min->setValue(params->strength_min);
@@ -385,6 +388,9 @@ void SubframeAutoIndexer::grabIndexerParameters()
     _indexing_tolerance->setValue(params->indexingTolerance);
     _frequency_tolerance->setValue(params->frequencyTolerance);
     _min_cell_volume->setValue(params->minUnitCellVolume);
+
+    if (gSession->currentProject()->hasDataSet() && params->last_frame < 1)
+            _max_frame->setValue(_data_combo->currentData()->nFrames());
 }
 
 void SubframeAutoIndexer::setIndexerParameters()
@@ -394,8 +400,8 @@ void SubframeAutoIndexer::setIndexerParameters()
 
     auto* params = gSession->currentProject()->experiment()->autoIndexer()->parameters();
 
-    params->first_frame = _min_frame->value();
-    params->last_frame = _max_frame->value();
+    params->first_frame = _min_frame->value() - 1;
+    params->last_frame = _max_frame->value() - 1;
     params->d_min = _d_min->value();
     params->d_max = _d_max->value();
     params->strength_min = _str_min->value();

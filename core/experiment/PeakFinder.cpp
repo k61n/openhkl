@@ -93,8 +93,8 @@ void PeakFinderParameters::log(const Level& level) const
     ohklLog(level, "maximum_size           = ", maximum_size);
     ohklLog(level, "peak_end               = ", peak_end);
     ohklLog(level, "maximum_frames         = ", maximum_frames);
-    ohklLog(level, "frames_begin           = ", frames_begin);
-    ohklLog(level, "frames_end             = ", frames_end);
+    ohklLog(level, "first_frame           = ", first_frame);
+    ohklLog(level, "last_frame             = ", last_frame);
     ohklLog(level, "threshold              = ", threshold);
     ohklLog(level, "convolver              = ", convolver);
 }
@@ -549,8 +549,8 @@ void PeakFinder::find(const sptrDataSet data)
 
     _current_label = 0;
 
-    int loop_begin = _params->frames_begin;
-    int loop_end = _params->frames_end;
+    int loop_begin = _params->first_frame;
+    int loop_end = _params->last_frame;
     if (loop_begin == -1)
         loop_begin = 0;
     if (loop_end == -1)
