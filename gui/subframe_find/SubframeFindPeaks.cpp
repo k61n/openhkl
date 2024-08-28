@@ -164,7 +164,7 @@ void SubframeFindPeaks::setBlobUp()
     f.addWidget(_kernel_para_table, 1);
 
     std::tie(_start_frame_spin, _end_frame_spin) =
-        f.addSpinBoxPair("Frame range", "start and end image of range in which to find peaks");
+        f.addSpinBoxPair("Image range", "start and end image of range in which to find peaks");
 
     _threshold_check =
         f.addCheckBox("Apply threshold to preview", "Only show pixels above threshold");
@@ -180,6 +180,8 @@ void SubframeFindPeaks::setBlobUp()
     _min_size_spin->setMaximum(1000);
     _max_size_spin->setMaximum(100000);
     _max_width_spin->setMaximum(20);
+    _start_frame_spin->setMinimum(1);
+    _end_frame_spin->setMinimum(1);
 
     connect(_find_button, &QPushButton::clicked, this, &SubframeFindPeaks::find);
     connect(

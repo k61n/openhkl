@@ -80,7 +80,7 @@ Experiment:
         solutionCutoff: 10
         frequencyTolerance: 0.7
         first_frame: 0
-        last_frame: 10
+        last_frame: 9
         d_min: 1.5
         d_max: 50
         strength_min: 1

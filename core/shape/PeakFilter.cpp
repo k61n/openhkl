@@ -450,7 +450,7 @@ void PeakFilter::filterFrameRange(PeakCollection* peak_collection) const
     for (int i = 0; i < peak_collection->numberOfPeaks(); ++i) {
         ohkl::Peak3D* peak_ptr = peak_collection->getPeak(i);
         auto c = peak_ptr->shape().center();
-        if (c[2] >= _filter_params->frame_min && c[2] <= _filter_params->frame_max)
+        if (c[2] >= _filter_params->first_frame && c[2] <= _filter_params->last_frame)
             peak_ptr->caughtYou(true);
         else {
             peak_ptr->rejectYou(true);
@@ -461,12 +461,12 @@ void PeakFilter::filterFrameRange(PeakCollection* peak_collection) const
 }
 
 std::vector<Peak3D*> PeakFilter::filterFrameRange(
-    const std::vector<Peak3D*>& peaks, int frame_min, int frame_max) const
+    const std::vector<Peak3D*>& peaks, int first_frame, int last_frame) const
 {
     std::vector<Peak3D*> filtered_peaks;
     for (auto* peak : peaks) {
         auto c = peak->shape().center();
-        if (c[2] >= static_cast<double>(frame_min) && c[2] <= static_cast<double>(frame_max))
+        if (c[2] >= static_cast<double>(first_frame) && c[2] <= static_cast<double>(last_frame))
             filtered_peaks.push_back(peak);
     }
     return filtered_peaks;
@@ -648,8 +648,8 @@ void PeakFilter::filter(PeakCollection* peak_collection) const
     if (_filter_flags->frames) {
         filterFrameRange(peak_collection);
         ohklLog(
-            Level::Info, "Filtering peaks from frames in range", _filter_params->frame_min, "-",
-            _filter_params->frame_max);
+            Level::Info, "Filtering peaks from frames in range", _filter_params->first_frame, "-",
+            _filter_params->last_frame);
     }
 
     if (_filter_flags->rejection_flag) {

@@ -15,6 +15,7 @@
 #include "gui/subframe_filter/SubframeFilter.h"
 
 #include "core/experiment/Experiment.h"
+#include "core/data/DataSet.h"
 #include "core/shape/PeakFilter.h"
 #include "gui/MainWin.h" // gGui
 #include "gui/dialogs/ListNameDialog.h"
@@ -188,14 +189,18 @@ void SubframeFilter::setFrameRangeUp()
     GridFiller f(_frame_range_box);
 
     _frame_min = f.addDoubleSpinBox("Minimum:");
+    _frame_min->setMinimum(1);
     _frame_min->setMaximum(1000);
     _frame_min->setDecimals(0);
     _frame_min->setValue(0.0000);
+    _frame_min->setSingleStep(1.0);
 
     _frame_max = f.addDoubleSpinBox("Maximum:");
+    _frame_max->setMinimum(1);
     _frame_max->setMaximum(1000);
     _frame_max->setDecimals(0);
     _frame_max->setValue(10.00000);
+    _frame_max->setSingleStep(1.0);
 
     _left_layout->addWidget(_frame_range_box);
 }
@@ -348,6 +353,11 @@ void SubframeFilter::refreshAll()
     refreshPeakTable();
     grabFilterParameters();
     toggleUnsafeWidgets();
+
+    if (gSession->currentProject()->hasDataSet()) {
+        _frame_min->setMaximum(_data_combo->currentData()->nFrames());
+        _frame_max->setMaximum(_data_combo->currentData()->nFrames());
+    }
 }
 
 void SubframeFilter::grabFilterParameters()
@@ -362,8 +372,8 @@ void SubframeFilter::grabFilterParameters()
     _strength_max->setValue(params->strength_max);
     _d_range_min->setValue(params->d_min);
     _d_range_max->setValue(params->d_max);
-    _frame_min->setValue(params->frame_min);
-    _frame_max->setValue(params->frame_max);
+    _frame_min->setValue(params->first_frame + 1);
+    _frame_max->setValue(params->last_frame + 1);
     _significance_level->setValue(params->significance);
     _peak_end->setValue(params->peak_end);
     _bkg_end->setValue(params->bkg_end);
@@ -384,6 +394,9 @@ void SubframeFilter::grabFilterParameters()
     _merge_box->setChecked(flags->significance);
     _overlap_box->setChecked(flags->overlapping);
     _rejection_flag_box->setChecked(flags->rejection_flag);
+
+    if (gSession->currentProject()->hasDataSet() && params->last_frame < 0)
+        _frame_max->setValue(_data_combo->currentData()->nFrames());
 }
 
 void SubframeFilter::setFilterParameters()
@@ -420,8 +433,8 @@ void SubframeFilter::setFilterParameters()
     params->significance = _significance_level->value();
     params->d_min = _d_range_min->value();
     params->d_max = _d_range_max->value();
-    params->frame_min = _frame_min->value();
-    params->frame_max = _frame_max->value();
+    params->first_frame = _frame_min->value() - 1;
+    params->last_frame = _frame_max->value() - 1;
     params->strength_min = _strength_min->value();
     params->strength_max = _strength_max->value();
     params->unit_cell = _unit_cell->currentText().toStdString();
