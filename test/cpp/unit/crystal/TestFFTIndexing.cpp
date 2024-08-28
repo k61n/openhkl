@@ -60,6 +60,7 @@ TEST_CASE("test/crystal/TestFFTIndexing.cpp", "")
     params->unitCellEquivalenceTolerance = 0.05;
     params->solutionCutoff = 10.0;
     params->peaks_integrated = false;
+    params->d_min = 1.335;
 
     // real basis of unit cell
     Eigen::Matrix3d basis;
