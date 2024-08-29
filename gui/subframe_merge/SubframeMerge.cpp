@@ -108,8 +108,8 @@ void SubframeMerge::grabMergeParameters()
 
     _d_min->setValue(params->d_min);
     _d_max->setValue(params->d_max);
-    _frame_min->setValue(params->frame_min + 1);
-    _frame_max->setValue(params->frame_max + 1);
+    _frame_min->setValue(params->first_frame + 1);
+    _frame_max->setValue(params->last_frame + 1);
     _d_shells->setValue(params->n_shells);
     _friedel->setChecked(params->friedel);
 }
@@ -123,8 +123,8 @@ void SubframeMerge::setMergeParameters()
 
     params->d_min = _d_min->value();
     params->d_max = _d_max->value();
-    params->frame_min = _frame_min->value() - 1;
-    params->frame_max = _frame_max->value() - 1;
+    params->first_frame = _frame_min->value() - 1;
+    params->last_frame = _frame_max->value() - 1;
     params->n_shells = _d_shells->value();
     params->friedel = _friedel->isChecked();
 }

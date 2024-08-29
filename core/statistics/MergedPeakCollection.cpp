@@ -30,8 +30,8 @@ MergedPeakCollection::MergedPeakCollection(
     , _friedel(friedel)
     , _merged_peak_set()
     , _sum_intensity(sum_intensity)
-    , _frame_min(fmin)
-    , _frame_max(fmax)
+    , _first_frame(fmin)
+    , _last_frame(fmax)
 {
     ohklLog(Level::Info, "MergedPeakCollection::MergedPeakCollection: merging peaks");
     _peak_collections = peak_collections;
@@ -67,8 +67,8 @@ MergedPeakCollection::MergedPeakCollection(
     , _friedel(friedel)
     , _merged_peak_set()
     , _sum_intensity(sum_intensity)
-    , _frame_min(fmin)
-    , _frame_max(fmax)
+    , _first_frame(fmin)
+    , _last_frame(fmax)
 {
 }
 
@@ -96,8 +96,8 @@ void MergedPeakCollection::addPeak(Peak3D* peak)
 {
     auto c = peak->shape().center();
     // Ignore the peaks outside the frame range (mainly to exclude peaks that can't be interpolated)
-    if (_frame_min >= 0 && _frame_max >= 0) {
-        if (c[2] >= _frame_max && c[2] <= _frame_min)
+    if (_first_frame >= 0 && _last_frame >= 0) {
+        if (c[2] >= _last_frame && c[2] <= _first_frame)
             return;
     }
 

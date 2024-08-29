@@ -93,7 +93,7 @@ void PeakFinderParameters::log(const Level& level) const
     ohklLog(level, "maximum_size           = ", maximum_size);
     ohklLog(level, "peak_end               = ", peak_end);
     ohklLog(level, "maximum_frames         = ", maximum_frames);
-    ohklLog(level, "first_frame           = ", first_frame);
+    ohklLog(level, "first_frame            = ", first_frame);
     ohklLog(level, "last_frame             = ", last_frame);
     ohklLog(level, "threshold              = ", threshold);
     ohklLog(level, "convolver              = ", convolver);

@@ -35,8 +35,8 @@ void MergeParameters::log(const Level& level) const
     ohklLog(level, "Merge parameters:");
     ohklLog(level, "d_min                  = ", d_min);
     ohklLog(level, "d_max                  = ", d_max);
-    ohklLog(level, "frame_min             = ", frame_min);
-    ohklLog(level, "frame_max             = ", frame_max);
+    ohklLog(level, "first_frame            = ", first_frame);
+    ohklLog(level, "last_frame             = ", last_frame);
     ohklLog(level, "n_shells               = ", n_shells);
     ohklLog(level, "friedel                = ", friedel);
 }
@@ -82,11 +82,11 @@ void PeakMerger::mergePeaks()
     _profile_merged_data_per_shell.clear();
 
     _sum_merged_data = std::make_unique<MergedPeakCollection>(
-        _space_group, _peak_collections, _params->friedel, true, _params->frame_min,
-        _params->frame_max);
+        _space_group, _peak_collections, _params->friedel, true, _params->first_frame,
+        _params->last_frame);
     _profile_merged_data = std::make_unique<MergedPeakCollection>(
-        _space_group, _peak_collections, _params->friedel, false, _params->frame_min,
-        _params->frame_max);
+        _space_group, _peak_collections, _params->friedel, false, _params->first_frame,
+        _params->last_frame);
 
     _sum_merged_data->setDRange(_params->d_min, _params->d_max);
     _profile_merged_data->setDRange(_params->d_min, _params->d_max);
@@ -112,11 +112,11 @@ void PeakMerger::mergePeaks()
 
         std::unique_ptr<MergedPeakCollection> sum_merged_data_per_shell =
             std::make_unique<MergedPeakCollection>(
-                _space_group, _params->friedel, true, _params->frame_min, _params->frame_max);
+                _space_group, _params->friedel, true, _params->first_frame, _params->last_frame);
 
         std::unique_ptr<MergedPeakCollection> profile_merged_data_per_shell =
             std::make_unique<MergedPeakCollection>(
-                _space_group, _params->friedel, false, _params->frame_min, _params->frame_max);
+                _space_group, _params->friedel, false, _params->first_frame, _params->last_frame);
 
         for (PeakCollection* collection : _peak_collections) {
             sum_merged_data_per_shell->addPeakCollection(collection);

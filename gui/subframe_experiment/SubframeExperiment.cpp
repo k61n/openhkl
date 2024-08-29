@@ -867,8 +867,8 @@ void SubframeExperiment::merge()
 
     merge_params->d_min = _d_min->value();
     merge_params->d_max = _d_max->value();
-    merge_params->frame_min = 0;
-    merge_params->frame_max = _n_increments->value();
+    merge_params->first_frame = 0;
+    merge_params->last_frame = _n_increments->value();
     merge_params->n_shells = 10;
     merge_params->friedel = true;
 

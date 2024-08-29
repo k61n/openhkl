@@ -133,8 +133,8 @@ Experiment:
     Merge:
         d_min: 1.5
         d_max: 50
-        frame_min: 0
-        frame_max: -1
+        first_frame: 0
+        last_frame: -1
         n_shells: 10
         friedel: true
         scale: 1

@@ -98,8 +98,8 @@ def index(experiment, a, b, c, alpha, beta, gamma, sg):
     filter.flags().d_range = True
     filter.flags().frames = True
     filter.parameters().d_min = 1.5
-    filter.parameters().frame_min = 10
-    filter.parameters().frame_max = 20
+    filter.parameters().first_frame = 10
+    filter.parameters().last_frame = 20
     filter.parameters().strength_min = 1.0
     filter.filter(found_peaks)
     experiment.acceptFilter('indexing', found_peaks)
@@ -245,8 +245,8 @@ merger = expt.peakMerger()
 params = merger.parameters()
 merger.reset()
 params.d_min = 1.5
-params.frame_min = 1  # exclude first and last frames from statistics
-params.frame_max = data.nFrames() - 1
+params.first_frame = 1  # exclude first and last frames from statistics
+params.last_frame = data.nFrames() - 1
 merger.addPeakCollection(predicted_peaks)
 merger.mergePeaks()
 merger.computeQuality()

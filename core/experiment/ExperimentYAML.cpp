@@ -364,8 +364,8 @@ void ExperimentYAML::grabMergeParameters(MergeParameters* params)
 
     params->d_min = getNode<double>(branch, "d_min");
     params->d_max = getNode<double>(branch, "d_max");
-    params->frame_min = getNode<int>(branch, "frame_min");
-    params->frame_max = getNode<int>(branch, "frame_max");
+    params->first_frame = getNode<int>(branch, "first_frame");
+    params->last_frame = getNode<int>(branch, "last_frame");
     params->n_shells = getNode<int>(branch, "n_shells");
     params->friedel = getNode<bool>(branch, "friedel");
     params->scale = getNode<double>(branch, "scale");
@@ -381,8 +381,8 @@ void ExperimentYAML::setMergeParameters(MergeParameters* params)
 
     merge_node["d_min"] = params->d_min;
     merge_node["d_max"] = params->d_max;
-    merge_node["frame_min"] = params->frame_min;
-    merge_node["frame_max"] = params->frame_max;
+    merge_node["first_frame"] = params->first_frame;
+    merge_node["last_frame"] = params->last_frame;
     merge_node["n_shells"] = params->n_shells;
     merge_node["friedel"] = params->friedel;
     merge_node["scale"] = params->scale;
