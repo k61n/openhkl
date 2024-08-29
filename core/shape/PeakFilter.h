@@ -65,8 +65,8 @@ struct PeakFilterParameters {
     double unit_cell_tolerance = 0.2; //!< indexing tolerance
     double significance = 0.99; //!< signficance
     double sparse = 100; //!< number of peaks in dataset to be kept
-    double frame_min = 0.0; //!< start of frame range
-    double frame_max = 10.0; //!< end of frame range
+    double first_frame = 0.0; //!< start of frame range
+    double last_frame = 9.0; //!< end of frame range
     double peak_end = 3.0; //!< scale for peak intensity ellipsoid (sigmas)
     double bkg_end = 6.0; //!< scale for background ellipsoid (sigmas)
     RejectionFlag rejection_flag = RejectionFlag::NotRejected; //!< rejection flag to keep
@@ -155,7 +155,7 @@ class PeakFilter {
 
     //! Remove peaks from outside a frame range for a vector
     std::vector<Peak3D*> filterFrameRange(
-        const std::vector<Peak3D*>& peaks, int frame_min, int frame_max) const;
+        const std::vector<Peak3D*>& peaks, int first_frame, int last_frame) const;
 
     //! Filter d-range on peak vector (intended for a single frame, hence the state)
     std::vector<Peak3D*> filterDRange(

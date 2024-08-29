@@ -45,11 +45,18 @@ ExperimentYAML::ExperimentYAML(const std::string& filename)
     }
 }
 
+ExperimentYAML::ExperimentYAML(const YAML::Node& node)
+{
+    if (!node["Experiment"])
+        _node["Experiment"] = YAML::Null;
+    _node = node;
+}
+
 void ExperimentYAML::grabDataReaderParameters(DataReaderParameters* params) const
 {
     ohklLog(Level::Info, "ExperimentYAML::grabDataReaderParameters: reading parameters from yml");
     if (!_node["DataReader"])
-        throw std::runtime_error("No DataReader node in this yaml file");
+        return;
 
     YAML::Node branch = _node["DataReader"];
 
@@ -193,8 +200,8 @@ void ExperimentYAML::grabPeakFinderParameters(PeakFinderParameters* params)
     params->maximum_size = getNode<int>(branch, "maximum_size");
     params->peak_end = getNode<double>(branch, "peak_end");
     params->maximum_frames = getNode<int>(branch, "maximum_frames");
-    params->frames_begin = getNode<int>(branch, "frames_begin");
-    params->frames_end = getNode<int>(branch, "frames_end");
+    params->first_frame = getNode<int>(branch, "first_frame");
+    params->last_frame = getNode<int>(branch, "last_frame");
     params->threshold = getNode<double>(branch, "threshold");
     params->convolver = getNode<std::string>(branch, "convolver");
 }
@@ -211,8 +218,8 @@ void ExperimentYAML::setPeakFinderParameters(PeakFinderParameters* params)
     pf_node["maximum_size"] = params->maximum_size;
     pf_node["peak_end"] = params->peak_end;
     pf_node["maximum_frames"] = params->maximum_frames;
-    pf_node["frames_begin"] = params->frames_begin;
-    pf_node["frames_end"] = params->frames_end;
+    pf_node["first_frame"] = params->first_frame;
+    pf_node["last_frame"] = params->last_frame;
     pf_node["threshold"] = params->threshold;
     pf_node["convolver"] = params->convolver;
 }
@@ -357,8 +364,8 @@ void ExperimentYAML::grabMergeParameters(MergeParameters* params)
 
     params->d_min = getNode<double>(branch, "d_min");
     params->d_max = getNode<double>(branch, "d_max");
-    params->frame_min = getNode<int>(branch, "frame_min");
-    params->frame_max = getNode<int>(branch, "frame_max");
+    params->first_frame = getNode<int>(branch, "first_frame");
+    params->last_frame = getNode<int>(branch, "last_frame");
     params->n_shells = getNode<int>(branch, "n_shells");
     params->friedel = getNode<bool>(branch, "friedel");
     params->scale = getNode<double>(branch, "scale");
@@ -374,8 +381,8 @@ void ExperimentYAML::setMergeParameters(MergeParameters* params)
 
     merge_node["d_min"] = params->d_min;
     merge_node["d_max"] = params->d_max;
-    merge_node["frame_min"] = params->frame_min;
-    merge_node["frame_max"] = params->frame_max;
+    merge_node["first_frame"] = params->first_frame;
+    merge_node["last_frame"] = params->last_frame;
     merge_node["n_shells"] = params->n_shells;
     merge_node["friedel"] = params->friedel;
     merge_node["scale"] = params->scale;

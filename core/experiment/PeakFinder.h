@@ -38,8 +38,8 @@ struct PeakFinderParameters {
     int maximum_size = 10000; //!< Maximum number of pixels in a blob
     double peak_end = 1.0; //!< Peak scaling factor (sigmas)
     int maximum_frames = 10; //!< Maximum number of frames a blob can span
-    int frames_begin = -1; //!< First frame in range for peak finding
-    int frames_end = -1; //!< Last frame in range for peak findinng
+    int first_frame = -1; //!< First frame in range for peak finding
+    int last_frame = -1; //!< Last frame in range for peak findinng
     double threshold = 80.0; //!< Blobs containing fewer counts than this are discarded
     std::string convolver = "annular";
 
@@ -104,6 +104,9 @@ class PeakFinder {
     //! Set the convolver flavour for peak/background convolution
     void setConvolver(std::unique_ptr<Convolver> convolver);
 #endif
+
+    //! Set the convolver flavour for peak/background convolution
+    void setConvolver(const std::string& convolver, const std::map<std::string, double>& parameters);
 
     //! Set the convolver flavour for peak/background convolution
     void setConvolver(const Convolver& convolver);

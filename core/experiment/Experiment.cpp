@@ -14,6 +14,7 @@
 
 #include "core/experiment/Experiment.h"
 
+#include "InstrumentParameters.h"
 #include "base/utils/Logger.h"
 #include "base/utils/Path.h" // tempFilename
 #include "core/algo/AutoIndexer.h"
@@ -96,16 +97,6 @@ void Experiment::setName(const std::string& name)
     _name = name;
 }
 
-void Experiment::setDefaultDMin()
-{
-    double lambda = getDiffractometer()->source().selectedMonochromator().wavelength();
-    double d_min = lambda / 2.0;
-    _predictor->parameters()->d_min = d_min;
-    _auto_indexer->parameters()->d_min = d_min;
-    _peak_filter->parameters()->d_min = d_min;
-    _peak_merger->parameters()->d_min = d_min;
-}
-
 void Experiment::readFromYaml(const std::string& filename)
 {
     ohklLog(Level::Info, "Experiment::readFromYaml:  ", filename);
@@ -140,7 +131,15 @@ Diffractometer* Experiment::getDiffractometer()
 
 void Experiment::setDiffractometer(const std::string& diffractometerName)
 {
-    _diffractometer.reset(Diffractometer::create(diffractometerName));
+    YAML::Node instrumentDefinition = Instrument::findResource(diffractometerName);
+    _diffractometer.reset(new Diffractometer(instrumentDefinition[ohkl::ym_instrument]));
+    ExperimentYAML yaml(instrumentDefinition);
+    yaml.grabPeakFinderParameters(_peak_finder->parameters());
+    yaml.grabAutoindexerParameters(_auto_indexer->parameters());
+    yaml.grabShapeParameters(_shape_model_builder->parameters());
+    yaml.grabPredictorParameters(_predictor->parameters());
+    yaml.grabIntegrationParameters(_integrator->parameters());
+    yaml.grabMergeParameters(_peak_merger->parameters());
 }
 
 bool Experiment::acceptFoundPeaks(const std::string& name)
@@ -243,7 +242,6 @@ void Experiment::loadFromFile(const std::string& path)
     importer.loadUnitCells(this);
     importer.loadPeaks(this);
     importer.loadInstrumentStates(this);
-    setDefaultDMin();
 }
 
 const UnitCell* Experiment::getAcceptedCell() const
@@ -288,7 +286,6 @@ bool Experiment::addData(sptrDataSet data, bool default_states)
     if (!_data_handler->addData(data, _diffractometer.get(), data->name(), default_states)) {
         return false;
     }
-    setDefaultDMin();
     return true;
 }
 

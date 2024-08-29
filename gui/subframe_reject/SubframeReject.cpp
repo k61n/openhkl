@@ -241,7 +241,7 @@ void SubframeReject::setPeakTableUp()
 
 void SubframeReject::refreshPeakTable()
 {
-    if (!gSession->currentProject()->hasPeakCollection()) {
+    if (gSession->currentProject()->hasPeakCollection()) {
         _peak_collection = _peak_combo->currentPeakCollection();
         _peak_collection_item.setPeakCollection(_peak_collection);
         _peak_collection_item.setFilterMode();

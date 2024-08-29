@@ -65,8 +65,8 @@ TEST_CASE("test/data/TestPeakFinder.cpp", "")
 
     ohkl::PeakFinder* finder = experiment.peakFinder();
     auto* finder_params = finder->parameters();
-    finder_params->frames_begin = 0;
-    finder_params->frames_end = -1;
+    finder_params->first_frame = 0;
+    finder_params->last_frame = -1;
     finder_params->minimum_size = 30;
     finder_params->maximum_size = 10000;
     finder_params->peak_end = 1.0;

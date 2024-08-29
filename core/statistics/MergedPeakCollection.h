@@ -84,8 +84,8 @@ class MergedPeakCollection {
     bool _sum_intensity;
     double _d_min;
     double _d_max;
-    int _frame_min;
-    int _frame_max;
+    int _first_frame;
+    int _last_frame;
 
     //! Number of invalid peaks
     int _nInvalid = 0;

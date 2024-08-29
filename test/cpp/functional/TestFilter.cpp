@@ -67,8 +67,8 @@ TEST_CASE("test/data/TestFilter.cpp", "")
     filter->resetFiltering(peaks);
 
     flags->frames = true;
-    params->frame_min = 3;
-    params->frame_max = 10;
+    params->first_frame = 3;
+    params->last_frame = 10;
     filter->filter(peaks);
     std::cout << peaks->numberCaughtByFilter() << "/" << npeaks << " in frames 3 - 10"
               << std::endl;

@@ -108,8 +108,8 @@ void SubframeMerge::grabMergeParameters()
 
     _d_min->setValue(params->d_min);
     _d_max->setValue(params->d_max);
-    _frame_min->setValue(params->frame_min + 1);
-    _frame_max->setValue(params->frame_max + 1);
+    _frame_min->setValue(params->first_frame + 1);
+    _frame_max->setValue(params->last_frame + 1);
     _d_shells->setValue(params->n_shells);
     _friedel->setChecked(params->friedel);
 }
@@ -123,8 +123,8 @@ void SubframeMerge::setMergeParameters()
 
     params->d_min = _d_min->value();
     params->d_max = _d_max->value();
-    params->frame_min = _frame_min->value() - 1;
-    params->frame_max = _frame_max->value() - 1;
+    params->first_frame = _frame_min->value() - 1;
+    params->last_frame = _frame_max->value() - 1;
     params->n_shells = _d_shells->value();
     params->friedel = _friedel->isChecked();
 }
@@ -855,14 +855,16 @@ void SubframeMerge::toggleUnsafeWidgets()
     _save_shell->setEnabled(false);
     _save_merged->setEnabled(false);
     _save_unmerged->setEnabled(false);
+    _save_peaks->setEnabled(false);
 
     if (!gSession->hasProject())
         return;
 
-    if (_peak_combo_1->count() > 0) {
+    if (gSession->currentProject()->hasPeakCollection()) {
         _save_shell->setEnabled(true);
         _save_merged->setEnabled(true);
         _save_unmerged->setEnabled(true);
+        _save_peaks->setEnabled(true);
     }
 }
 

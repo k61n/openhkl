@@ -164,7 +164,7 @@ void SubframeFindPeaks::setBlobUp()
     f.addWidget(_kernel_para_table, 1);
 
     std::tie(_start_frame_spin, _end_frame_spin) =
-        f.addSpinBoxPair("Frame range", "start and end image of range in which to find peaks");
+        f.addSpinBoxPair("Image range", "start and end image of range in which to find peaks");
 
     _threshold_check =
         f.addCheckBox("Apply threshold to preview", "Only show pixels above threshold");
@@ -180,6 +180,8 @@ void SubframeFindPeaks::setBlobUp()
     _min_size_spin->setMaximum(1000);
     _max_size_spin->setMaximum(100000);
     _max_width_spin->setMaximum(20);
+    _start_frame_spin->setMinimum(1);
+    _end_frame_spin->setMinimum(1);
 
     connect(_find_button, &QPushButton::clicked, this, &SubframeFindPeaks::find);
     connect(
@@ -381,6 +383,9 @@ void SubframeFindPeaks::refreshAll()
 
 void SubframeFindPeaks::grabFinderParameters()
 {
+    if (!gSession->hasProject())
+        return;
+
     ohkl::PeakFinder* finder = gSession->currentProject()->experiment()->peakFinder();
 
     auto* params = gSession->currentProject()->experiment()->peakFinder()->parameters();
@@ -389,13 +394,16 @@ void SubframeFindPeaks::grabFinderParameters()
     _max_size_spin->setValue(params->maximum_size);
     _scale_spin->setValue(params->peak_end);
     _max_width_spin->setValue(params->maximum_frames);
-    _start_frame_spin->setValue(params->frames_begin + 1);
-    _end_frame_spin->setValue(params->frames_end);
+    _start_frame_spin->setValue(params->first_frame + 1);
+    _end_frame_spin->setValue(params->last_frame + 1);
     _threshold_spin->setValue(params->threshold);
 
+    _kernel_combo->setCurrentText(QString::fromStdString(params->convolver));
+
+    // only change the convolver if it doesn't match the parameters
     ohkl::Convolver* convolver = finder->convolver();
-    std::string convolverType = convolver->type();
-    _kernel_combo->setCurrentText(QString::fromStdString(convolverType));
+    if (convolver->type() != params->convolver)
+        finder->setConvolver(params->convolver, {});
 
     const std::map<std::string, double>& convolver_params = convolver->parameters();
     using mapIterator = std::map<std::string, double>::const_iterator;
@@ -437,11 +445,13 @@ void SubframeFindPeaks::setFinderParameters()
     params->maximum_size = _max_size_spin->value();
     params->peak_end = _scale_spin->value();
     params->maximum_frames = _max_width_spin->value();
-    params->frames_begin = _start_frame_spin->value() - 1;
-    params->frames_end = _end_frame_spin->value() - 1;
+    params->first_frame = _start_frame_spin->value() - 1;
+    params->last_frame = _end_frame_spin->value() - 1;
     params->threshold = _threshold_spin->value();
 
     std::string convolverType = _kernel_combo->currentText().toStdString();
+    params->convolver = convolverType;
+
     ohkl::ConvolverFactory factory;
     ohkl::Convolver* convolver = factory.create(convolverType, {});
     convolver->setParameters(convolutionParameters());

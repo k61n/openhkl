@@ -120,8 +120,8 @@ class TestFullWorkFlow(unittest.TestCase):
         filter.flags().d_range = True;
         filter.flags().frames = True;
         filter.parameters().d_min = 1.5
-        filter.parameters().frame_min = 0
-        filter.parameters().frame_max= 10
+        filter.parameters().first_frame = 0
+        filter.parameters().last_frame = 10
         filter.parameters().strength_min = 1.0
         filter.filter(found_peaks)
         expt.acceptFilter('indexing', found_peaks, ohkl.PeakCollectionType_INDEXING, data)

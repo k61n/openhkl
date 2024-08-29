@@ -16,7 +16,10 @@
 
 namespace ohkl {
 
-DeltaConvolver::DeltaConvolver() : AtomicConvolver() { }
+DeltaConvolver::DeltaConvolver() : AtomicConvolver()
+{
+    _convolver_type = "delta";
+}
 
 DeltaConvolver::DeltaConvolver(const std::map<std::string, double>& parameters) : DeltaConvolver()
 {

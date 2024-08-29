@@ -199,8 +199,8 @@ void PeakExportDialog::setMergeParams()
 
     params->d_min = _drange_min->value();
     params->d_max = _drange_max->value();
-    params->frame_min = _frame_min->value();
-    params->frame_max = _frame_max->value();
+    params->first_frame = _frame_min->value();
+    params->last_frame = _frame_max->value();
     params->friedel = _friedel->isChecked();
     params->scale = _scale_factor->value();
 }

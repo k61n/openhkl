@@ -17,7 +17,10 @@
 
 namespace ohkl {
 
-AnnularConvolver::AnnularConvolver() : Convolver({{"r1", 5}, {"r2", 10}, {"r3", 15}}) { }
+AnnularConvolver::AnnularConvolver() : Convolver({{"r1", 5}, {"r2", 10}, {"r3", 15}})
+{
+    _convolver_type = "annular";
+}
 
 AnnularConvolver::AnnularConvolver(const std::map<std::string, double>& parameters)
     : AnnularConvolver()
