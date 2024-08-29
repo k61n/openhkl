@@ -59,7 +59,7 @@ instrument:
                 value:  0.0
 Experiment:
     PeakFinder:
-        minimum_size: 1
+        minimum_size: 30
         maximum_size: 10000
         peak_end: 1
         maximum_frames: 10
