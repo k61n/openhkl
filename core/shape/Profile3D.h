@@ -70,12 +70,19 @@ class Profile3D {
     int nProfiles() const { return _n_profiles; };
 
  private:
+    //! Bounding box for this profile (sigmas)
     AABB _aabb;
+    //! Histogram bin size
     Eigen::Vector3d _dx;
+    //! Histogram dimension
     Eigen::Vector3i _shape;
+    //! Total number of counts in this profile
     size_t _count;
+    //! Profile counts
     std::vector<double> _profile;
+    //! Number of peaks that could not be used in this profile
     int _n_failures;
+    //! Number of peaks used to construct this profile
     int _n_profiles;
 };
 

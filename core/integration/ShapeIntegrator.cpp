@@ -63,26 +63,26 @@ ComputeResult ShapeIntegrator::compute(
     Profile1D integrated_profile(pxsum_result.sum_background, region.peakEnd());
     const PeakCoordinateSystem frame(peak);
 
-    const Ellipsoid e = peak->shape();
+    const Ellipsoid shape = peak->shape();
 
     for (size_t i = 0; i < events.size(); ++i) {
         const auto& ev = events[i];
-        Eigen::Vector3d x(ev.px, ev.py, ev.frame);
+        Eigen::Vector3d pos = ev.vector();
         const double dI = counts[i] - mean_bkg;
         // todo: variance here assumes Poisson (no gain or baseline)
-        integrated_profile.addPoint(e.r2(x), counts[i]);
+        integrated_profile.addPoint(shape.r2(pos), counts[i]);
 
         if (shape_model->detectorCoords()) {
-            x -= peak->shape().center();
+            pos -= peak->shape().center();
             if (_nsubdiv == 1)
-                profile.addValue(x, dI);
+                profile.addValue(pos, dI);
             else
-                profile.addSubdividedValue(x, dI, _nsubdiv);
+                profile.addSubdividedValue(pos, dI, _nsubdiv);
         } else {
             if (_nsubdiv == 1)
                 profile.addValue(frame.transform(ev), dI);
             else
-                profile.addSubdividedValue(x, dI, _nsubdiv);
+                profile.addSubdividedValue(frame.transform(ev), dI, _nsubdiv);
         }
     }
     if (profile.normalize())

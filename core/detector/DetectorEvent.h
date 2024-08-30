@@ -31,6 +31,9 @@ class DetectorEvent {
     //! Construct from a 3 vector
     explicit DetectorEvent(Eigen::Vector3d x, double tof = -1);
 
+    //! Return the real space vector
+    Eigen::Vector3d vector() const;
+
     bool isValid() const;
 
     //! Detector x-coord
