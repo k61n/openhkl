@@ -68,7 +68,7 @@ TEST_CASE("test/data/TestShapeModel.cpp", "")
     shape_params->sigma_m = found_peaks->sigmaM();
     shape_params->neighbour_range_pixels = 500;
     shape_params->neighbour_range_frames = 5;
-    shape_params->n_subdiv = 1;
+    shape_params->n_subdiv = 5;
 
     ohkl::ShapeModel shapes = shape_builder->integrate(fit_peaks.getPeakList(), data);
     std::cout << shapes.numberOfPeaks() << "/" << found_peaks->numberOfPeaks()

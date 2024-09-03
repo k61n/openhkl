@@ -29,6 +29,11 @@ DetectorEvent::DetectorEvent(Eigen::Vector3d x, double tof)
 {
 }
 
+Eigen::Vector3d DetectorEvent::vector() const
+{
+    return {px, py, frame};
+}
+
 bool DetectorEvent::isValid() const
 {
     return _valid;

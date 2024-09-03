@@ -23,9 +23,6 @@
 
 namespace ohkl {
 
-//    if (!_peak)
-//        throw std::runtime_error("Cannot construct PeakCoordinateSystem from null Peak3d");
-
 PeakCoordinateSystem::PeakCoordinateSystem(Peak3D* peak) : _peak(peak)
 {
     _event = DetectorEvent(peak->shape().center());

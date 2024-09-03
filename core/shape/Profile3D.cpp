@@ -100,25 +100,25 @@ size_t Profile3D::count() const
 size_t Profile3D::addSubdividedValue(const Eigen::Vector3d& x, double y, size_t subdivide)
 {
     size_t n = 0;
+    // lower bound of bins, using subdivided bin *centre*
     const Eigen::Vector3d lower = x - _dx / 2.0 + _dx / 2.0 / subdivide;
     const double scale = 1.0 / (subdivide * subdivide * subdivide);
 
     for (size_t i = 0; i < subdivide; ++i) {
         for (size_t j = 0; j < subdivide; ++j) {
             for (size_t k = 0; k < subdivide; ++k) {
-                Eigen::Vector3d delta(i, j, k);
+                Eigen::Vector3d delta(i, j, k); // subdivided bin width
                 delta /= subdivide;
                 delta(0) *= _dx(0);
                 delta(1) *= _dx(1);
                 delta(2) *= _dx(2);
 
-                if (addValue(lower + delta, scale * y)) {
+                if (addValue(lower + delta, scale * y))
                     ++n;
-                }
             }
         }
     }
-    _count += n;
+    _count += n; // number of *subdivided* counts added
     return n;
 }
 
