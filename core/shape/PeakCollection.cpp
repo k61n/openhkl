@@ -257,7 +257,8 @@ void PeakCollection::resetRejectionFlags()
 {
     ohklLog(Level::Info, "PeakCollection::resetRejectionFlags");
     for (auto* peak : getPeakList())
-        peak->setRejectionFlag(RejectionFlag::NotRejected, true);
+        if (peak->rejectionFlag() != RejectionFlag::Extinct)
+            peak->setRejectionFlag(RejectionFlag::NotRejected, true);
 }
 
 void PeakCollection::resetIntegrationFlags(IntegratorType integrator)

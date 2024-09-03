@@ -297,15 +297,9 @@ int Refiner::updatePredictions(std::vector<Peak3D*> peaks)
 {
     ohklLog(Level::Info, "Refiner::updatePredictions");
     assignPredictedCells(peaks); // Set the batch cells to the predicted peaks
-    const PeakFilter peak_filter;
-    std::vector<ohkl::Peak3D*> filtered_peaks = peaks;
-    filtered_peaks = peak_filter.filterEnabled(peaks, true);
-    int n_enabled = filtered_peaks.size();
-    ohklLog(Level::Info, "Refiner::updatePredictions: ", n_enabled, " enabled peaks");
-
     int updated = 0;
 
-    for (ohkl::Peak3D* peak : filtered_peaks) {
+    for (ohkl::Peak3D* peak : peaks) {
         // find appropriate batch
         const RefinementBatch* b = nullptr;
         const double z = peak->shape().center()[2];
