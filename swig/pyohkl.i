@@ -50,7 +50,6 @@
 %shared_ptr(ohkl::NexusDataReader)
 %shared_ptr(ohkl::BaseNexusDataReader)
 %shared_ptr(ohkl::UnitCell)
-%shared_ptr(ohkl::ShapeModelParameters)
 
 %{
 #pragma GCC diagnostic ignored "-Wpedantic"
