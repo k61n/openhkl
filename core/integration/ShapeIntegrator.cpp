@@ -17,6 +17,7 @@
 #include "base/geometry/Ellipsoid.h"
 #include "core/data/DataSet.h"
 #include "core/integration/IIntegrator.h"
+#include "core/peak/IntegrationRegion.h"
 #include "core/peak/Intensity.h"
 #include "core/peak/Peak3D.h"
 #include "core/peak/PeakCoordinateSystem.h"
@@ -26,9 +27,9 @@
 
 namespace ohkl {
 
-ShapeIntegrator::ShapeIntegrator() : PixelSumIntegrator()
-{
-}
+const double ShapeIntegrator::_eps = 1.0e-10;
+
+ShapeIntegrator::ShapeIntegrator() : PixelSumIntegrator() { }
 
 void ShapeIntegrator::initialise(const AABB& aabb, ShapeModelParameters* params)
 {
@@ -37,6 +38,7 @@ void ShapeIntegrator::initialise(const AABB& aabb, ShapeModelParameters* params)
     _ny = params->nbins_y;
     _nz = params->nbins_z;
     _nsubdiv = params->n_subdiv;
+    _kabsch = params->kabsch_coords;
 }
 
 ComputeResult ShapeIntegrator::compute(
@@ -59,8 +61,24 @@ ComputeResult ShapeIntegrator::compute(
     const auto& events = region.peakData().events();
     const auto& counts = region.peakData().counts();
 
-    Profile3D profile(_aabb, _nx, _ny, _nz);
-    Profile1D integrated_profile(pxsum_result.sum_background, region.peakEnd());
+    // Scale AABB according to peak shape for fixed ellipsoids
+    double peak_scale = _params.peak_end;
+    if (_params.region_type == RegionType::FixedEllipsoid) {
+        const double r = peak->shape().radii().sum() / 3.0;
+        if (!std::isnan(r) && std::abs(r) > _eps)
+            peak_scale = _params.fixed_peak_end / r;
+        else {
+            result.integration_flag = RejectionFlag::InvalidShape;
+            return result;
+        }
+    }
+
+    AABB aabb = _aabb;
+    if (_kabsch)
+        aabb.rescale(peak_scale);
+
+    Profile3D profile(aabb, _nx, _ny, _nz);
+    Profile1D integrated_profile(pxsum_result.sum_background, peak_scale);
     const PeakCoordinateSystem frame(peak);
 
     const Ellipsoid shape = peak->shape();

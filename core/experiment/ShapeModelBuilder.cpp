@@ -87,8 +87,8 @@ AABB ShapeModelBuilder::getAABB()
     AABB aabb;
     if (_params->kabsch_coords) {
         const Eigen::Vector3d sigma(_params->sigma_d, _params->sigma_d, _params->sigma_m);
-        aabb.setLower(-_params->peak_end * sigma);
-        aabb.setUpper(_params->peak_end * sigma);
+        aabb.setLower(-sigma);
+        aabb.setUpper(sigma);
     } else {
         const Eigen::Vector3d dx(_params->nbins_x, _params->nbins_y, _params->nbins_z);
         aabb.setLower(-0.5 * dx);

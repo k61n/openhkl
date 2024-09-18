@@ -84,6 +84,8 @@ class Profile3D {
     int _n_failures;
     //! Number of peaks used to construct this profile
     int _n_profiles;
+    //! Epsilon for comparing floats to zero
+    static const double _eps;
 };
 
 /*! @}*/

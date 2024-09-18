@@ -18,6 +18,8 @@
 
 namespace ohkl {
 
+const double Profile3D::_eps = 1.0e-10;
+
 Profile3D::Profile3D(const AABB& aabb, const Eigen::Vector3i& shape)
     : Profile3D(aabb, shape(0), shape(1), shape(2))
 {
@@ -149,7 +151,7 @@ bool Profile3D::normalize()
     for (const auto& value : _profile)
         sum += value;
 
-    if (sum == 0.0 || std::isnan(sum))
+    if (std::abs(sum) < _eps || std::isnan(sum))
         return false;
 
     for (auto& value : _profile)

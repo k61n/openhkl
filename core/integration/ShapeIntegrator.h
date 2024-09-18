@@ -43,6 +43,8 @@ class ShapeIntegrator : public PixelSumIntegrator {
  private:
     AABB _aabb;
     int _nx, _ny, _nz, _nsubdiv;
+    bool _kabsch;
+    static const double _eps;
 };
 
 /*! @}*/
