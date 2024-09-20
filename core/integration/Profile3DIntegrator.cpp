@@ -63,13 +63,13 @@ void updateFit(
 namespace ohkl {
 
 ComputeResult Profile3DIntegrator::compute(
-    Peak3D* peak, ShapeModel* shape_model, const IntegrationRegion& region)
+    Peak3D* peak, Profile* profile, const IntegrationRegion& region)
 {
     ComputeResult result;
     result.integrator_type = IntegratorType::Profile3D;
 
-    if (!shape_model) {
-        result.integration_flag = RejectionFlag::NoShapeModel;
+    if (!profile) {
+        result.integration_flag = RejectionFlag::NoProfile;
         return result;
     }
 
@@ -86,22 +86,22 @@ ComputeResult Profile3DIntegrator::compute(
     result.profile_background = Intensity(1.0, 1.0);
     result.profile_intensity = Intensity(0.0, 0.0);
 
-    std::vector<double> profile;
+    std::vector<double> profile_counts;
     std::vector<double> obs_counts;
 
-    profile.reserve(events.size());
+    profile_counts.reserve(events.size());
     obs_counts.reserve(events.size());
 
     const double tolerance = 1e-5;
 
     const DetectorEvent event(peak->shape().center());
-    const Profile3D model_profile = shape_model->meanProfile(event);
+    const Profile3D* model_profile = profile->profile3d();
     const PeakCoordinateSystem coord(peak);
 
     // evaluate the model profile at the given events
     for (int i = 0; i < events.size(); ++i) {
         Eigen::Vector3d x;
-        if (shape_model->detectorCoords()) {
+        if (model_profile->detectorCoords()) {
             x(0) = events[i].px;
             x(1) = events[i].py;
             x(2) = events[i].frame;
@@ -110,9 +110,9 @@ ComputeResult Profile3DIntegrator::compute(
             x = coord.transform(events[i]);
         }
 
-        const double predict = model_profile.predict(x);
+        const double predict = model_profile->predict(x);
 
-        profile.push_back(predict);
+        profile_counts.push_back(predict);
         obs_counts.push_back(counts[i]);
     }
 
@@ -120,7 +120,7 @@ ComputeResult Profile3DIntegrator::compute(
     for (auto i = 0; i < 20; ++i) {
         const Intensity old_intensity = result.profile_intensity;
         const double I0 = result.profile_intensity.value();
-        updateFit(result.profile_intensity, result.profile_background, profile, obs_counts);
+        updateFit(result.profile_intensity, result.profile_background, profile_counts, obs_counts);
         const double I1 = result.profile_intensity.value();
 
         if (std::isnan(I1) || std::isnan(result.profile_background.value())) {

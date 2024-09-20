@@ -33,7 +33,7 @@ ShapeModel ShapeModelBuilder::integrate(
     ShapeModel shapes(*_params, data);
 
     ShapeIntegrator integrator;
-    integrator.initialise(getAABB(), _params.get());
+    integrator.initialise(getAABB(), _params.get(), &shapes);
 
     IntegrationParameters int_params;
     int_params.region_type = _params->region_type;

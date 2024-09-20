@@ -201,8 +201,8 @@ bool ShapeModel::addPeak(Peak3D* peak, Profile3D&& profile, Profile1D&& integrat
     // peak has one axis too small. Negated expression to handle nans
     if (!(w.minCoeff() > 1e-2))
         return false;
-    _profiles[peak].first = std::move(profile);
-    _profiles[peak].second = std::move(integrated_profile);
+
+    _profiles[peak] = Profile(std::move(profile), std::move(integrated_profile));
     return true;
 }
 
@@ -291,7 +291,7 @@ double ShapeModel::meanPearson() const
     return sum_pearson / _profiles.size();
 }
 
-Profile3D ShapeModel::meanProfile(const DetectorEvent& ev) const
+Profile ShapeModel::meanProfile(const DetectorEvent& ev) const
 {
     Profile3D mean;
     auto neighbors = findNeighbors(ev);
@@ -333,17 +333,17 @@ Profile3D ShapeModel::meanProfile(const DetectorEvent& ev) const
     }
 
     mean.normalize();
-    return mean;
+    return new Profile(std::move(mean), {});
 }
 
-std::vector<Intensity> ShapeModel::meanProfile1D(const DetectorEvent& ev) const
+Profile ShapeModel::meanProfile1D(const DetectorEvent& ev) const
 {
     auto neighbors = findNeighbors(ev);
-    std::vector<Intensity> mean_profile;
+    Profile1D mean_profile;
     const double inv_N = 1.0 / neighbors.size();
 
     if (neighbors.size() == 1)
-        return _profiles.find(neighbors[0])->second.second.profile();
+        return _profiles.find(neighbors[0])->second.second;
 
     for (auto peak : neighbors) {
         const auto& profile = _profiles.find(peak)->second.second.profile();
@@ -354,7 +354,7 @@ std::vector<Intensity> ShapeModel::meanProfile1D(const DetectorEvent& ev) const
         for (size_t i = 0; i < mean_profile.size(); ++i)
             mean_profile[i] += profile[i] * inv_N;
     }
-    return mean_profile;
+    return new Profile({}, mean_profile);
 }
 
 std::vector<Peak3D*> ShapeModel::findNeighbors(const DetectorEvent& ev) const
@@ -485,7 +485,7 @@ std::array<double, 6> ShapeModel::choleskyS() const
     return _choleskyS;
 }
 
-std::map<Peak3D*, std::pair<Profile3D, Profile1D>> ShapeModel::profiles() const
+std::map<Peak3D*, Profile>> ShapeModel::profiles() const
 {
     return _profiles;
 }

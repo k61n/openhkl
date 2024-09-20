@@ -30,7 +30,7 @@ class GaussianIntegrator : public IIntegrator {
  protected:
     //! Integrate a peak
     ComputeResult compute(
-        Peak3D* peak, ShapeModel* shape_model, const IntegrationRegion& region) override;
+        Peak3D* peak, Profile* profile, const IntegrationRegion& region) override;
     //! Returns the analytic profile computed over the given integration region
     std::vector<double> profile(Peak3D* peak, const IntegrationRegion& region);
 };

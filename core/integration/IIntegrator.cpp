@@ -20,8 +20,10 @@
 #include "base/utils/ParallelFor.h"
 #include "base/utils/ProgressHandler.h"
 #include "core/data/DataSet.h"
+#include "core/detector/DetectorEvent.h"
 #include "core/peak/Peak3D.h"
 #include "core/shape/Octree.h"
+#include "core/shape/Profile.h"
 #include "core/shape/ShapeModel.h"
 #include "tables/crystal/UnitCell.h"
 
@@ -98,10 +100,10 @@ void IIntegrator::integrate(
     }
 
     _profile_integration = false;
-    if (_params.integrator_type == IntegratorType::Profile1D
-        || _params.integrator_type == IntegratorType::Profile3D
-        || _params.integrator_type == IntegratorType::Gaussian
-        || _params.integrator_type == IntegratorType::ISigma)
+    if (_params.integrator_type == IntegratorType:: Profile1D ||
+        _params.integrator_type == IntegratorType::Profile3D ||
+        _params.integrator_type == IntegratorType::Gaussian ||
+        _params.integrator_type == IntegratorType::ISigma)
         _profile_integration = true;
 
 
@@ -227,7 +229,9 @@ void IIntegrator::integrate(
                     integrated[peak] = true;
                 } else { // do the integration
                     current_region->peakData().standardizeCoords();
-                    compute_result = compute(peak, shape_model, *current_region);
+                    Profile* profile = buildProfile(peak, shape_model);
+                    compute_result = compute(peak, profile, *current_region);
+                    delete profile;
                 }
 
                 if (saturated)
@@ -449,7 +453,9 @@ void IIntegrator::parallelIntegrate(
             } else {
                 if (reject == RejectionFlag::NotRejected) {
                     current_region->peakData().standardizeCoords();
-                    compute_result = compute(peak, shape_model, *current_region);
+                    Profile* profile = buildProfile(peak, shape_model);
+                    compute_result = compute(peak, profile, *current_region);
+                    delete profile;
                 } else
                     compute_result.integration_flag = reject;
 
@@ -534,5 +540,18 @@ void IIntegrator::removeOverlaps(
     }
     ohklLog(Level::Info, "IIntegrator::removeOverlaps: ", nrejected, " overlapping peaks rejected");
 }
+
+Profile* IIntegrator::buildProfile(Peak3D* peak, ShapeModel* shapes)
+{
+    const DetectorEvent event(peak->shape().center());
+    Profile* profile = nullptr;
+    if (_params.integrator_type == IntegratorType::Profile1D ||
+        _params.integrator_type == IntegratorType::ISigma)
+        profile = new {shapes->meanProfile1D(event)};
+    if (_params.integrator_type == IntegratorType::Profile3D)
+        profile =  new {shapes->meanProfile(event)};
+    return profile;
+}
+
 
 } // namespace ohkl

@@ -19,8 +19,6 @@
 
 namespace ohkl {
 
-class ShapeModel;
-
 /*! \addtogroup python_api
  *  @{*/
 
@@ -55,7 +53,7 @@ class Profile3DIntegrator : public IIntegrator {
  protected:
     //! Do the integration
     ComputeResult compute(
-        Peak3D* peak, ShapeModel* shape_model, const IntegrationRegion& region) override;
+        Peak3D* peak, Profile* profile, const IntegrationRegion& region) override;
 };
 
 /*! @}*/

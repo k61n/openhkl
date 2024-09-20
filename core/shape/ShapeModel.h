@@ -17,6 +17,7 @@
 
 #include "core/data/DataTypes.h"
 #include "core/integration/IIntegrator.h"
+#include "core/shape/Profile.h"
 #include "core/shape/Profile1D.h"
 #include "core/shape/Profile3D.h"
 
@@ -112,10 +113,10 @@ class ShapeModel {
     double meanPearson() const;
 
     //! Returns the average or nearest peak profile near the given detector event
-    Profile3D meanProfile(const DetectorEvent& ev) const;
+    Profile meanProfile(const DetectorEvent& ev) const;
 
     //! Returns the average or nearest peak profile near the given detector event
-    std::vector<Intensity> meanProfile1D(const DetectorEvent& ev) const;
+    Profile meanProfile1D(const DetectorEvent& ev) const;
 
     //! Returns the average or nearest peak covariance near the given detector event
     Eigen::Matrix3d meanCovariance(Peak3D* reference_peak) const;
@@ -156,7 +157,7 @@ class ShapeModel {
     Eigen::Matrix3d predictCovariance(const FitData&) const;
 
     //! List of reference peak profiles
-    std::map<Peak3D*, std::pair<Profile3D, Profile1D>> _profiles;
+    std::map<Peak3D*, Profile> _profiles;
 
     //! Associated DataSet
     sptrDataSet _data;
