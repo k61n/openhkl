@@ -105,7 +105,7 @@ ComputeResult Profile1DIntegrator::compute(
     const Eigen::Matrix3d A = peak->shape().metric();
 
     Profile1D profile1d(0.0, region.peakEnd());
-    const std::vector<Intensity> mean_profile = profile->profile1d()->meanProfile();
+    const std::vector<Intensity> mean_profile = profile->profile1d().meanProfile();
 
     // construct the observed profile
     for (size_t i = 0; i < events.size(); ++i) {

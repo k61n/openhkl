@@ -32,10 +32,11 @@ namespace ohkl {
  */
 class Profile {
  public:
+    Profile(const Profile3D& profile3d, Profile1D& profile1d);
     Profile(Profile3D&& profile3d, Profile1D&& profile1d);
 
-    Profile3D* profile3d() { return &_profile3d; };
-    Profile1D* profile1d() { return &_profile1d; };
+    const Profile3D& profile3d() { return _profile3d; };
+    const Profile1D& profile1d() { return _profile1d; };
 
  private:
     Profile3D _profile3d;

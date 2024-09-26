@@ -547,9 +547,9 @@ Profile* IIntegrator::buildProfile(Peak3D* peak, ShapeModel* shapes)
     Profile* profile = nullptr;
     if (_params.integrator_type == IntegratorType::Profile1D ||
         _params.integrator_type == IntegratorType::ISigma)
-        profile = new {shapes->meanProfile1D(event)};
+        profile = shapes->meanProfile1D(event);
     if (_params.integrator_type == IntegratorType::Profile3D)
-        profile =  new {shapes->meanProfile(event)};
+        profile =  shapes->meanProfile(event);
     return profile;
 }
 

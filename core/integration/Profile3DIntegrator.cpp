@@ -95,13 +95,13 @@ ComputeResult Profile3DIntegrator::compute(
     const double tolerance = 1e-5;
 
     const DetectorEvent event(peak->shape().center());
-    const Profile3D* model_profile = profile->profile3d();
+    const Profile3D& model_profile = profile->profile3d();
     const PeakCoordinateSystem coord(peak);
 
     // evaluate the model profile at the given events
     for (int i = 0; i < events.size(); ++i) {
         Eigen::Vector3d x;
-        if (model_profile->detectorCoords()) {
+        if (model_profile.detectorCoords()) {
             x(0) = events[i].px;
             x(1) = events[i].py;
             x(2) = events[i].frame;
@@ -110,7 +110,7 @@ ComputeResult Profile3DIntegrator::compute(
             x = coord.transform(events[i]);
         }
 
-        const double predict = model_profile->predict(x);
+        const double predict = model_profile.predict(x);
 
         profile_counts.push_back(predict);
         obs_counts.push_back(counts[i]);

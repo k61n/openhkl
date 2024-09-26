@@ -113,10 +113,10 @@ class ShapeModel {
     double meanPearson() const;
 
     //! Returns the average or nearest peak profile near the given detector event
-    Profile meanProfile(const DetectorEvent& ev) const;
+    Profile* meanProfile(const DetectorEvent& ev) const;
 
     //! Returns the average or nearest peak profile near the given detector event
-    Profile meanProfile1D(const DetectorEvent& ev) const;
+    Profile* meanProfile1D(const DetectorEvent& ev) const;
 
     //! Returns the average or nearest peak covariance near the given detector event
     Eigen::Matrix3d meanCovariance(Peak3D* reference_peak) const;
@@ -134,7 +134,7 @@ class ShapeModel {
     std::array<double, 6> choleskyS() const;
 
     //! Returns the background end used for the collection
-    std::map<Peak3D*, std::pair<Profile3D, Profile1D>> profiles() const;
+    std::map<Peak3D*, Profile> profiles() const;
 
     //! Return number of peaks in collection
     int numberOfPeaks() const { return _profiles.size(); };

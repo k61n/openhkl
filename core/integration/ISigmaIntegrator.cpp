@@ -54,7 +54,7 @@ ComputeResult ISigmaIntegrator::compute(
     const Eigen::Matrix3d A = peak->shape().metric();
 
     Profile1D profile1d;
-    std::vector<Intensity> mean_profile = profile->profile1d()->profile();
+    std::vector<Intensity> mean_profile = profile->profile1d().meanProfile();
 
     // evaluate the model profile at the given events
     for (int i = 0; i < events.size(); ++i) {
