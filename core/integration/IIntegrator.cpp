@@ -100,7 +100,7 @@ void IIntegrator::integrate(
     }
 
     _profile_integration = false;
-    if (_params.integrator_type == IntegratorType:: Profile1D ||
+    if (_params.integrator_type == IntegratorType::Profile1D ||
         _params.integrator_type == IntegratorType::Profile3D ||
         _params.integrator_type == IntegratorType::Gaussian ||
         _params.integrator_type == IntegratorType::ISigma)
