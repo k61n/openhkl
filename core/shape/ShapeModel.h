@@ -52,8 +52,8 @@ struct ShapeModelParameters : public IntegrationParameters {
     double sigma_m = 0.1; //!< Variance due to crystal mosaicity
     double sigma_d = 0.1; //!< Variance due to beam divergence
     PeakInterpolation interpolation = PeakInterpolation::NoInterpolation;
-    double neighbour_range_pixels = 500.0; //! Search radius for neighbouring profiles (pixels)
-    double neighbour_range_frames = 10.0; //! Search radius for neighbouring profiles (frames)
+    double neighbour_range_pixels = 100.0; //! Search radius for neighbouring profiles (pixels)
+    double neighbour_range_frames = 20.0; //! Search radius for neighbouring profiles (frames)
 
     void log(const Level& level) const;
 };

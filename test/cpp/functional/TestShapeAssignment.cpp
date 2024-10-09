@@ -20,7 +20,9 @@
 #include "core/experiment/PeakFinder.h"
 #include "core/experiment/ShapeModelBuilder.h"
 #include "core/instrument/Diffractometer.h"
+#include "core/integration/IIntegrator.h"
 #include "core/loader/RawDataReader.h"
+#include "core/peak/IntegrationRegion.h"
 #include "core/peak/Peak3D.h"
 #include "core/shape/PeakCollection.h"
 #include "core/shape/PeakFilter.h"
@@ -74,8 +76,12 @@ TEST_CASE("test/data/TestShapeAssignment.cpp", "")
     shape_params->nbins_x = 20;
     shape_params->nbins_y = 20;
     shape_params->nbins_z = 6;
-    shape_params->neighbour_range_pixels = 500;
-    shape_params->neighbour_range_frames = 10;
+    shape_params->neighbour_range_pixels = 100;
+    shape_params->neighbour_range_frames = 20;
+    shape_params->region_type = ohkl::RegionType::FixedEllipsoid;
+    shape_params->fixed_peak_end = 5.5;
+    shape_params->fixed_bkg_begin = 1.3;
+    shape_params->fixed_bkg_end = 2.3;
     ohkl::ShapeModel shapes = shape_builder->build(found_peaks, data);
 
     // Predict
