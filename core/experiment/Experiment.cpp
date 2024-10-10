@@ -101,7 +101,7 @@ void Experiment::readFromYaml(const std::string& filename)
 {
     ohklLog(Level::Info, "Experiment::readFromYaml:  ", filename);
     ExperimentYAML yaml(filename);
-    yaml.grabDataReaderParameters(_data_reader_params.get());
+    yaml.grabDataReaderParameters(_data_reader_params.get(), true);
     yaml.grabPeakFinderParameters(_peak_finder->parameters());
     yaml.grabAutoindexerParameters(_auto_indexer->parameters());
     yaml.grabShapeParameters(_shape_model_builder->parameters());

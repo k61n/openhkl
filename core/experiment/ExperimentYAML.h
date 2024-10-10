@@ -47,7 +47,7 @@ class ExperimentYAML {
     ExperimentYAML(const YAML::Node& node);
 
     //! Get parameters from data reader
-    void grabDataReaderParameters(DataReaderParameters* params) const;
+    void grabDataReaderParameters(DataReaderParameters* params, bool ohkl = false) const;
     //! Set data reader parameters
     void setDataReaderParameters(DataReaderParameters* params);
     //! Get parameters from integrator
