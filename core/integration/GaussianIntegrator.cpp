@@ -91,7 +91,7 @@ GaussianIntegrator::GaussianIntegrator() : IIntegrator()
 }
 
 ComputeResult GaussianIntegrator::compute(
-    Peak3D* peak, ShapeModel* /*shape_model*/, const IntegrationRegion& region)
+    Peak3D* peak, Profile* /*profile*/, const IntegrationRegion& region)
 {
     ComputeResult result;
     result.integrator_type = IntegratorType::Gaussian;

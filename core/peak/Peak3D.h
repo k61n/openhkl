@@ -60,6 +60,7 @@ enum class RejectionFlag {
     CentreOutOfBounds,
     BadIntegrationFit,
     NoShapeModel,
+    NoProfile,
     NoISigmaMinimum,
     TooWide,
     BadGaussianFit,

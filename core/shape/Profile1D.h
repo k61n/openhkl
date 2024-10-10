@@ -33,18 +33,24 @@ class Profile1D {
  public:
     //! Constructor. sigma_max indicates maximum number of standard deviations
     Profile1D(
-        const Intensity& mean_background = Intensity(), double sigma_max = 4.0, size_t num = 200);
+        const Intensity& mean_background = {}, double sigma_max = 4.0, size_t num = 200);
     //! Add a data point to the bins.
     //! @param r2 : equal to \f$(x-x0)\cdot A\cdot (x-x0)\f$ where \f$A\f$ is the inverse
     //! covariance matrix of the peak.
     //! @param M : the total count (no background correction)
     void addPoint(double r2, double M);
+    //! Add a profile to a the mean
+    void addProfile(const Profile1D& profile);
+    //! Normalise the mean profile
+    void normalize();
     //! Returns the vector of integrated counts values
     const std::vector<double>& counts() const;
     //! Returns the number of points in each bin
     const std::vector<int>& npoints() const;
     //! Returns the profile \f$I(s) / I(s_{max})\f$
     std::vector<Intensity> profile() const;
+    //! Return the rocking curve for a mean profile
+    std::vector<Intensity> meanProfile() const { return _mean_profile; };
     //! Reset the profile to zero
     void reset();
 
@@ -53,6 +59,8 @@ class Profile1D {
     std::vector<int> _npoints;
     std::vector<double> _endpoints;
     Intensity _meanBkg;
+    std::vector<Intensity> _mean_profile;
+    std::size_t _nprofiles;
 };
 
 /*! @}*/

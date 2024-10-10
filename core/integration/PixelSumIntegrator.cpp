@@ -92,7 +92,8 @@ PixelSumIntegrator::PixelSumIntegrator() : IIntegrator()
     _params.fit_cov = true;
 }
 
-ComputeResult PixelSumIntegrator::compute(Peak3D* peak, ShapeModel*, const IntegrationRegion& region)
+ComputeResult PixelSumIntegrator::compute(
+    Peak3D* peak, Profile* profile, const IntegrationRegion& region)
 {
     ComputeResult result;
     result.integrator_type = IntegratorType::PixelSum;

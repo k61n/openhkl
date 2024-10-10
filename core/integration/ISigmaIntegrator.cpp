@@ -19,25 +19,25 @@
 #include "core/peak/Intensity.h"
 #include "core/peak/Peak3D.h"
 #include "core/peak/PeakCoordinateSystem.h"
-#include "core/shape/ShapeModel.h"
+#include "core/shape/Profile.h"
 
 namespace ohkl {
 
 ISigmaIntegrator::ISigmaIntegrator() : PixelSumIntegrator() { }
 
 ComputeResult ISigmaIntegrator::compute(
-    Peak3D* peak, ShapeModel* shape_model, const IntegrationRegion& region)
+    Peak3D* peak, Profile* profile, const IntegrationRegion& region)
 {
     ComputeResult result;
     result.integrator_type = IntegratorType::ISigma;
 
-    if (!shape_model) {
-        result.integration_flag = RejectionFlag::NoShapeModel;
+    if (!profile) {
+        result.integration_flag = RejectionFlag::NoProfile;
         return result;
     }
 
     // first get mean background
-    const ComputeResult pxsum_result = PixelSumIntegrator::compute(peak, shape_model, region);
+    const ComputeResult pxsum_result = PixelSumIntegrator::compute(peak, profile, region);
     const double mean_bkg = pxsum_result.sum_background.value();
     const double var_bkg = pxsum_result.sum_background.variance();
 
@@ -53,24 +53,24 @@ ComputeResult ISigmaIntegrator::compute(
     const Eigen::Vector3d c = peak->shape().center();
     const Eigen::Matrix3d A = peak->shape().metric();
 
-    Profile1D profile;
-    std::vector<Intensity> mean_profile = shape_model->meanProfile1D(DetectorEvent(c));
+    Profile1D profile1d;
+    std::vector<Intensity> mean_profile = profile->profile1d().meanProfile();
 
     // evaluate the model profile at the given events
     for (int i = 0; i < events.size(); ++i) {
         Eigen::Vector3d dx(events[i].px, events[i].py, events[i].frame);
         dx -= c;
         const double r2 = dx.transpose() * A * dx;
-        profile.addPoint(r2, counts[i]);
+        profile1d.addPoint(r2, counts[i]);
     }
 
     int best_idx = -1;
     double best_val = std::numeric_limits<double>::max();
 
     // now compute minimum of sigma(I)^2 / I^2 + sigma(p)^2 / p^2
-    for (int i = 0; i < profile.counts().size(); ++i) {
-        const double M = profile.counts()[i];
-        const int n = profile.npoints()[i];
+    for (int i = 0; i < profile1d.counts().size(); ++i) {
+        const double M = profile1d.counts()[i];
+        const int n = profile1d.npoints()[i];
         const double I = M - n * mean_bkg;
         const double var_I = M + n * n * var_bkg;
 
@@ -91,8 +91,8 @@ ComputeResult ISigmaIntegrator::compute(
         return result;
     }
 
-    const double M = profile.counts()[best_idx];
-    const int n = profile.npoints()[best_idx];
+    const double M = profile1d.counts()[best_idx];
+    const int n = profile1d.npoints()[best_idx];
 
     result.profile_intensity = Intensity(M - n * mean_bkg, M + n * n * var_bkg);
     result.profile_intensity = result.profile_intensity / mean_profile[best_idx];

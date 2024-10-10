@@ -26,6 +26,7 @@ namespace ohkl {
 
 enum class Level;
 enum class RejectionFlag;
+class Profile;
 
 enum class IntegratorType { PixelSum = 0, Gaussian, ISigma, Profile1D, Profile3D, Shape, Count };
 
@@ -157,7 +158,9 @@ class IIntegrator {
  private:
     //! Compute the integrated intensity of the peak given the integration region.
     virtual ComputeResult compute(
-        Peak3D* peak, ShapeModel* shape_model, const IntegrationRegion& region) = 0;
+        Peak3D* peak, Profile* profile, const IntegrationRegion& region) = 0;
+    //! Construct the correct profile depending on the integrator type
+    Profile* buildProfile(Peak3D* peak, ShapeModel* shapes);
 };
 
 /*! @}*/

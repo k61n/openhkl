@@ -18,19 +18,21 @@
 
 namespace ohkl {
 
-Profile3D::Profile3D(const AABB& aabb, const Eigen::Vector3i& shape)
-    : Profile3D(aabb, shape(0), shape(1), shape(2))
+const double Profile3D::_eps = 1.0e-10;
+
+Profile3D::Profile3D(const AABB& aabb, const Eigen::Vector3i& shape, bool kabsch)
+    : Profile3D(aabb, shape(0), shape(1), shape(2), kabsch)
 {
 }
 
-Profile3D::Profile3D() : _shape(0, 0, 0), _profile(), _n_failures(0), _n_profiles(0)
+Profile3D::Profile3D() : _shape(0, 0, 0), _profile(), _n_failures(0), _n_profiles(0), _kabsch(true)
 {
     auto zero = Eigen::Vector3d(0, 0, 0);
     _aabb.setLower(zero);
     _aabb.setUpper(zero);
 }
 
-Profile3D::Profile3D(const AABB& aabb, int nx, int ny, int nz)
+Profile3D::Profile3D(const AABB& aabb, int nx, int ny, int nz, bool kabsch)
     : _aabb(aabb)
     , _dx()
     , _shape(nx, ny, nz)
@@ -38,6 +40,7 @@ Profile3D::Profile3D(const AABB& aabb, int nx, int ny, int nz)
     , _profile(nx * ny * nz, 0.0)
     , _n_failures(0)
     , _n_profiles(0)
+    , _kabsch(kabsch)
 {
     if (nx < 1 || ny < 1 || nz < 1)
         throw std::runtime_error("Profile3D: size must be positive!");
@@ -149,7 +152,7 @@ bool Profile3D::normalize()
     for (const auto& value : _profile)
         sum += value;
 
-    if (sum == 0.0 || std::isnan(sum))
+    if (std::abs(sum) < _eps || std::isnan(sum))
         return false;
 
     for (auto& value : _profile)

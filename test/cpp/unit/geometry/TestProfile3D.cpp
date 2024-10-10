@@ -26,7 +26,7 @@ TEST_CASE("test/geometry/TestProfile3D.cpp", "")
     bb.setLower(Eigen::Vector3d(0, 0, 0));
     bb.setUpper(Eigen::Vector3d(1, 2, 3));
 
-    ohkl::Profile3D profile(bb, 10, 10, 10);
+    ohkl::Profile3D profile(bb, 10, 10, 10, true);
 
     CHECK(profile.addValue({0., 0., 0.}, 1.0) == true);
     CHECK(profile.addValue({1., 2., 3.}, 1.0) == false);

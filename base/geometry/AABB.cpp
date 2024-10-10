@@ -66,6 +66,12 @@ void AABB::setUpper(double upperx, double uppery, double upperz)
     _upperBound << upperx, uppery, upperz;
 }
 
+void AABB::rescale(const double scale)
+{
+    _lowerBound *= scale;
+    _upperBound *= scale;
+}
+
 const Eigen::Vector3d& AABB::lower() const
 {
     return _lowerBound;

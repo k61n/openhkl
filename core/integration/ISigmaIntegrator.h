@@ -19,7 +19,7 @@
 
 namespace ohkl {
 
-class ShapeModel;
+class Profile;
 
 /*! \addtogroup python_api
  *  @{*/
@@ -43,7 +43,7 @@ class ISigmaIntegrator : public PixelSumIntegrator {
 
  protected:
     ComputeResult compute(
-        Peak3D* peak, ShapeModel* shape_model, const IntegrationRegion& region) override;
+        Peak3D* peak, Profile* Profile, const IntegrationRegion& region) override;
 };
 
 /*! @}*/

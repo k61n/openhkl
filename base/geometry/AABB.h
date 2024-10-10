@@ -16,6 +16,7 @@
 #define OHKL_BASE_GEOMETRY_AABB_H
 
 #include <Eigen/Dense>
+
 #include <vector>
 
 namespace ohkl {
@@ -59,6 +60,9 @@ class AABB {
     //! Sets the upper bound of the ellipsoid
     void setUpper(const Eigen::Vector3d& upper);
     void setUpper(double upperx, double uppery, double upperz);
+
+    //! Rescale the upper and lower limit vectors
+    void rescale(const double scale);
 
     //! Returns the center of the bounding box of the shape
     Eigen::Vector3d center() const;

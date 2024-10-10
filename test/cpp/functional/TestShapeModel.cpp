@@ -14,6 +14,7 @@
 
 #include "core/data/DataSet.h"
 #include "core/detector/DetectorEvent.h"
+#include "core/peak/IntegrationRegion.h"
 #include "core/shape/PeakCollection.h"
 #include "core/shape/Profile3D.h"
 #include "core/shape/ShapeModel.h"
@@ -69,6 +70,7 @@ TEST_CASE("test/data/TestShapeModel.cpp", "")
     shape_params->neighbour_range_pixels = 500;
     shape_params->neighbour_range_frames = 5;
     shape_params->n_subdiv = 5;
+    shape_params->region_type = ohkl::RegionType::VariableEllipsoid;
 
     ohkl::ShapeModel shapes = shape_builder->integrate(fit_peaks.getPeakList(), data);
     std::cout << shapes.numberOfPeaks() << "/" << found_peaks->numberOfPeaks()
@@ -77,13 +79,13 @@ TEST_CASE("test/data/TestShapeModel.cpp", "")
 
     const ohkl::DetectorEvent event(1100, 450, 8);
     // search for neighbours in radius 500 pixels, 5 frames
-    ohkl::Profile3D profile = shapes.meanProfile(event);
+    ohkl::Profile3D profile = shapes.meanProfile(event)->profile3d();
     ohkl::AABB aabb = profile.ellipsoid().aabb();
     Eigen::Vector3d axis_lengths = aabb.extents();
     std::cout << "Ellipsoid: " << axis_lengths[0] << " x " << axis_lengths[1]
               << " x " << axis_lengths[2] << std::endl;
     // Check that the predicted ellipsoid has the right shape
-    REQUIRE_THAT(axis_lengths[0], Catch::Matchers::WithinAbs(0.45, 0.1));
-    REQUIRE_THAT(axis_lengths[1], Catch::Matchers::WithinAbs(0.60, 0.1));
-    REQUIRE_THAT(axis_lengths[2], Catch::Matchers::WithinAbs(0.43, 0.1));
+    CHECK_THAT(axis_lengths[0], Catch::Matchers::WithinAbs(0.45, 0.1));
+    CHECK_THAT(axis_lengths[1], Catch::Matchers::WithinAbs(0.60, 0.1));
+    CHECK_THAT(axis_lengths[2], Catch::Matchers::WithinAbs(0.43, 0.1));
 }

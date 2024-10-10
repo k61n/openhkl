@@ -33,7 +33,7 @@ ShapeModel ShapeModelBuilder::integrate(
     ShapeModel shapes(*_params, data);
 
     ShapeIntegrator integrator;
-    integrator.initialise(getAABB(), _params.get());
+    integrator.initialise(getAABB(), _params.get(), &shapes);
 
     IntegrationParameters int_params;
     int_params.region_type = _params->region_type;
@@ -87,8 +87,8 @@ AABB ShapeModelBuilder::getAABB()
     AABB aabb;
     if (_params->kabsch_coords) {
         const Eigen::Vector3d sigma(_params->sigma_d, _params->sigma_d, _params->sigma_m);
-        aabb.setLower(-_params->peak_end * sigma);
-        aabb.setUpper(_params->peak_end * sigma);
+        aabb.setLower(-sigma);
+        aabb.setUpper(sigma);
     } else {
         const Eigen::Vector3d dx(_params->nbins_x, _params->nbins_y, _params->nbins_z);
         aabb.setLower(-0.5 * dx);

@@ -110,7 +110,8 @@ void RegionData::buildProfile(ShapeModel* shapes, double radius, double nframes)
     DetectorEvent center = {
         peak->shape().center()[0], peak->shape().center()[1], peak->shape().center()[2]};
     auto profile = shapes->meanProfile(center);
-    _n_profiles = profile.nProfiles();
+    auto profile3d = profile->profile3d();
+    _n_profiles = profile3d.nProfiles();
 
     const auto& events = _integration_region->peakData().events();
     std::vector<double> profile_counts;
@@ -137,7 +138,7 @@ void RegionData::buildProfile(ShapeModel* shapes, double radius, double nframes)
             coords = system.transform(events[idx]);
         }
 
-        profile_counts.push_back(profile.predict(coords));
+        profile_counts.push_back(profile3d.predict(coords));
     }
 
     for (std::size_t idx = 0; idx < events.size(); ++idx) {

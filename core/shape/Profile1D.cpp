@@ -15,12 +15,19 @@
 #include "core/shape/Profile1D.h"
 
 #include <cmath>
+#include <cstddef>
 
 namespace ohkl {
 
 Profile1D::Profile1D(const Intensity& mean_background, double sigma_max, size_t num)
-    : _counts(num, 0.0), _npoints(num, 0), _endpoints(num + 1), _meanBkg(mean_background)
+    : _counts(num, 0.0)
+    , _npoints(num, 0)
+    , _endpoints(num + 1)
+    , _meanBkg(mean_background)
+    , _mean_profile()
+    , _nprofiles(0)
 {
+    
     const double dr3 = sigma_max * sigma_max * sigma_max / num;
 
     for (size_t i = 0; i < num + 1; ++i)
@@ -39,6 +46,24 @@ void Profile1D::addPoint(double r2, double M)
             _npoints[i] += 1;
         }
     }
+}
+
+void Profile1D::addProfile(const Profile1D& profile)
+{
+    if (_mean_profile.empty())
+        _mean_profile.resize(profile.profile().size());
+
+    std::vector<Intensity> rocking_curve = profile.profile();
+    for (std::size_t idx = 0; idx < rocking_curve.size(); ++idx)
+        _mean_profile[idx] += rocking_curve[idx];
+    ++_nprofiles;
+}
+
+void Profile1D::normalize()
+{
+    const double inv_N = 1.0 / _nprofiles;
+    for (std::size_t i = 0; i < _mean_profile.size(); ++i)
+        _mean_profile[i] *= inv_N;
 }
 
 const std::vector<double>& Profile1D::counts() const

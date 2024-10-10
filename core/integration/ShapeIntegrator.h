@@ -19,6 +19,7 @@
 
 namespace ohkl {
 
+class Profile;
 class ShapeModel;
 struct ShapeModelParameters;
 
@@ -32,17 +33,20 @@ class ShapeIntegrator : public PixelSumIntegrator {
     ShapeIntegrator();
 
     //! Set shape model parameters
-    void initialise(const AABB& aabb, ShapeModelParameters* params);
+    void initialise(const AABB& aabb, ShapeModelParameters* params, ShapeModel* shapes);
 
  protected:
     //! Integrate a peak
     ComputeResult compute(
-        Peak3D* peak, ShapeModel* shape_model, const IntegrationRegion& region) override;
+        Peak3D* peak, Profile* profile, const IntegrationRegion& region) override;
     //! Returns the collection of cached peak shapes
 
  private:
     AABB _aabb;
     int _nx, _ny, _nz, _nsubdiv;
+    bool _kabsch;
+    ShapeModel* _shapes;
+    static const double _eps;
 };
 
 /*! @}*/

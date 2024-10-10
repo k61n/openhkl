@@ -81,13 +81,13 @@ namespace ohkl {
 Profile1DIntegrator::Profile1DIntegrator() : IIntegrator() { }
 
 ComputeResult Profile1DIntegrator::compute(
-    Peak3D* peak, ShapeModel* shape_model, const IntegrationRegion& region)
+    Peak3D* peak, Profile* profile, const IntegrationRegion& region)
 {
     ComputeResult result;
     result.integrator_type = IntegratorType::Profile1D;
 
-    if (!shape_model) {
-        result.integration_flag = RejectionFlag::NoShapeModel;
+    if (!profile) {
+        result.integration_flag = RejectionFlag::NoProfile;
         return result;
     }
 
@@ -104,29 +104,29 @@ ComputeResult Profile1DIntegrator::compute(
     const Eigen::Vector3d c = peak->shape().center();
     const Eigen::Matrix3d A = peak->shape().metric();
 
-    Profile1D profile(0.0, region.peakEnd());
-    const std::vector<Intensity> mean_profile = shape_model->meanProfile1D(DetectorEvent(c));
+    Profile1D profile1d(0.0, region.peakEnd());
+    const std::vector<Intensity> mean_profile = profile->profile1d().meanProfile();
 
     // construct the observed profile
     for (size_t i = 0; i < events.size(); ++i) {
         Eigen::Vector3d dx(events[i].px, events[i].py, events[i].frame);
         dx -= c;
         const double r2 = dx.transpose() * A * dx;
-        profile.addPoint(r2, counts[i]);
+        profile1d.addPoint(r2, counts[i]);
     }
 
     std::vector<int> dn;
     std::vector<double> dm;
     std::vector<double> dp;
 
-    dn.push_back(profile.npoints()[0]);
-    dm.push_back(profile.counts()[0]);
+    dn.push_back(profile1d.npoints()[0]);
+    dm.push_back(profile1d.counts()[0]);
     dp.push_back(mean_profile[0].value());
 
     // compute differences and rebin if necessary so that dn > 0
     for (size_t i = 1; i < mean_profile.size(); ++i) {
-        const auto& counts = profile.counts();
-        const auto& npoints = profile.npoints();
+        const auto& counts = profile1d.counts();
+        const auto& npoints = profile1d.npoints();
         dn.push_back(npoints[i] - npoints[i - 1]);
         dm.push_back(counts[i] - counts[i - 1]);
         dp.push_back(mean_profile[i].value() - mean_profile[i - 1].value());

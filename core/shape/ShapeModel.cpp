@@ -201,8 +201,9 @@ bool ShapeModel::addPeak(Peak3D* peak, Profile3D&& profile, Profile1D&& integrat
     // peak has one axis too small. Negated expression to handle nans
     if (!(w.minCoeff() > 1e-2))
         return false;
-    _profiles[peak].first = std::move(profile);
-    _profiles[peak].second = std::move(integrated_profile);
+
+    _profiles.insert_or_assign(
+        peak, std::move(Profile(std::move(profile), std::move(integrated_profile))));
     return true;
 }
 
@@ -291,15 +292,16 @@ double ShapeModel::meanPearson() const
     return sum_pearson / _profiles.size();
 }
 
-Profile3D ShapeModel::meanProfile(const DetectorEvent& ev) const
+Profile* ShapeModel::meanProfile(const DetectorEvent& ev) const
 {
     Profile3D mean;
     auto neighbors = findNeighbors(ev);
 
-    if (neighbors.size() == 1)
-        return _profiles.find(neighbors[0])->second.first;
+    if (neighbors.size() == 1) {
+        return new Profile(_profiles.at(neighbors[0]));
+    }
 
-    for (auto peak : neighbors) {
+    for (Peak3D* peak : neighbors) {
 
         double weight;
         switch (_params.interpolation) {
@@ -329,32 +331,25 @@ Profile3D ShapeModel::meanProfile(const DetectorEvent& ev) const
             }
         }
 
-        mean.addProfile(_profiles.find(peak)->second.first, weight);
+        Profile profile = _profiles.find(peak)->second;
+        mean.addProfile(profile.profile3d(), weight);
     }
 
     mean.normalize();
-    return mean;
+    return new Profile(std::move(mean), {});
 }
 
-std::vector<Intensity> ShapeModel::meanProfile1D(const DetectorEvent& ev) const
+Profile* ShapeModel::meanProfile1D(const DetectorEvent& ev) const
 {
     auto neighbors = findNeighbors(ev);
-    std::vector<Intensity> mean_profile;
-    const double inv_N = 1.0 / neighbors.size();
-
-    if (neighbors.size() == 1)
-        return _profiles.find(neighbors[0])->second.second.profile();
+    Profile1D mean_profile;
 
     for (auto peak : neighbors) {
-        const auto& profile = _profiles.find(peak)->second.second.profile();
-
-        if (mean_profile.empty())
-            mean_profile.resize(profile.size());
-
-        for (size_t i = 0; i < mean_profile.size(); ++i)
-            mean_profile[i] += profile[i] * inv_N;
+        Profile profile = _profiles.find(peak)->second;
+        mean_profile.addProfile(profile.profile1d());
     }
-    return mean_profile;
+
+    return new Profile({}, std::move(mean_profile));
 }
 
 std::vector<Peak3D*> ShapeModel::findNeighbors(const DetectorEvent& ev) const
@@ -485,7 +480,7 @@ std::array<double, 6> ShapeModel::choleskyS() const
     return _choleskyS;
 }
 
-std::map<Peak3D*, std::pair<Profile3D, Profile1D>> ShapeModel::profiles() const
+std::map<Peak3D*, Profile> ShapeModel::profiles() const
 {
     return _profiles;
 }

@@ -17,6 +17,7 @@
 
 #include "core/data/DataTypes.h"
 #include "core/integration/IIntegrator.h"
+#include "core/shape/Profile.h"
 #include "core/shape/Profile1D.h"
 #include "core/shape/Profile3D.h"
 
@@ -51,8 +52,8 @@ struct ShapeModelParameters : public IntegrationParameters {
     double sigma_m = 0.1; //!< Variance due to crystal mosaicity
     double sigma_d = 0.1; //!< Variance due to beam divergence
     PeakInterpolation interpolation = PeakInterpolation::NoInterpolation;
-    double neighbour_range_pixels = 500.0; //! Search radius for neighbouring profiles (pixels)
-    double neighbour_range_frames = 10.0; //! Search radius for neighbouring profiles (frames)
+    double neighbour_range_pixels = 100.0; //! Search radius for neighbouring profiles (pixels)
+    double neighbour_range_frames = 20.0; //! Search radius for neighbouring profiles (frames)
 
     void log(const Level& level) const;
 };
@@ -112,10 +113,10 @@ class ShapeModel {
     double meanPearson() const;
 
     //! Returns the average or nearest peak profile near the given detector event
-    Profile3D meanProfile(const DetectorEvent& ev) const;
+    Profile* meanProfile(const DetectorEvent& ev) const;
 
     //! Returns the average or nearest peak profile near the given detector event
-    std::vector<Intensity> meanProfile1D(const DetectorEvent& ev) const;
+    Profile* meanProfile1D(const DetectorEvent& ev) const;
 
     //! Returns the average or nearest peak covariance near the given detector event
     Eigen::Matrix3d meanCovariance(Peak3D* reference_peak) const;
@@ -133,7 +134,7 @@ class ShapeModel {
     std::array<double, 6> choleskyS() const;
 
     //! Returns the background end used for the collection
-    std::map<Peak3D*, std::pair<Profile3D, Profile1D>> profiles() const;
+    std::map<Peak3D*, Profile> profiles() const;
 
     //! Return number of peaks in collection
     int numberOfPeaks() const { return _profiles.size(); };
@@ -156,7 +157,7 @@ class ShapeModel {
     Eigen::Matrix3d predictCovariance(const FitData&) const;
 
     //! List of reference peak profiles
-    std::map<Peak3D*, std::pair<Profile3D, Profile1D>> _profiles;
+    std::map<Peak3D*, Profile> _profiles;
 
     //! Associated DataSet
     sptrDataSet _data;

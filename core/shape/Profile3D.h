@@ -35,9 +35,9 @@ class Profile3D {
     //! @param nx : number of histogram bins in x direction
     //! @param ny : number of histogram bins in y direction
     //! @param nz : number of histogram bins in z (frame) direction
-    Profile3D(const AABB& aabb, int nx, int ny, int nz);
+    Profile3D(const AABB& aabb, int nx, int ny, int nz, bool kabsch);
     //! Construct with given bounding box and shape tensor
-    Profile3D(const AABB& aabb, const Eigen::Vector3i& shape);
+    Profile3D(const AABB& aabb, const Eigen::Vector3i& shape, bool kabsch);
     //! Return the value of the bin at the given indices
     double at(size_t i, size_t j, size_t k) const;
     //! Return the value of the bin at the given indices
@@ -68,6 +68,8 @@ class Profile3D {
     const Eigen::Vector3i& shape() const;
     //! Return the number of profiles used to construct this one (via meanProfile)
     int nProfiles() const { return _n_profiles; };
+    //! Are coordinates detector coordinates? (as opposed to Kabsch)
+    bool detectorCoords() const { return !_kabsch; };
 
  private:
     //! Bounding box for this profile (sigmas)
@@ -84,6 +86,10 @@ class Profile3D {
     int _n_failures;
     //! Number of peaks used to construct this profile
     int _n_profiles;
+    //! Kabsch or detector coordinate system
+    bool _kabsch;
+    //! Epsilon for comparing floats to zero
+    static const double _eps;
 };
 
 /*! @}*/
