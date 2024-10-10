@@ -52,13 +52,16 @@ ExperimentYAML::ExperimentYAML(const YAML::Node& node)
     _node = node;
 }
 
-void ExperimentYAML::grabDataReaderParameters(DataReaderParameters* params) const
+void ExperimentYAML::grabDataReaderParameters(DataReaderParameters* params, bool ohkl) const
 {
     ohklLog(Level::Info, "ExperimentYAML::grabDataReaderParameters: reading parameters from yml");
     if (!_node["DataReader"])
         return;
 
     YAML::Node branch = _node["DataReader"];
+
+    if (ohkl)
+        params->data_format = DataFormat::OHKL;
 
     params->dataset_name = getNode<std::string>(branch, "name");
     params->wavelength = getNode<double>(branch, "wavelength");
@@ -70,7 +73,7 @@ void ExperimentYAML::grabDataReaderParameters(DataReaderParameters* params) cons
     params->bytes_per_pixel = getNode<int>(branch, "bytes_per_pixel");
 
     std::string format = getNode<std::string>(branch, "format");
-    if (format.empty())
+    if (format.empty() && !ohkl)
         throw std::runtime_error("DataReader/format not specified");
     else {
         if (format == "raw")
