@@ -39,6 +39,7 @@ bool PeakHandler::addPeakCollection(
     ptr->populate(peaks);
     ptr->setId(_last_index++);
     ptr->setUnitCell(cell, false);
+    ptr->getSymmetryRelated();
     _peak_collections.insert_or_assign(name, std::move(ptr));
     return hasPeakCollection(name); // now name must be in use
 }
@@ -58,6 +59,7 @@ bool PeakHandler::addPeakCollection(
     ptr->setIntegrated(integrated);
     ptr->setBkgGradient(gradient);
     ptr->populate(peaks);
+    ptr->getSymmetryRelated();
     _peak_collections.insert_or_assign(name, std::move(ptr));
     return hasPeakCollection(name); // now name must be in use
 }

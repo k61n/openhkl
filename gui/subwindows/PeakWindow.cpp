@@ -17,8 +17,10 @@
 #include "core/peak/Peak3D.h"
 #include "core/peak/RegionData.h"
 #include "gui/MainWin.h" // gGui
+#include "gui/views/PeakTableView.h"
 #include "gui/models/ColorMap.h"
 #include "gui/utility/ColorButton.h"
+#include "gui/views/PeakTableView.h"
 
 #include <QComboBox>
 #include <QDoubleSpinBox>
@@ -40,10 +42,26 @@ PeakWindow::PeakWindow(ohkl::Peak3D* peak, QWidget* parent /* = nullptr */)
     , _integration_region(nullptr)
     , _logarithmic(false)
     , _colormap(new ColorMap())
+    , _grid_layout(new QGridLayout)
+    , _peak_table(new PeakTableView)
+    , _peak_collection("temp", ohkl::PeakCollectionType::FOUND, nullptr)
+    , _peak_collection_item()
+    , _peak_collection_model()
 {
     setModal(false);
     setWindowTitle("Single peak integration region");
     setControlWidgetUp();
+
+    std::vector<ohkl::Peak3D*> peaks;
+    peaks.push_back(peak);
+    for (auto* symm_peak : peak->symmetryRelated())
+        peaks.push_back(symm_peak);
+    _peak_collection.populate(peaks);
+    _peak_collection_item.setPeakCollection(&_peak_collection);
+
+    _peak_collection_model.setRoot(&_peak_collection_item);
+    _peak_table->setModel(&_peak_collection_model);
+    _peak_table->resizeColumnsToContents();
 
     QWidget* view_widget = new QWidget;
     QWidget* control_widget = new QWidget;
@@ -57,8 +75,7 @@ PeakWindow::PeakWindow(ohkl::Peak3D* peak, QWidget* parent /* = nullptr */)
 
     main_layout->addWidget(view_widget);
     main_layout->addWidget(control_widget);
-
-    _grid_layout = new QGridLayout;
+    main_layout->addWidget(_peak_table);
 
     scroll_area->setWidget(view_widget);
     scroll_area->setWidgetResizable(true);

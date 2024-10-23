@@ -402,8 +402,6 @@ void SubframeFindPeaks::grabFinderParameters()
 
     // only change the convolver if it doesn't match the parameters
     ohkl::Convolver* convolver = finder->convolver();
-    if (convolver->type() != params->convolver)
-        finder->setConvolver(params->convolver, {});
 
     const std::map<std::string, double>& convolver_params = convolver->parameters();
     using mapIterator = std::map<std::string, double>::const_iterator;
