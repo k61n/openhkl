@@ -61,6 +61,9 @@ class PeakWindow : public QDialog {
 
     QSize sizeHint() const override;
 
+ public slots:
+    void onPeakTableSelection(const QModelIndex& index);
+
  private:
     //! set up control widget
     void setControlWidgetUp();
@@ -74,6 +77,8 @@ class PeakWindow : public QDialog {
     void remove();
     //! Set up the initial display
     void initView();
+    //! Refresh the peak table
+    void refreshPeakTable();
 
     //! Set widgets from parameters structure
     void grabParameters();

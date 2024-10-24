@@ -17,6 +17,7 @@
 #include "core/peak/Peak3D.h"
 #include "core/peak/RegionData.h"
 #include "gui/MainWin.h" // gGui
+#include "gui/graphics_items/PeakItemGraphic.h"
 #include "gui/views/PeakTableView.h"
 #include "gui/models/ColorMap.h"
 #include "gui/utility/ColorButton.h"
@@ -52,16 +53,7 @@ PeakWindow::PeakWindow(ohkl::Peak3D* peak, QWidget* parent /* = nullptr */)
     setWindowTitle("Single peak integration region");
     setControlWidgetUp();
 
-    std::vector<ohkl::Peak3D*> peaks;
-    peaks.push_back(peak);
-    for (auto* symm_peak : peak->symmetryRelated())
-        peaks.push_back(symm_peak);
-    _peak_collection.populate(peaks);
-    _peak_collection_item.setPeakCollection(&_peak_collection);
-
-    _peak_collection_model.setRoot(&_peak_collection_item);
-    _peak_table->setModel(&_peak_collection_model);
-    _peak_table->resizeColumnsToContents();
+    refreshPeakTable();
 
     QWidget* view_widget = new QWidget;
     QWidget* control_widget = new QWidget;
@@ -191,10 +183,12 @@ void PeakWindow::setControlWidgetUp()
     connect(_intensity_slider, &QSlider::valueChanged, this, &PeakWindow::refresh);
     connect(_peak_color_button, &ColorButton::colorChanged, this, &PeakWindow::refresh);
     connect(_bkg_color_button, &ColorButton::colorChanged, this, &PeakWindow::refresh);
+    connect(_peak_table, &QAbstractItemView::clicked, this, &PeakWindow::onPeakTableSelection);
 }
 
 void PeakWindow::initView()
 {
+    _views.clear();
     _integration_region = std::make_unique<ohkl::IntegrationRegion>(
         _peak, _params.peak_end, _params.bkg_begin, _params.bkg_end);
     _region_data = _integration_region->getRegion();
@@ -216,6 +210,21 @@ void PeakWindow::initView()
         throw std::runtime_error("Invalid integration region");
     }
     setLabel();
+}
+
+void PeakWindow::refreshPeakTable()
+{
+    _peak_collection.reset();
+    std::vector<ohkl::Peak3D*> peaks;
+    peaks.push_back(_peak);
+    for (auto* symm_peak : _peak->symmetryRelated())
+        peaks.push_back(symm_peak);
+    _peak_collection.populate(peaks);
+    _peak_collection_item.setPeakCollection(&_peak_collection);
+
+    _peak_collection_model.setRoot(&_peak_collection_item);
+    _peak_table->setModel(&_peak_collection_model);
+    _peak_table->resizeColumnsToContents();
 }
 
 void PeakWindow::refresh()
@@ -337,6 +346,14 @@ QSize PeakWindow::sizeHint() const
     double w = gGui->sizeHint().width();
     double h = QDialog::sizeHint().height();
     return QSize(w, h);
+}
+
+void PeakWindow::onPeakTableSelection(const QModelIndex& index)
+{
+    PeakItem* peak_item = _peak_collection_item.peakItemAt(index.row());
+    _peak = peak_item->peak();
+    initView();
+    refresh();
 }
 
 void PeakWindow::grabParameters()
