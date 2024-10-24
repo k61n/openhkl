@@ -188,6 +188,8 @@ void PeakWindow::setControlWidgetUp()
 
 void PeakWindow::initView()
 {
+    for (auto* view : _views)
+        delete view;
     _views.clear();
     _integration_region = std::make_unique<ohkl::IntegrationRegion>(
         _peak, _params.peak_end, _params.bkg_begin, _params.bkg_end);
