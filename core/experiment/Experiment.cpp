@@ -240,8 +240,8 @@ void Experiment::loadFromFile(const std::string& path)
     importer.setFilePath(path, this);
     importer.loadData(this);
     importer.loadUnitCells(this);
-    importer.loadPeaks(this);
     importer.loadInstrumentStates(this);
+    importer.loadPeaks(this);
 }
 
 const UnitCell* Experiment::getAcceptedCell() const

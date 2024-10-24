@@ -19,6 +19,7 @@
 #include "core/integration/IIntegrator.h"
 #include "core/peak/Peak3D.h"
 #include "core/raw/DataKeys.h"
+#include "core/statistics/MergedPeakCollection.h"
 #include "tables/crystal/UnitCell.h"
 
 #include <string>
@@ -34,6 +35,7 @@ PeakCollection::PeakCollection()
     , _indexed(false)
     , _integrated(false)
     , _gradient(false)
+    , _have_equivalents(false)
 {
 }
 
@@ -46,6 +48,7 @@ PeakCollection::PeakCollection(const std::string& name, PeakCollectionType type,
     , _indexed(false)
     , _integrated(false)
     , _gradient(false)
+    , _have_equivalents(false)
 {
 }
 
@@ -225,6 +228,28 @@ Peak3D* PeakCollection::findPeakByIndex(const MillerIndex& hkl)
         }
     }
     return nullptr;
+}
+
+void PeakCollection::getSymmetryRelated(bool friedel)
+{
+    if (_have_equivalents)
+        return;
+
+    if (!_cell)
+        return;
+
+    std::vector<PeakCollection*> collections = {this};
+    MergedPeakCollection merged_peaks(_cell->spaceGroup(), collections, friedel);
+
+    for (const auto& merged_peak : merged_peaks.mergedPeakSet()) {
+        std::vector<Peak3D*> symmetry_related;
+        for (auto* peak : merged_peak.peaks())
+            symmetry_related.push_back(peak);
+        for (auto* peak : symmetry_related) // mergedPeakSet is const
+            peak->addSymmetryRelated(symmetry_related);
+    }
+
+    _have_equivalents = true;
 }
 
 int PeakCollection::countEnabled() const

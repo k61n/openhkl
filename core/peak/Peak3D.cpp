@@ -84,6 +84,7 @@ Peak3D::Peak3D(sptrDataSet data)
     , _profile_integration_flag(RejectionFlag::NotRejected)
     , _data(data)
     , _rockingCurve()
+    , _symmetry_related()
 {
 }
 
@@ -108,6 +109,7 @@ Peak3D::Peak3D(sptrDataSet data, const MillerIndex& hkl)
     , _profile_integration_flag(RejectionFlag::NotRejected)
     , _data(data)
     , _rockingCurve()
+    , _symmetry_related()
 {
 }
 
@@ -129,6 +131,7 @@ Peak3D::Peak3D(std::shared_ptr<ohkl::Peak3D> peak)
     , _transmission(peak->transmission())
     , _data(peak->dataSet())
     , _rockingCurve(peak->rockingCurve())
+    , _symmetry_related(peak->symmetryRelated())
 
 {
     setShape(peak->shape());
@@ -510,6 +513,18 @@ void Peak3D::resetIntegration(IntegratorType integrator_type)
 const std::map<RejectionFlag, std::string>& Peak3D::rejectionMap()
 {
     return _rejection_map;
+}
+
+void Peak3D::addSymmetryRelated(const std::vector<Peak3D*>& peaks)
+{
+    if (!_symmetry_related.empty())
+        return;
+
+    for (auto* peak : peaks) {
+        if (peak == this)
+            continue;
+        _symmetry_related.push_back(peak);
+    }
 }
 
 } // namespace ohkl

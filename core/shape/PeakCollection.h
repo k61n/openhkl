@@ -99,6 +99,8 @@ class PeakCollection {
     void setMillerIndices() const;
     //! Find the peak with the given MillerIndex
     Peak3D* findPeakByIndex(const MillerIndex& hkl);
+    //! Find symmetry-related peaks for each peak
+    void getSymmetryRelated(bool friedel = true);
 
     //! Get the number of peaks int he PeakCollection
     int numberOfPeaks() const { return _peaks.size(); }
@@ -129,7 +131,7 @@ class PeakCollection {
     void setIntegrated(bool value) { _integrated = value; }
     //! Background gradient flag
     void setBkgGradient(bool value) { _gradient = value; }
-
+    //! Assign a unit cell (only assign to peaks if setPeaks == true)
     void setUnitCell(const sptrUnitCell& cell, bool setPeaks = true);
 
     //! Reset integration status
@@ -169,6 +171,9 @@ class PeakCollection {
 
     //! Integration includes background gradient
     bool _gradient;
+
+    //! Peaks have symmetry-equivalents populated
+    bool _have_equivalents;
 };
 
 /*! @}*/

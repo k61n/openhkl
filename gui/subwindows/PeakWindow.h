@@ -16,11 +16,15 @@
 #define OHKL_GUI_SUBWINDOWS_PEAKWINDOW_H
 
 #include "core/peak/IntegrationRegion.h"
+#include "core/shape/PeakCollection.h"
+#include "gui/items/PeakCollectionItem.h"
+#include "gui/models/PeakCollectionModel.h"
 
 #include <QDialog>
 
 class ColorButton;
 class ColorMap;
+class PeakTableView;
 class QComboBox;
 class QDoubleSpinBox;
 class QGraphicsView;
@@ -57,6 +61,9 @@ class PeakWindow : public QDialog {
 
     QSize sizeHint() const override;
 
+ public slots:
+    void onPeakTableSelection(const QModelIndex& index);
+
  private:
     //! set up control widget
     void setControlWidgetUp();
@@ -70,6 +77,8 @@ class PeakWindow : public QDialog {
     void remove();
     //! Set up the initial display
     void initView();
+    //! Refresh the peak table
+    void refreshPeakTable();
 
     //! Set widgets from parameters structure
     void grabParameters();
@@ -97,6 +106,12 @@ class PeakWindow : public QDialog {
     ColorButton* _peak_color_button;
     ColorButton* _bkg_color_button;
     QSlider* _intensity_slider;
+
+    PeakTableView* _peak_table;
+
+    ohkl::PeakCollection _peak_collection;
+    PeakCollectionItem _peak_collection_item;
+    PeakCollectionModel _peak_collection_model;
 
     static PeakWindowParameters _params;
 };

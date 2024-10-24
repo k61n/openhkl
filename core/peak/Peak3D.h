@@ -226,8 +226,14 @@ class Peak3D {
     std::string toString() const;
     //! Reset integration state
     void resetIntegration(IntegratorType integrator_type);
+    //! Add a list of symmetry-related peaks
+    void addSymmetryRelated(const std::vector<Peak3D*>& peaks);
     //! Return the map of RejectionFlag definitions
     static const std::map<RejectionFlag, std::string>& rejectionMap();
+    //! Return a list of symmetry-related peaks
+    std::vector<Peak3D*> symmetryRelated() const { return _symmetry_related; };
+    //! Get the multiplicity of the peak
+    std::size_t multiplicity() const { return _symmetry_related.size() + 1; };
 
 
 #ifndef SWIG
@@ -279,6 +285,8 @@ class Peak3D {
     sptrDataSet _data;
     //! Peak profile along frame (rotation) axis
     std::vector<Intensity> _rockingCurve;
+    //! List of symmetry -related peaks
+    std::vector<Peak3D*> _symmetry_related;
 
     //! Map of rejection flag descriptions
     static const std::map<RejectionFlag, std::string> _rejection_map;

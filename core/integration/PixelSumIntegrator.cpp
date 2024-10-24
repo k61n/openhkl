@@ -95,6 +95,7 @@ PixelSumIntegrator::PixelSumIntegrator() : IIntegrator()
 ComputeResult PixelSumIntegrator::compute(
     Peak3D* peak, Profile* profile, const IntegrationRegion& region)
 {
+    static_cast<void>(profile); // profile unused in pixel sum
     ComputeResult result;
     result.integrator_type = IntegratorType::PixelSum;
 

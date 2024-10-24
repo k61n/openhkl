@@ -40,8 +40,8 @@ struct PeakFinderParameters {
     int maximum_frames = 10; //!< Maximum number of frames a blob can span
     int first_frame = -1; //!< First frame in range for peak finding
     int last_frame = -1; //!< Last frame in range for peak findinng
-    double threshold = 80.0; //!< Blobs containing fewer counts than this are discarded
-    std::string convolver = "annular";
+    double threshold = 1.0; //!< Blobs containing fewer counts than this are discarded
+    std::string convolver = "enhanced annular";
 
     void log(const Level& level) const;
 };

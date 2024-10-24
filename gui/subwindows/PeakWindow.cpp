@@ -17,8 +17,11 @@
 #include "core/peak/Peak3D.h"
 #include "core/peak/RegionData.h"
 #include "gui/MainWin.h" // gGui
+#include "gui/graphics_items/PeakItemGraphic.h"
+#include "gui/views/PeakTableView.h"
 #include "gui/models/ColorMap.h"
 #include "gui/utility/ColorButton.h"
+#include "gui/views/PeakTableView.h"
 
 #include <QComboBox>
 #include <QDoubleSpinBox>
@@ -40,10 +43,17 @@ PeakWindow::PeakWindow(ohkl::Peak3D* peak, QWidget* parent /* = nullptr */)
     , _integration_region(nullptr)
     , _logarithmic(false)
     , _colormap(new ColorMap())
+    , _grid_layout(new QGridLayout)
+    , _peak_table(new PeakTableView)
+    , _peak_collection("temp", ohkl::PeakCollectionType::FOUND, nullptr)
+    , _peak_collection_item()
+    , _peak_collection_model()
 {
     setModal(false);
     setWindowTitle("Single peak integration region");
     setControlWidgetUp();
+
+    refreshPeakTable();
 
     QWidget* view_widget = new QWidget;
     QWidget* control_widget = new QWidget;
@@ -57,8 +67,7 @@ PeakWindow::PeakWindow(ohkl::Peak3D* peak, QWidget* parent /* = nullptr */)
 
     main_layout->addWidget(view_widget);
     main_layout->addWidget(control_widget);
-
-    _grid_layout = new QGridLayout;
+    main_layout->addWidget(_peak_table);
 
     scroll_area->setWidget(view_widget);
     scroll_area->setWidgetResizable(true);
@@ -174,10 +183,14 @@ void PeakWindow::setControlWidgetUp()
     connect(_intensity_slider, &QSlider::valueChanged, this, &PeakWindow::refresh);
     connect(_peak_color_button, &ColorButton::colorChanged, this, &PeakWindow::refresh);
     connect(_bkg_color_button, &ColorButton::colorChanged, this, &PeakWindow::refresh);
+    connect(_peak_table, &QAbstractItemView::clicked, this, &PeakWindow::onPeakTableSelection);
 }
 
 void PeakWindow::initView()
 {
+    for (auto* view : _views)
+        delete view;
+    _views.clear();
     _integration_region = std::make_unique<ohkl::IntegrationRegion>(
         _peak, _params.peak_end, _params.bkg_begin, _params.bkg_end);
     _region_data = _integration_region->getRegion();
@@ -199,6 +212,21 @@ void PeakWindow::initView()
         throw std::runtime_error("Invalid integration region");
     }
     setLabel();
+}
+
+void PeakWindow::refreshPeakTable()
+{
+    _peak_collection.reset();
+    std::vector<ohkl::Peak3D*> peaks;
+    peaks.push_back(_peak);
+    for (auto* symm_peak : _peak->symmetryRelated())
+        peaks.push_back(symm_peak);
+    _peak_collection.populate(peaks);
+    _peak_collection_item.setPeakCollection(&_peak_collection);
+
+    _peak_collection_model.setRoot(&_peak_collection_item);
+    _peak_table->setModel(&_peak_collection_model);
+    _peak_table->resizeColumnsToContents();
 }
 
 void PeakWindow::refresh()
@@ -320,6 +348,14 @@ QSize PeakWindow::sizeHint() const
     double w = gGui->sizeHint().width();
     double h = QDialog::sizeHint().height();
     return QSize(w, h);
+}
+
+void PeakWindow::onPeakTableSelection(const QModelIndex& index)
+{
+    PeakItem* peak_item = _peak_collection_item.peakItemAt(index.row());
+    _peak = peak_item->peak();
+    initView();
+    refresh();
 }
 
 void PeakWindow::grabParameters()
