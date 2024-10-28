@@ -91,9 +91,9 @@ void BrillouinZone::clean_qs()
     // remove duplicates, if any
     remove_duplicates(_qs, true, _eps);
     // remove external vertices
-    std::remove_if(_qs.begin(), _qs.end(), [&](const Eigen::RowVector3d& v) {
+    static_cast<void>(std::remove_if(_qs.begin(), _qs.end(), [&](const Eigen::RowVector3d& v) {
         return !inside(0.5 * v);
-    });
+    }));
 
     std::vector<Eigen::RowVector3d> new_qs;
     const auto n = _qs.size();

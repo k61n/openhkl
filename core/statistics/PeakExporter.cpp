@@ -329,6 +329,7 @@ bool PeakExporter::exportPeaks(
     sptrDataSet data, sptrUnitCell cell, bool merged, bool sum_intensity, double scale,
     std::string comment)
 {
+    static_cast<void>(comment);
     _sum_intensities = sum_intensity;
     switch (fmt) {
         case ExportFormat::Mtz: {

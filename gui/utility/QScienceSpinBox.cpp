@@ -33,6 +33,7 @@ bool isIntermediateValueHelper(qint64 num, qint64 min, qint64 max, qint64* match
     } else {
         tmp = qAbs(num);
         for (int i = 0; tmp > 0; ++i) {
+            static_cast<void>(i);
             digits[numDigits++] = tmp % 10;
             tmp /= 10;
         }

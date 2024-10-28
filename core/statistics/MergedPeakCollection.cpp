@@ -133,7 +133,7 @@ void MergedPeakCollection::addAny(Peak3D* peak)
 
     MergedPeak new_peak(_group, _sum_intensity, _friedel);
 
-    MergeFlag flag = new_peak.addAny(peak);
+    static_cast<void>(new_peak.addAny(peak));
 
     auto it = _merged_peak_set.find(new_peak);
 

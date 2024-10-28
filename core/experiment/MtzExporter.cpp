@@ -43,7 +43,6 @@ MtzExporter::MtzExporter(
 {
     auto gonio = _ohkl_data->diffractometer()->sample().gonio(); // Sample 3-axis gonio
     // auto gonio = _ohkl_data->diffractometer()->detector()->gonio(); // Detector 2-axis gonio
-    auto& instrument_states = _ohkl_data->instrumentStates();
 
     const auto& sample_gonio = _ohkl_data->diffractometer()->sample().gonio();
     size_t n_sample_gonio_axes = sample_gonio.nAxes();
@@ -369,4 +368,4 @@ bool MtzExporter::writeToFile(std::string filename)
     return true;
 }
 
-} // ohkl namespace
+} // namespace ohkl

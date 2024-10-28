@@ -176,9 +176,6 @@ class ShapeModel {
 
     //! Progress handler
     sptrProgressHandler _handler;
-
-    //! Parallelise integration
-    bool _thread_parallel;
 };
 
 /*! @}*/

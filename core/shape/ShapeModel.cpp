@@ -202,8 +202,8 @@ bool ShapeModel::addPeak(Peak3D* peak, Profile3D&& profile, Profile1D&& integrat
     if (!(w.minCoeff() > 1e-2))
         return false;
 
-    _profiles.insert_or_assign(
-        peak, std::move(Profile(std::move(profile), std::move(integrated_profile))));
+    Profile prof = {std::move(profile), std::move(integrated_profile)};
+    _profiles.insert_or_assign(peak, std::move(prof));
     return true;
 }
 
