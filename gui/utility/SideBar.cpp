@@ -341,6 +341,9 @@ void SideBar::refreshCurrent()
 void SideBar::onSubframeChanged()
 {
     switch (static_cast<SubFrame>(gGui->_layout_stack->currentIndex())) {
+        case SubFrame::Home: {
+            break;
+        }
         case SubFrame::Experiment: {
             gGui->experiment->setIndexerParameters();
             gGui->experiment->setStrategyParameters();
@@ -375,6 +378,12 @@ void SideBar::onSubframeChanged()
         }
         case SubFrame::Integrate: {
             gGui->integrator->setIntegrationParameters();
+            break;
+        }
+        case SubFrame::Reject: {
+            break;
+        }
+        case SubFrame::Merge: {
             break;
         }
             // SubframeMerge does not need setMergeParameters because it is triggered on merging

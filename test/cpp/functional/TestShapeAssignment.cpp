@@ -107,8 +107,8 @@ TEST_CASE("test/data/TestShapeAssignment.cpp", "")
     refiner_params->refine_sample_orientation = true;
     refiner_params->refine_sample_position = true;
     refiner_params->refine_detector_offset = true;
-    bool refine_success = refiner->refine(data, found_peaks->getPeakList(), cell);
-    int n_updated = refiner->updatePredictions(predicted_peaks->getPeakList());
+    static_cast<void>(refiner->refine(data, found_peaks->getPeakList(), cell));
+    static_cast<void>(refiner->updatePredictions(predicted_peaks->getPeakList()));
 
     std::cout << "Integrating" << std::endl;
     auto* integrator = experiment.integrator();
