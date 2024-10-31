@@ -34,6 +34,7 @@
 #include <QSlider>
 #include <QTextStream>
 #include <QVBoxLayout>
+#include <stdexcept>
 
 PeakWindowParameters PeakWindow::_params = {};
 
@@ -188,9 +189,11 @@ void PeakWindow::setControlWidgetUp()
 
 void PeakWindow::initView()
 {
-    for (auto* view : _views)
-        delete view;
-    _views.clear();
+    if (!_views.empty()) {
+        for (auto* view : _views)
+            delete view;
+        _views.clear();
+    }
     _integration_region = std::make_unique<ohkl::IntegrationRegion>(
         _peak, _params.peak_end, _params.bkg_begin, _params.bkg_end);
     _region_data = _integration_region->getRegion();
@@ -354,7 +357,12 @@ void PeakWindow::onPeakTableSelection(const QModelIndex& index)
 {
     PeakItem* peak_item = _peak_collection_item.peakItemAt(index.row());
     _peak = peak_item->peak();
-    initView();
+    try {
+        initView();
+    } catch (std::runtime_error& e) {
+        gGui->statusBar()->showMessage(e.what());
+        return;
+    }
     refresh();
 }
 

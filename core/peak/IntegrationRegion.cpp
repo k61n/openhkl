@@ -160,17 +160,18 @@ RegionData* IntegrationRegion::getRegion()
     long ymin = std::lround(std::floor(lower[1]));
     long xmax = std::lround(std::ceil(upper[0]) + 1);
     long ymax = std::lround(std::ceil(upper[1]) + 1);
+    int zmin = std::ceil(lower[2]);
+    int zmax = std::floor(upper[2]);
 
     xmin = std::max(0L, xmin);
     ymin = std::max(0L, ymin);
+    zmin = std::max(0, zmin);
 
     auto data = _peak->dataSet();
 
     xmax = std::min(xmax, long(data->nCols()));
     ymax = std::min(ymax, long(data->nRows()));
-
-    const int zmin = std::ceil(lower[2]);
-    const int zmax = std::floor(upper[2]);
+    zmax = std::min(std::size_t(zmax), data->nFrames());
 
 
     _region_data = RegionData(this, xmin, xmax, ymin, ymax, zmin, zmax);
