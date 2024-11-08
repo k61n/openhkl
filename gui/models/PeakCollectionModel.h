@@ -20,6 +20,11 @@
 #include <QAbstractTableModel>
 
 class PeakCollectionItem;
+class PeakItem;
+
+namespace ohkl {
+class Peak3D;
+}
 
 class PeakCollectionModel : public QAbstractTableModel {
     Q_OBJECT
@@ -28,7 +33,6 @@ class PeakCollectionModel : public QAbstractTableModel {
     PeakCollectionModel(QObject* parent);
     ~PeakCollectionModel() = default;
 
- public:
     //! Set the root item that will be used within the model
     void setRoot(PeakCollectionItem* peak_collection);
     //! Set the root item that will be used within the model
@@ -45,20 +49,20 @@ class PeakCollectionModel : public QAbstractTableModel {
     void reset();
     //! Get the DataSet pointer associated with the PeakCollection
     ohkl::sptrDataSet dataSet() const;
-
- public:
     //! Return the data of the item (Manages role interaction)
     QVariant data(const QModelIndex& index, int role) const override;
     //! Manages the display and edition flags
     Qt::ItemFlags flags(const QModelIndex& index) const override;
     //! Returns header information
     QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
-    //! The sorting of the peaks
-    void sort(int column, Qt::SortOrder order) override;
     //! Implement model's setData method for interactable checkbox
     bool setData(const QModelIndex& index, const QVariant& value, int role) override;
+    //! Get the QModelIndex of a PeakItem given its identifier
+    QModelIndex getModelIndex(int id) const;
+    //! Get the peak item given a peak pointer
+    PeakItem* getPeakItem(ohkl::Peak3D* peak) const;
 
- public:
+ private:
     PeakCollectionItem* _root_item = nullptr;
     std::string _name;
 };

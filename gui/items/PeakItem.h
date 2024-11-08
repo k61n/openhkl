@@ -52,6 +52,8 @@ enum PeakColumn {
     Count,
 };
 
+enum Role { GetIndex = Qt::UserRole };
+
 class PeakItem : public QStandardItem {
  public:
     PeakItem(ohkl::Peak3D* peak);
@@ -81,11 +83,17 @@ class PeakItem : public QStandardItem {
     //! Whether the peak was caught by the filter
     bool caughtByFilter() const;
 
+    int id() const { return _id; };
+
  private:
     //! pointer to the data
     ohkl::Peak3D* _peak;
     //! Generate the visual item
     std::unique_ptr<PeakItemGraphic> _peak_graphic;
+    //! Unique id
+    int _id;
+    //! The last used id
+    static unsigned long _last_id;
 };
 
 #endif // OHKL_GUI_ITEMS_PEAKITEM_H

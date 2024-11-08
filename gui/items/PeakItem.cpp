@@ -28,9 +28,10 @@
 #include "tables/crystal/MillerIndex.h"
 #include "tables/crystal/UnitCell.h"
 
-PeakItem::PeakItem(ohkl::Peak3D* peak)
+unsigned long PeakItem::_last_id = 0;
+
+PeakItem::PeakItem(ohkl::Peak3D* peak) : _peak(peak), _id(_last_id++)
 {
-    _peak = peak;
     _peak_graphic = std::unique_ptr<PeakItemGraphic>(new PeakItemGraphic(peak));
 }
 
@@ -272,13 +273,16 @@ QVariant PeakItem::peakData(const QModelIndex& index, int role, PeakDisplayModes
             }
             break;
         }
-        case Qt::ToolTipRole:
-            switch (col) {
-                case PeakColumn::h: return hkl[0] + hkl_error[0];
-                case PeakColumn::k: return hkl[1] + hkl_error[1];
-                case PeakColumn::l: return hkl[2] + hkl_error[2];
-            }
-            break;
+        case Qt::ToolTipRole: {
+                switch (col) {
+                    case PeakColumn::h: return hkl[0] + hkl_error[0];
+                    case PeakColumn::k: return hkl[1] + hkl_error[1];
+                    case PeakColumn::l: return hkl[2] + hkl_error[2];
+                }
+                break;
+        }
+        case Role::GetIndex:
+            return _id;
     }
     return QVariant::Invalid;
 }

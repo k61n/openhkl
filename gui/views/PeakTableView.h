@@ -26,7 +26,8 @@ class PeakTableView : public QTableView {
     explicit PeakTableView(QWidget* parent = nullptr);
 
     void setModel(QAbstractItemModel* model) override;
-    void selectAll() override{};
+    void selectAll() override {};
+    void jumpToRow(const QModelIndex& index);
 
  private:
     void resetSort();

@@ -535,10 +535,9 @@ void SubframeIntegrate::runIntegration()
 
 void SubframeIntegrate::changeSelected(PeakItemGraphic* peak_graphic)
 {
-    int row = _peak_collection_item.returnRowOfVisualItem(peak_graphic);
-    QModelIndex index = _peak_collection_model.index(row, 0);
-    _peak_table->selectRow(row);
-    _peak_table->scrollTo(index, QAbstractItemView::PositionAtTop);
+    PeakItem* peak_item = _peak_collection_model.getPeakItem(peak_graphic->peak());
+    QModelIndex index = _peak_collection_model.getModelIndex(peak_item->id());
+    _peak_table->jumpToRow(index);
 }
 
 void SubframeIntegrate::toggleUnsafeWidgets()
