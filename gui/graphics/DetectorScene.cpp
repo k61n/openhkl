@@ -472,19 +472,10 @@ void DetectorScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
     }
     // No button was pressed, just a mouse move
     else if (event->button() == Qt::NoButton) {
-        QPointF lastPos = event->lastScenePos();
-        QPoint point = lastPos.toPoint();
-        QTransform trans;
-
-        QList<QGraphicsItem*> gItemList =
-            items(point, Qt::IntersectsItemShape, Qt::DescendingOrder, trans);
-        for (auto gItem : gItemList) {
-            if (!gItem)
-                continue;
-
-            PeakItemGraphic* p = dynamic_cast<PeakItemGraphic*>(gItem);
-            if (p)
-                emit signalSelectedPeakItemChanged(p);
+        for (auto* item : items(event->scenePos())) {
+            PeakItemGraphic* peak_item = dynamic_cast<PeakItemGraphic*>(item);
+            if (peak_item)
+                emit signalSelectedPeakItemChanged(peak_item);
         }
     }
 }

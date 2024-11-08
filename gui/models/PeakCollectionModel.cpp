@@ -20,6 +20,8 @@
 #include "gui/items/PeakCollectionItem.h"
 #include "gui/items/PeakItem.h"
 
+#include <QModelIndex>
+
 PeakCollectionModel::PeakCollectionModel() : QAbstractTableModel()
 {
     _root_item = nullptr;
@@ -172,14 +174,6 @@ QVariant PeakCollectionModel::headerData(int section, Qt::Orientation orientatio
     }
 }
 
-void PeakCollectionModel::sort(int column, Qt::SortOrder order)
-{
-    if (!_root_item)
-        return;
-    return _root_item->sort(column, order);
-    emit dataChanged(QModelIndex(), QModelIndex());
-}
-
 void PeakCollectionModel::reset()
 {
     _root_item = nullptr;
@@ -204,4 +198,20 @@ bool PeakCollectionModel::setData(const QModelIndex& index, const QVariant& valu
         return true;
     }
     return false;
+}
+
+QModelIndex PeakCollectionModel::getModelIndex(int id) const
+{
+    QModelIndex start = index(0, 0);
+    QModelIndexList matches = match(start, Role::GetIndex, id, 1);
+    return matches.at(0);
+}
+
+PeakItem* PeakCollectionModel::getPeakItem(ohkl::Peak3D* peak) const
+{
+    for (auto* peak_item : _root_item->peakItems()) {
+        if (peak_item->peak() == peak)
+            return peak_item;
+    }
+    return nullptr;
 }

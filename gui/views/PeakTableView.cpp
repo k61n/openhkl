@@ -43,6 +43,13 @@ void PeakTableView::setModel(QAbstractItemModel* model)
     sortByColumn(PeakColumn::d, Qt::DescendingOrder);
 }
 
+void PeakTableView::jumpToRow(const QModelIndex& index)
+{
+    QModelIndex sorted_index = _sort_model.mapFromSource(index);
+    selectRow(sorted_index.row());
+    scrollTo(sorted_index, QAbstractItemView::PositionAtTop);
+}
+
 void PeakTableView::resetSort()
 {
     sortByColumn(-1, Qt::AscendingOrder);
