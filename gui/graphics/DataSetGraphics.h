@@ -72,7 +72,7 @@ class DataSetGraphics {
     //! Get the base image on which peaks etc are superimposed
     std::optional<QImage> baseImage(std::size_t frame_idx, QRect full);
     //! Generate a filtered/thresholded image using the specified convolver
-    Eigen::MatrixXd filteredImage(RowMatrix image);
+    Eigen::MatrixXd filteredImage(RowMatrix image, bool thresholded = true);
     //! Generate a tooltip for the current scene position
     std::optional<QString> tooltip(int col, int row);
     //! Get graphics marking per-frame position of the direct beam

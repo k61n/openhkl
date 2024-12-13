@@ -1,0 +1,53 @@
+//  ***********************************************************************************************
+//
+//  OpenHKL: data reduction for single crystal diffraction
+//
+//! @file      core/image/ImageFilter.h
+//! @brief     Defines class ImageFilter
+//!
+//! @homepage  https://openhkl.org
+//! @license   GNU General Public License v3 or higher (see COPYING)
+//! @copyright Institut Laue-Langevin and Forschungszentrum Jülich GmbH 2016-
+//! @authors   see CITATION, MAINTAINER
+//
+//  ***********************************************************************************************
+
+#ifndef OHKL_CORE_IMAGE_IMAGEFILTER_H
+#define OHKL_CORE_IMAGE_IMAGEFILTER_H
+
+#include <Eigen/Dense>
+#include <opencv2/opencv.hpp>
+
+using RealMatrix = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
+
+namespace ohkl {
+
+//! Pure virtual base class for ConstantConvolver, DeltaConvolver, RadialConvolver.
+
+class ImageFilter {
+ public:
+    ImageFilter();
+
+    void setKernel(const cv::Mat& kernel);
+    void setImage(const RealMatrix& image);
+    virtual void filter();
+    virtual void threshold(double thresh);
+
+    RealMatrix filteredImage();
+    RealMatrix thresholdedImage();
+
+ protected:
+    cv::Mat _kernel;
+    std::size_t _size;
+
+    std::size_t _image_rows;
+    std::size_t _image_cols;
+
+    cv::Mat _image;
+    cv::Mat _filtered_image;
+    cv::Mat _thresholded_image;
+};
+
+} // namespace ohkl
+
+#endif // OHKL_CORE_IMAGE_IMAGEFILTER_H

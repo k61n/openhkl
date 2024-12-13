@@ -18,10 +18,12 @@
 #include "base/mask/BoxMask.h"
 #include "base/mask/EllipseMask.h"
 #include "base/utils/Units.h"
+#include "core/convolve/ConvolutionKernel.h"
 #include "core/convolve/Convolver.h"
 #include "core/convolve/ConvolverFactory.h"
 #include "core/data/DataSet.h"
 #include "core/detector/Detector.h"
+#include "core/image/AnnularImageFilter.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/InstrumentState.h"
 #include "core/instrument/InterpolatedState.h"
@@ -67,27 +69,15 @@ std::optional<QImage> DataSetGraphics::baseImage(std::size_t frame_idx, QRect fu
     }
 }
 
-Eigen::MatrixXd DataSetGraphics::filteredImage(RowMatrix image)
+Eigen::MatrixXd DataSetGraphics::filteredImage(RowMatrix image, bool thresholded)
 {
-    int nrows = _data->nRows();
-    int ncols = _data->nCols();
-
-    Eigen::MatrixXd filtered_image = Eigen::MatrixXd::Zero(nrows, ncols);
-    std::string convolver = ohkl::Convolver::kernelTypes.at(_params->convolver);
-    _convolver.reset(ohkl::ConvolverFactory{}.create(convolver, _params->convolver_params));
-    filtered_image = _convolver->convolve(image.cast<double>());
-
-    for (int i = 0; i < nrows; ++i)
-        for (int j = 0; j < ncols; ++j)
-            filtered_image(i, j) = filtered_image(i, j) < _params->threshold ? 0 : 1;
-
-    double minVal = filtered_image.minCoeff();
-    double maxVal = filtered_image.maxCoeff();
-    if (maxVal - minVal <= 0.0)
-        maxVal = minVal + 1.0;
-    filtered_image.array() -= minVal;
-    filtered_image.array() /= maxVal - minVal;
-    return filtered_image;
+    ohkl::AnnularImageFilter filter(4, 8, 12);
+    filter.setImage(image.cast<double>());
+    filter.filter();
+    filter.threshold(30);
+    if (thresholded)
+        return filter.thresholdedImage();
+    return filter.filteredImage();
 }
 
 std::optional<QString> DataSetGraphics::tooltip(int col, int row)
