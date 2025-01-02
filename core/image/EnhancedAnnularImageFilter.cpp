@@ -39,15 +39,15 @@ void EnhancedAnnularImageFilter::filter()
 
     cv::filter2D(
         _image, peak_image, ddepth, _peak_kernel.matrix(), anchor, delta,
-        cv::BorderTypes::BORDER_CONSTANT);
+        cv::BorderTypes::BORDER_WRAP);
     cv::filter2D(
         _image, bkg_image, ddepth, _bkg_kernel.matrix(), anchor, delta,
-        cv::BorderTypes::BORDER_CONSTANT);
-    diff2 = (_image - bkg_image) * (_image - bkg_image);
+        cv::BorderTypes::BORDER_WRAP);
+    diff2 = (_image - bkg_image).mul(_image - bkg_image);
     cv::sqrt(diff2, diff);
     cv::filter2D(
         diff, std, ddepth, _bkg_kernel.matrix(), anchor, delta,
-        cv::BorderTypes::BORDER_CONSTANT);
+        cv::BorderTypes::BORDER_WRAP);
     cv::subtract(peak_image, bkg_image, _filtered_image);
     _filtered_image /= std;
 }

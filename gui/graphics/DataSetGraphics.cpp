@@ -23,7 +23,7 @@
 #include "core/convolve/ConvolverFactory.h"
 #include "core/data/DataSet.h"
 #include "core/detector/Detector.h"
-#include "core/image/AnnularImageFilter.h"
+#include "core/image/EnhancedAnnularImageFilter.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/InstrumentState.h"
 #include "core/instrument/InterpolatedState.h"
@@ -71,10 +71,10 @@ std::optional<QImage> DataSetGraphics::baseImage(std::size_t frame_idx, QRect fu
 
 Eigen::MatrixXd DataSetGraphics::filteredImage(RowMatrix image, bool thresholded)
 {
-    ohkl::AnnularImageFilter filter(4, 8, 12);
+    ohkl::EnhancedAnnularImageFilter filter(4, 8, 12);
     filter.setImage(image.cast<double>());
     filter.filter();
-    filter.threshold(30);
+    filter.threshold(1.0);
     if (thresholded)
         return filter.thresholdedImage();
     return filter.filteredImage();
