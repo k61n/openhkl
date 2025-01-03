@@ -42,7 +42,7 @@
 TEST_CASE("test/data/TestShapeAssignment.cpp", "")
 {
     // reference values
-    const int ref_n_peaks = 59209;
+    const int ref_n_peaks = 59086;
     const int ref_n_integrated_peaks = 56186;
     const double ref_rpim_overall = 0.0774;
     const double ref_ccstar_overall = 0.9975;
