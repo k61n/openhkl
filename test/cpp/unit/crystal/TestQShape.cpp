@@ -82,11 +82,7 @@ TEST_CASE("test/crystal/TestQShape.cpp", "")
     finder_params->maximum_frames = 10;
     finder_params->threshold = 15;
     finder_params->peak_end = 1.0;
-
-    ohkl::ConvolverFactory convolver_factory;
-    auto convolver = convolver_factory.create("annular", {});
-    // peakFinder.setConvolver(std::unique_ptr<ohkl::Convolver>(convolver));
-
+    finder_params->filter = "Annular";
 
     peakFinder.setHandler(progressHandler);
 
