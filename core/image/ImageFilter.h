@@ -46,6 +46,8 @@ class ImageFilter {
 
     RealMatrix filteredImage();
     RealMatrix thresholdedImage();
+    cv::Mat cvFilteredImage() { return _filtered_image; };
+    cv::Mat cvThresholdedImage() { return _thresholded_image; };
 
  protected:
     cv::Mat _kernel;

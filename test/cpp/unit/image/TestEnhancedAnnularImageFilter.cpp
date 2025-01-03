@@ -2,7 +2,7 @@
 //
 //  OpenHKL: data reduction for single crystal diffraction
 //
-//! @file      test/cpp/data/TestAnnularImageFilter.cpp
+//! @file      test/cpp/data/TestEnhancedAnnularImageFilter.cpp
 //! @brief     Test ...
 //!
 //! @homepage  https://openhkl.org
@@ -19,7 +19,7 @@
 #include "core/instrument/Diffractometer.h"
 #include "core/loader/IDataReader.h"
 #include "core/loader/RawDataReader.h"
-#include "core/image/AnnularImageFilter.h"
+#include "core/image/EnhancedAnnularImageFilter.h"
 
 #include <opencv2/core.hpp>
 #include <opencv2/core/base.hpp>
@@ -28,11 +28,10 @@
 
 #include <iostream>
 #include <opencv2/core/hal/interface.h>
-#include <opencv2/features2d.hpp>
 #include <opencv2/highgui.hpp>
 #include <opencv2/opencv.hpp>
 
-TEST_CASE("test/data/TestAnnularImageFilter.cpp", "")
+    TEST_CASE("test/data/TestEnhancedAnnularImageFilter.cpp", "")
 {
     const std::string filename = "CrChiA_c01runab_28603.raw";
     ohkl::Experiment experiment("CrChiA", "BioDiff");
@@ -51,17 +50,17 @@ TEST_CASE("test/data/TestAnnularImageFilter.cpp", "")
     ohkl::RealMatrix image = data->transformedFrame(0);
 
     std::map<std::string, double> params = {{"r1", 4.0}, {"r2", 8.0}, {"r3", 12.0}};
-    ohkl::AnnularImageFilter filter(params);
+    ohkl::EnhancedAnnularImageFilter filter(params);
     filter.setImage(image);
     filter.filter();
     cv::Mat filtered_image = filter.cvFilteredImage();
     cv::Mat thresholded, thresholded_8u;
 
-    cv::threshold(filtered_image, thresholded, 30, 255, cv::THRESH_BINARY_INV);
+    cv::threshold(filtered_image, thresholded, 1.0, 255, cv::THRESH_BINARY_INV);
     thresholded.convertTo(thresholded_8u, CV_8U, 1.0);
 
     cv::SimpleBlobDetector::Params blob_params;
-    blob_params.minThreshold = 30;
+    blob_params.minThreshold = 1;
     blob_params.maxThreshold = 100;
     blob_params.filterByCircularity = false;
     blob_params.filterByConvexity = false;
@@ -79,5 +78,5 @@ TEST_CASE("test/data/TestAnnularImageFilter.cpp", "")
     // cv::imshow("With keypoints", with_keypoints);
     // cv::waitKey();
 
-    CHECK(keypoints.size() == 62);
+    CHECK(keypoints.size() == 476);
 }
