@@ -24,10 +24,12 @@
 
 namespace ohkl {
 
-AnnularImageFilter::AnnularImageFilter(double r1, double r2, double r3)
-    : ImageFilter(), _peak_kernel(0.0, r1), _bkg_kernel(r2, r3)
+AnnularImageFilter::AnnularImageFilter(const FilterParameters& params)
+    : ImageFilter(params)
+    , _peak_kernel(0.0, _parameters.at("r1"))
+    , _bkg_kernel(_parameters.at("r2"), _parameters.at("r3"))
 {
-    _size = static_cast<int>(2 * r3 + 1);
+    _size = static_cast<int>(2 * _parameters.at("r3") + 1);
 }
 
 void AnnularImageFilter::filter()

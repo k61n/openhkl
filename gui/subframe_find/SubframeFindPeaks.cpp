@@ -14,7 +14,6 @@
 
 #include "gui/subframe_find/SubframeFindPeaks.h"
 
-#include "core/convolve/ConvolverFactory.h"
 #include "core/data/DataSet.h"
 #include "core/data/ImageGradient.h"
 #include "core/experiment/Experiment.h"
@@ -78,7 +77,7 @@ SubframeFindPeaks::SubframeFindPeaks()
     setSaveUp();
     setFigureUp();
     setPeakTableUp();
-    updateConvolutionParameters();
+    updateFilterParameters();
     toggleUnsafeWidgets();
 
     _right_element->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -93,7 +92,7 @@ SubframeFindPeaks::SubframeFindPeaks()
 
     connect(
         _kernel_combo, &QComboBox::currentTextChanged, this,
-        &SubframeFindPeaks::updateConvolutionParameters);
+        &SubframeFindPeaks::updateFilterParameters);
     connect(
         _gradient_kernel, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
         this, &SubframeFindPeaks::onGradientSettingsChanged);
@@ -151,12 +150,12 @@ void SubframeFindPeaks::setBlobUp()
 
     _kernel_combo = f.addCombo("Convolution kernel", "Convolution kernel for peak search");
 
-    auto kernel_types = ohkl::Convolver::kernelTypes;
+    auto kernel_types = ohkl::ImageFilterStrings;
     for (auto it = kernel_types.begin(); it != kernel_types.end(); ++it)
         _kernel_combo->addItem(QString::fromStdString(it->second));
     _kernel_combo->setCurrentIndex(1);
 
-    QLabel* kernel_para_label = new QLabel("Convolver parameters:");
+    QLabel* kernel_para_label = new QLabel("Filter parameters:");
     kernel_para_label->setAlignment(Qt::AlignLeft | Qt::AlignTop);
     f.addWidget(kernel_para_label, 0);
 
@@ -398,12 +397,12 @@ void SubframeFindPeaks::grabFinderParameters()
     _end_frame_spin->setValue(params->last_frame + 1);
     _threshold_spin->setValue(params->threshold);
 
-    _kernel_combo->setCurrentText(QString::fromStdString(params->convolver));
+    _kernel_combo->setCurrentText(QString::fromStdString(params->filter));
 
-    // only change the convolver if it doesn't match the parameters
-    ohkl::Convolver* convolver = finder->convolver();
+    finder->setFilterParameters(filterParameters());
 
-    const std::map<std::string, double>& convolver_params = convolver->parameters();
+    const std::map<std::string, double>& convolver_params =
+        _detector_widget->scene()->params()->convolver_params;
     using mapIterator = std::map<std::string, double>::const_iterator;
 
     _kernel_para_table->clear();
@@ -447,13 +446,8 @@ void SubframeFindPeaks::setFinderParameters()
     params->last_frame = _end_frame_spin->value() - 1;
     params->threshold = _threshold_spin->value();
 
-    std::string convolverType = _kernel_combo->currentText().toStdString();
-    params->convolver = convolverType;
-
-    ohkl::ConvolverFactory factory;
-    ohkl::Convolver* convolver = factory.create(convolverType, {});
-    convolver->setParameters(convolutionParameters());
-    finder->setConvolver(std::unique_ptr<ohkl::Convolver>(convolver));
+    params->filter = _kernel_combo->currentText().toStdString();
+    finder->setFilterParameters(filterParameters());
 }
 
 void SubframeFindPeaks::grabIntegrationParameters()
@@ -507,14 +501,19 @@ void SubframeFindPeaks::setIntegrationParameters()
     params->gradient_type = static_cast<ohkl::GradientKernel>(_gradient_kernel->currentIndex());
 }
 
-void SubframeFindPeaks::updateConvolutionParameters()
+void SubframeFindPeaks::updateFilterParameters()
 {
     QSignalBlocker blocker(_kernel_para_table);
     std::string kernelName = _kernel_combo->currentText().toStdString();
-    ohkl::ConvolverFactory _kernel_comboFactory;
-    ohkl::Convolver* kernel = _kernel_comboFactory.create(kernelName, {});
 
-    const std::map<std::string, double>& params = kernel->parameters();
+    std::map<std::string, double> params;
+    if (gSession->hasProject()) {
+        ohkl::PeakFinder* finder = gSession->currentProject()->experiment()->peakFinder();
+        params = finder->filterParameters();
+    } else {
+        params = {{"r1", 5}, {"r2", 10}, {"r3", 15}};
+    }
+
     using mapIterator = std::map<std::string, double>::const_iterator;
 
     _kernel_para_table->setRowCount(0);
@@ -590,7 +589,7 @@ void SubframeFindPeaks::integrate()
     gGui->setReady(true);
 }
 
-std::map<std::string, double> SubframeFindPeaks::convolutionParameters()
+std::map<std::string, double> SubframeFindPeaks::filterParameters()
 {
     std::map<std::string, double> parameters;
     for (int i = 0; i < _kernel_para_table->rowCount(); ++i) {
@@ -646,6 +645,9 @@ void SubframeFindPeaks::refreshPeakTable()
     _peak_table->setColumnHidden(PeakColumn::Enabled, true);
     _peak_table->setColumnHidden(PeakColumn::Count, true);
 
+    _detector_widget->scene()->params()->convolver_params = filterParameters();
+    _detector_widget->scene()->params()->filter =
+        static_cast<ohkl::ImageFilterType>(_kernel_combo->currentIndex());
     _detector_widget->refresh();
 }
 
@@ -693,9 +695,9 @@ void SubframeFindPeaks::showFilteredImage()
     _detector_widget->scene()->params()->filteredImage = _threshold_check->isChecked();
     _detector_widget->scene()->params()->threshold = _threshold_spin->value();
     if (_threshold_check->isChecked()) {
-        _detector_widget->scene()->params()->convolver =
-            static_cast<ohkl::ConvolutionKernelType>(_kernel_combo->currentIndex());
-        for (const auto& [key, value] : convolutionParameters())
+        _detector_widget->scene()->params()->filter =
+            static_cast<ohkl::ImageFilterType>(_kernel_combo->currentIndex());
+        for (const auto& [key, value] : filterParameters())
             _detector_widget->scene()->params()->convolver_params.insert_or_assign(key, value);
     }
     _detector_widget->scene()->loadCurrentImage();

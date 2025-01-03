@@ -25,8 +25,8 @@
 
 namespace ohkl {
 
-EnhancedAnnularImageFilter::EnhancedAnnularImageFilter(double r1, double r2, double r3)
-    : AnnularImageFilter(r1, r2, r3)
+EnhancedAnnularImageFilter::EnhancedAnnularImageFilter(const FilterParameters& params)
+    : AnnularImageFilter(params)
 {
 }
 

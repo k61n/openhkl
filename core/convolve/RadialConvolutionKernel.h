@@ -57,6 +57,8 @@ class RadialConvolutionKernel : public ConvolutionKernel {
  public:
     RadialConvolutionKernel(double r_in, double r_out);
 
+    int kernelSize() const { return _size; };
+
  protected:
     int _size;
 

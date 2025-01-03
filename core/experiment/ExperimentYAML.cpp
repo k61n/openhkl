@@ -206,7 +206,7 @@ void ExperimentYAML::grabPeakFinderParameters(PeakFinderParameters* params)
     params->first_frame = getNode<int>(branch, "first_frame");
     params->last_frame = getNode<int>(branch, "last_frame");
     params->threshold = getNode<double>(branch, "threshold");
-    params->convolver = getNode<std::string>(branch, "convolver");
+    params->filter = getNode<std::string>(branch, "filter");
 }
 
 void ExperimentYAML::setPeakFinderParameters(PeakFinderParameters* params)
@@ -224,7 +224,7 @@ void ExperimentYAML::setPeakFinderParameters(PeakFinderParameters* params)
     pf_node["first_frame"] = params->first_frame;
     pf_node["last_frame"] = params->last_frame;
     pf_node["threshold"] = params->threshold;
-    pf_node["convolver"] = params->convolver;
+    pf_node["filter"] = params->filter;
 }
 
 void ExperimentYAML::grabAutoindexerParameters(IndexerParameters* params)

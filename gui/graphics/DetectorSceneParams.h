@@ -16,6 +16,7 @@
 
 #include "core/convolve/Convolver.h"
 #include "core/data/ImageGradient.h"
+#include "core/image/ImageFilter.h"
 
 //! Which mode is the cursor diplaying
 enum TooltipMode { Cursor = 0, Pixel = 1, Theta = 2, GammaNu = 3, DSpacing = 4, MillerIndices = 5 };
@@ -46,6 +47,7 @@ struct DetectorSceneParams {
     std::map<std::string, double> convolver_params = {
         {"r1", 5.0}, {"r2", 10.0}, {"r3", 15.0}, {"r_in", 5.0}, {"r_out", 10.0}, {"box_size", 3.0},
     };
+    ohkl::ImageFilterType filter = ohkl::ImageFilterType::EnhancedAnnular;
     ohkl::ConvolutionKernelType convolver = ohkl::ConvolutionKernelType::Annular;
     ohkl::GradientKernel gradientKernel = ohkl::GradientKernel::Sobel;
     TooltipMode tooltipMode = Pixel;

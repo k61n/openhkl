@@ -50,7 +50,8 @@ TEST_CASE("test/data/TestAnnularConvolutionKernel.cpp", "")
 
     ohkl::RealMatrix image = data->transformedFrame(0);
 
-    ohkl::AnnularImageFilter filter(4, 8, 12);
+    ohkl::FilterParameters params = {{"r1", 4.0}, {"r2", 8.0}, {"r3", 12.0}};
+    ohkl::AnnularImageFilter filter(params);
     filter.setImage(image);
     filter.filter();
 

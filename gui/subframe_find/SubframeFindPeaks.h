@@ -42,7 +42,7 @@ class SubframeFindPeaks : public QWidget {
  public:
     SubframeFindPeaks();
     //! Change the convolution parameters
-    void updateConvolutionParameters();
+    void updateFilterParameters();
     //! Find peaks
     void find();
     //! integrate found peaks
@@ -95,7 +95,7 @@ class SubframeFindPeaks : public QWidget {
     void toggleUnsafeWidgets();
 
     //! Convolution parameter map
-    std::map<std::string, double> convolutionParameters();
+    std::map<std::string, double> filterParameters();
 
     //! The model for the found peaks
     ohkl::PeakCollection _peak_collection;

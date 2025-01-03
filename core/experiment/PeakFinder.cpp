@@ -18,10 +18,11 @@
 #include "base/mask/IMask.h"
 #include "base/utils/Logger.h"
 #include "base/utils/ProgressHandler.h"
-#include "core/convolve/ConvolverFactory.h"
 #include "core/data/DataSet.h"
 #include "core/detector/Detector.h"
 #include "core/experiment/Experiment.h"
+#include "core/image/ImageFilter.h"
+#include "core/image/FilterFactory.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/Sample.h"
 #include "core/integration/Blob3D.h"
@@ -33,7 +34,6 @@
 #include <cstdio>
 #include <utility>
 #include <vector>
-
 #define DYNAMIC_CHUNK 10
 
 using RealMatrix = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
@@ -96,7 +96,7 @@ void PeakFinderParameters::log(const Level& level) const
     ohklLog(level, "first_frame            = ", first_frame);
     ohklLog(level, "last_frame             = ", last_frame);
     ohklLog(level, "threshold              = ", threshold);
-    ohklLog(level, "convolver              = ", convolver);
+    ohklLog(level, "filter                 = ", filter);
 }
 
 //  ***********************************************************************************************
@@ -106,7 +106,7 @@ void PeakFinderParameters::log(const Level& level) const
 PeakFinder::PeakFinder() : _handler(nullptr), _current_label(0), _integrated(false)
 {
     _params = std::make_unique<PeakFinderParameters>();
-    _convolver.reset(ConvolverFactory{}.create("annular", {{"r1", 5.}, {"r2", 10.}, {"r3", 15.}}));
+    _filter_params = {{"r1", 5}, {"r2", 10}, {"r3", 15}};
 }
 
 std::vector<Peak3D*> PeakFinder::currentPeaks()
@@ -140,22 +140,6 @@ void PeakFinder::setHandler(const sptrProgressHandler& handler)
 PeakFinderParameters* PeakFinder::parameters()
 {
     return _params.get();
-}
-
-void PeakFinder::setConvolver(std::unique_ptr<Convolver> convolver)
-{
-    _convolver = std::move(convolver);
-}
-
-void PeakFinder::setConvolver(
-        const std::string& convolver, const std::map<std::string, double>& parameters)
-{
-    _convolver.reset(ConvolverFactory{}.create(convolver, parameters));
-}
-
-void PeakFinder::setConvolver(const Convolver& convolver)
-{
-    _convolver.reset(convolver.clone());
 }
 
 //  ***********************************************************************************************
@@ -216,8 +200,8 @@ void PeakFinder::mergeCollidingBlobs(const DataSet& data, std::map<int, Blob3D>&
 }
 
 void PeakFinder::findPrimaryBlobs(
-    const DataSet& data, std::map<int, Blob3D>& blobs, ohkl::EquivalenceList& equivalences,
-    size_t begin, size_t end)
+    const DataSet& data, ImageFilter* filter, std::map<int, Blob3D>& blobs,
+    ohkl::EquivalenceList& equivalences, size_t begin, size_t end)
 {
     std::ostringstream oss;
     oss << "Finding blobs for data set " << data.name();
@@ -248,14 +232,18 @@ void PeakFinder::findPrimaryBlobs(
         ++nframes;
 
         RealMatrix frame_data = data.frame(idx).cast<double>();
-        RealMatrix filtered_frame = _convolver->convolve(frame_data);
+        filter->setImage(frame_data);
+        filter->filter();
+        // filter->threshold(_params->threshold);
+        RealMatrix filtered_frame = filter->filteredImage();
 
         // Go the the beginning of data
         int index2D = 0;
         for (unsigned int row = 0; row < nrows; ++row) {
             for (unsigned int col = 0; col < ncols; ++col) {
-                // Discard pixel if value < threshold
-                if (filtered_frame(row, col) < _params->threshold) {
+                // Discard pixel if value < threshold                               ...
+                if (filtered_frame(row, col) < _params->threshold)
+                {
                     labels[index2D] = labels2[index2D] = 0;
                     index2D++;
                     continue;
@@ -569,9 +557,12 @@ void PeakFinder::find(const sptrDataSet data)
     std::map<int, Blob3D> local_blobs = {{}};
     ohkl::EquivalenceList local_equivalences;
 
+    FilterFactory factory;
+    ImageFilter* filter = factory.create(_params->filter, _filter_params);
+
     // find blobs within the current frame range
     ohklLog(Level::Debug, "PeakFinder::find: findPrimary from ", loop_begin, " to ", loop_end);
-    findPrimaryBlobs(*data, local_blobs, local_equivalences, loop_begin, loop_end);
+    findPrimaryBlobs(*data, filter, local_blobs, local_equivalences, loop_begin, loop_end);
 
     // merge adjacent blobs
     ohklLog(Level::Debug, "PeakFinder::find: mergeBlobs");
@@ -596,9 +587,9 @@ void PeakFinder::find(const sptrDataSet data)
 
     int count = 0;
 
-    const auto& kernel_size = _convolver->kernelSize();
-    const auto& x_offset = kernel_size.first;
-    const auto& y_offset = kernel_size.second;
+    int kernel_size = filter->kernelSize();
+    int x_offset = kernel_size;
+    int y_offset = kernel_size;
 
     // AABB used for rejecting peaks which overlaps with detector boundaries
     AABB dAABB(

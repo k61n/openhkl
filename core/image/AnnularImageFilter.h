@@ -28,8 +28,10 @@ namespace ohkl {
 
 class AnnularImageFilter : public ImageFilter {
  public:
-    AnnularImageFilter(double r1, double r2, double r3);
+    AnnularImageFilter(const FilterParameters& params);
     void filter() override;
+
+    int kernelSize() const override { return _bkg_kernel.kernelSize(); };
 
  protected:
     RadialConvolutionKernel _peak_kernel;

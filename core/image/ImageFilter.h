@@ -22,16 +22,27 @@ using RealMatrix = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::
 
 namespace ohkl {
 
+using FilterParameters = std::map<std::string, double>;
+
+enum class ImageFilterType { Annular = 0, EnhancedAnnular };
+static const std::map<ImageFilterType, std::string> ImageFilterStrings {
+    {ImageFilterType::Annular, "Annular"},
+    {ImageFilterType::EnhancedAnnular, "Enhanced annular"},
+};
+
 //! Pure virtual base class for ConstantConvolver, DeltaConvolver, RadialConvolver.
 
 class ImageFilter {
  public:
-    ImageFilter();
+    ImageFilter(const FilterParameters& params);
+    virtual ~ImageFilter() = default;
 
     void setKernel(const cv::Mat& kernel);
     void setImage(const RealMatrix& image);
     virtual void filter();
     virtual void threshold(double thresh);
+
+    virtual int kernelSize() const { return _kernel.rows; }
 
     RealMatrix filteredImage();
     RealMatrix thresholdedImage();
@@ -46,6 +57,8 @@ class ImageFilter {
     cv::Mat _image;
     cv::Mat _filtered_image;
     cv::Mat _thresholded_image;
+
+    FilterParameters _parameters;
 };
 
 } // namespace ohkl

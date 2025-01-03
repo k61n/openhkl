@@ -85,7 +85,7 @@ TEST_CASE("test/crystal/TestQShape.cpp", "")
 
     ohkl::ConvolverFactory convolver_factory;
     auto convolver = convolver_factory.create("annular", {});
-    peakFinder.setConvolver(std::unique_ptr<ohkl::Convolver>(convolver));
+    // peakFinder.setConvolver(std::unique_ptr<ohkl::Convolver>(convolver));
 
 
     peakFinder.setHandler(progressHandler);

@@ -23,7 +23,7 @@ namespace ohkl {
 
 class EnhancedAnnularImageFilter : public AnnularImageFilter {
  public:
-    EnhancedAnnularImageFilter(double r1, double r2, double r3);
+    EnhancedAnnularImageFilter(const FilterParameters& params);
     void filter() override;
 };
 

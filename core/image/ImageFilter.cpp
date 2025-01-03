@@ -21,7 +21,7 @@
 
 namespace ohkl {
 
-ImageFilter::ImageFilter() : _kernel()
+ImageFilter::ImageFilter(const FilterParameters& params) : _kernel(), _parameters(params)
 {
 }
 
@@ -39,11 +39,9 @@ void ImageFilter::setImage(const RealMatrix& image)
 
 void ImageFilter::filter()
 {
-    cv::Mat filtered_image;
-
-    const int ddepth = -1;
-    const int delta = 0;
-    cv::Point anchor = {-1, -1};
+    const int ddepth = -1; // Same bit depth as original image
+    const int delta = 0; // No baseline
+    cv::Point anchor = {-1, -1}; // Anchor at centre of kernel
 
     cv::filter2D(_image, _filtered_image, ddepth, _kernel, anchor, delta);
 }

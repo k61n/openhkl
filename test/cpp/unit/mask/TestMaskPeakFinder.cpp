@@ -79,7 +79,7 @@ TEST_CASE("test/data/TestPeakFinder2D.cpp", "")
     finder_params->maximum_size = 10000;
     finder_params->peak_end = 1.0;
     finder_params->threshold = 80;
-    finder->setConvolver(ohkl::AnnularConvolver());
+    finder_params->filter = "Annular";
     finder->find(experiment.getAllData()[0]);
 
     std::vector<ohkl::Peak3D*> found_peaks = finder->currentPeaks();

@@ -24,6 +24,7 @@
 #include "core/data/DataSet.h"
 #include "core/detector/Detector.h"
 #include "core/image/EnhancedAnnularImageFilter.h"
+#include "core/image/FilterFactory.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/InstrumentState.h"
 #include "core/instrument/InterpolatedState.h"
@@ -71,13 +72,20 @@ std::optional<QImage> DataSetGraphics::baseImage(std::size_t frame_idx, QRect fu
 
 Eigen::MatrixXd DataSetGraphics::filteredImage(RowMatrix image, bool thresholded)
 {
-    ohkl::EnhancedAnnularImageFilter filter(4, 8, 12);
-    filter.setImage(image.cast<double>());
-    filter.filter();
-    filter.threshold(1.0);
+    ohkl::FilterFactory factory;
+    const std::string filter_type = ohkl::ImageFilterStrings.at(_params->filter);
+    ohkl::ImageFilter* filter = factory.create(filter_type, _params->convolver_params);
+    filter->setImage(image.cast<double>());
+    filter->filter();
+    filter->threshold(1.0);
+    Eigen::MatrixXd return_image;
     if (thresholded)
-        return filter.thresholdedImage();
-    return filter.filteredImage();
+        return_image = filter->thresholdedImage();
+    else
+        return_image = filter->filteredImage();
+
+    delete filter;
+    return return_image;
 }
 
 std::optional<QString> DataSetGraphics::tooltip(int col, int row)
