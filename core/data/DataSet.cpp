@@ -29,6 +29,8 @@
 #include "core/detector/DetectorEvent.h"
 #include "core/experiment/ExperimentExporter.h"
 #include "core/gonio/Gonio.h"
+#include "core/image/GradientFilter.h"
+#include "core/image/GradientFilterFactory.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/InstrumentStateSet.h"
 #include "core/instrument/InterpolatedState.h"
@@ -309,12 +311,15 @@ Eigen::MatrixXd DataSet::transformedFrame(std::size_t idx) const
     return new_frame;
 }
 
-Eigen::MatrixXd DataSet::gradientFrame(std::size_t idx, GradientKernel kernel, bool realspace) const
+Eigen::MatrixXd DataSet::gradientFrame(std::size_t idx, GradientFilterType kernel) const
 {
     ohklLog(Level::Debug, "Computing gradient of frame ", idx);
-    ImageGradient grad(transformedFrame(idx));
-    grad.compute(kernel, realspace);
-    return grad.magnitude();
+    std::string filter_type = GradientFilterStrings.at(kernel);
+    GradientFilterFactory factory;
+    GradientFilter* filter = factory.create(filter_type);
+    filter->setImage(transformedFrame((idx)));
+    filter->filter();
+    return filter->filteredImage();
 }
 
 const IDataReader* DataSet::reader() const

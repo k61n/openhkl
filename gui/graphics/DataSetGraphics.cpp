@@ -59,8 +59,7 @@ std::optional<QImage> DataSetGraphics::baseImage(std::size_t frame_idx, QRect fu
     _current_frame = _data->frame(frame_idx);
     if (_params->gradient) {
         return _color_map->matToImage(
-            _data->gradientFrame(frame_idx, _params->gradientKernel, !_params->fftGradient)
-                .cast<double>(),
+            _data->gradientFrame(frame_idx, _params->gradientKernel).cast<double>(),
             full, _params->intensity, _params->logarithmic);
     } else if (_params->filteredImage) {
         return _color_map->matToImage(filteredImage(_current_frame), full, 1);

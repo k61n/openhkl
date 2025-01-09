@@ -15,10 +15,10 @@
 #include "gui/subframe_find/SubframeFindPeaks.h"
 
 #include "core/data/DataSet.h"
-#include "core/data/ImageGradient.h"
 #include "core/experiment/Experiment.h"
 #include "core/experiment/Integrator.h"
 #include "core/experiment/PeakFinder.h"
+#include "core/image/GradientFilter.h"
 #include "core/integration/IIntegrator.h"
 #include "core/peak/IntegrationRegion.h"
 #include "core/peak/Peak3D.h"
@@ -96,9 +96,6 @@ SubframeFindPeaks::SubframeFindPeaks()
     connect(
         _gradient_kernel, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
         this, &SubframeFindPeaks::onGradientSettingsChanged);
-    connect(
-        _fft_gradient_check, &QCheckBox::stateChanged, this,
-        &SubframeFindPeaks::onGradientSettingsChanged);
     connect(
         _gradient_check, &QCheckBox::clicked, this, &SubframeFindPeaks::onGradientSettingsChanged);
     connect(
@@ -238,8 +235,6 @@ void SubframeFindPeaks::setIntegrateUp()
     _gradient_check = f.addCheckBox(
         "Compute gradient", "Compute mean gradient and sigma of background region", 1);
 
-    _fft_gradient_check = f.addCheckBox("FFT gradient", "Use FFT to compute gradient", 1);
-
     _gradient_kernel = f.addCombo("Gradient kernel", "Convolution kernel used to compute gradient");
 
     _integrate_button = f.addButton("Integrate");
@@ -248,9 +243,9 @@ void SubframeFindPeaks::setIntegrateUp()
     _bkg_begin->setMaximum(50);
     _bkg_end->setMaximum(50);
 
-    for (const auto& [kernel, description] : _kernel_description)
-        _gradient_kernel->addItem(description);
-    _gradient_kernel->setCurrentIndex(1);
+    for (const auto& [kernel, description] : ohkl::GradientFilterStrings)
+        _gradient_kernel->addItem(QString::fromStdString(description));
+    _gradient_kernel->setCurrentIndex(0);
 
     connect(_integrate_button, &QPushButton::clicked, this, &SubframeFindPeaks::integrate);
 
@@ -473,7 +468,6 @@ void SubframeFindPeaks::grabIntegrationParameters()
     _use_max_width->setChecked(params->use_max_width);
     _max_width->setValue(params->max_width);
     _gradient_check->setChecked(params->use_gradient);
-    _fft_gradient_check->setChecked(params->fft_gradient);
     _gradient_kernel->setCurrentIndex(static_cast<int>(params->gradient_type));
 }
 
@@ -497,8 +491,7 @@ void SubframeFindPeaks::setIntegrationParameters()
     params->use_max_width = _use_max_width->isChecked();
     params->max_width = _max_width->value();
     params->use_gradient = _gradient_check->isChecked();
-    params->fft_gradient = _fft_gradient_check->isChecked();
-    params->gradient_type = static_cast<ohkl::GradientKernel>(_gradient_kernel->currentIndex());
+    params->gradient_type = static_cast<ohkl::GradientFilterType>(_gradient_kernel->currentIndex());
 }
 
 void SubframeFindPeaks::updateFilterParameters()
@@ -687,7 +680,7 @@ DetectorWidget* SubframeFindPeaks::detectorWidget()
 
 void SubframeFindPeaks::onGradientSettingsChanged()
 {
-    emit signalGradient(_gradient_kernel->currentIndex(), _fft_gradient_check->isChecked());
+    emit signalGradient(_gradient_kernel->currentIndex());
 }
 
 void SubframeFindPeaks::showFilteredImage()

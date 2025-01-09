@@ -72,8 +72,7 @@ TEST_CASE("test/data/TestPxsumIntegration.cpp", "")
     params->fit_cov = true;
     params->discard_saturated = true;
     params->use_gradient = true;
-    params->gradient_type = ohkl::GradientKernel::Sobel;
-    params->fft_gradient = false;
+    params->gradient_type = ohkl::GradientFilterType::CentralDifference;
     params->skip_masked = true;
     params->use_max_width = true;
     params->max_width = 10;

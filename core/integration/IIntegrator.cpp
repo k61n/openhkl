@@ -46,7 +46,6 @@ void IntegrationParameters::log(const Level& level) const
     ohklLog(level, "integrator_type        = ", static_cast<int>(integrator_type));
     ohklLog(level, "region_type            = ", static_cast<int>(region_type));
     ohklLog(level, "use_gradient           = ", use_gradient);
-    ohklLog(level, "fft_gradient           = ", fft_gradient);
     ohklLog(level, "gradient_type          = ", static_cast<int>(gradient_type));
     ohklLog(level, "skip_masked            = ", skip_masked);
     ohklLog(level, "remove_overlaps        = ", remove_overlaps);
@@ -168,7 +167,7 @@ void IIntegrator::integrate(
         Eigen::MatrixXi mask;
         current_frame = data->transformedFrame(idx);
         if (_params.use_gradient)
-            gradient = data->gradientFrame(idx, _params.gradient_type, !_params.fft_gradient);
+            gradient = data->gradientFrame(idx, _params.gradient_type);
 
         mask.resize(data->nRows(), data->nCols());
         mask.setConstant(int(IntegrationRegion::EventType::EXCLUDED));
@@ -348,7 +347,7 @@ void IIntegrator::parallelIntegrate(
             current_frame = data->transformedFrame(idx);
             if (_params.use_gradient)
                 gradient =
-                    data->gradientFrame(idx, _params.gradient_type, !_params.fft_gradient);
+                    data->gradientFrame(idx, _params.gradient_type);
 
             mask.resize(data->nRows(), data->nCols());
             mask.setConstant(int(IntegrationRegion::EventType::EXCLUDED));

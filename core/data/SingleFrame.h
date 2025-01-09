@@ -44,8 +44,7 @@ class SingleFrame : public DataSet {
     Eigen::MatrixXd transformedFrame(std::size_t idx) const override;
 
     //! Return per-pixel magnitude of gradient of a given frame
-    Eigen::MatrixXd gradientFrame(
-        std::size_t idx, GradientKernel kernel, bool realspace = true) const override;
+    Eigen::MatrixXd gradientFrame(std::size_t idx, GradientFilterType kernel) const override;
 
     void setNFrames(std::size_t nframes) override;
 };

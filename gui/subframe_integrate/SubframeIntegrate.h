@@ -64,7 +64,7 @@ class SubframeIntegrate : public QWidget {
     void onGradientSettingsChanged();
 
  signals:
-    void signalGradient(int kernel, bool fft);
+    void signalGradient(int kernel);
 
  private:
     //! Select experiment, dataset, peak collection, unit cell
@@ -137,7 +137,6 @@ class SubframeIntegrate : public QWidget {
     SafeSpinBox* _max_width;
     QGroupBox* _compute_gradient;
     QComboBox* _gradient_kernel;
-    QCheckBox* _fft_gradient;
 
     QPushButton* _integrate_button;
 
@@ -167,13 +166,6 @@ class SubframeIntegrate : public QWidget {
         {ohkl::IntegratorType::Profile1D, "1D Profile integrator"},
         {ohkl::IntegratorType::Profile3D, "3D Profile integrator"},
         {ohkl::IntegratorType::Shape, "Shape model integrator"}};
-
-    const std::map<ohkl::GradientKernel, QString> _kernel_description{
-        {ohkl::GradientKernel::CentralDifference, "Central difference"},
-        {ohkl::GradientKernel::Sobel, "Sobel 3x3"},
-        {ohkl::GradientKernel::Sobel5, "Sobel 5x5"},
-        {ohkl::GradientKernel::Prewitt, "Prewitt"},
-        {ohkl::GradientKernel::Roberts, "Roberts"}};
 };
 
 

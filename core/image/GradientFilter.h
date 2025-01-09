@@ -19,9 +19,9 @@
 
 #include <opencv2/opencv.hpp>
 
-using RealMatrix = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
-
 namespace ohkl {
+
+using RealMatrix = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
 
 enum class GradientDirection {X = 0, Y, Z};
 enum class GradientFilterType { CentralDifference = 0, Sobel3 };

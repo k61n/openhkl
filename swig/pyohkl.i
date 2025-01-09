@@ -128,7 +128,6 @@ using Eigen::Quaterniond;
 #include "core/detector/DetectorFactory.h"
 #include "core/detector/FlatDetector.h"
 #include "core/data/DataSet.h"
-#include "core/data/ImageGradient.h"
 #include "core/experiment/MaskImporter.h"
 #include "core/experiment/Integrator.h"
 #include "core/experiment/Experiment.h"
@@ -327,7 +326,6 @@ ArrayExtendCRef(MillerIndex, int);
 %include "core/loader/NexusDataReader.h"
 %include "core/loader/BaseNexusDataReader.h"
 
-%include "core/data/ImageGradient.h"
 %include "core/peak/Intensity.h"
 %include "core/peak/Peak3D.h"
 %include "core/peak/PeakCoordinateSystem.h"

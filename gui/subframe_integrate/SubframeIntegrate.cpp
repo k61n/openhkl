@@ -18,6 +18,7 @@
 #include "core/experiment/Experiment.h"
 #include "core/experiment/Integrator.h"
 #include "core/experiment/ShapeModelBuilder.h"
+#include "core/image/GradientFilter.h"
 #include "core/integration/IIntegrator.h"
 #include "core/shape/PeakCollection.h"
 #include "core/shape/ShapeModel.h"
@@ -88,9 +89,6 @@ SubframeIntegrate::SubframeIntegrate() : QWidget()
     connect(
         _gradient_kernel, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
         this, &SubframeIntegrate::onGradientSettingsChanged);
-    connect(
-        _fft_gradient, &QCheckBox::stateChanged, this,
-        &SubframeIntegrate::onGradientSettingsChanged);
     connect(
         _compute_gradient, &QGroupBox::clicked, this,
         &SubframeIntegrate::onGradientSettingsChanged);
@@ -214,7 +212,6 @@ void SubframeIntegrate::grabIntegrationParameters()
     _fit_center->setChecked(params->fit_center);
     _fit_covariance->setChecked(params->fit_cov);
     _compute_gradient->setChecked(params->use_gradient);
-    _fft_gradient->setChecked(params->fft_gradient);
     _gradient_kernel->setCurrentIndex(static_cast<int>(params->gradient_type));
     _remove_masked->setChecked(params->skip_masked);
     _remove_overlaps->setChecked(params->remove_overlaps);
@@ -258,8 +255,7 @@ void SubframeIntegrate::setIntegrationParameters()
         params->fixed_bkg_end = _bkg_end->value();
     }
     params->use_gradient = _compute_gradient->isChecked();
-    params->fft_gradient = _fft_gradient->isChecked();
-    params->gradient_type = static_cast<ohkl::GradientKernel>(_gradient_kernel->currentIndex());
+    params->gradient_type = static_cast<ohkl::GradientFilterType>(_gradient_kernel->currentIndex());
     params->skip_masked = _remove_masked->isChecked();
     params->remove_overlaps = _remove_overlaps->isChecked();
     params->use_max_strength = _use_max_strength->isChecked();
@@ -340,16 +336,11 @@ void SubframeIntegrate::setIntegrateUp()
 
     _gradient_kernel = new QComboBox();
 
-    _fft_gradient = new QCheckBox("FFT gradient");
-    _fft_gradient->setToolTip("Use Fourier transform for image filtering");
-    _fft_gradient->setChecked(false);
-
     QGridLayout* grid = new QGridLayout();
     _compute_gradient->setLayout(grid);
     QLabel* label = new QLabel("Kernel");
     grid->addWidget(label, 0, 0, 1, 1);
     grid->addWidget(_gradient_kernel, 0, 1, 1, 1);
-    grid->addWidget(_fft_gradient, 1, 1, 1, -1);
     f.addWidget(_compute_gradient);
 
     _discard_saturated = new QGroupBox("Discard saturated");
@@ -421,8 +412,8 @@ void SubframeIntegrate::setIntegrateUp()
     grid->addWidget(_max_width, 0, 1, 1, 1);
     f.addWidget(_use_max_width);
 
-    for (const auto& [kernel, description] : _kernel_description)
-        _gradient_kernel->addItem(description);
+    for (const auto& [kernel, description] : ohkl::GradientFilterStrings)
+        _gradient_kernel->addItem(QString::fromStdString(description));
     _gradient_kernel->setCurrentIndex(1);
 
     _radius_int = f.addDoubleSpinBox(
@@ -572,5 +563,5 @@ DetectorWidget* SubframeIntegrate::detectorWidget()
 
 void SubframeIntegrate::onGradientSettingsChanged()
 {
-    emit signalGradient(_gradient_kernel->currentIndex(), _fft_gradient->isChecked());
+    emit signalGradient(_gradient_kernel->currentIndex());
 }

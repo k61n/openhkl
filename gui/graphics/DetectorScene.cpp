@@ -87,11 +87,10 @@ DetectorScene::DetectorScene(std::size_t npeakcollections, QObject* parent)
         _peak_graphics.push_back(std::make_unique<PeakCollectionGraphics>(&_params));
 }
 
-void DetectorScene::onGradientSetting(int kernel, bool fft)
+void DetectorScene::onGradientSetting(int kernel)
 {
     try {
-        _params.gradientKernel = static_cast<ohkl::GradientKernel>(kernel);
-        _params.fftGradient = fft;
+        _params.gradientKernel = static_cast<ohkl::GradientFilterType>(kernel);
         loadCurrentImage();
     } catch (const std::exception& e) {
         QMessageBox::critical(nullptr, "Error", QString(e.what()));

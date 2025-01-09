@@ -67,7 +67,7 @@ class SubframeFindPeaks : public QWidget {
     void onGradientSettingsChanged();
 
  signals:
-    void signalGradient(int kernel, bool fft);
+    void signalGradient(int kernel);
 
  private:
     //! Set up the data selection GUI
@@ -132,7 +132,6 @@ class SubframeFindPeaks : public QWidget {
     SafeSpinBox* _max_width;
     QGroupBox* _use_max_width;
     QCheckBox* _gradient_check;
-    QCheckBox* _fft_gradient_check;
     QComboBox* _gradient_kernel;
 
     QPushButton* _find_button;
@@ -143,13 +142,6 @@ class SubframeFindPeaks : public QWidget {
     QGraphicsPixmapItem* _pixmap;
 
     PeakTableView* _peak_table;
-
-    const std::map<ohkl::GradientKernel, QString> _kernel_description{
-        {ohkl::GradientKernel::CentralDifference, "Central difference"},
-        {ohkl::GradientKernel::Sobel, "Sobel 3x3"},
-        {ohkl::GradientKernel::Sobel5, "Sobel 5x5"},
-        {ohkl::GradientKernel::Prewitt, "Prewitt"},
-    };
 };
 
 #endif // OHKL_GUI_SUBFRAME_FIND_SUBFRAMEFINDPEAKS_H

@@ -18,9 +18,9 @@
 #include <Eigen/Dense>
 #include <opencv2/opencv.hpp>
 
-using RealMatrix = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
-
 namespace ohkl {
+
+using RealMatrix = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
 
 using FilterParameters = std::map<std::string, double>;
 
