@@ -17,7 +17,6 @@
 #include "core/convolve/Convolver.h"
 
 #include <opencv2/core/eigen.hpp>
-#include <opencv2/opencv.hpp>
 
 namespace ohkl {
 
