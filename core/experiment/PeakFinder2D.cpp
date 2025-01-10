@@ -85,10 +85,7 @@ void PeakFinder2D::find(std::size_t frame_idx)
 
     // SimpleBlobDetector only accepts 8 bit unsigned images
     cv::Mat cv_frame_8u;
-    cv_frame_thresholded.convertTo(cv_frame_8u, CV_8U, 1.0);
-
-    cv::imshow("thresholded", cv_frame_thresholded);
-    cv::waitKey();
+    cv::normalize(cv_frame_thresholded, cv_frame_8u, 0, 255, cv::NORM_MINMAX, CV_8U);
 
     _keypoint_collection.clearFrame(frame_idx);
     std::vector<cv::KeyPoint>* keypoints = _keypoint_collection.frame(frame_idx);
