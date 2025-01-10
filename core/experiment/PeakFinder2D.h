@@ -16,8 +16,8 @@
 #define OHKL_CORE_EXPERIMENT_PEAKFINDER2D_H
 
 #include "base/utils/LogLevel.h"
-#include "core/convolve/Convolver.h"
 #include "core/data/DataTypes.h"
+#include "core/image/ImageFilter.h"
 #include "core/shape/KeyPointCollection.h"
 
 #include <opencv2/core/types.hpp>
@@ -28,8 +28,6 @@ namespace ohkl {
 /*! \addtogroup python_api
  *  @{*/
 
-enum class ConvolutionKernelType;
-class Convolver;
 class Peak3D;
 class ProgressHandler;
 
@@ -41,7 +39,7 @@ using sptrProgressHandler = std::shared_ptr<ProgressHandler>;
  */
 
 struct PeakFinder2DParameters : public cv::SimpleBlobDetector::Params {
-    ConvolutionKernelType kernel = ConvolutionKernelType::Annular; //!< Convolution kernel type
+    ImageFilterType kernel = ImageFilterType::EnhancedAnnular; //!< Convolution kernel type
     int threshold = 80; //!< Threshold for image thresholding (post-filter)
 
     void log(const Level& level) const;
@@ -69,30 +67,31 @@ class PeakFinder2D {
     //! Get object storing per-frame keypoints
     KeyPointCollection* keypoints() { return &_keypoint_collection; };
 
-    //! Set the convolver
-    void setConvolver(const ConvolutionKernelType& kernel);
-    //! Get the convolver
-    Convolver* convolver() const { return _convolver.get(); };
-
     //! Generate a list of peaks from found blobs
     std::vector<Peak3D*> getPeakList(std::size_t frame_index);
+
+    //! Set image filter parameters
+    void setFilterParameters(const std::map<std::string, double>& params)
+    {
+        _filter_params = params;
+    };
+
+    //! Get the image filter parameters
+    std::map<std::string, double> filterParameters() { return _filter_params; };
 
  private:
     //! progress handler
     sptrProgressHandler _handler;
     //! The DataSet
     sptrDataSet _current_data;
-    //! Convolver for image filtering
-    std::unique_ptr<Convolver> _convolver;
-
     //! Blob detection parameters
     PeakFinder2DParameters _params;
-
     //! Vector of keypoints per frame
     KeyPointCollection _keypoint_collection;
-
     //! temporary list of peaks for indexing
     PeakList _found_peaks;
+    //! The parameters for the image filter
+    std::map<std::string, double> _filter_params;
 };
 
 /*! @}*/

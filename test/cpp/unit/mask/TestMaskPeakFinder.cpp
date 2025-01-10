@@ -12,29 +12,26 @@
 //
 //  ***********************************************************************************************
 
-#include "core/convolve/AnnularConvolver.h"
-#include "core/convolve/Convolver.h"
+#include "test/cpp/catch.hpp"
+
+#include "base/mask/BoxMask.h"
+#include "base/mask/EllipseMask.h"
+#include "core/data/DataSet.h"
+#include "core/experiment/Experiment.h"
+#include "core/experiment/PeakFinder.h"
+#include "core/instrument/Diffractometer.h"
 #include "core/loader/IDataReader.h"
 #include "core/loader/RawDataReader.h"
+#include "core/peak/Peak3D.h"
+#include "core/raw/DataKeys.h"
 #include "core/shape/PeakCollection.h"
-#include "test/cpp/catch.hpp"
+#include "core/shape/PeakFilter.h"
 
 #include <Eigen/Dense>
 #include <fstream>
 #include <iostream>
 #include <string>
 #include <vector>
-
-#include "base/mask/BoxMask.h"
-#include "base/mask/EllipseMask.h"
-#include "core/convolve/ConvolverFactory.h"
-#include "core/data/DataSet.h"
-#include "core/experiment/Experiment.h"
-#include "core/experiment/PeakFinder.h"
-#include "core/instrument/Diffractometer.h"
-#include "core/peak/Peak3D.h"
-#include "core/raw/DataKeys.h"
-#include "core/shape/PeakFilter.h"
 
 //#define OUTPUT_INTERMEDIATE 1
 
@@ -80,6 +77,9 @@ TEST_CASE("test/data/TestPeakFinder2D.cpp", "")
     finder_params->peak_end = 1.0;
     finder_params->threshold = 80;
     finder_params->filter = "Annular";
+    std::map<std::string, double> filter_params = {{"r1", 5}, {"r2", 10}, {"r3", 15}};
+    finder->setFilterParameters(filter_params);
+
     finder->find(experiment.getAllData()[0]);
 
     std::vector<ohkl::Peak3D*> found_peaks = finder->currentPeaks();

@@ -23,7 +23,6 @@
 #include "base/utils/ProgressHandler.h"
 #include "base/utils/StringIO.h" // lowerCase
 #include "base/utils/Units.h" // deg
-#include "core/convolve/ConvolverFactory.h"
 #include "core/data/DataTypes.h"
 #include "core/detector/Detector.h"
 #include "core/detector/DetectorEvent.h"

@@ -30,8 +30,6 @@ static const std::map<ImageFilterType, std::string> ImageFilterStrings {
     {ImageFilterType::EnhancedAnnular, "Enhanced annular"},
 };
 
-//! Pure virtual base class for ConstantConvolver, DeltaConvolver, RadialConvolver.
-
 class ImageFilter {
  public:
     ImageFilter(const FilterParameters& params);
@@ -40,7 +38,7 @@ class ImageFilter {
     void setKernel(const cv::Mat& kernel);
     void setImage(const RealMatrix& image);
     virtual void filter();
-    virtual void threshold(double thresh);
+    virtual void threshold(double thresh, bool inverted = false);
 
     virtual int kernelSize() const { return _kernel.rows; }
 

@@ -29,7 +29,6 @@
 typedef Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> RowMatrix;
 
 namespace ohkl {
-class Convolver;
 class InstrumentState;
 }
 
@@ -109,9 +108,6 @@ class DataSetGraphics {
 
     std::vector<ohkl::DetectorEvent>* _beam;
     std::vector<ohkl::DetectorEvent>* _old_beam;
-
-    //! Convolver for image filtering
-    std::unique_ptr<ohkl::Convolver> _convolver;
 
     //! Colour of direct beam
     QColor _beam_color;

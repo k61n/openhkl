@@ -16,7 +16,6 @@
 
 #include "base/utils/Units.h"
 #include "core/algo/AutoIndexer.h"
-#include "core/convolve/AnnularConvolver.h"
 #include "core/data/DataSet.h"
 #include "core/experiment/Experiment.h"
 #include "core/experiment/PeakFinder.h"

@@ -13,7 +13,6 @@
 //  ***********************************************************************************************
 
 #include "core/algo/Refiner.h"
-#include "core/convolve/AnnularConvolver.h"
 #include "core/data/DataSet.h"
 #include "core/experiment/Experiment.h"
 #include "core/experiment/Integrator.h"
@@ -31,7 +30,6 @@
 #include "core/statistics/PeakMerger.h"
 #include "tables/crystal/UnitCell.h"
 #include "test/cpp/catch.hpp"
-
 
 #include <Eigen/Dense>
 #include <fstream>

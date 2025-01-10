@@ -14,9 +14,8 @@
 
 #include "core/image/ImageFilter.h"
 
-#include "core/convolve/Convolver.h"
-
 #include <opencv2/core/eigen.hpp>
+#include <opencv2/opencv.hpp>
 
 namespace ohkl {
 
@@ -45,9 +44,12 @@ void ImageFilter::filter()
     cv::filter2D(_image, _filtered_image, ddepth, _kernel, anchor, delta);
 }
 
-void ImageFilter::threshold(double thresh)
+    void ImageFilter::threshold(double thresh, bool inverted)
 {
-    cv::threshold(_filtered_image, _thresholded_image, thresh, 1, cv::THRESH_BINARY);
+    int inv = cv::THRESH_BINARY;
+    if (inverted)
+        inv = cv::THRESH_BINARY_INV;
+    cv::threshold(_filtered_image, _thresholded_image, thresh, 1, inv);
 }
 
 RealMatrix ImageFilter::filteredImage()

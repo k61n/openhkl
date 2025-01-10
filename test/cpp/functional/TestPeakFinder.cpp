@@ -18,7 +18,6 @@
 #include "core/experiment/Experiment.h"
 #include "core/experiment/PeakFinder.h"
 #include "core/loader/RawDataReader.h"
-#include "core/convolve/AnnularConvolver.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/peak/Peak3D.h"
 #include "core/shape/PeakFilter.h"
@@ -72,7 +71,9 @@ TEST_CASE("test/data/TestPeakFinder.cpp", "")
     finder_params->peak_end = 1.0;
     finder_params->threshold = 80;
     finder_params->filter = "Annular";
+    std::map<std::string, double> filter_params = {{"r1", 5}, {"r2", 10}, {"r3", 15}};
 
+    finder->setFilterParameters(filter_params);
     finder->find(experiment.getAllData()[0]);
     std::cout << finder->numberFound() << " peaks found" << std::endl;
 

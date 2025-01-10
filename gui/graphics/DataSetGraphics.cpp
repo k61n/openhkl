@@ -19,8 +19,6 @@
 #include "base/mask/EllipseMask.h"
 #include "base/utils/Units.h"
 #include "core/convolve/ConvolutionKernel.h"
-#include "core/convolve/Convolver.h"
-#include "core/convolve/ConvolverFactory.h"
 #include "core/data/DataSet.h"
 #include "core/detector/Detector.h"
 #include "core/image/EnhancedAnnularImageFilter.h"

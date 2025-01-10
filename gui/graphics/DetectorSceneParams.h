@@ -14,7 +14,6 @@
 #ifndef OHKL_GUI_GRAPHICS_DETECTORSCENEPARAMS_H
 #define OHKL_GUI_GRAPHICS_DETECTORSCENEPARAMS_H
 
-#include "core/convolve/Convolver.h"
 #include "core/image/ImageFilter.h"
 #include "core/image/GradientFilter.h"
 
@@ -48,7 +47,6 @@ struct DetectorSceneParams {
         {"r1", 5.0}, {"r2", 10.0}, {"r3", 15.0}, {"r_in", 5.0}, {"r_out", 10.0}, {"box_size", 3.0},
     };
     ohkl::ImageFilterType filter = ohkl::ImageFilterType::EnhancedAnnular;
-    ohkl::ConvolutionKernelType convolver = ohkl::ConvolutionKernelType::Annular;
     ohkl::GradientFilterType gradientKernel = ohkl::GradientFilterType::CentralDifference;
     TooltipMode tooltipMode = Pixel;
 

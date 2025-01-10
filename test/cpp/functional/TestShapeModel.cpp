@@ -22,7 +22,6 @@
 #include "test/cpp/catch.hpp"
 #include "core/experiment/Experiment.h"
 #include "core/loader/RawDataReader.h"
-#include "core/convolve/AnnularConvolver.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/peak/Peak3D.h"
 #include "core/shape/PeakFilter.h"

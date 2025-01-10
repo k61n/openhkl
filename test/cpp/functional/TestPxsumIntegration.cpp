@@ -12,7 +12,6 @@
 //
 //  ***********************************************************************************************
 
-#include "core/convolve/AnnularConvolver.h"
 #include "core/data/DataSet.h"
 #include "core/experiment/Experiment.h"
 #include "core/experiment/Integrator.h"

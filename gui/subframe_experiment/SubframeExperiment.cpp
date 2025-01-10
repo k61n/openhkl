@@ -17,7 +17,6 @@
 #include "base/utils/Logger.h"
 #include "base/utils/Units.h"
 #include "core/algo/AutoIndexer.h"
-#include "core/convolve/Convolver.h"
 #include "core/data/DataSet.h"
 #include "core/experiment/DataQuality.h"
 #include "core/experiment/Experiment.h"
@@ -416,7 +415,7 @@ void SubframeExperiment::setPeakFinder2DUp()
         "Apply threshold to preview", "Show detector image post filtering/thresholding", 1);
     _find_peaks_2d = gfiller.addButton("Find spots", "Find detector spots in current image");
 
-    auto kernel_types = ohkl::Convolver::kernelTypes;
+    auto kernel_types = ohkl::ImageFilterStrings;
     for (auto it = kernel_types.begin(); it != kernel_types.end(); ++it)
         _convolver_combo->addItem(QString::fromStdString(it->second));
     _convolver_combo->setCurrentIndex(1);
@@ -625,8 +624,8 @@ void SubframeExperiment::showFilteredImage()
 {
     _detector_widget->scene()->params()->filteredImage = _threshold_check->isChecked();
     _detector_widget->scene()->params()->threshold = _threshold_spin->value();
-    _detector_widget->scene()->params()->convolver =
-        static_cast<ohkl::ConvolutionKernelType>(_convolver_combo->currentIndex());
+    _detector_widget->scene()->params()->filter =
+        static_cast<ohkl::ImageFilterType>(_convolver_combo->currentIndex());
     _detector_widget->scene()->loadCurrentImage();
     setFinderParameters();
 }
@@ -950,7 +949,7 @@ void SubframeExperiment::setFinderParameters()
     params->minThreshold = _blob_min_thresh->value();
     params->maxThreshold = _blob_max_thresh->value();
     params->threshold = _threshold_spin->value();
-    params->kernel = static_cast<ohkl::ConvolutionKernelType>(_convolver_combo->currentIndex());
+    params->kernel = static_cast<ohkl::ImageFilterType>(_convolver_combo->currentIndex());
 }
 
 void SubframeExperiment::grabIndexerParameters()

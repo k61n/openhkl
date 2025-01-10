@@ -14,7 +14,6 @@
 
 #include "core/image/EnhancedAnnularImageFilter.h"
 
-#include "core/convolve/Convolver.h"
 #include "core/image/AnnularImageFilter.h"
 
 #include <opencv2/core.hpp>

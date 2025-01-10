@@ -18,7 +18,6 @@
 #include <Eigen/Dense>
 
 #include "base/utils/ProgressHandler.h"
-#include "core/convolve/ConvolverFactory.h"
 #include "core/data/DataSet.h"
 #include "core/raw/DataKeys.h"
 #include "core/experiment/Experiment.h"
