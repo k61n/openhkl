@@ -131,7 +131,7 @@ class SubframeFindPeaks : public QWidget {
     SafeDoubleSpinBox* _bkg_end;
     SafeSpinBox* _max_width;
     QGroupBox* _use_max_width;
-    QCheckBox* _gradient_check;
+    QGroupBox* _compute_gradient;
     QComboBox* _gradient_kernel;
 
     QPushButton* _find_button;

@@ -332,7 +332,7 @@ void SubframeIntegrate::setIntegrateUp()
     _compute_gradient->setAlignment(Qt::AlignLeft);
     _compute_gradient->setCheckable(true);
     _compute_gradient->setChecked(false);
-    _compute_gradient->setToolTip("Discard peaks with high mean background gradient");
+    _compute_gradient->setToolTip("Compute image gradient");
 
     _gradient_kernel = new QComboBox();
 
@@ -414,7 +414,7 @@ void SubframeIntegrate::setIntegrateUp()
 
     for (const auto& [kernel, description] : ohkl::GradientFilterStrings)
         _gradient_kernel->addItem(QString::fromStdString(description));
-    _gradient_kernel->setCurrentIndex(1);
+    _gradient_kernel->setCurrentIndex(0);
 
     _radius_int = f.addDoubleSpinBox(
         "Search radius (pixels):", "(pixels) - neighbour search radius in pixels");

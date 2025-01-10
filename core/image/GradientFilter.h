@@ -27,7 +27,7 @@ enum class GradientDirection {X = 0, Y, Z};
 enum class GradientFilterType { CentralDifference = 0, Sobel3 };
 static const std::map<GradientFilterType, std::string> GradientFilterStrings {
     {GradientFilterType::CentralDifference, "Central difference"},
-    {GradientFilterType::Sobel3, "Sobel 3x3"},
+    {GradientFilterType::Sobel3, "Sobel 3"},
 };
 
 //! Pure virtual base class for Gradient filters

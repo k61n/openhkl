@@ -97,7 +97,7 @@ SubframeFindPeaks::SubframeFindPeaks()
         _gradient_kernel, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
         this, &SubframeFindPeaks::onGradientSettingsChanged);
     connect(
-        _gradient_check, &QCheckBox::clicked, this, &SubframeFindPeaks::onGradientSettingsChanged);
+        _compute_gradient, &QGroupBox::clicked, this, &SubframeFindPeaks::onGradientSettingsChanged);
     connect(
         this, &SubframeFindPeaks::signalGradient, _detector_widget->scene(),
         &DetectorScene::onGradientSetting);
@@ -232,10 +232,20 @@ void SubframeFindPeaks::setIntegrateUp()
     grid->addWidget(_max_width, 0, 1, 1, 1);
     f.addWidget(_use_max_width);
 
-    _gradient_check = f.addCheckBox(
-        "Compute gradient", "Compute mean gradient and sigma of background region", 1);
+    _compute_gradient = new QGroupBox("Compute gradient");
+    _compute_gradient->setAlignment(Qt::AlignLeft);
+    _compute_gradient->setCheckable(true);
+    _compute_gradient->setChecked(false);
+    _compute_gradient->setToolTip("Compute image gradient");
 
-    _gradient_kernel = f.addCombo("Gradient kernel", "Convolution kernel used to compute gradient");
+    _gradient_kernel = new QComboBox();
+
+    grid = new QGridLayout();
+    _compute_gradient->setLayout(grid);
+    label = new QLabel("Kernel");
+    grid->addWidget(label, 0, 0, 1, 1);
+    grid->addWidget(_gradient_kernel, 0, 1, 1, 1);
+    f.addWidget(_compute_gradient);
 
     _integrate_button = f.addButton("Integrate");
 
@@ -467,7 +477,7 @@ void SubframeFindPeaks::grabIntegrationParameters()
 
     _use_max_width->setChecked(params->use_max_width);
     _max_width->setValue(params->max_width);
-    _gradient_check->setChecked(params->use_gradient);
+    _compute_gradient->setChecked(params->use_gradient);
     _gradient_kernel->setCurrentIndex(static_cast<int>(params->gradient_type));
 }
 
@@ -490,7 +500,7 @@ void SubframeFindPeaks::setIntegrationParameters()
     }
     params->use_max_width = _use_max_width->isChecked();
     params->max_width = _max_width->value();
-    params->use_gradient = _gradient_check->isChecked();
+    params->use_gradient = _compute_gradient->isChecked();
     params->gradient_type = static_cast<ohkl::GradientFilterType>(_gradient_kernel->currentIndex());
 }
 
