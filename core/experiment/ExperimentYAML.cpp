@@ -204,6 +204,9 @@ void ExperimentYAML::grabPeakFinderParameters(PeakFinderParameters* params)
     params->maximum_frames = getNode<int>(branch, "maximum_frames");
     params->first_frame = getNode<int>(branch, "first_frame");
     params->last_frame = getNode<int>(branch, "last_frame");
+    params->r1 = getNode<double>(branch, "r1");
+    params->r2 = getNode<double>(branch, "r2");
+    params->r3 = getNode<double>(branch, "r3");
     params->threshold = getNode<double>(branch, "threshold");
     params->filter = getNode<std::string>(branch, "filter");
 }
@@ -222,6 +225,9 @@ void ExperimentYAML::setPeakFinderParameters(PeakFinderParameters* params)
     pf_node["maximum_frames"] = params->maximum_frames;
     pf_node["first_frame"] = params->first_frame;
     pf_node["last_frame"] = params->last_frame;
+    pf_node["r1"] = params->r1;
+    pf_node["r2"] = params->r2;
+    pf_node["r3"] = params->r3;
     pf_node["threshold"] = params->threshold;
     pf_node["filter"] = params->filter;
 }

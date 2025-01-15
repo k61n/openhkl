@@ -70,6 +70,8 @@
 
 #include <cstring>
 #include <gsl/gsl_histogram.h>
+#include <qglobal.h>
+#include <qspinbox.h>
 #include <stdexcept>
 
 SubframeExperiment::SubframeExperiment()
@@ -409,6 +411,9 @@ void SubframeExperiment::setPeakFinder2DUp()
         gfiller.addSpinBox("Minimum blob threshold", "Minimum threshold for blob detection");
     _blob_max_thresh =
         gfiller.addSpinBox("Maximum blob threshold", "Maximum threshold for blob detection");
+    _r1 = gfiller.addDoubleSpinBox("r1", "Upper bound for positive region of filter kernel");
+    _r2 = gfiller.addDoubleSpinBox("r2", "Lower bound for negative region of filter kernel");
+    _r3 = gfiller.addDoubleSpinBox("r3", "Upper bound for negative region of filter kernel");
     _search_all_frames =
         gfiller.addCheckBox("Search all images", "Find blobs in all images in this data set", 1);
     _threshold_check = gfiller.addCheckBox(
@@ -426,6 +431,22 @@ void SubframeExperiment::setPeakFinder2DUp()
     _blob_min_thresh->setValue(1);
     _blob_max_thresh->setValue(100);
 
+    _r1->setMaximum(20);
+    _r1->setMinimum(2);
+    _r1->setSingleStep(1);
+
+    _r2->setMaximum(20);
+    _r2->setMinimum(2);
+    _r2->setSingleStep(1);
+
+    _r3->setMaximum(20);
+    _r3->setMinimum(2);
+    _r3->setSingleStep(1);
+
+    _r1->setValue(5);
+    _r2->setValue(10);
+    _r3->setValue(15);
+
     connect(
         _data_combo, &QComboBox::currentTextChanged, this,
         &SubframeExperiment::toggleUnsafeWidgets);
@@ -433,6 +454,15 @@ void SubframeExperiment::setPeakFinder2DUp()
         _data_combo, QOverload<int>::of(&QComboBox::currentIndexChanged),
         _detector_widget->dataCombo(), &QComboBox::setCurrentIndex);
     connect(_threshold_check, &QCheckBox::clicked, this, &SubframeExperiment::showFilteredImage);
+    connect(
+        _r1, qOverload<double>(&QDoubleSpinBox::valueChanged), this,
+        &SubframeExperiment::showFilteredImage);
+    connect(
+        _r2, qOverload<double>(&QDoubleSpinBox::valueChanged), this,
+        &SubframeExperiment::showFilteredImage);
+    connect(
+        _r3, qOverload<double>(&QDoubleSpinBox::valueChanged), this,
+        &SubframeExperiment::showFilteredImage);
     connect(_find_peaks_2d, &QPushButton::clicked, this, &SubframeExperiment::find_2d);
     connect(
         _threshold_spin, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
@@ -935,6 +965,9 @@ void SubframeExperiment::grabFinderParameters()
     _blob_min_thresh->setValue(params->minThreshold);
     _blob_max_thresh->setValue(params->maxThreshold);
     _threshold_spin->setValue(params->threshold);
+    _r1->setValue(params->r1);
+    _r2->setValue(params->r2);
+    _r3->setValue(params->r3);
     _convolver_combo->setCurrentIndex(static_cast<int>(params->kernel));
 }
 
@@ -949,6 +982,9 @@ void SubframeExperiment::setFinderParameters()
     params->minThreshold = _blob_min_thresh->value();
     params->maxThreshold = _blob_max_thresh->value();
     params->threshold = _threshold_spin->value();
+    params->r1 = _r1->value();
+    params->r2 = _r2->value();
+    params->r3 = _r3->value();
     params->kernel = static_cast<ohkl::ImageFilterType>(_convolver_combo->currentIndex());
 }
 

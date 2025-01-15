@@ -75,7 +75,7 @@ void PeakFinder2D::find(std::size_t frame_idx)
     _params.log(Level::Info);
     FilterFactory factory;
     std::string filter_type = ImageFilterStrings.at(_params.kernel);
-    ImageFilter* filter = factory.create(filter_type, _filter_params);
+    ImageFilter* filter = factory.create(filter_type, filterParameters());
 
     RealMatrix frame = _current_data->frame(frame_idx).cast<double>();
     filter->setImage(frame);
@@ -133,5 +133,18 @@ std::vector<Peak3D*> PeakFinder2D::getPeakList(std::size_t frame_index)
     _current_data->maskPeaks(peaks, tmp_map);
     return peaks;
 }
+
+    void PeakFinder2D::setFilterParameters(const std::map<std::string, double>& params)
+    {
+        _params.r1 = params.at("r1");
+        _params.r2 = params.at("r2");
+        _params.r3 = params.at("r3");
+    }
+
+    //! Get the image filter parameters
+    std::map<std::string, double> PeakFinder2D::filterParameters()
+    {
+        return {{"r1", _params.r1}, {"r2", _params.r2}, {"r3", _params.r3}};
+    }
 
 } // namespace ohkl

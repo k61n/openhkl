@@ -41,6 +41,9 @@ struct PeakFinderParameters {
     int maximum_frames = 10; //!< Maximum number of frames a blob can span
     int first_frame = -1; //!< First frame in range for peak finding
     int last_frame = -1; //!< Last frame in range for peak findinng
+    double r1 = 5.0; //!< Upper bound for positive region of filter kernel
+    double r2 = 10.0; //!< Lower bound for negative region of filter kernel
+    double r3 = 15.0; //!< Upper bound for negative region of filter kernel
     double threshold = 1.0; //!< Blobs containing fewer counts than this are discarded
     std::string filter = "Enhanced annular";
 
@@ -102,11 +105,10 @@ class PeakFinder {
     void setBkgGradient(bool b) { _gradient = b; };
 
     //! Set image filter parameters
-    void setFilterParameters(const std::map<std::string, double>& params) {
-        _filter_params = params; };
+    void setFilterParameters(const std::map<std::string, double>& params);
 
     //! Get the image filter parameters
-    std::map<std::string, double> filterParameters() { return _filter_params; };
+    std::map<std::string, double> filterParameters();
 
  private:
     //! Remove blobs that do not meet the above criteria
@@ -131,8 +133,6 @@ class PeakFinder {
 
     //! The parameters for peak finding
     std::unique_ptr<PeakFinderParameters> _params;
-    //! The parameters for the image filter
-    std::map<std::string, double> _filter_params;
     //! Current label
     int _current_label;
     //! Vector of found peaks

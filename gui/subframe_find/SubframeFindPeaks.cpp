@@ -56,6 +56,8 @@
 #include <QTableWidget>
 #include <QTableWidgetItem>
 #include <QVBoxLayout>
+#include <qglobal.h>
+#include <qspinbox.h>
 
 SubframeFindPeaks::SubframeFindPeaks()
     : QWidget()
@@ -77,7 +79,6 @@ SubframeFindPeaks::SubframeFindPeaks()
     setSaveUp();
     setFigureUp();
     setPeakTableUp();
-    updateFilterParameters();
     toggleUnsafeWidgets();
 
     _right_element->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -90,9 +91,6 @@ SubframeFindPeaks::SubframeFindPeaks()
     _right_element->setStretchFactor(0, 2);
     _right_element->setStretchFactor(1, 1);
 
-    connect(
-        _kernel_combo, &QComboBox::currentTextChanged, this,
-        &SubframeFindPeaks::updateFilterParameters);
     connect(
         _gradient_kernel, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
         this, &SubframeFindPeaks::onGradientSettingsChanged);
@@ -156,8 +154,9 @@ void SubframeFindPeaks::setBlobUp()
     kernel_para_label->setAlignment(Qt::AlignLeft | Qt::AlignTop);
     f.addWidget(kernel_para_label, 0);
 
-    _kernel_para_table = new QTableWidget(0, 2, this);
-    f.addWidget(_kernel_para_table, 1);
+    _r1 = f.addDoubleSpinBox("r1", "Upper bound for positive region of filter kernel");
+    _r2 = f.addDoubleSpinBox("r2", "Lower bound for negative region of filter kernel");
+    _r3 = f.addDoubleSpinBox("r3", "Upper bound for negative region of filter kernel");
 
     std::tie(_start_frame_spin, _end_frame_spin) =
         f.addSpinBoxPair("Image range", "start and end image of range in which to find peaks");
@@ -167,15 +166,23 @@ void SubframeFindPeaks::setBlobUp()
 
     _find_button = f.addButton("Find peaks");
 
-    _kernel_para_table->setMaximumHeight(
-        _kernel_para_table->verticalHeader()->defaultSectionSize() * 4);
-    _kernel_para_table->verticalHeader()->setVisible(false);
-    _kernel_para_table->setHorizontalHeaderLabels(QStringList{"Parameter", "Value"});
     _threshold_spin->setMaximum(1000);
     _scale_spin->setMaximum(10);
     _min_size_spin->setMaximum(1000);
     _max_size_spin->setMaximum(100000);
     _max_width_spin->setMaximum(20);
+    _r1->setMaximum(20);
+    _r2->setMaximum(20);
+    _r3->setMaximum(20);
+    _r1->setMinimum(2);
+    _r2->setMinimum(2);
+    _r3->setMinimum(2);
+    _r1->setSingleStep(1);
+    _r1->setValue(5);
+    _r2->setValue(10);
+    _r3->setValue(15);
+    _r2->setSingleStep(1);
+    _r3->setSingleStep(1);
     _start_frame_spin->setMinimum(1);
     _end_frame_spin->setMinimum(1);
 
@@ -187,8 +194,13 @@ void SubframeFindPeaks::setBlobUp()
         static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
         this, &SubframeFindPeaks::showFilteredImage);
     connect(
-        _kernel_para_table,
-        static_cast<void (QTableWidget::*)(int, int)>(&QTableWidget::cellChanged), this,
+        _r1, qOverload<double>(&QDoubleSpinBox::valueChanged), this,
+        &SubframeFindPeaks::showFilteredImage);
+    connect(
+        _r2, qOverload<double>(&QDoubleSpinBox::valueChanged), this,
+        &SubframeFindPeaks::showFilteredImage);
+    connect(
+        _r3, qOverload<double>(&QDoubleSpinBox::valueChanged), this,
         &SubframeFindPeaks::showFilteredImage);
 
     _left_layout->addWidget(blob_para);
@@ -390,8 +402,6 @@ void SubframeFindPeaks::grabFinderParameters()
     if (!gSession->hasProject())
         return;
 
-    ohkl::PeakFinder* finder = gSession->currentProject()->experiment()->peakFinder();
-
     auto* params = gSession->currentProject()->experiment()->peakFinder()->parameters();
 
     _min_size_spin->setValue(params->minimum_size);
@@ -400,39 +410,11 @@ void SubframeFindPeaks::grabFinderParameters()
     _max_width_spin->setValue(params->maximum_frames);
     _start_frame_spin->setValue(params->first_frame + 1);
     _end_frame_spin->setValue(params->last_frame + 1);
+    _r1->setValue(params->r1);
+    _r2->setValue(params->r2);
+    _r3->setValue(params->r3);
     _threshold_spin->setValue(params->threshold);
-
     _kernel_combo->setCurrentText(QString::fromStdString(params->filter));
-
-    finder->setFilterParameters(filterParameters());
-
-    const std::map<std::string, double>& convolver_params =
-        _detector_widget->scene()->params()->convolver_params;
-    using mapIterator = std::map<std::string, double>::const_iterator;
-
-    _kernel_para_table->clear();
-    _kernel_para_table->setRowCount(0);
-    _kernel_para_table->setColumnCount(2);
-    int currentRow = 0;
-    for (mapIterator it = convolver_params.begin(); it != convolver_params.end(); ++it) {
-        _kernel_para_table->insertRow(currentRow);
-
-        QString name = QString::fromStdString(it->first);
-        QTableWidgetItem* pname = new QTableWidgetItem();
-        pname->setData(Qt::DisplayRole, name);
-        pname->setFlags(pname->flags() & ~Qt::ItemIsEditable);
-
-
-        double val = it->second;
-        QTableWidgetItem* pvalue = new QTableWidgetItem();
-        pvalue->setData(Qt::DisplayRole, val);
-
-        _kernel_para_table->setItem(currentRow, 0, pname);
-        _kernel_para_table->setItem(currentRow, 1, pvalue);
-
-        currentRow++;
-    }
-    _kernel_para_table->resizeColumnsToContents();
 }
 
 void SubframeFindPeaks::setFinderParameters()
@@ -449,10 +431,13 @@ void SubframeFindPeaks::setFinderParameters()
     params->maximum_frames = _max_width_spin->value();
     params->first_frame = _start_frame_spin->value() - 1;
     params->last_frame = _end_frame_spin->value() - 1;
+    params->r1 = _r1->value();
+    params->r2 = _r2->value();
+    params->r3 = _r3->value();
     params->threshold = _threshold_spin->value();
-
     params->filter = _kernel_combo->currentText().toStdString();
-    finder->setFilterParameters(filterParameters());
+
+    _detector_widget->scene()->params()->convolver_params = finder->filterParameters();
 }
 
 void SubframeFindPeaks::grabIntegrationParameters()
@@ -504,46 +489,6 @@ void SubframeFindPeaks::setIntegrationParameters()
     params->gradient_type = static_cast<ohkl::GradientFilterType>(_gradient_kernel->currentIndex());
 }
 
-void SubframeFindPeaks::updateFilterParameters()
-{
-    QSignalBlocker blocker(_kernel_para_table);
-    std::string kernelName = _kernel_combo->currentText().toStdString();
-
-    std::map<std::string, double> params;
-    if (gSession->hasProject()) {
-        ohkl::PeakFinder* finder = gSession->currentProject()->experiment()->peakFinder();
-        params = finder->filterParameters();
-    } else {
-        params = {{"r1", 5}, {"r2", 10}, {"r3", 15}};
-    }
-
-    using mapIterator = std::map<std::string, double>::const_iterator;
-
-    _kernel_para_table->setRowCount(0);
-    _kernel_para_table->setColumnCount(2);
-    int currentRow = 0;
-    for (mapIterator it = params.begin(); it != params.end(); ++it) {
-        _kernel_para_table->insertRow(currentRow);
-
-        QString name = QString::fromStdString(it->first);
-        QTableWidgetItem* pname = new QTableWidgetItem();
-        pname->setData(Qt::DisplayRole, name);
-        pname->setFlags(pname->flags() ^ Qt::ItemIsEditable);
-
-
-        QString val = QString::number(it->second);
-        QTableWidgetItem* pvalue = new QTableWidgetItem();
-        pvalue->setData(Qt::DisplayRole, val);
-
-        _kernel_para_table->setItem(currentRow, 0, pname);
-        _kernel_para_table->setItem(currentRow, 1, pvalue);
-
-        currentRow++;
-    }
-    _kernel_para_table->resizeColumnsToContents();
-    showFilteredImage();
-}
-
 void SubframeFindPeaks::find()
 {
     gGui->setReady(false);
@@ -592,17 +537,6 @@ void SubframeFindPeaks::integrate()
     gGui->setReady(true);
 }
 
-std::map<std::string, double> SubframeFindPeaks::filterParameters()
-{
-    std::map<std::string, double> parameters;
-    for (int i = 0; i < _kernel_para_table->rowCount(); ++i) {
-        std::string pname = _kernel_para_table->item(i, 0)->text().toStdString();
-        double pvalue = _kernel_para_table->item(i, 1)->text().toDouble();
-        parameters.insert(std::make_pair(pname, pvalue));
-    }
-    return parameters;
-}
-
 void SubframeFindPeaks::accept()
 {
     auto expt = gSession->currentProject()->experiment();
@@ -648,7 +582,8 @@ void SubframeFindPeaks::refreshPeakTable()
     _peak_table->setColumnHidden(PeakColumn::Enabled, true);
     _peak_table->setColumnHidden(PeakColumn::Count, true);
 
-    _detector_widget->scene()->params()->convolver_params = filterParameters();
+    ohkl::PeakFinder* finder = gSession->currentProject()->experiment()->peakFinder();
+    _detector_widget->scene()->params()->convolver_params = finder->filterParameters();
     _detector_widget->scene()->params()->filter =
         static_cast<ohkl::ImageFilterType>(_kernel_combo->currentIndex());
     _detector_widget->refresh();
@@ -695,13 +630,12 @@ void SubframeFindPeaks::onGradientSettingsChanged()
 
 void SubframeFindPeaks::showFilteredImage()
 {
+    setFinderParameters();
     _detector_widget->scene()->params()->filteredImage = _threshold_check->isChecked();
     _detector_widget->scene()->params()->threshold = _threshold_spin->value();
     if (_threshold_check->isChecked()) {
         _detector_widget->scene()->params()->filter =
             static_cast<ohkl::ImageFilterType>(_kernel_combo->currentIndex());
-        for (const auto& [key, value] : filterParameters())
-            _detector_widget->scene()->params()->convolver_params.insert_or_assign(key, value);
     }
     _detector_widget->scene()->loadCurrentImage();
 }

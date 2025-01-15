@@ -23,6 +23,7 @@
 
 #include <QSpinBox>
 #include <QWidget>
+#include <qspinbox.h>
 
 class CellComboBox;
 class DataComboBox;
@@ -170,6 +171,9 @@ class SubframeExperiment : public QWidget {
     SafeSpinBox* _blob_min_thresh;
     SafeSpinBox* _blob_max_thresh;
     QCheckBox* _search_all_frames;
+    QDoubleSpinBox* _r1;
+    QDoubleSpinBox* _r2;
+    QDoubleSpinBox* _r3;
     QCheckBox* _threshold_check;
     QPushButton* _find_peaks_2d;
 

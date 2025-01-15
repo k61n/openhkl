@@ -41,6 +41,9 @@ using sptrProgressHandler = std::shared_ptr<ProgressHandler>;
 struct PeakFinder2DParameters : public cv::SimpleBlobDetector::Params {
     ImageFilterType kernel = ImageFilterType::EnhancedAnnular; //!< Convolution kernel type
     int threshold = 80; //!< Threshold for image thresholding (post-filter)
+    double r1 = 5.0; //!< Upper bound for positive region of filter kernel
+    double r2 = 10.0; //!< Lower bound for negative region of filter kernel
+    double r3 = 15.0; //!< Upper bound for negative region of filter kernel
 
     void log(const Level& level) const;
 };
@@ -71,13 +74,10 @@ class PeakFinder2D {
     std::vector<Peak3D*> getPeakList(std::size_t frame_index);
 
     //! Set image filter parameters
-    void setFilterParameters(const std::map<std::string, double>& params)
-    {
-        _filter_params = params;
-    };
+    void setFilterParameters(const std::map<std::string, double>& params);
 
     //! Get the image filter parameters
-    std::map<std::string, double> filterParameters() { return _filter_params; };
+    std::map<std::string, double> filterParameters();
 
  private:
     //! progress handler

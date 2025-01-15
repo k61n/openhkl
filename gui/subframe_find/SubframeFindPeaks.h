@@ -41,8 +41,6 @@ class SubframeFindPeaks : public QWidget {
     Q_OBJECT
  public:
     SubframeFindPeaks();
-    //! Change the convolution parameters
-    void updateFilterParameters();
     //! Find peaks
     void find();
     //! integrate found peaks
@@ -94,9 +92,6 @@ class SubframeFindPeaks : public QWidget {
     //! Disable widgets that are unsafe without relevant data
     void toggleUnsafeWidgets();
 
-    //! Convolution parameter map
-    std::map<std::string, double> filterParameters();
-
     //! The model for the found peaks
     ohkl::PeakCollection _peak_collection;
     //! The temporary collection
@@ -118,7 +113,9 @@ class SubframeFindPeaks : public QWidget {
     SafeSpinBox* _max_size_spin;
     SafeSpinBox* _max_width_spin;
     QComboBox* _kernel_combo;
-    QTableWidget* _kernel_para_table;
+    SafeDoubleSpinBox* _r1;
+    SafeDoubleSpinBox* _r2;
+    SafeDoubleSpinBox* _r3;
     SafeSpinBox* _start_frame_spin;
     SafeSpinBox* _end_frame_spin;
 

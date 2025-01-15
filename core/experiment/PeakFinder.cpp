@@ -95,6 +95,9 @@ void PeakFinderParameters::log(const Level& level) const
     ohklLog(level, "maximum_frames         = ", maximum_frames);
     ohklLog(level, "first_frame            = ", first_frame);
     ohklLog(level, "last_frame             = ", last_frame);
+    ohklLog(level, "r1                     = ", r1);
+    ohklLog(level, "r2                     = ", r2);
+    ohklLog(level, "r3                     = ", r3);
     ohklLog(level, "threshold              = ", threshold);
     ohklLog(level, "filter                 = ", filter);
 }
@@ -106,7 +109,6 @@ void PeakFinderParameters::log(const Level& level) const
 PeakFinder::PeakFinder() : _handler(nullptr), _current_label(0), _integrated(false)
 {
     _params = std::make_unique<PeakFinderParameters>();
-    _filter_params = {{"r1", 5}, {"r2", 10}, {"r3", 15}};
 }
 
 std::vector<Peak3D*> PeakFinder::currentPeaks()
@@ -558,7 +560,7 @@ void PeakFinder::find(const sptrDataSet data)
     ohkl::EquivalenceList local_equivalences;
 
     FilterFactory factory;
-    ImageFilter* filter = factory.create(_params->filter, _filter_params);
+    ImageFilter* filter = factory.create(_params->filter, filterParameters());
 
     // find blobs within the current frame range
     ohklLog(Level::Debug, "PeakFinder::find: findPrimary from ", loop_begin, " to ", loop_end);
@@ -678,6 +680,19 @@ void PeakFinder::find(const sptrDataSet data)
 unsigned int PeakFinder::numberFound()
 {
     return _peaks_found;
+}
+
+void PeakFinder::setFilterParameters(const std::map<std::string, double>& params)
+{
+    _params->r1 = params.at("r1");
+    _params->r2 = params.at("r2");
+    _params->r3 = params.at("r3");
+}
+
+//! Get the image filter parameters
+std::map<std::string, double> PeakFinder::filterParameters()
+{
+    return {{"r1", _params->r1}, {"r2", _params->r2}, {"r3", _params->r3}};
 }
 
 } // namespace ohkl
