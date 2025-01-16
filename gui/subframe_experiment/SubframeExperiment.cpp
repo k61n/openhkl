@@ -432,20 +432,20 @@ void SubframeExperiment::setPeakFinder2DUp()
     _blob_max_thresh->setValue(100);
 
     _r1->setMaximum(20);
-    _r1->setMinimum(2);
+    _r1->setMinimum(3);
     _r1->setSingleStep(1);
+    _r1->setValue(5);
 
     _r2->setMaximum(20);
-    _r2->setMinimum(2);
+    _r2->setMinimum(3);
     _r2->setSingleStep(1);
+    _r2->setValue(10);
 
     _r3->setMaximum(20);
-    _r3->setMinimum(2);
+    _r3->setMinimum(3);
     _r3->setSingleStep(1);
-
-    _r1->setValue(5);
-    _r2->setValue(10);
     _r3->setValue(15);
+
 
     connect(
         _data_combo, &QComboBox::currentTextChanged, this,
