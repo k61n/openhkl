@@ -174,9 +174,9 @@ void SubframeFindPeaks::setBlobUp()
     _r1->setMaximum(20);
     _r2->setMaximum(20);
     _r3->setMaximum(20);
-    _r1->setMinimum(3);
-    _r2->setMinimum(3);
-    _r3->setMinimum(3);
+    _r1->setMinimum(1);
+    _r2->setMinimum(1);
+    _r3->setMinimum(1);
     _r1->setSingleStep(1);
     _r2->setSingleStep(1);
     _r3->setSingleStep(1);

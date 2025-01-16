@@ -39,10 +39,10 @@ void AnnularImageFilter::filter()
 
     cv::filter2D(
         _image, peak_image, ddepth, _peak_kernel.matrix(), anchor, delta,
-        cv::BorderTypes::BORDER_WRAP);
+        cv::BorderTypes::BORDER_REFLECT);
     cv::filter2D(
         _image, bkg_image, ddepth, _bkg_kernel.matrix(), anchor, delta,
-        cv::BorderTypes::BORDER_WRAP);
+        cv::BorderTypes::BORDER_REFLECT);
     cv::subtract(peak_image, bkg_image, _filtered_image);
 }
 
