@@ -20,6 +20,8 @@
 
 namespace ohkl {
 
+class ImageFilter;
+
 /*! \addtogroup python_api
  *  @{*/
 
@@ -27,7 +29,6 @@ using EquivalencePair = std::pair<int, int>;
 using EquivalenceList = std::vector<EquivalencePair>;
 
 class Blob3D;
-class Convolver;
 class ProgressHandler;
 
 using sptrProgressHandler = std::shared_ptr<ProgressHandler>;
@@ -40,8 +41,11 @@ struct PeakFinderParameters {
     int maximum_frames = 10; //!< Maximum number of frames a blob can span
     int first_frame = -1; //!< First frame in range for peak finding
     int last_frame = -1; //!< Last frame in range for peak findinng
+    double r1 = 5.0; //!< Upper bound for positive region of filter kernel
+    double r2 = 10.0; //!< Lower bound for negative region of filter kernel
+    double r3 = 15.0; //!< Upper bound for negative region of filter kernel
     double threshold = 1.0; //!< Blobs containing fewer counts than this are discarded
-    std::string convolver = "enhanced annular";
+    std::string filter = "Enhanced annular";
 
     void log(const Level& level) const;
 };
@@ -100,18 +104,11 @@ class PeakFinder {
     //! set background gradient status
     void setBkgGradient(bool b) { _gradient = b; };
 
-#ifndef SWIG
-    //! Set the convolver flavour for peak/background convolution
-    void setConvolver(std::unique_ptr<Convolver> convolver);
-#endif
+    //! Set image filter parameters
+    void setFilterParameters(const std::map<std::string, double>& params);
 
-    //! Set the convolver flavour for peak/background convolution
-    void setConvolver(const std::string& convolver, const std::map<std::string, double>& parameters);
-
-    //! Set the convolver flavour for peak/background convolution
-    void setConvolver(const Convolver& convolver);
-    //! Get the convolver
-    ohkl::Convolver* convolver() const { return _convolver.get(); }
+    //! Get the image filter parameters
+    std::map<std::string, double> filterParameters();
 
  private:
     //! Remove blobs that do not meet the above criteria
@@ -119,8 +116,8 @@ class PeakFinder {
 
     //! Detector spot detection algorithm
     void findPrimaryBlobs(
-        const DataSet& data, std::map<int, Blob3D>& blobs, EquivalenceList& equivalences,
-        size_t begin, size_t end);
+        const DataSet& data, ImageFilter* filter, std::map<int, Blob3D>& blobs,
+        EquivalenceList& equivalences, size_t begin, size_t end);
 
     //! Detect collisions between blobs
     void findCollisions(
@@ -132,11 +129,8 @@ class PeakFinder {
     //! Merge equivalent blobs
     void mergeEquivalentBlobs(std::map<int, Blob3D>& blobs, EquivalenceList& equivalences) const;
 
- private:
     sptrProgressHandler _handler;
 
-    //! The convolver for peak/background convolution
-    std::unique_ptr<Convolver> _convolver;
     //! The parameters for peak finding
     std::unique_ptr<PeakFinderParameters> _params;
     //! Current label
@@ -153,6 +147,8 @@ class PeakFinder {
     bool _integrated;
     //! whether peaks have background gradient after integration
     bool _gradient;
+
+    static const double _eps;
 };
 
 /*! @}*/

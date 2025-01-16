@@ -41,8 +41,6 @@ class SubframeFindPeaks : public QWidget {
     Q_OBJECT
  public:
     SubframeFindPeaks();
-    //! Change the convolution parameters
-    void updateConvolutionParameters();
     //! Find peaks
     void find();
     //! integrate found peaks
@@ -67,7 +65,7 @@ class SubframeFindPeaks : public QWidget {
     void onGradientSettingsChanged();
 
  signals:
-    void signalGradient(int kernel, bool fft);
+    void signalGradient(int kernel);
 
  private:
     //! Set up the data selection GUI
@@ -94,9 +92,6 @@ class SubframeFindPeaks : public QWidget {
     //! Disable widgets that are unsafe without relevant data
     void toggleUnsafeWidgets();
 
-    //! Convolution parameter map
-    std::map<std::string, double> convolutionParameters();
-
     //! The model for the found peaks
     ohkl::PeakCollection _peak_collection;
     //! The temporary collection
@@ -118,7 +113,9 @@ class SubframeFindPeaks : public QWidget {
     SafeSpinBox* _max_size_spin;
     SafeSpinBox* _max_width_spin;
     QComboBox* _kernel_combo;
-    QTableWidget* _kernel_para_table;
+    SafeDoubleSpinBox* _r1;
+    SafeDoubleSpinBox* _r2;
+    SafeDoubleSpinBox* _r3;
     SafeSpinBox* _start_frame_spin;
     SafeSpinBox* _end_frame_spin;
 
@@ -131,8 +128,7 @@ class SubframeFindPeaks : public QWidget {
     SafeDoubleSpinBox* _bkg_end;
     SafeSpinBox* _max_width;
     QGroupBox* _use_max_width;
-    QCheckBox* _gradient_check;
-    QCheckBox* _fft_gradient_check;
+    QGroupBox* _compute_gradient;
     QComboBox* _gradient_kernel;
 
     QPushButton* _find_button;
@@ -143,13 +139,6 @@ class SubframeFindPeaks : public QWidget {
     QGraphicsPixmapItem* _pixmap;
 
     PeakTableView* _peak_table;
-
-    const std::map<ohkl::GradientKernel, QString> _kernel_description{
-        {ohkl::GradientKernel::CentralDifference, "Central difference"},
-        {ohkl::GradientKernel::Sobel, "Sobel 3x3"},
-        {ohkl::GradientKernel::Sobel5, "Sobel 5x5"},
-        {ohkl::GradientKernel::Prewitt, "Prewitt"},
-    };
 };
 
 #endif // OHKL_GUI_SUBFRAME_FIND_SUBFRAMEFINDPEAKS_H

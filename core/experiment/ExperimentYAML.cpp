@@ -16,6 +16,7 @@
 
 #include "core/algo/AutoIndexer.h"
 #include "core/experiment/PeakFinder.h"
+#include "core/image/GradientFilter.h"
 #include "core/integration/IIntegrator.h"
 #include "core/loader/IDataReader.h"
 #include "core/peak/IntegrationRegion.h"
@@ -142,9 +143,8 @@ void ExperimentYAML::grabIntegrationParameters(IntegrationParameters* params)
     params->fit_cov = getNode<bool>(branch, "fit_cov");
     params->integrator_type = static_cast<IntegratorType>(getNode<int>(branch, "integrator_type"));
     params->region_type = static_cast<RegionType>(getNode<int>(branch, "region_type"));
-    params->gradient_type = static_cast<GradientKernel>(getNode<int>(branch, "gradient_type"));
+    params->gradient_type = static_cast<GradientFilterType>(getNode<int>(branch, "gradient_type"));
     params->use_gradient = getNode<bool>(branch, "use_gradient");
-    params->fft_gradient = getNode<bool>(branch, "fft_gradient");
     params->skip_masked = getNode<bool>(branch, "skip_masked");
     params->remove_overlaps = getNode<bool>(branch, "remove_overlaps");
     params->use_max_strength = getNode<bool>(branch, "use_max_strength");
@@ -177,7 +177,6 @@ void ExperimentYAML::setIntegrationParameters(IntegrationParameters* params)
     int_node["region_type"] = static_cast<int>(params->region_type);
     int_node["gradient_type"] = static_cast<int>(params->gradient_type);
     int_node["use_gradient"] = params->use_gradient;
-    int_node["fft_gradient"] = params->fft_gradient;
     int_node["skip_masked"] = params->skip_masked;
     int_node["remove_overlaps"] = params->remove_overlaps;
     int_node["use_max_strength"] = params->use_max_strength;
@@ -205,8 +204,11 @@ void ExperimentYAML::grabPeakFinderParameters(PeakFinderParameters* params)
     params->maximum_frames = getNode<int>(branch, "maximum_frames");
     params->first_frame = getNode<int>(branch, "first_frame");
     params->last_frame = getNode<int>(branch, "last_frame");
+    params->r1 = getNode<double>(branch, "r1");
+    params->r2 = getNode<double>(branch, "r2");
+    params->r3 = getNode<double>(branch, "r3");
     params->threshold = getNode<double>(branch, "threshold");
-    params->convolver = getNode<std::string>(branch, "convolver");
+    params->filter = getNode<std::string>(branch, "filter");
 }
 
 void ExperimentYAML::setPeakFinderParameters(PeakFinderParameters* params)
@@ -223,8 +225,11 @@ void ExperimentYAML::setPeakFinderParameters(PeakFinderParameters* params)
     pf_node["maximum_frames"] = params->maximum_frames;
     pf_node["first_frame"] = params->first_frame;
     pf_node["last_frame"] = params->last_frame;
+    pf_node["r1"] = params->r1;
+    pf_node["r2"] = params->r2;
+    pf_node["r3"] = params->r3;
     pf_node["threshold"] = params->threshold;
-    pf_node["convolver"] = params->convolver;
+    pf_node["filter"] = params->filter;
 }
 
 void ExperimentYAML::grabAutoindexerParameters(IndexerParameters* params)

@@ -23,6 +23,7 @@
 
 #include <QSpinBox>
 #include <QWidget>
+#include <qspinbox.h>
 
 class CellComboBox;
 class DataComboBox;
@@ -166,10 +167,13 @@ class SubframeExperiment : public QWidget {
     // 2D peak finder
     DataComboBox* _data_combo;
     QComboBox* _convolver_combo;
-    SafeSpinBox* _threshold_spin;
+    SafeDoubleSpinBox* _threshold_spin;
     SafeSpinBox* _blob_min_thresh;
     SafeSpinBox* _blob_max_thresh;
     QCheckBox* _search_all_frames;
+    QDoubleSpinBox* _r1;
+    QDoubleSpinBox* _r2;
+    QDoubleSpinBox* _r3;
     QCheckBox* _threshold_check;
     QPushButton* _find_peaks_2d;
 
@@ -220,6 +224,8 @@ class SubframeExperiment : public QWidget {
     PeakViewWidget* _peak_view_widget;
 
     bool _show_direct_beam;
+
+    int _stored_cursor_mode;
 
     //! Saved direct beam positions
     std::vector<ohkl::DetectorEvent> _direct_beam_events;

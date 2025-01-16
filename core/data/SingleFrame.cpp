@@ -45,11 +45,10 @@ Eigen::MatrixXd SingleFrame::transformedFrame(std::size_t idx) const
     return DataSet::transformedFrame(0);
 }
 
-Eigen::MatrixXd SingleFrame::gradientFrame(
-    std::size_t idx, GradientKernel kernel, bool realspace) const
+Eigen::MatrixXd SingleFrame::gradientFrame(std::size_t idx, GradientFilterType kernel) const
 {
     std::ignore = idx;
-    return DataSet::gradientFrame(0, kernel, realspace);
+    return DataSet::gradientFrame(0, kernel);
 }
 
 void SingleFrame::setNFrames(std::size_t nframes)

@@ -15,8 +15,8 @@
 #include "core/experiment/PeakFinder2D.h"
 
 #include "base/utils/ProgressHandler.h"
-#include "core/convolve/ConvolverFactory.h"
 #include "core/data/DataSet.h"
+#include "core/image/FilterFactory.h"
 #include "core/peak/Peak3D.h"
 
 #include <Eigen/src/Core/Matrix.h>
@@ -25,6 +25,7 @@
 #include <opencv2/core/hal/interface.h>
 #include <opencv2/core/types.hpp>
 #include <opencv2/features2d.hpp>
+#include <opencv2/highgui.hpp>
 #include <opencv2/opencv.hpp>
 
 #include <opencv2/imgcodecs.hpp>
@@ -38,22 +39,20 @@ void PeakFinder2DParameters::log(const Level& level) const
 {
     ohklLog(level, "2D Peak finder parameters:");
     ohklLog(level, "threshold              = ", threshold);
-    ohklLog(level, "convolver              = ", static_cast<int>(kernel));
+    ohklLog(level, "filter                 = ", static_cast<int>(kernel));
 }
 
 PeakFinder2D::PeakFinder2D() : _handler(nullptr), _current_data(nullptr)
 {
     _params.minThreshold = 1;
     _params.maxThreshold = 100;
-    _params.filterByCircularity = false;
+    _params.filterByCircularity = true;
     _params.filterByConvexity = false;
     _params.filterByInertia = false;
     _params.filterByArea = false;
     _params.filterByColor = false;
-    _params.threshold = 80;
-    _params.kernel = ConvolutionKernelType::Annular;
-
-    setConvolver(_params.kernel);
+    _params.threshold = 30;
+    _params.kernel = ImageFilterType::EnhancedAnnular;
 }
 
 void PeakFinder2D::setHandler(const sptrProgressHandler& handler)
@@ -69,46 +68,23 @@ void PeakFinder2D::setData(sptrDataSet data)
     }
 }
 
-void PeakFinder2D::setConvolver(const ConvolutionKernelType& kernel)
-{
-    auto kernel_type = Convolver::kernelTypes.find(kernel);
-    _convolver.reset(ConvolverFactory{}.create(kernel_type->second, {}));
-}
-
 void PeakFinder2D::find(std::size_t frame_idx)
 {
     ohklLog(Level::Info, "PeakFinder2D::find: frame ", frame_idx);
-    setConvolver(_params.kernel);
-    RealMatrix frame = _current_data->frame(frame_idx).cast<double>();
-    RealMatrix filtered_frame = _convolver->convolve(frame);
+    _params.log(Level::Info);
+    FilterFactory factory;
+    std::string filter_type = ImageFilterStrings.at(_params.kernel);
+    ImageFilter* filter = factory.create(filter_type, filterParameters());
 
-    cv::Mat cv_frame, cv_frame_thresholded, cv_frame_8u;
-    cv::eigen2cv(filtered_frame, cv_frame);
-    //! Maximum count determined by bit depth
-    double max_count = pow(2, static_cast<int>(_current_data->bitDepth()));
-    cv::threshold(
-        cv_frame, cv_frame_thresholded, _params.threshold, static_cast<int>(max_count),
-        cv::THRESH_BINARY_INV);
+    RealMatrix frame = _current_data->frame(frame_idx).cast<double>();
+    filter->setImage(frame);
+    filter->filter();
+    filter->threshold(_params.threshold, true);
+    cv::Mat cv_frame_thresholded = filter->cvThresholdedImage();
+
     // SimpleBlobDetector only accepts 8 bit unsigned images
-    double fac = 1.0 / 256.0;
-    double scale = 1.0;
-    switch (_current_data->bitDepth()) {
-        case BitDepth::u8b: {
-            break;
-        }
-        case BitDepth::u16b: {
-            scale = fac;
-            break;
-        }
-        case BitDepth::u32b: {
-            scale = fac * fac;
-            break;
-        }
-        default: {
-            throw std::runtime_error("PeakFinder2D::find: unexpected image bit depth");
-        }
-    }
-    cv_frame_thresholded.convertTo(cv_frame_8u, CV_8U, scale);
+    cv::Mat cv_frame_8u;
+    cv::normalize(cv_frame_thresholded, cv_frame_8u, 0, 255, cv::NORM_MINMAX, CV_8U);
 
     _keypoint_collection.clearFrame(frame_idx);
     std::vector<cv::KeyPoint>* keypoints = _keypoint_collection.frame(frame_idx);
@@ -155,5 +131,18 @@ std::vector<Peak3D*> PeakFinder2D::getPeakList(std::size_t frame_index)
     _current_data->maskPeaks(peaks, tmp_map);
     return peaks;
 }
+
+    void PeakFinder2D::setFilterParameters(const std::map<std::string, double>& params)
+    {
+        _params.r1 = params.at("r1");
+        _params.r2 = params.at("r2");
+        _params.r3 = params.at("r3");
+    }
+
+    //! Get the image filter parameters
+    std::map<std::string, double> PeakFinder2D::filterParameters()
+    {
+        return {{"r1", _params.r1}, {"r2", _params.r2}, {"r3", _params.r3}};
+    }
 
 } // namespace ohkl

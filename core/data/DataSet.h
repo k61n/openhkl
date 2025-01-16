@@ -15,7 +15,6 @@
 #ifndef OHKL_CORE_DATA_DATASET_H
 #define OHKL_CORE_DATA_DATASET_H
 
-#include "core/data/ImageGradient.h"
 #include "core/instrument/InstrumentState.h"
 #include "core/loader/IDataReader.h"
 #include "core/raw/DataKeys.h"
@@ -28,6 +27,7 @@
 namespace ohkl {
 
 enum class RejectionFlag;
+enum class GradientFilterType;
 class AABB;
 class Detector;
 class DetectorEvent;
@@ -83,7 +83,7 @@ class DataSet {
     virtual Eigen::MatrixXd transformedFrame(std::size_t idx) const;
     //! Return per-pixel magnitude of gradient of a given frame
     virtual Eigen::MatrixXd gradientFrame(
-        std::size_t idx, GradientKernel kernel, bool realspace = true) const;
+        std::size_t idx, GradientFilterType kernel) const;
 
     //! Gets the file handle.
     void open();

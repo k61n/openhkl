@@ -12,7 +12,6 @@
 //
 //  ***********************************************************************************************
 
-#include "core/convolve/AnnularConvolver.h"
 #include "core/data/DataSet.h"
 #include "core/experiment/Experiment.h"
 #include "core/experiment/Integrator.h"
@@ -37,7 +36,7 @@
 TEST_CASE("test/data/TestPxsumIntegration.cpp", "")
 {
     // reference values
-    const int ref_n_peaks = 59209;
+    const int ref_n_peaks = 59086;
     const int ref_n_integrated_peaks = 56186;
     const double ref_rpim_overall = 0.0774;
     const double ref_ccstar_overall = 0.9975;
@@ -72,8 +71,7 @@ TEST_CASE("test/data/TestPxsumIntegration.cpp", "")
     params->fit_cov = true;
     params->discard_saturated = true;
     params->use_gradient = true;
-    params->gradient_type = ohkl::GradientKernel::Sobel;
-    params->fft_gradient = false;
+    params->gradient_type = ohkl::GradientFilterType::CentralDifference;
     params->skip_masked = true;
     params->use_max_width = true;
     params->max_width = 10;

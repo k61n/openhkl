@@ -12,25 +12,23 @@
 //
 //  ***********************************************************************************************
 
+#include "test/cpp/catch.hpp"
+
 #include "base/mask/BoxMask.h"
 #include "base/mask/EllipseMask.h"
 #include "base/utils/Units.h"
-#include "core/convolve/Convolver.h"
-#include "core/convolve/ConvolverFactory.h"
+#include "core/algo/AutoIndexer.h"
 #include "core/data/DataSet.h"
 #include "core/experiment/Experiment.h"
 #include "core/experiment/PeakFinder2D.h"
 #include "core/instrument/Diffractometer.h"
-#include "core/algo/AutoIndexer.h"
 #include "core/instrument/InstrumentState.h"
 #include "core/loader/IDataReader.h"
 #include "core/loader/RawDataReader.h"
 #include "core/peak/Peak3D.h"
-#include "core/raw/DataKeys.h"
 #include "core/shape/PeakFilter.h"
 #include "tables/crystal/SpaceGroup.h"
 #include "tables/crystal/UnitCell.h"
-#include "test/cpp/catch.hpp"
 
 #include <Eigen/Dense>
 #include <fstream>
@@ -70,24 +68,19 @@ TEST_CASE("test/data/TestSingleFrameIndex.cpp", "")
     data->finishRead();
     experiment.addData(data);
 
-    // mask edges and beam stop
-    ohkl::AABB box1 = {{0, 0, -1}, {300, 900, 1}};
-    ohkl::AABB box2 = {{2200, 0, -1}, {2500, 900, 1}};
-    ohkl::AABB ellipse = {{1200, 400, -1}, {1300, 500, 1}};
-    data->addMask(new ohkl::BoxMask(box1));
-    data->addMask(new ohkl::BoxMask(box2));
-    data->addMask(new ohkl::EllipseMask(ellipse));
-
     auto* finder = experiment.peakFinder2D();
     auto* finder_params = finder->parameters();
-    finder_params->threshold = 80;
+    finder_params->threshold = 60;
+    finder_params->kernel = ohkl::ImageFilterType::Annular;
+    std::map<std::string, double> filter_params = {{"r1", 5}, {"r2", 10}, {"r3", 15}};
+    finder->setFilterParameters(filter_params);
     finder->setData(data);
-    finder->setConvolver(ohkl::ConvolutionKernelType::Annular);
     finder->find(0);
 
     std::vector<ohkl::Peak3D*> found_peaks = finder->getPeakList(0);
+    std::cout << found_peaks.size() << " peaks found" << std::endl;
 
-    data->adjustDirectBeam(-2.00, -2.10);
+    data->adjustDirectBeam(-1.00, -2.00);
     // TODO: reimplement use of a single file and state
     // ohkl::InstrumentState* state = &data->instrumentStates().at(0);
 
@@ -104,6 +97,7 @@ TEST_CASE("test/data/TestSingleFrameIndex.cpp", "")
     reference_cell.setSpaceGroup(ohkl::SpaceGroup{"P 21 21 21"});
 
     indexer->autoIndex(found_peaks, data);
+    std::cout << indexer->solutionsToString() << std::endl;
     ohkl::sptrUnitCell best_cell = indexer->solutions().at(0).first;
     std::cout << reference_cell.toString() << std::endl;
     std::cout << best_cell->toString() << std::endl;

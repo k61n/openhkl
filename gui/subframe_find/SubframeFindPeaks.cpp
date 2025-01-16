@@ -14,12 +14,11 @@
 
 #include "gui/subframe_find/SubframeFindPeaks.h"
 
-#include "core/convolve/ConvolverFactory.h"
 #include "core/data/DataSet.h"
-#include "core/data/ImageGradient.h"
 #include "core/experiment/Experiment.h"
 #include "core/experiment/Integrator.h"
 #include "core/experiment/PeakFinder.h"
+#include "core/image/GradientFilter.h"
 #include "core/integration/IIntegrator.h"
 #include "core/peak/IntegrationRegion.h"
 #include "core/peak/Peak3D.h"
@@ -57,6 +56,8 @@
 #include <QTableWidget>
 #include <QTableWidgetItem>
 #include <QVBoxLayout>
+#include <qglobal.h>
+#include <qspinbox.h>
 
 SubframeFindPeaks::SubframeFindPeaks()
     : QWidget()
@@ -78,7 +79,6 @@ SubframeFindPeaks::SubframeFindPeaks()
     setSaveUp();
     setFigureUp();
     setPeakTableUp();
-    updateConvolutionParameters();
     toggleUnsafeWidgets();
 
     _right_element->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -92,16 +92,10 @@ SubframeFindPeaks::SubframeFindPeaks()
     _right_element->setStretchFactor(1, 1);
 
     connect(
-        _kernel_combo, &QComboBox::currentTextChanged, this,
-        &SubframeFindPeaks::updateConvolutionParameters);
-    connect(
         _gradient_kernel, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
         this, &SubframeFindPeaks::onGradientSettingsChanged);
     connect(
-        _fft_gradient_check, &QCheckBox::stateChanged, this,
-        &SubframeFindPeaks::onGradientSettingsChanged);
-    connect(
-        _gradient_check, &QCheckBox::clicked, this, &SubframeFindPeaks::onGradientSettingsChanged);
+        _compute_gradient, &QGroupBox::clicked, this, &SubframeFindPeaks::onGradientSettingsChanged);
     connect(
         this, &SubframeFindPeaks::signalGradient, _detector_widget->scene(),
         &DetectorScene::onGradientSetting);
@@ -151,17 +145,18 @@ void SubframeFindPeaks::setBlobUp()
 
     _kernel_combo = f.addCombo("Convolution kernel", "Convolution kernel for peak search");
 
-    auto kernel_types = ohkl::Convolver::kernelTypes;
+    auto kernel_types = ohkl::ImageFilterStrings;
     for (auto it = kernel_types.begin(); it != kernel_types.end(); ++it)
         _kernel_combo->addItem(QString::fromStdString(it->second));
     _kernel_combo->setCurrentIndex(1);
 
-    QLabel* kernel_para_label = new QLabel("Convolver parameters:");
+    QLabel* kernel_para_label = new QLabel("Filter parameters:");
     kernel_para_label->setAlignment(Qt::AlignLeft | Qt::AlignTop);
     f.addWidget(kernel_para_label, 0);
 
-    _kernel_para_table = new QTableWidget(0, 2, this);
-    f.addWidget(_kernel_para_table, 1);
+    _r1 = f.addDoubleSpinBox("r1", "Upper bound for positive region of filter kernel");
+    _r2 = f.addDoubleSpinBox("r2", "Lower bound for negative region of filter kernel");
+    _r3 = f.addDoubleSpinBox("r3", "Upper bound for negative region of filter kernel");
 
     std::tie(_start_frame_spin, _end_frame_spin) =
         f.addSpinBoxPair("Image range", "start and end image of range in which to find peaks");
@@ -171,19 +166,31 @@ void SubframeFindPeaks::setBlobUp()
 
     _find_button = f.addButton("Find peaks");
 
-    _kernel_para_table->setMaximumHeight(
-        _kernel_para_table->verticalHeader()->defaultSectionSize() * 4);
-    _kernel_para_table->verticalHeader()->setVisible(false);
-    _kernel_para_table->setHorizontalHeaderLabels(QStringList{"Parameter", "Value"});
     _threshold_spin->setMaximum(1000);
+    _threshold_spin->setValue(1);
     _scale_spin->setMaximum(10);
     _min_size_spin->setMaximum(1000);
     _max_size_spin->setMaximum(100000);
     _max_width_spin->setMaximum(20);
+    _r1->setMaximum(20);
+    _r2->setMaximum(20);
+    _r3->setMaximum(20);
+    _r1->setMinimum(1);
+    _r2->setMinimum(1);
+    _r3->setMinimum(1);
+    _r1->setSingleStep(1);
+    _r2->setSingleStep(1);
+    _r3->setSingleStep(1);
+    _r1->setValue(5);
+    _r2->setValue(10);
+    _r3->setValue(15);
     _start_frame_spin->setMinimum(1);
     _end_frame_spin->setMinimum(1);
 
     connect(_find_button, &QPushButton::clicked, this, &SubframeFindPeaks::find);
+    connect(
+        _kernel_combo, qOverload<int>(&QComboBox::currentIndexChanged), this,
+        &SubframeFindPeaks::showFilteredImage);
     connect(
         _threshold_check, &QCheckBox::stateChanged, this, &SubframeFindPeaks::showFilteredImage);
     connect(
@@ -191,8 +198,13 @@ void SubframeFindPeaks::setBlobUp()
         static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
         this, &SubframeFindPeaks::showFilteredImage);
     connect(
-        _kernel_para_table,
-        static_cast<void (QTableWidget::*)(int, int)>(&QTableWidget::cellChanged), this,
+        _r1, qOverload<double>(&QDoubleSpinBox::valueChanged), this,
+        &SubframeFindPeaks::showFilteredImage);
+    connect(
+        _r2, qOverload<double>(&QDoubleSpinBox::valueChanged), this,
+        &SubframeFindPeaks::showFilteredImage);
+    connect(
+        _r3, qOverload<double>(&QDoubleSpinBox::valueChanged), this,
         &SubframeFindPeaks::showFilteredImage);
 
     _left_layout->addWidget(blob_para);
@@ -236,12 +248,20 @@ void SubframeFindPeaks::setIntegrateUp()
     grid->addWidget(_max_width, 0, 1, 1, 1);
     f.addWidget(_use_max_width);
 
-    _gradient_check = f.addCheckBox(
-        "Compute gradient", "Compute mean gradient and sigma of background region", 1);
+    _compute_gradient = new QGroupBox("Compute gradient");
+    _compute_gradient->setAlignment(Qt::AlignLeft);
+    _compute_gradient->setCheckable(true);
+    _compute_gradient->setChecked(false);
+    _compute_gradient->setToolTip("Compute image gradient");
 
-    _fft_gradient_check = f.addCheckBox("FFT gradient", "Use FFT to compute gradient", 1);
+    _gradient_kernel = new QComboBox();
 
-    _gradient_kernel = f.addCombo("Gradient kernel", "Convolution kernel used to compute gradient");
+    grid = new QGridLayout();
+    _compute_gradient->setLayout(grid);
+    label = new QLabel("Kernel");
+    grid->addWidget(label, 0, 0, 1, 1);
+    grid->addWidget(_gradient_kernel, 0, 1, 1, 1);
+    f.addWidget(_compute_gradient);
 
     _integrate_button = f.addButton("Integrate");
 
@@ -249,9 +269,9 @@ void SubframeFindPeaks::setIntegrateUp()
     _bkg_begin->setMaximum(50);
     _bkg_end->setMaximum(50);
 
-    for (const auto& [kernel, description] : _kernel_description)
-        _gradient_kernel->addItem(description);
-    _gradient_kernel->setCurrentIndex(1);
+    for (const auto& [kernel, description] : ohkl::GradientFilterStrings)
+        _gradient_kernel->addItem(QString::fromStdString(description));
+    _gradient_kernel->setCurrentIndex(0);
 
     connect(_integrate_button, &QPushButton::clicked, this, &SubframeFindPeaks::integrate);
 
@@ -386,8 +406,6 @@ void SubframeFindPeaks::grabFinderParameters()
     if (!gSession->hasProject())
         return;
 
-    ohkl::PeakFinder* finder = gSession->currentProject()->experiment()->peakFinder();
-
     auto* params = gSession->currentProject()->experiment()->peakFinder()->parameters();
 
     _min_size_spin->setValue(params->minimum_size);
@@ -396,39 +414,11 @@ void SubframeFindPeaks::grabFinderParameters()
     _max_width_spin->setValue(params->maximum_frames);
     _start_frame_spin->setValue(params->first_frame + 1);
     _end_frame_spin->setValue(params->last_frame + 1);
+    _r1->setValue(params->r1);
+    _r2->setValue(params->r2);
+    _r3->setValue(params->r3);
     _threshold_spin->setValue(params->threshold);
-
-    _kernel_combo->setCurrentText(QString::fromStdString(params->convolver));
-
-    // only change the convolver if it doesn't match the parameters
-    ohkl::Convolver* convolver = finder->convolver();
-
-    const std::map<std::string, double>& convolver_params = convolver->parameters();
-    using mapIterator = std::map<std::string, double>::const_iterator;
-
-    _kernel_para_table->clear();
-    _kernel_para_table->setRowCount(0);
-    _kernel_para_table->setColumnCount(2);
-    int currentRow = 0;
-    for (mapIterator it = convolver_params.begin(); it != convolver_params.end(); ++it) {
-        _kernel_para_table->insertRow(currentRow);
-
-        QString name = QString::fromStdString(it->first);
-        QTableWidgetItem* pname = new QTableWidgetItem();
-        pname->setData(Qt::DisplayRole, name);
-        pname->setFlags(pname->flags() & ~Qt::ItemIsEditable);
-
-
-        double val = it->second;
-        QTableWidgetItem* pvalue = new QTableWidgetItem();
-        pvalue->setData(Qt::DisplayRole, val);
-
-        _kernel_para_table->setItem(currentRow, 0, pname);
-        _kernel_para_table->setItem(currentRow, 1, pvalue);
-
-        currentRow++;
-    }
-    _kernel_para_table->resizeColumnsToContents();
+    _kernel_combo->setCurrentText(QString::fromStdString(params->filter));
 }
 
 void SubframeFindPeaks::setFinderParameters()
@@ -445,15 +435,13 @@ void SubframeFindPeaks::setFinderParameters()
     params->maximum_frames = _max_width_spin->value();
     params->first_frame = _start_frame_spin->value() - 1;
     params->last_frame = _end_frame_spin->value() - 1;
+    params->r1 = _r1->value();
+    params->r2 = _r2->value();
+    params->r3 = _r3->value();
     params->threshold = _threshold_spin->value();
+    params->filter = _kernel_combo->currentText().toStdString();
 
-    std::string convolverType = _kernel_combo->currentText().toStdString();
-    params->convolver = convolverType;
-
-    ohkl::ConvolverFactory factory;
-    ohkl::Convolver* convolver = factory.create(convolverType, {});
-    convolver->setParameters(convolutionParameters());
-    finder->setConvolver(std::unique_ptr<ohkl::Convolver>(convolver));
+    _detector_widget->scene()->params()->convolver_params = finder->filterParameters();
 }
 
 void SubframeFindPeaks::grabIntegrationParameters()
@@ -478,8 +466,7 @@ void SubframeFindPeaks::grabIntegrationParameters()
 
     _use_max_width->setChecked(params->use_max_width);
     _max_width->setValue(params->max_width);
-    _gradient_check->setChecked(params->use_gradient);
-    _fft_gradient_check->setChecked(params->fft_gradient);
+    _compute_gradient->setChecked(params->use_gradient);
     _gradient_kernel->setCurrentIndex(static_cast<int>(params->gradient_type));
 }
 
@@ -502,44 +489,8 @@ void SubframeFindPeaks::setIntegrationParameters()
     }
     params->use_max_width = _use_max_width->isChecked();
     params->max_width = _max_width->value();
-    params->use_gradient = _gradient_check->isChecked();
-    params->fft_gradient = _fft_gradient_check->isChecked();
-    params->gradient_type = static_cast<ohkl::GradientKernel>(_gradient_kernel->currentIndex());
-}
-
-void SubframeFindPeaks::updateConvolutionParameters()
-{
-    QSignalBlocker blocker(_kernel_para_table);
-    std::string kernelName = _kernel_combo->currentText().toStdString();
-    ohkl::ConvolverFactory _kernel_comboFactory;
-    ohkl::Convolver* kernel = _kernel_comboFactory.create(kernelName, {});
-
-    const std::map<std::string, double>& params = kernel->parameters();
-    using mapIterator = std::map<std::string, double>::const_iterator;
-
-    _kernel_para_table->setRowCount(0);
-    _kernel_para_table->setColumnCount(2);
-    int currentRow = 0;
-    for (mapIterator it = params.begin(); it != params.end(); ++it) {
-        _kernel_para_table->insertRow(currentRow);
-
-        QString name = QString::fromStdString(it->first);
-        QTableWidgetItem* pname = new QTableWidgetItem();
-        pname->setData(Qt::DisplayRole, name);
-        pname->setFlags(pname->flags() ^ Qt::ItemIsEditable);
-
-
-        QString val = QString::number(it->second);
-        QTableWidgetItem* pvalue = new QTableWidgetItem();
-        pvalue->setData(Qt::DisplayRole, val);
-
-        _kernel_para_table->setItem(currentRow, 0, pname);
-        _kernel_para_table->setItem(currentRow, 1, pvalue);
-
-        currentRow++;
-    }
-    _kernel_para_table->resizeColumnsToContents();
-    showFilteredImage();
+    params->use_gradient = _compute_gradient->isChecked();
+    params->gradient_type = static_cast<ohkl::GradientFilterType>(_gradient_kernel->currentIndex());
 }
 
 void SubframeFindPeaks::find()
@@ -590,17 +541,6 @@ void SubframeFindPeaks::integrate()
     gGui->setReady(true);
 }
 
-std::map<std::string, double> SubframeFindPeaks::convolutionParameters()
-{
-    std::map<std::string, double> parameters;
-    for (int i = 0; i < _kernel_para_table->rowCount(); ++i) {
-        std::string pname = _kernel_para_table->item(i, 0)->text().toStdString();
-        double pvalue = _kernel_para_table->item(i, 1)->text().toDouble();
-        parameters.insert(std::make_pair(pname, pvalue));
-    }
-    return parameters;
-}
-
 void SubframeFindPeaks::accept()
 {
     auto expt = gSession->currentProject()->experiment();
@@ -646,6 +586,10 @@ void SubframeFindPeaks::refreshPeakTable()
     _peak_table->setColumnHidden(PeakColumn::Enabled, true);
     _peak_table->setColumnHidden(PeakColumn::Count, true);
 
+    ohkl::PeakFinder* finder = gSession->currentProject()->experiment()->peakFinder();
+    _detector_widget->scene()->params()->convolver_params = finder->filterParameters();
+    _detector_widget->scene()->params()->filter =
+        static_cast<ohkl::ImageFilterType>(_kernel_combo->currentIndex());
     _detector_widget->refresh();
 }
 
@@ -685,18 +629,17 @@ DetectorWidget* SubframeFindPeaks::detectorWidget()
 
 void SubframeFindPeaks::onGradientSettingsChanged()
 {
-    emit signalGradient(_gradient_kernel->currentIndex(), _fft_gradient_check->isChecked());
+    emit signalGradient(_gradient_kernel->currentIndex());
 }
 
 void SubframeFindPeaks::showFilteredImage()
 {
+    setFinderParameters();
     _detector_widget->scene()->params()->filteredImage = _threshold_check->isChecked();
     _detector_widget->scene()->params()->threshold = _threshold_spin->value();
     if (_threshold_check->isChecked()) {
-        _detector_widget->scene()->params()->convolver =
-            static_cast<ohkl::ConvolutionKernelType>(_kernel_combo->currentIndex());
-        for (const auto& [key, value] : convolutionParameters())
-            _detector_widget->scene()->params()->convolver_params.insert_or_assign(key, value);
+        _detector_widget->scene()->params()->filter =
+            static_cast<ohkl::ImageFilterType>(_kernel_combo->currentIndex());
     }
     _detector_widget->scene()->loadCurrentImage();
 }

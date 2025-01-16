@@ -16,7 +16,7 @@
 #define OPENHKL_CORE_INTEGRATION_IINTEGRATOR_H
 
 #include "core/data/DataTypes.h"
-#include "core/data/ImageGradient.h"
+#include "core/image/GradientFilter.h"
 #include "core/peak/IntegrationRegion.h"
 #include "core/peak/Intensity.h"
 
@@ -95,9 +95,7 @@ struct IntegrationParameters {
     //! Use gradient to discriminate heterogeneous background regions
     bool use_gradient = false;
     //! Kernel to use for gradient convolution
-    GradientKernel gradient_type = GradientKernel::Sobel;
-    //! Whether to use FFT or real space gradient computation
-    bool fft_gradient = false;
+    GradientFilterType gradient_type = GradientFilterType::CentralDifference;
     //! Whether to use fixed or sigma-dependent integration regions
     RegionType region_type = RegionType::VariableEllipsoid;
     //! Whether to skip peaks that intersect masks

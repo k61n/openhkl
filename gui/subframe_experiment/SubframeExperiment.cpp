@@ -17,7 +17,6 @@
 #include "base/utils/Logger.h"
 #include "base/utils/Units.h"
 #include "core/algo/AutoIndexer.h"
-#include "core/convolve/Convolver.h"
 #include "core/data/DataSet.h"
 #include "core/experiment/DataQuality.h"
 #include "core/experiment/Experiment.h"
@@ -404,19 +403,22 @@ void SubframeExperiment::setPeakFinder2DUp()
     _data_combo = gfiller.addDataCombo("Data set");
     _convolver_combo =
         gfiller.addCombo("Convolution kernel", "Convolver kernel type to use in image filtering");
-    _threshold_spin = gfiller.addSpinBox(
+    _threshold_spin = gfiller.addDoubleSpinBox(
         "Filtered image threshold", "Minimum counts to use in image thresholding");
     _blob_min_thresh =
         gfiller.addSpinBox("Minimum blob threshold", "Minimum threshold for blob detection");
     _blob_max_thresh =
         gfiller.addSpinBox("Maximum blob threshold", "Maximum threshold for blob detection");
+    _r1 = gfiller.addDoubleSpinBox("r1", "Upper bound for positive region of filter kernel");
+    _r2 = gfiller.addDoubleSpinBox("r2", "Lower bound for negative region of filter kernel");
+    _r3 = gfiller.addDoubleSpinBox("r3", "Upper bound for negative region of filter kernel");
     _search_all_frames =
         gfiller.addCheckBox("Search all images", "Find blobs in all images in this data set", 1);
     _threshold_check = gfiller.addCheckBox(
         "Apply threshold to preview", "Show detector image post filtering/thresholding", 1);
     _find_peaks_2d = gfiller.addButton("Find spots", "Find detector spots in current image");
 
-    auto kernel_types = ohkl::Convolver::kernelTypes;
+    auto kernel_types = ohkl::ImageFilterStrings;
     for (auto it = kernel_types.begin(); it != kernel_types.end(); ++it)
         _convolver_combo->addItem(QString::fromStdString(it->second));
     _convolver_combo->setCurrentIndex(1);
@@ -427,16 +429,44 @@ void SubframeExperiment::setPeakFinder2DUp()
     _blob_min_thresh->setValue(1);
     _blob_max_thresh->setValue(100);
 
+    _r1->setMaximum(20);
+    _r1->setMinimum(1);
+    _r1->setSingleStep(1);
+    _r1->setValue(5);
+
+    _r2->setMaximum(20);
+    _r2->setMinimum(1);
+    _r2->setSingleStep(1);
+    _r2->setValue(10);
+
+    _r3->setMaximum(20);
+    _r3->setMinimum(1);
+    _r3->setSingleStep(1);
+    _r3->setValue(15);
+
+
     connect(
         _data_combo, &QComboBox::currentTextChanged, this,
         &SubframeExperiment::toggleUnsafeWidgets);
     connect(
         _data_combo, QOverload<int>::of(&QComboBox::currentIndexChanged),
         _detector_widget->dataCombo(), &QComboBox::setCurrentIndex);
+    connect(
+        _convolver_combo, qOverload<int>(&QComboBox::currentIndexChanged), this,
+        &SubframeExperiment::showFilteredImage);
     connect(_threshold_check, &QCheckBox::clicked, this, &SubframeExperiment::showFilteredImage);
+    connect(
+        _r1, qOverload<double>(&QDoubleSpinBox::valueChanged), this,
+        &SubframeExperiment::showFilteredImage);
+    connect(
+        _r2, qOverload<double>(&QDoubleSpinBox::valueChanged), this,
+        &SubframeExperiment::showFilteredImage);
+    connect(
+        _r3, qOverload<double>(&QDoubleSpinBox::valueChanged), this,
+        &SubframeExperiment::showFilteredImage);
     connect(_find_peaks_2d, &QPushButton::clicked, this, &SubframeExperiment::find_2d);
     connect(
-        _threshold_spin, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
+        _threshold_spin, qOverload<double>(&QDoubleSpinBox::valueChanged), this,
         &SubframeExperiment::showFilteredImage);
 
     _strategy_layout->addWidget(peak2D_spoiler);
@@ -623,10 +653,11 @@ void SubframeExperiment::updateRanges()
 
 void SubframeExperiment::showFilteredImage()
 {
+    setFinderParameters();
     _detector_widget->scene()->params()->filteredImage = _threshold_check->isChecked();
     _detector_widget->scene()->params()->threshold = _threshold_spin->value();
-    _detector_widget->scene()->params()->convolver =
-        static_cast<ohkl::ConvolutionKernelType>(_convolver_combo->currentIndex());
+    _detector_widget->scene()->params()->filter =
+        static_cast<ohkl::ImageFilterType>(_convolver_combo->currentIndex());
     _detector_widget->scene()->loadCurrentImage();
     setFinderParameters();
 }
@@ -769,11 +800,10 @@ void SubframeExperiment::find_2d()
     progressView.watch(progHandler);
     finder->setHandler(progHandler);
 
+    setFinderParameters();
     finder->setData(data);
     _detector_widget->scene()->params()->detectorSpots = true;
     _detector_widget->scene()->linkKeyPoints(finder->keypoints(), 0);
-
-    setFinderParameters();
 
     if (_search_all_frames->isChecked())
         finder->findAll();
@@ -936,6 +966,9 @@ void SubframeExperiment::grabFinderParameters()
     _blob_min_thresh->setValue(params->minThreshold);
     _blob_max_thresh->setValue(params->maxThreshold);
     _threshold_spin->setValue(params->threshold);
+    _r1->setValue(params->r1);
+    _r2->setValue(params->r2);
+    _r3->setValue(params->r3);
     _convolver_combo->setCurrentIndex(static_cast<int>(params->kernel));
 }
 
@@ -950,7 +983,12 @@ void SubframeExperiment::setFinderParameters()
     params->minThreshold = _blob_min_thresh->value();
     params->maxThreshold = _blob_max_thresh->value();
     params->threshold = _threshold_spin->value();
-    params->kernel = static_cast<ohkl::ConvolutionKernelType>(_convolver_combo->currentIndex());
+    params->r1 = _r1->value();
+    params->r2 = _r2->value();
+    params->r3 = _r3->value();
+    params->kernel = static_cast<ohkl::ImageFilterType>(_convolver_combo->currentIndex());
+
+    _detector_widget->scene()->params()->convolver_params = finder->filterParameters();
 }
 
 void SubframeExperiment::grabIndexerParameters()
@@ -1038,8 +1076,11 @@ void SubframeExperiment::toggleCursorMode()
     switch (_left_widget->currentIndex()) {
         case 0: {
             if (_beam_setter_widget->crosshairOn()->isChecked()) {
+                _stored_cursor_mode = _detector_widget->scene()->mode();
                 _detector_widget->enableCursorMode(false);
                 _detector_widget->scene()->changeInteractionMode(7);
+            } else {
+                _detector_widget->scene()->changeInteractionMode(_stored_cursor_mode);
             }
             break;
         }
