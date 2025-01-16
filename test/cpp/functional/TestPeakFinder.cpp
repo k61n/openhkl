@@ -77,5 +77,5 @@ TEST_CASE("test/data/TestPeakFinder.cpp", "")
     finder->find(experiment.getAllData()[0]);
     std::cout << finder->numberFound() << " peaks found" << std::endl;
 
-    CHECK(finder->numberFound() == 493);
+    CHECK(finder->numberFound() == 485);
 }

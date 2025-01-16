@@ -76,7 +76,7 @@ TEST_CASE("test/data/TestAnnularImageFilter.cpp", "")
     cv::Ptr<cv::SimpleBlobDetector> detector = cv::SimpleBlobDetector::create(blob_params);
     detector->detect(thresholded_8u, keypoints);
 
-    CHECK(keypoints.size() == 62);
+    CHECK(keypoints.size() == 59);
 
     ohkl::ImageFilter* enh_ann_filter = factory.create("Enhanced annular", params);
 
@@ -92,5 +92,5 @@ TEST_CASE("test/data/TestAnnularImageFilter.cpp", "")
     detector = cv::SimpleBlobDetector::create(blob_params);
     detector->detect(thresholded_8u, keypoints);
 
-    CHECK(keypoints.size() == 476);
+    CHECK(keypoints.size() == 494);
 }

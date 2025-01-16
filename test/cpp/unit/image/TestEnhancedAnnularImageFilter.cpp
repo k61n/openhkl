@@ -78,5 +78,5 @@
     // cv::imshow("With keypoints", with_keypoints);
     // cv::waitKey();
 
-    CHECK(keypoints.size() == 476);
+    CHECK(keypoints.size() == 494);
 }

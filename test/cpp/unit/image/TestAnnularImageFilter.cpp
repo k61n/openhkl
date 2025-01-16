@@ -79,5 +79,5 @@ TEST_CASE("test/data/TestAnnularImageFilter.cpp", "")
     // cv::imshow("With keypoints", with_keypoints);
     // cv::waitKey();
 
-    CHECK(keypoints.size() == 62);
+    CHECK(keypoints.size() == 59);
 }

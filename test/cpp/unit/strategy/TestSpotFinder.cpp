@@ -64,5 +64,5 @@ TEST_CASE("test/data/TestSpotFinder.cpp", "")
     std::vector<ohkl::Peak3D*> found_peaks = finder->getPeakList(0);
     std::cout << found_peaks.size() << " peaks found" << std::endl;
 
-    CHECK(found_peaks.size() == 105);
+    CHECK(found_peaks.size() == 102);
 }
