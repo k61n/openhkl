@@ -652,6 +652,7 @@ void SubframeExperiment::updateRanges()
 
 void SubframeExperiment::showFilteredImage()
 {
+    setFinderParameters();
     _detector_widget->scene()->params()->filteredImage = _threshold_check->isChecked();
     _detector_widget->scene()->params()->threshold = _threshold_spin->value();
     _detector_widget->scene()->params()->filter =
@@ -986,6 +987,8 @@ void SubframeExperiment::setFinderParameters()
     params->r2 = _r2->value();
     params->r3 = _r3->value();
     params->kernel = static_cast<ohkl::ImageFilterType>(_convolver_combo->currentIndex());
+
+    _detector_widget->scene()->params()->convolver_params = finder->filterParameters();
 }
 
 void SubframeExperiment::grabIndexerParameters()

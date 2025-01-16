@@ -167,6 +167,7 @@ void SubframeFindPeaks::setBlobUp()
     _find_button = f.addButton("Find peaks");
 
     _threshold_spin->setMaximum(1000);
+    _threshold_spin->setValue(1);
     _scale_spin->setMaximum(10);
     _min_size_spin->setMaximum(1000);
     _max_size_spin->setMaximum(100000);
