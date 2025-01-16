@@ -720,7 +720,12 @@ void DetectorScene::loadCurrentImage()
     if (_currentFrameIndex >= _currentData->nFrames())
         _currentFrameIndex = _currentData->nFrames() - 1;
 
-    std::optional<QImage> base_image = _dataset_graphics->baseImage(_currentFrameIndex, full);
+    std::optional<QImage> base_image = {};
+    try {
+        base_image = _dataset_graphics->baseImage(_currentFrameIndex, full);
+    } catch (std::runtime_error& e) {
+        QMessageBox::critical(nullptr, "Error", QString(e.what()));
+    }
 
     if (base_image) {
         if (!_image)

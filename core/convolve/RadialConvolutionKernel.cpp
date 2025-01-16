@@ -26,7 +26,7 @@ RadialConvolutionKernel::RadialConvolutionKernel(double r_in, double r_out) : Co
 {
     if (r_in < 0 || r_out < r_in)
         throw std::runtime_error(
-            "RadialConvlutionKernel::RadialConvolutionKernel: invalid parameters");
+            "RadialConvolutionKernel::RadialConvolutionKernel: r_in >= r_out");
 
     _size = 2 * r_out + 1;
     _matrix = cv::Mat::zeros(_size, _size, CV_64F);
