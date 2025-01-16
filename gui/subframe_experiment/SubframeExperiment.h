@@ -167,7 +167,7 @@ class SubframeExperiment : public QWidget {
     // 2D peak finder
     DataComboBox* _data_combo;
     QComboBox* _convolver_combo;
-    SafeSpinBox* _threshold_spin;
+    SafeDoubleSpinBox* _threshold_spin;
     SafeSpinBox* _blob_min_thresh;
     SafeSpinBox* _blob_max_thresh;
     QCheckBox* _search_all_frames;

@@ -70,8 +70,6 @@
 
 #include <cstring>
 #include <gsl/gsl_histogram.h>
-#include <qglobal.h>
-#include <qspinbox.h>
 #include <stdexcept>
 
 SubframeExperiment::SubframeExperiment()
@@ -405,7 +403,7 @@ void SubframeExperiment::setPeakFinder2DUp()
     _data_combo = gfiller.addDataCombo("Data set");
     _convolver_combo =
         gfiller.addCombo("Convolution kernel", "Convolver kernel type to use in image filtering");
-    _threshold_spin = gfiller.addSpinBox(
+    _threshold_spin = gfiller.addDoubleSpinBox(
         "Filtered image threshold", "Minimum counts to use in image thresholding");
     _blob_min_thresh =
         gfiller.addSpinBox("Minimum blob threshold", "Minimum threshold for blob detection");
@@ -453,6 +451,9 @@ void SubframeExperiment::setPeakFinder2DUp()
     connect(
         _data_combo, QOverload<int>::of(&QComboBox::currentIndexChanged),
         _detector_widget->dataCombo(), &QComboBox::setCurrentIndex);
+    connect(
+        _convolver_combo, qOverload<int>(&QComboBox::currentIndexChanged), this,
+        &SubframeExperiment::showFilteredImage);
     connect(_threshold_check, &QCheckBox::clicked, this, &SubframeExperiment::showFilteredImage);
     connect(
         _r1, qOverload<double>(&QDoubleSpinBox::valueChanged), this,
@@ -465,7 +466,7 @@ void SubframeExperiment::setPeakFinder2DUp()
         &SubframeExperiment::showFilteredImage);
     connect(_find_peaks_2d, &QPushButton::clicked, this, &SubframeExperiment::find_2d);
     connect(
-        _threshold_spin, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
+        _threshold_spin, qOverload<double>(&QDoubleSpinBox::valueChanged), this,
         &SubframeExperiment::showFilteredImage);
 
     _strategy_layout->addWidget(peak2D_spoiler);

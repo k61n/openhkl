@@ -189,6 +189,9 @@ void SubframeFindPeaks::setBlobUp()
 
     connect(_find_button, &QPushButton::clicked, this, &SubframeFindPeaks::find);
     connect(
+        _kernel_combo, qOverload<int>(&QComboBox::currentIndexChanged), this,
+        &SubframeFindPeaks::showFilteredImage);
+    connect(
         _threshold_check, &QCheckBox::stateChanged, this, &SubframeFindPeaks::showFilteredImage);
     connect(
         _threshold_spin,

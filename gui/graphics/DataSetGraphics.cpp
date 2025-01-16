@@ -74,7 +74,7 @@ Eigen::MatrixXd DataSetGraphics::filteredImage(RowMatrix image, bool thresholded
     ohkl::ImageFilter* filter = factory.create(filter_type, _params->convolver_params);
     filter->setImage(image.cast<double>());
     filter->filter();
-    filter->threshold(1.0);
+    filter->threshold(_params->threshold);
     Eigen::MatrixXd return_image;
     if (thresholded)
         return_image = filter->thresholdedImage();
