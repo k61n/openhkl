@@ -30,7 +30,6 @@
 
 #include <opencv2/imgcodecs.hpp>
 #include <stdexcept>
-#include <iostream>
 
 using RealMatrix = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
 
@@ -91,7 +90,6 @@ void PeakFinder2D::find(std::size_t frame_idx)
     std::vector<cv::KeyPoint>* keypoints = _keypoint_collection.frame(frame_idx);
     cv::Ptr<cv::SimpleBlobDetector> detector = cv::SimpleBlobDetector::create(_params);
     detector->detect(cv_frame_8u, *keypoints);
-    std::cout << keypoints->size() << " keypoints" << std::endl;
     ohklLog(Level::Info, "PeakFinder2D::find: found ", keypoints->size(), " blobs");
 }
 
