@@ -225,6 +225,8 @@ class SubframeExperiment : public QWidget {
 
     bool _show_direct_beam;
 
+    int _stored_cursor_mode;
+
     //! Saved direct beam positions
     std::vector<ohkl::DetectorEvent> _direct_beam_events;
     //! Current direct beam positions

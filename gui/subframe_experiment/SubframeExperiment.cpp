@@ -799,11 +799,10 @@ void SubframeExperiment::find_2d()
     progressView.watch(progHandler);
     finder->setHandler(progHandler);
 
+    setFinderParameters();
     finder->setData(data);
     _detector_widget->scene()->params()->detectorSpots = true;
     _detector_widget->scene()->linkKeyPoints(finder->keypoints(), 0);
-
-    setFinderParameters();
 
     if (_search_all_frames->isChecked())
         finder->findAll();
@@ -1076,8 +1075,11 @@ void SubframeExperiment::toggleCursorMode()
     switch (_left_widget->currentIndex()) {
         case 0: {
             if (_beam_setter_widget->crosshairOn()->isChecked()) {
+                _stored_cursor_mode = _detector_widget->scene()->mode();
                 _detector_widget->enableCursorMode(false);
                 _detector_widget->scene()->changeInteractionMode(7);
+            } else {
+                _detector_widget->scene()->changeInteractionMode(_stored_cursor_mode);
             }
             break;
         }
