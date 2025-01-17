@@ -16,18 +16,6 @@ set(test_files
     CrChiA_c01runab_28603.raw
     CrChiA_c01runab_28604.raw
     CrChiA_c01runab_28605.raw
-    CrChiA_c01runab_28606.raw
-    CrChiA_c01runab_28607.raw
-    CrChiA_c01runab_28608.raw
-    CrChiA_c01runab_28609.raw
-    CrChiA_c01runab_28610.raw
-    CrChiA_c01runab_28611.raw
-    CrChiA_c01runab_28612.raw
-    CrChiA_c01runab_28613.raw
-    CrChiA_c01runab_28614.raw
-    CrChiA_c01runab_28615.raw
-    CrChiA_c01runab_28616.raw
-    CrChiA_c01runab_28617.raw
     CrChiA.ohkl
     det_pos1_001.dat
     det_pos1_002.dat
@@ -35,6 +23,23 @@ set(test_files
     p11202_00009983.tiff
     p11202_00009984.tiff
     p11202_00009985.tiff
+    p11202_00009986.tiff
+    p11202_00009987.tiff
+    p11202_00009988.tiff
+    p11202_00009989.tiff
+    p11202_00009990.tiff
+    p11202_00009991.tiff
+    p11202_00009992.tiff
+    p11202_00009993.tiff
+    p11202_00009994.tiff
+    p11202_00009995.tiff
+    p11202_00009996.tiff
+    p11202_00009997.tiff
+    p11202_00009998.tiff
+    p11202_00009999.tiff
+    p11202_00010000.tiff
+    p11202_00010001.tiff
+    p11202_00010002.tiff
     509192.nxs
     509193.nxs
     509194.nxs

@@ -43,17 +43,9 @@ TEST_CASE("test/data/TestSingleFrameIndex.cpp", "")
     const std::vector<std::string> filenames = {
         "CrChiA_c01runab_28603.raw",
         "CrChiA_c01runab_28604.raw",
-        "CrChiA_c01runab_28605.raw",
-        "CrChiA_c01runab_28606.raw",
-        "CrChiA_c01runab_28607.raw",
-        "CrChiA_c01runab_28608.raw",
-        "CrChiA_c01runab_28609.raw",
-        "CrChiA_c01runab_28610.raw",
-        "CrChiA_c01runab_28611.raw",
-        "CrChiA_c01runab_28612.raw",
-        "CrChiA_c01runab_28613.raw"};
+        "CrChiA_c01runab_28605.raw"};
 
-        ohkl::Experiment experiment("CrChiA", "BioDiff");
+    ohkl::Experiment experiment("CrChiA", "BioDiff");
 
     ohkl::sptrDataSet data =
         std::make_shared<ohkl::DataSet>("CrChiA", experiment.getDiffractometer());

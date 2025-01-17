@@ -35,12 +35,12 @@
 
 TEST_CASE("test/data/TestShapeModel.cpp", "")
 {
-    const std::string filename = "CrChiA.ohkl";
-    ohkl::Experiment experiment("test", "BioDiff");
+    const std::string filename = "Trypsin-small.ohkl";
+    ohkl::Experiment experiment("Trypsin", "BioDiff");
     experiment.loadFromFile(filename);
 
-    ohkl::sptrUnitCell cell = experiment.getSptrUnitCell("accepted");
-    ohkl::sptrDataSet data = experiment.getData("testdata");
+    ohkl::sptrUnitCell cell = experiment.getSptrUnitCell("indexed");
+    ohkl::sptrDataSet data = experiment.getData("Scan I");
     data->initBuffer(true);
 
     auto* found_peaks = experiment.getPeakCollection("found");
@@ -74,7 +74,7 @@ TEST_CASE("test/data/TestShapeModel.cpp", "")
     ohkl::ShapeModel shapes = shape_builder->integrate(fit_peaks.getPeakList(), data);
     std::cout << shapes.numberOfPeaks() << "/" << found_peaks->numberOfPeaks()
               << " peaks used in ShapeModel" << std::endl;
-    CHECK(shapes.numberOfPeaks() == 260);
+    CHECK(shapes.numberOfPeaks() == 1248);
 
     const ohkl::DetectorEvent event(1100, 450, 8);
     // search for neighbours in radius 500 pixels, 5 frames
@@ -84,7 +84,7 @@ TEST_CASE("test/data/TestShapeModel.cpp", "")
     std::cout << "Ellipsoid: " << axis_lengths[0] << " x " << axis_lengths[1]
               << " x " << axis_lengths[2] << std::endl;
     // Check that the predicted ellipsoid has the right shape
-    CHECK_THAT(axis_lengths[0], Catch::Matchers::WithinAbs(0.45, 0.1));
-    CHECK_THAT(axis_lengths[1], Catch::Matchers::WithinAbs(0.60, 0.1));
-    CHECK_THAT(axis_lengths[2], Catch::Matchers::WithinAbs(0.43, 0.1));
+    CHECK_THAT(axis_lengths[0], Catch::Matchers::WithinAbs(0.56, 0.1));
+    CHECK_THAT(axis_lengths[1], Catch::Matchers::WithinAbs(0.75, 0.1));
+    CHECK_THAT(axis_lengths[2], Catch::Matchers::WithinAbs(0.51, 0.1));
 }

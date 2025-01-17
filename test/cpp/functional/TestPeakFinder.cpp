@@ -32,33 +32,27 @@
 TEST_CASE("test/data/TestPeakFinder.cpp", "")
 {
     const std::vector<std::string> filenames = {
-        "CrChiA_c01runab_28603.raw",
-        "CrChiA_c01runab_28604.raw",
-        "CrChiA_c01runab_28605.raw",
-        "CrChiA_c01runab_28606.raw",
-        "CrChiA_c01runab_28607.raw",
-        "CrChiA_c01runab_28608.raw",
-        "CrChiA_c01runab_28609.raw",
-        "CrChiA_c01runab_28610.raw",
-        "CrChiA_c01runab_28611.raw",
-        "CrChiA_c01runab_28612.raw",
-        "CrChiA_c01runab_28613.raw",
-        "CrChiA_c01runab_28614.raw",
-        "CrChiA_c01runab_28615.raw",
-        "CrChiA_c01runab_28616.raw",
-        "CrChiA_c01runab_28617.raw"};
-    ohkl::Experiment experiment("CrChiA", "BioDiff");
+        "p11202_00009983.tiff", "p11202_00009984.tiff", "p11202_00009985.tiff",
+        "p11202_00009986.tiff", "p11202_00009987.tiff", "p11202_00009988.tiff",
+        "p11202_00009989.tiff", "p11202_00009990.tiff", "p11202_00009991.tiff",
+        "p11202_00009992.tiff", "p11202_00009993.tiff", "p11202_00009994.tiff",
+        "p11202_00009995.tiff", "p11202_00009996.tiff", "p11202_00009997.tiff",
+        "p11202_00009998.tiff", "p11202_00009999.tiff", "p11202_00010000.tiff",
+        "p11202_00010001.tiff", "p11202_00010002.tiff"};
+
+    ohkl::Experiment experiment("Trypsin", "BioDiff");
 
     const ohkl::sptrDataSet data =
-        std::make_shared<ohkl::DataSet>("CrChiA", experiment.getDiffractometer());
+        std::make_shared<ohkl::DataSet>("Trypsin", experiment.getDiffractometer());
 
     ohkl::DataReaderParameters data_params;
-    data_params.data_format = ohkl::DataFormat::RAW;
-    data_params.wavelength = 2.669;
-    data_params.delta_omega = 0.3;
+    data_params.data_format = ohkl::DataFormat::TIFF;
+    data_params.wavelength = 2.67;
+    data_params.delta_omega = 0.4;
+    data_params.rebin_size = 2;
     data->setImageReaderParameters(data_params);
     for (const auto& file : filenames)
-        data->addFrame(file, ohkl::DataFormat::RAW);
+        data->addFrame(file, ohkl::DataFormat::TIFF);
     data->finishRead();
     experiment.addData(data);
 
@@ -77,5 +71,5 @@ TEST_CASE("test/data/TestPeakFinder.cpp", "")
     finder->find(experiment.getAllData()[0]);
     std::cout << finder->numberFound() << " peaks found" << std::endl;
 
-    CHECK(finder->numberFound() == 485);
+    CHECK(finder->numberFound() == 1210);
 }

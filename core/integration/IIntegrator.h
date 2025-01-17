@@ -40,6 +40,8 @@ struct ComputeResult {
     ComputeResult(const ComputeResult& other) = default;
     ComputeResult& operator=(const ComputeResult& other) = default;
 
+    std::string toString() const;
+
     //! Rejection flag for integration
     RejectionFlag integration_flag;
     //! Pixel sum integrated intensity after background subtraction
