@@ -38,6 +38,7 @@ class Profile;
  */
 
 class ISigmaIntegrator : public PixelSumIntegrator {
+    friend class UnitTest_ISigmaIntegrator;
  public:
     ISigmaIntegrator();
 

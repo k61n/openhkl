@@ -44,10 +44,12 @@ void UnitTest_Profile3DIntegrator::run()
     const int ref_npeaks = 1268;
 
     const int index_weak = 1131;
+    const int ref_nprofiles_weak = 24;
     const ohkl::MillerIndex hkl_weak = {7, 16, -17};
     const Eigen::Vector3d ref_weak_center = {835.4216508288, 668.4556875384, 2.8655152724};
     const ohkl::Intensity ref_weak_intensity = {-1255.0754647948, 3664.9743762012};
     const int index_strong = 1842;
+    const int ref_nprofiles_strong = 24;
     const ohkl::MillerIndex hkl_strong = {2, -12, -5};
     const Eigen::Vector3d ref_strong_center = {1478.0614852674, 521.7100719425, 4.0832852392};
     const ohkl::Intensity ref_strong_intensity = {289825.4165382066, 4103414.0567727922};
@@ -73,7 +75,6 @@ void UnitTest_Profile3DIntegrator::run()
 
     std::cout << weak_peak->shape().center().transpose() << std::endl;
     std::cout << strong_peak->shape().center().transpose() << std::endl;
-
 
     CHECK(weak_peak->hkl().h() == hkl_weak.h());
     CHECK(weak_peak->hkl().k() == hkl_weak.k());
@@ -113,11 +114,11 @@ void UnitTest_Profile3DIntegrator::run()
 
     DetectorEvent weak_peak_event(weak_peak_center);
     Profile* weak_peak_profile = shapes.meanProfile(weak_peak_event);
-    CHECK(weak_peak_profile->profile3d().nProfiles() == 24);
+    CHECK(weak_peak_profile->profile3d().nProfiles() == ref_nprofiles_weak);
 
     DetectorEvent strong_peak_event(weak_peak_center);
     Profile* strong_peak_profile = shapes.meanProfile(weak_peak_event);
-    CHECK(strong_peak_profile->profile3d().nProfiles() == 24);
+    CHECK(strong_peak_profile->profile3d().nProfiles() == ref_nprofiles_strong);
 
 
     IntegrationRegion weak_peak_region(weak_peak, 5.5, 1.3, 2.3, RegionType::FixedEllipsoid);

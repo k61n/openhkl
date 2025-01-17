@@ -27,7 +27,6 @@ Profile1D::Profile1D(const Intensity& mean_background, double sigma_max, size_t 
     , _mean_profile()
     , _nprofiles(0)
 {
-    
     const double dr3 = sigma_max * sigma_max * sigma_max / num;
 
     for (size_t i = 0; i < num + 1; ++i)

@@ -51,6 +51,8 @@ class Profile1D {
     std::vector<Intensity> profile() const;
     //! Return the rocking curve for a mean profile
     std::vector<Intensity> meanProfile() const { return _mean_profile; };
+    //! Return the number of profiles used to construct this profile
+    int nProfiles() const { return _nprofiles; };
     //! Reset the profile to zero
     void reset();
 
