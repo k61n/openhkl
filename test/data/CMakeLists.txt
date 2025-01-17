@@ -43,6 +43,7 @@ set(test_files
     509192.nxs
     509193.nxs
     509194.nxs
+    Trypsin-small.ohkl
     Trypsin.ohkl
     Trypsin-pxsum.ohkl)
 
