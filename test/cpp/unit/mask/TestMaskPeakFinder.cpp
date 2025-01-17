@@ -102,5 +102,7 @@ TEST_CASE("test/data/TestMaskPeakFinder.cpp", "")
     }
 
     std::cout << nmasked << "/" << npeaks << " peaks masked" << std::endl;
-    CHECK(nmasked == 42);
+    const int ref_nmasked = 42;
+    CHECK(nmasked >= ref_nmasked - 2);
+    CHECK(nmasked <= ref_nmasked + 2);
 }

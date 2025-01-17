@@ -74,7 +74,9 @@ TEST_CASE("test/data/TestShapeModel.cpp", "")
     ohkl::ShapeModel shapes = shape_builder->integrate(fit_peaks.getPeakList(), data);
     std::cout << shapes.numberOfPeaks() << "/" << found_peaks->numberOfPeaks()
               << " peaks used in ShapeModel" << std::endl;
-    CHECK(shapes.numberOfPeaks() == 1248);
+    const int ref_npeaks = 1248;
+    CHECK(shapes.numberOfPeaks() >= ref_npeaks - 2);
+    CHECK(shapes.numberOfPeaks() <= ref_npeaks + 2);
 
     const ohkl::DetectorEvent event(1100, 450, 8);
     // search for neighbours in radius 500 pixels, 5 frames

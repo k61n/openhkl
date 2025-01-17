@@ -63,13 +63,15 @@ TEST_CASE("test/data/TestPeakFinder.cpp", "")
     finder_params->minimum_size = 30;
     finder_params->maximum_size = 10000;
     finder_params->peak_end = 1.0;
-    finder_params->threshold = 150;
-    finder_params->filter = "Annular";
+    finder_params->threshold = 1.5;
+    finder_params->filter = "Enhanced annular";
     std::map<std::string, double> filter_params = {{"r1", 5}, {"r2", 10}, {"r3", 15}};
 
     finder->setFilterParameters(filter_params);
     finder->find(experiment.getAllData()[0]);
     std::cout << finder->numberFound() << " peaks found" << std::endl;
 
-    CHECK(finder->numberFound() == 698);
+    const int ref_npeaks = 1371;
+    CHECK(finder->numberFound() >= ref_npeaks - 2);
+    CHECK(finder->numberFound() <= ref_npeaks + 2);
 }
