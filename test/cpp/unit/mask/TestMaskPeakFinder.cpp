@@ -36,7 +36,7 @@
 //#define OUTPUT_INTERMEDIATE 1
 
 
-TEST_CASE("test/data/TestPeakFinder2D.cpp", "")
+TEST_CASE("test/data/TestMaskPeakFinder.cpp", "")
 {
     const std::vector<std::string> filenames = {
         "p11202_00009983.tiff", "p11202_00009984.tiff", "p11202_00009985.tiff",
@@ -78,7 +78,7 @@ TEST_CASE("test/data/TestPeakFinder2D.cpp", "")
     finder_params->minimum_size = 30;
     finder_params->maximum_size = 10000;
     finder_params->peak_end = 1.0;
-    finder_params->threshold = 1.0;
+    finder_params->threshold = 1.2;
     finder_params->r1 = 5.0;
     finder_params->r2 = 10.0;
     finder_params->r3 = 15.0;
@@ -102,5 +102,5 @@ TEST_CASE("test/data/TestPeakFinder2D.cpp", "")
     }
 
     std::cout << nmasked << "/" << npeaks << " peaks masked" << std::endl;
-    CHECK(nmasked == 148);
+    CHECK(nmasked == 42);
 }

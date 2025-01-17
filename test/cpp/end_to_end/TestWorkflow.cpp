@@ -277,6 +277,6 @@ TEST_CASE("test/data/TestWorkflow.cpp", "")
             merger->sumShellQuality()->shells.at(idx).Completeness,
             Catch::Matchers::WithinAbs(ref_completeness.at(idx), eps_stat));
     }
-    experiment.saveToFile("Trypsin-small.ohkl"); // Regenerate the end-to-end test file
+    // experiment.saveToFile("Trypsin-small.ohkl"); // Regenerate the end-to-end test file
 }
 

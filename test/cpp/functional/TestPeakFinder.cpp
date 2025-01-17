@@ -63,7 +63,7 @@ TEST_CASE("test/data/TestPeakFinder.cpp", "")
     finder_params->minimum_size = 30;
     finder_params->maximum_size = 10000;
     finder_params->peak_end = 1.0;
-    finder_params->threshold = 80;
+    finder_params->threshold = 100;
     finder_params->filter = "Annular";
     std::map<std::string, double> filter_params = {{"r1", 5}, {"r2", 10}, {"r3", 15}};
 
@@ -71,5 +71,5 @@ TEST_CASE("test/data/TestPeakFinder.cpp", "")
     finder->find(experiment.getAllData()[0]);
     std::cout << finder->numberFound() << " peaks found" << std::endl;
 
-    CHECK(finder->numberFound() == 1210);
+    CHECK(finder->numberFound() == 1001);
 }
