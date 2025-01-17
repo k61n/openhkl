@@ -33,6 +33,7 @@ namespace ohkl {
  *  profile.
  */
 class Profile1DIntegrator : public IIntegrator {
+    friend class UnitTest_Profile1DIntegrator;
  public:
     //! Construct integrator
     Profile1DIntegrator();

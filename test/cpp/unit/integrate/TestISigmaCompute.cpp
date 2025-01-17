@@ -2,8 +2,8 @@
 //
 //  OpenHKL: data reduction for single crystal diffraction
 //
-//! @file      test/cpp/unit/integrate/TestProfile3DCompute.cpp
-//! @brief     Test compute method for 3D profile sum integration
+//! @file      test/cpp/unit/integrate/TestISigmaCompute.cpp
+//! @brief     Test compute method for I/sigma integration
 //!
 //! @homepage  https://openhkl.org
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -14,8 +14,8 @@
 
 #include "core/detector/DetectorEvent.h"
 #include "core/integration/IIntegrator.h"
+#include "core/integration/ISigmaIntegrator.h"
 #include "core/integration/Profile1DIntegrator.h"
-#include "core/integration/Profile3DIntegrator.h"
 #include "test/cpp/catch.hpp"
 
 #include "core/data/DataSet.h"
@@ -32,27 +32,27 @@
 
 namespace ohkl {
 
-class UnitTest_Profile3DIntegrator {
+class UnitTest_ISigmaIntegrator {
  public:
     static void run();
 };
 
-void UnitTest_Profile3DIntegrator::run()
+void UnitTest_ISigmaIntegrator::run()
 {
     const double eps = 1.0e-5;
 
     const int ref_npeaks = 1268;
 
     const int index_weak = 1131;
-    const int ref_nprofiles_weak = 24;
+    const int ref_nprofiles_weak = 25;
     const ohkl::MillerIndex hkl_weak = {7, 16, -17};
     const Eigen::Vector3d ref_weak_center = {835.4216508288, 668.4556875384, 2.8655152724};
-    const ohkl::Intensity ref_weak_intensity = {-1255.0754647948, 3664.9743762012};
+    const ohkl::Intensity ref_weak_intensity = {5185.8, 207.432};
     const int index_strong = 1842;
-    const int ref_nprofiles_strong = 24;
+    const int ref_nprofiles_strong = 25;
     const ohkl::MillerIndex hkl_strong = {2, -12, -5};
     const Eigen::Vector3d ref_strong_center = {1478.0614852674, 521.7100719425, 4.0832852392};
-    const ohkl::Intensity ref_strong_intensity = {289825.4165382066, 4103414.0567727922};
+    const ohkl::Intensity ref_strong_intensity = {11276.64, 451.0656};
 
     const std::string filename = "Trypsin-small.ohkl";
     Experiment experiment("Trypsin", "BioDiff");
@@ -75,6 +75,7 @@ void UnitTest_Profile3DIntegrator::run()
 
     std::cout << weak_peak->shape().center().transpose() << std::endl;
     std::cout << strong_peak->shape().center().transpose() << std::endl;
+
 
     CHECK(weak_peak->hkl().h() == hkl_weak.h());
     CHECK(weak_peak->hkl().k() == hkl_weak.k());
@@ -113,13 +114,12 @@ void UnitTest_Profile3DIntegrator::run()
     CHECK(shapes.numberOfPeaks() < ref_npeaks + 2);
 
     DetectorEvent weak_peak_event(weak_peak_center);
-    Profile* weak_peak_profile = shapes.meanProfile(weak_peak_event);
-    CHECK(weak_peak_profile->profile3d().nProfiles() == ref_nprofiles_weak);
+    Profile* weak_peak_profile = shapes.meanProfile1D(weak_peak_event);
+    CHECK(weak_peak_profile->profile1d().nProfiles() == ref_nprofiles_weak);
 
     DetectorEvent strong_peak_event(weak_peak_center);
-    Profile* strong_peak_profile = shapes.meanProfile(weak_peak_event);
-    CHECK(strong_peak_profile->profile3d().nProfiles() == ref_nprofiles_strong);
-
+    Profile* strong_peak_profile = shapes.meanProfile1D(weak_peak_event);
+    CHECK(strong_peak_profile->profile1d().nProfiles() == ref_nprofiles_strong);
 
     IntegrationRegion weak_peak_region(weak_peak, 5.5, 1.3, 2.3, RegionType::FixedEllipsoid);
     IntegrationRegion strong_peak_region(strong_peak, 5.5, 1.3, 2.3, RegionType::FixedEllipsoid);
@@ -134,7 +134,7 @@ void UnitTest_Profile3DIntegrator::run()
     }
 
     IntegrationParameters integration_params;
-    integration_params.integrator_type = IntegratorType::Profile3D;
+    integration_params.integrator_type = IntegratorType::ISigma;
     integration_params.region_type = ohkl::RegionType::FixedEllipsoid;
     integration_params.fixed_peak_end = 5.5;
     integration_params.fixed_bkg_begin = 1.3;
@@ -142,7 +142,7 @@ void UnitTest_Profile3DIntegrator::run()
     integration_params.use_max_d = false;
     integration_params.use_max_strength = false;
 
-    Profile3DIntegrator integrator;
+    ISigmaIntegrator integrator;
     integrator.setParameters(integration_params);
     ComputeResult weak_peak_result =
         integrator.compute(weak_peak, weak_peak_profile, weak_peak_region);
@@ -177,8 +177,8 @@ void UnitTest_Profile3DIntegrator::run()
 }
 
 
-TEST_CASE("test/integrate/TestProfile3DCompute.cpp", "")
+TEST_CASE("test/integrate/TestISigmaCompute.cpp", "")
 {
-    UnitTest_Profile3DIntegrator::run();
+    UnitTest_ISigmaIntegrator::run();
 }
 }
