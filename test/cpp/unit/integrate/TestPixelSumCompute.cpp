@@ -12,18 +12,18 @@
 //
 //  ***********************************************************************************************
 
-#include "core/integration/IIntegrator.h"
-#include "core/integration/PixelSumIntegrator.h"
-#include "tables/crystal/MillerIndex.h"
 #include "test/cpp/catch.hpp"
 
 #include "core/data/DataSet.h"
 #include "core/detector/Detector.h"
 #include "core/experiment/Experiment.h"
 #include "core/instrument/Diffractometer.h"
+#include "core/integration/IIntegrator.h"
+#include "core/integration/PixelSumIntegrator.h"
 #include "core/peak/IntegrationRegion.h"
 #include "core/peak/Peak3D.h"
 #include "core/shape/PeakCollection.h"
+#include "tables/crystal/MillerIndex.h"
 
 #include <iostream>
 

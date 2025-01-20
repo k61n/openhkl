@@ -12,12 +12,12 @@
 //
 //  ***********************************************************************************************
 
-#include "tables/crystal/MillerIndex.h"
 #include "test/cpp/catch.hpp"
 
 #include "core/data/DataSet.h"
 #include "core/experiment/Experiment.h"
 #include "core/shape/PeakCollection.h"
+#include "tables/crystal/MillerIndex.h"
 
 #include <iostream>
 
