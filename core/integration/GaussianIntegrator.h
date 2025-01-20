@@ -24,6 +24,7 @@ namespace ohkl {
 
 /*! \brief Compute integrated intensity by fitting to an analytic 3D Gaussian.*/
 class GaussianIntegrator : public IIntegrator {
+    friend class UnitTest_GaussianIntegrator;
  public:
     GaussianIntegrator();
 

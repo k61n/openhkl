@@ -31,12 +31,12 @@
 
 TEST_CASE("test/data/TestPeakFinder.cpp", "")
 {
-    const std::string filename = "CrChiA.ohkl";
-    ohkl::Experiment experiment("test", "BioDiff");
+    const std::string filename = "Trypsin-small.ohkl";
+    ohkl::Experiment experiment("Trypsin", "BioDiff");
     experiment.loadFromFile(filename);
 
-    ohkl::sptrUnitCell cell = experiment.getSptrUnitCell("accepted");
-    ohkl::sptrDataSet data = experiment.getData("testdata");
+    ohkl::sptrUnitCell cell = experiment.getSptrUnitCell("indexed");
+    ohkl::sptrDataSet data = experiment.getData("Scan I");
 
     auto* predictor = experiment.predictor();
     auto* params = predictor->parameters();
@@ -44,10 +44,6 @@ TEST_CASE("test/data/TestPeakFinder.cpp", "")
     params->d_max = 50.0;
     predictor->predictPeaks(data, cell);
 
-    int expected_n_peaks = 5054;
-    int eps = 10;
-
     std::cout << predictor->numberOfPredictedPeaks() << " peaks predicted" << std::endl;
-    CHECK(predictor->numberOfPredictedPeaks() >= expected_n_peaks - eps);
-    CHECK(predictor->numberOfPredictedPeaks() <= expected_n_peaks + eps);
+    CHECK(predictor->numberOfPredictedPeaks() == 6180);
 }

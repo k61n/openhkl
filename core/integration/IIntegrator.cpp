@@ -70,6 +70,24 @@ ComputeResult::ComputeResult()
 {
 }
 
+std::string ComputeResult::toString() const
+{
+    std::ostringstream oss;
+    oss << "Status              " << std::setw(14) << static_cast<int>(integration_flag) << std::endl
+        << "Integrator type     " << std::setw(14) << static_cast<int>(integrator_type) << std::endl
+        << "Sum intensity       " << std::fixed << std::setw(14) << std::setprecision(3)
+        << sum_intensity.value() << " +/- " << sum_intensity.sigma() << std::endl
+        << "Sum background      " << std::fixed << std::setw(14) << std::setprecision(3)
+        << sum_background.value() << " +/- " << sum_background.sigma() << std::endl
+        << "Background gradient " << std::fixed << std::setw(14) << std::setprecision(3)
+        << bkg_gradient.value() << " +/- " << bkg_gradient.sigma() << std::endl
+        << "Profile intensity   " << std::fixed << std::setw(14) << std::setprecision(3)
+        << profile_intensity.value() << " +/- " << profile_intensity.sigma() << std::endl
+        << "Profile background  " << std::fixed << std::setw(14) << std::setprecision(3)
+        << profile_background.value() << " +/- " << profile_background.sigma() << std::endl;
+}
+
+
 IIntegrator::IIntegrator()
     : _handler(nullptr)
     , _params{}

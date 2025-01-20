@@ -74,6 +74,8 @@ class TiffDataReader : public IDataReader {
     TiffMetadata _tiff_meta_data;
 
     TIFF* _tiff;
+
+    bool _resolution_set;
 };
 
 } // namespace ohkl

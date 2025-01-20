@@ -41,7 +41,12 @@ void TiffMetadata::log(const Level& level) const
     ohklLog(level, "npixels         = ", npixels);
 }
 
-TiffDataReader::TiffDataReader() : IDataReader("::NO-FILENAME::"), _tiff(nullptr) { }
+TiffDataReader::TiffDataReader()
+    : IDataReader("::NO-FILENAME::")
+    , _tiff(nullptr)
+    , _resolution_set(false)
+{
+}
 
 // only used when we need to read file resolutions of files before creating DataSet
 std::vector<std::pair<int, int>> TiffDataReader::readFileResolutions(
@@ -154,6 +159,18 @@ void TiffDataReader::addFrame(const std::string& filename)
     _dataset_out->datashape[2] = nframes;
 
     const std::size_t idx = nframes - 1;
+
+    if (!_resolution_set) {
+        auto tags = scanFile(filename);
+        std::size_t target_cols = tags.image_width / _parameters.rebin_size;
+        std::size_t target_rows = tags.image_length / _parameters.rebin_size;
+
+        Detector* detector = _dataset_out->diffractometer()->detector();
+        detector->setNCols(target_cols);
+        detector->setNRows(target_rows);
+
+        _resolution_set = true;
+    }
 
     _dataset_out->diffractometer()->addSampleAngles(idx, _parameters);
     _dataset_out->diffractometer()->addDetectorAngles(_parameters);

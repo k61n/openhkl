@@ -28,8 +28,8 @@
 
 TEST_CASE("test/data/TestFilter.cpp", "")
 {
-    const std::string filename = "CrChiA.ohkl";
-    ohkl::Experiment experiment("test", "BioDiff");
+    const std::string filename = "Trypsin-small.ohkl";
+    ohkl::Experiment experiment("Trypsin", "BioDiff");
     experiment.loadFromFile(filename);
 
     auto* peaks = experiment.getPeakCollection("found");
@@ -48,7 +48,7 @@ TEST_CASE("test/data/TestFilter.cpp", "")
     filter->filter(peaks);
     std::cout << peaks->numberCaughtByFilter() << "/" << npeaks << " in d range 2 - 40"
               << std::endl;
-    CHECK(peaks->numberCaughtByFilter() == 404);
+    CHECK(peaks->numberCaughtByFilter() == 1509);
 
     filter->resetFilterFlags();
     filter->resetFiltering(peaks);
@@ -59,7 +59,7 @@ TEST_CASE("test/data/TestFilter.cpp", "")
     filter->filter(peaks);
     std::cout << peaks->numberCaughtByFilter() << "/" << npeaks << " with strength 5 - 10000"
               << std::endl;
-    CHECK(peaks->numberCaughtByFilter() == 413);
+    CHECK(peaks->numberCaughtByFilter() == 1512);
 
     filter->resetFilterFlags();
     filter->resetFiltering(peaks);
@@ -70,7 +70,7 @@ TEST_CASE("test/data/TestFilter.cpp", "")
     filter->filter(peaks);
     std::cout << peaks->numberCaughtByFilter() << "/" << npeaks << " in frames 3 - 10"
               << std::endl;
-    CHECK(peaks->numberCaughtByFilter() == 222);
+    CHECK(peaks->numberCaughtByFilter() == 585);
 
     filter->resetFilterFlags();
     filter->resetFiltering(peaks);
@@ -80,7 +80,7 @@ TEST_CASE("test/data/TestFilter.cpp", "")
     filter->filter(peaks);
     std::cout << peaks->numberCaughtByFilter() << "/" << npeaks << " not rejected"
               << std::endl;
-    CHECK(peaks->numberCaughtByFilter() == 247);
+    CHECK(peaks->numberCaughtByFilter() == 1148);
 
     filter->resetFilterFlags();
     filter->resetFiltering(peaks);
@@ -91,5 +91,5 @@ TEST_CASE("test/data/TestFilter.cpp", "")
     filter->filter(peaks);
     std::cout << peaks->numberCaughtByFilter() << "/" << npeaks << " with gradient < 6.5"
               << std::endl;
-    CHECK(peaks->numberCaughtByFilter() == 492);
+    CHECK(peaks->numberCaughtByFilter() == 1689);
 }

@@ -36,34 +36,37 @@
 //#define OUTPUT_INTERMEDIATE 1
 
 
-TEST_CASE("test/data/TestPeakFinder2D.cpp", "")
+TEST_CASE("test/data/TestMaskPeakFinder.cpp", "")
 {
     const std::vector<std::string> filenames = {
-        "CrChiA_c01runab_28603.raw", "CrChiA_c01runab_28604.raw", "CrChiA_c01runab_28605.raw",
-        "CrChiA_c01runab_28606.raw", "CrChiA_c01runab_28607.raw", "CrChiA_c01runab_28608.raw",
-        "CrChiA_c01runab_28609.raw", "CrChiA_c01runab_28610.raw", "CrChiA_c01runab_28611.raw",
-        "CrChiA_c01runab_28612.raw", "CrChiA_c01runab_28613.raw", "CrChiA_c01runab_28614.raw",
-        "CrChiA_c01runab_28615.raw", "CrChiA_c01runab_28616.raw", "CrChiA_c01runab_28617.raw"};
+        "p11202_00009983.tiff", "p11202_00009984.tiff", "p11202_00009985.tiff",
+        "p11202_00009986.tiff", "p11202_00009987.tiff", "p11202_00009988.tiff",
+        "p11202_00009989.tiff", "p11202_00009990.tiff", "p11202_00009991.tiff",
+        "p11202_00009992.tiff", "p11202_00009993.tiff", "p11202_00009994.tiff",
+        "p11202_00009995.tiff", "p11202_00009996.tiff", "p11202_00009997.tiff",
+        "p11202_00009998.tiff", "p11202_00009999.tiff", "p11202_00010000.tiff",
+        "p11202_00010001.tiff", "p11202_00010002.tiff"};
 
-    ohkl::Experiment experiment("CrChiA", "BioDiff");
+    ohkl::Experiment experiment("Trypsin", "BioDiff");
 
     const ohkl::sptrDataSet data =
-        std::make_shared<ohkl::DataSet>("CrChiA", experiment.getDiffractometer());
+        std::make_shared<ohkl::DataSet>("Trypsin", experiment.getDiffractometer());
 
     ohkl::DataReaderParameters data_params;
-    data_params.data_format = ohkl::DataFormat::RAW;
-    data_params.wavelength = 2.667;
-    data_params.delta_omega = 0.3;
+    data_params.data_format = ohkl::DataFormat::TIFF;
+    data_params.wavelength = 2.67;
+    data_params.delta_omega = 0.4;
+    data_params.rebin_size = 2;
     data->setImageReaderParameters(data_params);
     for (const auto& filename : filenames)
-        data->addFrame(filename, ohkl::DataFormat::RAW);
+        data->addFrame(filename, ohkl::DataFormat::TIFF);
     data->finishRead();
     experiment.addData(data);
 
     // mask edges and beam stop
-    ohkl::AABB box1 = {{0, 0, 0}, {300, 900, 15}};
-    ohkl::AABB box2 = {{2200, 0, 0}, {2500, 900, 15}};
-    ohkl::AABB ellipse = {{1200, 400, 0}, {1300, 500, 15}};
+    ohkl::AABB box1 = {{0, 0, 0}, {300, 900, 20}};
+    ohkl::AABB box2 = {{2200, 0, 0}, {2500, 900, 20}};
+    ohkl::AABB ellipse = {{1200, 400, 0}, {1300, 500, 20}};
     data->addMask(new ohkl::BoxMask(box1));
     data->addMask(new ohkl::BoxMask(box2));
     data->addMask(new ohkl::EllipseMask(ellipse));
@@ -75,10 +78,11 @@ TEST_CASE("test/data/TestPeakFinder2D.cpp", "")
     finder_params->minimum_size = 30;
     finder_params->maximum_size = 10000;
     finder_params->peak_end = 1.0;
-    finder_params->threshold = 80;
-    finder_params->filter = "Annular";
-    std::map<std::string, double> filter_params = {{"r1", 5}, {"r2", 10}, {"r3", 15}};
-    finder->setFilterParameters(filter_params);
+    finder_params->threshold = 1.2;
+    finder_params->r1 = 5.0;
+    finder_params->r2 = 10.0;
+    finder_params->r3 = 15.0;
+    finder_params->filter = "Enhanced annular";
 
     finder->find(experiment.getAllData()[0]);
 
@@ -89,14 +93,16 @@ TEST_CASE("test/data/TestPeakFinder2D.cpp", "")
     experiment.acceptFoundPeaks("found");
     ohkl::PeakCollection* peaks = experiment.getPeakCollection("found");
 
-    ohkl::PeakFilter* filter = experiment.peakFilter();
-    filter->flags()->masked = true;
-    filter->flags()->enabled = false;
-    filter->filter(peaks);
-
+    int nmasked = 0;
     int npeaks = peaks->numberOfPeaks();
-    int nrejected = peaks->numberCaughtByFilter();
 
-    std::cout << nrejected << "/" << npeaks << " peaks masked" << std::endl;
-    CHECK(nrejected >= 38);
+    for (auto* peak : peaks->getPeakList()) {
+        if (peak->rejectionFlag() == ohkl::RejectionFlag::Masked)
+            ++nmasked;
+    }
+
+    std::cout << nmasked << "/" << npeaks << " peaks masked" << std::endl;
+    const int ref_nmasked = 42;
+    CHECK(nmasked >= ref_nmasked - 2);
+    CHECK(nmasked <= ref_nmasked + 2);
 }

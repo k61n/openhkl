@@ -119,6 +119,10 @@ class AutoIndexer {
     void acceptSolution(const sptrUnitCell solution, const std::vector<ohkl::Peak3D*>& peaks);
     //! Set solution to be unit cell for given peak collection
     void acceptSolution(const sptrUnitCell solution, PeakCollection* peaks);
+    //! Return highest ranked solution that matches given reference cell parameters
+    sptrUnitCell firstGoodSolution(
+        double a, double b, double c, double alpha, double beta, double gamma, double length_tol,
+        double angle_tol, const std::string& bravais) const;
     //! Check if list of solutions contains reference unit cell. If it does,
     //! return a pointer, otherwise return nullptr
     sptrUnitCell goodSolution(const UnitCell* reference_cell, double length_tol, double angle_tol);

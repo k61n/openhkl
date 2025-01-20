@@ -13,10 +13,12 @@
 //  ***********************************************************************************************
 
 #include "core/algo/AutoIndexer.h"
+
 #include "base/fit/FitParameters.h"
 #include "base/fit/Minimizer.h"
 #include "base/geometry/ReciprocalVector.h"
 #include "base/utils/Logger.h"
+#include "base/utils/Units.h"
 #include "core/algo/FFTIndexing.h"
 #include "core/data/DataSet.h" // peak->data()->interpolatedState
 #include "core/instrument/InstrumentState.h"
@@ -383,6 +385,32 @@ void AutoIndexer::acceptSolution(const sptrUnitCell solution, PeakCollection* pe
     for (auto* peak : peaks->getPeakList())
         peak->setUnitCell(solution);
     peaks->setIndexed(true);
+}
+
+sptrUnitCell AutoIndexer::firstGoodSolution(
+    double a, double b, double c, double alpha, double beta, double gamma, double length_tol,
+    double angle_tol, const std::string& bravais) const
+{
+    for (const auto& solution : _solutions) {
+        auto character = solution.first->character();
+        auto bravais_type = solution.first->bravaisTypeSymbol();
+        if (bravais != bravais_type)
+            continue;
+        if (std::fabs(a - character.a) > length_tol)
+            continue;
+        if (std::fabs(b - character.b) > length_tol)
+            continue;
+        if (std::fabs(c - character.c) > length_tol)
+            continue;
+        if (std::fabs(alpha - character.alpha / deg) > angle_tol)
+            continue;
+        if (std::fabs(beta - character.beta / deg) > angle_tol)
+            continue;
+        if (std::fabs(gamma - character.gamma / deg) > angle_tol)
+            continue;
+        return solution.first;
+    }
+    return nullptr;
 }
 
 sptrUnitCell AutoIndexer::goodSolution(

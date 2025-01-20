@@ -47,6 +47,7 @@ namespace ohkl {
  *  4. Repeat from 2 until convergence
  */
 class Profile3DIntegrator : public IIntegrator {
+    friend class UnitTest_Profile3DIntegrator;
  public:
     Profile3DIntegrator() = default;
 

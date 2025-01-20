@@ -34,18 +34,18 @@
 
 TEST_CASE("test/data/TestAutoIndexer.cpp", "")
 {
-    const std::string filename = "CrChiA.ohkl";
-    ohkl::Experiment experiment("test", "BioDiff");
+    const std::string filename = "Trypsin-small.ohkl";
+    ohkl::Experiment experiment("Trypsin", "BioDiff");
     experiment.loadFromFile(filename);
 
     ohkl::UnitCell reference_cell;
     reference_cell.setParameters(
-        57.96, 65.12, 86.52, 90.0 * ohkl::deg, 90.0 * ohkl::deg, 90.0 * ohkl::deg);
+        54.90, 58.47, 67.41, 90.0 * ohkl::deg, 90.0 * ohkl::deg, 90.0 * ohkl::deg);
     reference_cell.setSpaceGroup(ohkl::SpaceGroup{"P 21 21 21"});
 
     auto data = experiment.getAllData()[0];
     auto* found_peaks = experiment.getPeakCollection("found");
-    CHECK(found_peaks->numberOfPeaks() == 492);
+    CHECK(found_peaks->numberOfPeaks() == 1777);
 
     auto* indexer = experiment.autoIndexer();
     auto* params = indexer->parameters();

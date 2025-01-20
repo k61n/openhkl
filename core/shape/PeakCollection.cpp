@@ -14,6 +14,7 @@
 
 #include "core/shape/PeakCollection.h"
 
+#include "base/algo/MostFrequent.h"
 #include "base/utils/Logger.h"
 #include "core/data/DataSet.h"
 #include "core/integration/IIntegrator.h"
@@ -147,6 +148,15 @@ int PeakCollection::numberCaughtByFilter() const
 int PeakCollection::numberRejectedByFilter() const
 {
     return numberOfPeaks() - numberCaughtByFilter();
+}
+
+RejectionFlag PeakCollection::mostFrequentRejection() const
+{
+    std::vector<int> flags;
+    for (const auto& peak : _peaks)
+        flags.push_back(static_cast<int>(peak->rejectionFlag()));
+    std::pair<int, int> result = mostFrequentElement(flags, 0);
+    return static_cast<RejectionFlag>(result.first);
 }
 
 MetaData& PeakCollection::metadata()
