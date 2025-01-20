@@ -39,6 +39,7 @@
 #include "test/cpp/catch.hpp"
 
 #include <Eigen/Dense>
+#include <algorithm>
 #include <memory>
 #include <string>
 #include <vector>
@@ -86,6 +87,7 @@ TEST_CASE("test/data/TestWorkflow.cpp", "")
         if (std::regex_search(file.path().string(), regexpr))
             filenames.push_back(file.path().string());
     }
+    std::sort(filenames.begin(), filenames.end());
     CHECK(filenames.size() == nfiles);
 
     ohkl::Experiment experiment(expt_name, diff_name);
