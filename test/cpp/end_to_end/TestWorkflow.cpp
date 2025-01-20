@@ -29,6 +29,7 @@
 #include "core/loader/IDataReader.h"
 #include "core/loader/RawDataReader.h"
 #include "core/peak/IntegrationRegion.h"
+#include "core/peak/Peak3D.h"
 #include "core/shape/PeakCollection.h"
 #include "core/shape/Predictor.h"
 #include "core/shape/ShapeModel.h"
@@ -152,6 +153,8 @@ TEST_CASE("test/data/TestWorkflow.cpp", "")
     integrator->integrateFoundPeaks(finder);
     experiment.acceptFoundPeaks(found_peaks_name);
     ohkl::PeakCollection* found_peaks = experiment.getPeakCollection(found_peaks_name);
+    ohkl::RejectionFlag most_frequent = found_peaks->mostFrequentRejection();
+    std::cout << "Most frequent rejection flag = " << static_cast<int>(most_frequent) << std::endl;
     CHECK(found_peaks->numberOfValid() < ref_found_integrated_peaks + eps_peaks);
     CHECK(found_peaks->numberOfValid() > ref_found_integrated_peaks - eps_peaks);
     std::cout << "Successfully integrated " << found_peaks->numberOfValid() << " peaks"

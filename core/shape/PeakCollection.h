@@ -108,10 +108,13 @@ class PeakCollection {
     int numberOfValid() const;
     //! Return the number of invalid peaks
     int numberOfInvalid() const;
-    // Return number of peaks caught by filters
+    //! Return number of peaks caught by filters
     int numberCaughtByFilter() const;
-    // Return number of peaks rejected by filters
+    //! Return number of peaks rejected by filters
     int numberRejectedByFilter() const;
+    //! Return most frequent rejection flag
+    RejectionFlag mostFrequentRejection() const;
+
 
     //! Return a fresh generated pointer to metadata
     MetaData& metadata();
