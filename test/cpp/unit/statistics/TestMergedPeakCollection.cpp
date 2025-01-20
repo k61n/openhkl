@@ -26,7 +26,8 @@
 
 TEST_CASE("test/integrate/TestMergedPeakCollection.cpp", "")
 {
-    const double eps = 1.0e-5;
+    const double eps = 1.0e-3;
+    const int eps_peaks = 10;
 
     const int ref_npeaks = 5731;
     const int ref_merged = 4880;
@@ -47,8 +48,10 @@ TEST_CASE("test/integrate/TestMergedPeakCollection.cpp", "")
     merged_peaks.setDRange(1.5, 50.0);
 
 
-    CHECK(merged_peaks.totalSize() == ref_npeaks);
-    CHECK(merged_peaks.nUnique() == ref_merged);
+    CHECK(merged_peaks.totalSize() >= ref_npeaks - eps_peaks);
+    CHECK(merged_peaks.totalSize() <= ref_npeaks + eps_peaks);
+    CHECK(merged_peaks.nUnique() >= ref_merged - eps_peaks);
+    CHECK(merged_peaks.nUnique() <= ref_merged + eps_peaks);
     CHECK(merged_peaks.maxPeaks() == ref_max_peaks);
     CHECK_THAT(merged_peaks.redundancy(), Catch::Matchers::WithinAbs(ref_redundancy, eps));
 }

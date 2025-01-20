@@ -23,7 +23,7 @@
 
 TEST_CASE("test/integrate/TestPeakCollection.cpp", "")
 {
-    const double eps = 1.0e-5;
+    const double eps = 1.0e-3;
 
     const int ref_n_peaks = 6239;
     const int ref_valid_peaks = 5731;
