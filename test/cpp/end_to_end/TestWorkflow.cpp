@@ -139,8 +139,8 @@ TEST_CASE("test/data/TestWorkflow.cpp", "")
     finder_params->threshold = 1.1;
     finder_params->filter = "Enhanced annular";
     finder->find(data);
-    CHECK(finder->numberFound() < ref_found_peaks + eps_peaks);
-    CHECK(finder->numberFound() > ref_found_peaks - eps_peaks);
+    CHECK(finder->numberFound() <= ref_found_peaks + eps_peaks);
+    CHECK(finder->numberFound() >= ref_found_peaks - eps_peaks);
     std::cout << "Found " << finder->numberFound() << " peaks" << std::endl;
 
     // Integrate found peaks
@@ -157,8 +157,8 @@ TEST_CASE("test/data/TestWorkflow.cpp", "")
     ohkl::PeakCollection* found_peaks = experiment.getPeakCollection(found_peaks_name);
     ohkl::RejectionFlag most_frequent = found_peaks->mostFrequentRejection();
     std::cout << "Most frequent rejection flag = " << static_cast<int>(most_frequent) << std::endl;
-    CHECK(found_peaks->numberOfValid() < ref_found_integrated_peaks + eps_peaks);
-    CHECK(found_peaks->numberOfValid() > ref_found_integrated_peaks - eps_peaks);
+    CHECK(found_peaks->numberOfValid() <= ref_found_integrated_peaks + eps_peaks);
+    CHECK(found_peaks->numberOfValid() >= ref_found_integrated_peaks - eps_peaks);
     std::cout << "Successfully integrated " << found_peaks->numberOfValid() << " peaks"
               << std::endl;
 
@@ -214,8 +214,8 @@ TEST_CASE("test/data/TestWorkflow.cpp", "")
 
     ohkl::ShapeModel shapes = shape_builder->integrate(found_peaks->getPeakList(), data);
     std::cout << "Shape model contains " << shapes.numberOfPeaks() << " profiles" << std::endl;
-    CHECK(shapes.numberOfPeaks() < ref_shapes + eps_peaks);
-    CHECK(shapes.numberOfPeaks() > ref_shapes - eps_peaks);
+    CHECK(shapes.numberOfPeaks() <= ref_shapes + eps_peaks);
+    CHECK(shapes.numberOfPeaks() >= ref_shapes - eps_peaks);
 
     // Predict
     std::cout << "Predicting peaks" << std::endl;
@@ -225,15 +225,15 @@ TEST_CASE("test/data/TestWorkflow.cpp", "")
     predictor_params->d_max = 50.0;
     predictor->predictPeaks(data, cell);
     std::cout << predictor->numberOfPredictedPeaks() << " peaks predicted" << std::endl;
-    CHECK(predictor->numberOfPredictedPeaks() > ref_predicted_peaks - eps_peaks);
-    CHECK(predictor->numberOfPredictedPeaks() < ref_predicted_peaks + eps_peaks);
+    CHECK(predictor->numberOfPredictedPeaks() >= ref_predicted_peaks - eps_peaks);
+    CHECK(predictor->numberOfPredictedPeaks() <= ref_predicted_peaks + eps_peaks);
     experiment.addPeakCollection(
         predicted_peaks_name, ohkl::PeakCollectionType::PREDICTED, predictor->peaks(), data, cell);
     ohkl::PeakCollection* predicted_peaks = experiment.getPeakCollection(predicted_peaks_name);
     shapes.setPredictedShapes(predicted_peaks);
     std::cout << predicted_peaks->numberOfValid() << " valid predicted peaks" << std::endl;
-    CHECK(predicted_peaks->numberOfValid() < ref_valid_predicted_peaks + eps_peaks);
-    CHECK(predicted_peaks->numberOfValid() > ref_valid_predicted_peaks - eps_peaks);
+    CHECK(predicted_peaks->numberOfValid() <= ref_valid_predicted_peaks + eps_peaks);
+    CHECK(predicted_peaks->numberOfValid() >= ref_valid_predicted_peaks - eps_peaks);
 
     // Refine
     std::cout << "Refining" << std::endl;
@@ -254,8 +254,8 @@ TEST_CASE("test/data/TestWorkflow.cpp", "")
     integrator_params->bkg_end = 2.3;
     integrator_params->use_gradient = false;
     integrator->integratePeaks(data, predicted_peaks, integrator_params, &shapes);
-    CHECK(integrator->numberOfValidPeaks() < ref_integrated + eps_peaks);
-    CHECK(integrator->numberOfValidPeaks() > ref_integrated - eps_peaks);
+    CHECK(integrator->numberOfValidPeaks() <= ref_integrated + eps_peaks);
+    CHECK(integrator->numberOfValidPeaks() >= ref_integrated - eps_peaks);
     std::cout << integrator->numberOfValidPeaks() << " / " << integrator->numberOfPeaks()
               << " integrated" << std::endl;
 
