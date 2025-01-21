@@ -425,7 +425,7 @@ void SubframeExperiment::setPeakFinder2DUp()
         _convolver_combo->addItem(QString::fromStdString(it->second));
     _convolver_combo->setCurrentIndex(1);
 
-    _threshold_spin->setValue(1);
+    _threshold_spin->setValue(2);
     _threshold_spin->setSingleStep(0.1);
 
     _blob_min_thresh->setMaximum(256);
@@ -457,7 +457,7 @@ void SubframeExperiment::setPeakFinder2DUp()
         _detector_widget->dataCombo(), &QComboBox::setCurrentIndex);
     connect(
         _convolver_combo, qOverload<int>(&QComboBox::currentIndexChanged), this,
-        &SubframeExperiment::showFilteredImage);
+        &SubframeExperiment::onFilterComboChanged);
     connect(_threshold_check, &QCheckBox::clicked, this, &SubframeExperiment::showFilteredImage);
     connect(
         _r1, qOverload<double>(&QDoubleSpinBox::valueChanged), this,
@@ -1383,6 +1383,15 @@ void SubframeExperiment::onMaskSelected()
     bool checked = dynamic_cast<QCheckBox*>(_mask_table->cellWidget(row, 4))->isChecked();
     _detector_widget->scene()->maskItems().at(row)->setSelected(checked);
     toggleUnsafeWidgets();
+}
+
+void SubframeExperiment::onFilterComboChanged()
+{
+    auto* experiment = gSession->currentProject()->experiment();
+    ohkl::ImageFilterType filter =
+        static_cast<ohkl::ImageFilterType>(_convolver_combo->currentIndex());
+    _threshold_spin->setValue(experiment->imageFilterThreshold(filter));
+    showFilteredImage();
 }
 
 void SubframeExperiment::deleteSelectedMasks()

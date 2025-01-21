@@ -81,7 +81,7 @@ Experiment::Experiment() : _diffractometer(nullptr), _strategy(false)
 }
 
 std::map<ImageFilterType, double> Experiment::_filter_thresholds = {
-    {ImageFilterType::Annular, 50},
+    {ImageFilterType::Annular, 80},
     {ImageFilterType::EnhancedAnnular, 1},
 };
 

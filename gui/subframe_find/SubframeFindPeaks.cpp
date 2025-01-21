@@ -168,7 +168,7 @@ void SubframeFindPeaks::setBlobUp()
     _find_button = f.addButton("Find peaks");
 
     _threshold_spin->setMaximum(1000);
-    _threshold_spin->setValue(1);
+    _threshold_spin->setValue(2);
     _scale_spin->setMaximum(10);
     _min_size_spin->setMaximum(1000);
     _max_size_spin->setMaximum(100000);
@@ -191,7 +191,7 @@ void SubframeFindPeaks::setBlobUp()
     connect(_find_button, &QPushButton::clicked, this, &SubframeFindPeaks::find);
     connect(
         _kernel_combo, qOverload<int>(&QComboBox::currentIndexChanged), this,
-        &SubframeFindPeaks::showFilteredImage);
+        &SubframeFindPeaks::onFilterComboChanged);
     connect(
         _threshold_check, &QCheckBox::stateChanged, this, &SubframeFindPeaks::showFilteredImage);
     connect(
@@ -637,12 +637,17 @@ void SubframeFindPeaks::onGradientSettingsChanged()
     emit signalGradient(_gradient_kernel->currentIndex());
 }
 
-void SubframeFindPeaks::showFilteredImage()
+void SubframeFindPeaks::onFilterComboChanged()
 {
     auto* experiment = gSession->currentProject()->experiment();
     ohkl::ImageFilterType filter =
         static_cast<ohkl::ImageFilterType>(_kernel_combo->currentIndex());
     _threshold_spin->setValue(experiment->imageFilterThreshold(filter));
+    showFilteredImage();
+}
+
+void SubframeFindPeaks::showFilteredImage()
+{
     setFinderParameters();
     _detector_widget->scene()->params()->filteredImage = _threshold_check->isChecked();
     _detector_widget->scene()->params()->threshold = _threshold_spin->value();

@@ -63,6 +63,7 @@ class SubframeFindPeaks : public QWidget {
 
  public slots:
     void onGradientSettingsChanged();
+    void onFilterComboChanged();
 
  signals:
     void signalGradient(int kernel);

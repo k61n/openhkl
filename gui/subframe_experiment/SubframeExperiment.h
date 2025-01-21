@@ -132,6 +132,7 @@ class SubframeExperiment : public QWidget {
  public slots:
     void onMaskChanged();
     void onMaskSelected();
+    void onFilterComboChanged();
     //! Reset DetectorScene interaction mode
     void resetMode(int index);
 
