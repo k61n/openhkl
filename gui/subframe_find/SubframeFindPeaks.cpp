@@ -19,6 +19,7 @@
 #include "core/experiment/Integrator.h"
 #include "core/experiment/PeakFinder.h"
 #include "core/image/GradientFilter.h"
+#include "core/image/ImageFilter.h"
 #include "core/integration/IIntegrator.h"
 #include "core/peak/IntegrationRegion.h"
 #include "core/peak/Peak3D.h"
@@ -167,7 +168,7 @@ void SubframeFindPeaks::setBlobUp()
     _find_button = f.addButton("Find peaks");
 
     _threshold_spin->setMaximum(1000);
-    _threshold_spin->setValue(1);
+    _threshold_spin->setValue(2);
     _scale_spin->setMaximum(10);
     _min_size_spin->setMaximum(1000);
     _max_size_spin->setMaximum(100000);
@@ -190,7 +191,7 @@ void SubframeFindPeaks::setBlobUp()
     connect(_find_button, &QPushButton::clicked, this, &SubframeFindPeaks::find);
     connect(
         _kernel_combo, qOverload<int>(&QComboBox::currentIndexChanged), this,
-        &SubframeFindPeaks::showFilteredImage);
+        &SubframeFindPeaks::onFilterComboChanged);
     connect(
         _threshold_check, &QCheckBox::stateChanged, this, &SubframeFindPeaks::showFilteredImage);
     connect(
@@ -406,7 +407,8 @@ void SubframeFindPeaks::grabFinderParameters()
     if (!gSession->hasProject())
         return;
 
-    auto* params = gSession->currentProject()->experiment()->peakFinder()->parameters();
+    auto* experiment = gSession->currentProject()->experiment();
+    auto* params = experiment->peakFinder()->parameters();
 
     _min_size_spin->setValue(params->minimum_size);
     _max_size_spin->setValue(params->maximum_size);
@@ -417,8 +419,9 @@ void SubframeFindPeaks::grabFinderParameters()
     _r1->setValue(params->r1);
     _r2->setValue(params->r2);
     _r3->setValue(params->r3);
-    _threshold_spin->setValue(params->threshold);
     _kernel_combo->setCurrentText(QString::fromStdString(params->filter));
+    ohkl::ImageFilterType filter = static_cast<ohkl::ImageFilterType>(_kernel_combo->currentIndex());
+    _threshold_spin->setValue(experiment->imageFilterThreshold(filter));
 }
 
 void SubframeFindPeaks::setFinderParameters()
@@ -426,9 +429,10 @@ void SubframeFindPeaks::setFinderParameters()
     if (!gSession->hasProject())
         return;
 
-    ohkl::PeakFinder* finder = gSession->currentProject()->experiment()->peakFinder();
+    auto* experiment = gSession->currentProject()->experiment();
+    auto* finder = experiment->peakFinder();
+    auto* params = finder->parameters();
 
-    auto* params = gSession->currentProject()->experiment()->peakFinder()->parameters();
     params->minimum_size = _min_size_spin->value();
     params->maximum_size = _max_size_spin->value();
     params->peak_end = _scale_spin->value();
@@ -438,8 +442,9 @@ void SubframeFindPeaks::setFinderParameters()
     params->r1 = _r1->value();
     params->r2 = _r2->value();
     params->r3 = _r3->value();
-    params->threshold = _threshold_spin->value();
     params->filter = _kernel_combo->currentText().toStdString();
+    ohkl::ImageFilterType filter = static_cast<ohkl::ImageFilterType>(_kernel_combo->currentIndex());
+    experiment->setImageFilterThreshold(filter, _threshold_spin->value());
 
     _detector_widget->scene()->params()->convolver_params = finder->filterParameters();
 }
@@ -630,6 +635,15 @@ DetectorWidget* SubframeFindPeaks::detectorWidget()
 void SubframeFindPeaks::onGradientSettingsChanged()
 {
     emit signalGradient(_gradient_kernel->currentIndex());
+}
+
+void SubframeFindPeaks::onFilterComboChanged()
+{
+    auto* experiment = gSession->currentProject()->experiment();
+    ohkl::ImageFilterType filter =
+        static_cast<ohkl::ImageFilterType>(_kernel_combo->currentIndex());
+    _threshold_spin->setValue(experiment->imageFilterThreshold(filter));
+    showFilteredImage();
 }
 
 void SubframeFindPeaks::showFilteredImage()
