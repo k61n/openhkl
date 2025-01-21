@@ -24,6 +24,7 @@
 
 namespace ohkl {
 
+enum class ImageFilterType;
 enum class PeakCollectionType;
 class AutoIndexer;
 class DataHandler;
@@ -48,7 +49,7 @@ struct DataReaderParameters;
 struct ShapeModelParameters;
 
 using DataMap = std::map<std::string, sptrDataSet>;
-
+    
 /*! \addtogroup python_api
  *  @{*/
 
@@ -221,6 +222,10 @@ class Experiment {
     bool acceptFoundPeaks(const std::string& name);
     //! Create a new peak collection from a found collection
     bool acceptFoundPeaks(const std::string& name, const PeakCollection& found);
+    //! Set the image filter threshold
+    void setImageFilterThreshold(ImageFilterType type, double threshold);
+    //! Get the image filter threshold
+    double imageFilterThreshold(ImageFilterType type) const;
 
     // Peak Filter
     //! Return a pointer to the PeakFilter object
@@ -293,6 +298,9 @@ class Experiment {
 
     // Data reader parameters, since there is nowhere else to store this
     std::unique_ptr<DataReaderParameters> _data_reader_params;
+
+    // Threshold values for different image filters
+    static std::map<ImageFilterType, double> _filter_thresholds;
 
     bool _strategy;
 };

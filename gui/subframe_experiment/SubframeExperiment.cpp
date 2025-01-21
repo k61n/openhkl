@@ -23,6 +23,7 @@
 #include "core/experiment/MaskExporter.h"
 #include "core/experiment/MaskImporter.h"
 #include "core/experiment/PeakFinder2D.h"
+#include "core/image/ImageFilter.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/peak/Qs2Events.h"
 #include "core/shape/Predictor.h"
@@ -69,6 +70,7 @@
 #include <QWidget>
 
 #include <cstring>
+#include <gsl/gsl_errno.h>
 #include <gsl/gsl_histogram.h>
 #include <stdexcept>
 
@@ -423,6 +425,9 @@ void SubframeExperiment::setPeakFinder2DUp()
         _convolver_combo->addItem(QString::fromStdString(it->second));
     _convolver_combo->setCurrentIndex(1);
 
+    _threshold_spin->setValue(1);
+    _threshold_spin->setSingleStep(0.1);
+
     _blob_min_thresh->setMaximum(256);
     _blob_max_thresh->setMaximum(256);
 
@@ -443,7 +448,6 @@ void SubframeExperiment::setPeakFinder2DUp()
     _r3->setMinimum(1);
     _r3->setSingleStep(1);
     _r3->setValue(15);
-
 
     connect(
         _data_combo, &QComboBox::currentTextChanged, this,
@@ -653,6 +657,10 @@ void SubframeExperiment::updateRanges()
 
 void SubframeExperiment::showFilteredImage()
 {
+    auto* experiment = gSession->currentProject()->experiment();
+    ohkl::ImageFilterType filter =
+        static_cast<ohkl::ImageFilterType>(_convolver_combo->currentIndex());
+    _threshold_spin->setValue(experiment->imageFilterThreshold(filter));
     setFinderParameters();
     _detector_widget->scene()->params()->filteredImage = _threshold_check->isChecked();
     _detector_widget->scene()->params()->threshold = _threshold_spin->value();
@@ -960,12 +968,15 @@ void SubframeExperiment::grabFinderParameters()
     if (!gSession->hasProject())
         return;
 
-    auto* finder = gSession->currentProject()->experiment()->peakFinder2D();
+    auto* experiment = gSession->currentProject()->experiment();
+    auto* finder = experiment->peakFinder2D();
     auto* params = finder->parameters();
 
     _blob_min_thresh->setValue(params->minThreshold);
     _blob_max_thresh->setValue(params->maxThreshold);
-    _threshold_spin->setValue(params->threshold);
+    ohkl::ImageFilterType filter =
+        static_cast<ohkl::ImageFilterType>(_convolver_combo->currentIndex());
+    _threshold_spin->setValue(experiment->imageFilterThreshold(filter));
     _r1->setValue(params->r1);
     _r2->setValue(params->r2);
     _r3->setValue(params->r3);
@@ -977,12 +988,15 @@ void SubframeExperiment::setFinderParameters()
     if (!gSession->hasProject())
         return;
 
-    auto* finder = gSession->currentProject()->experiment()->peakFinder2D();
+    auto* experiment = gSession->currentProject()->experiment();
+    auto* finder = experiment->peakFinder2D();
     auto* params = finder->parameters();
 
     params->minThreshold = _blob_min_thresh->value();
     params->maxThreshold = _blob_max_thresh->value();
-    params->threshold = _threshold_spin->value();
+    ohkl::ImageFilterType filter =
+        static_cast<ohkl::ImageFilterType>(_convolver_combo->currentIndex());
+    experiment->setImageFilterThreshold(filter, _threshold_spin->value());
     params->r1 = _r1->value();
     params->r2 = _r2->value();
     params->r3 = _r3->value();

@@ -33,6 +33,7 @@
 #include "core/experiment/ShapeModelBuilder.h"
 #include "core/experiment/ShapeHandler.h"
 #include "core/experiment/UnitCellHandler.h"
+#include "core/image/ImageFilter.h"
 #include "core/instrument/Diffractometer.h"
 #include "core/instrument/InstrumentStateSet.h"
 #include "core/instrument/Monochromator.h"
@@ -78,6 +79,11 @@ Experiment::Experiment() : _diffractometer(nullptr), _strategy(false)
 
     _data_reader_params = std::make_unique<DataReaderParameters>();
 }
+
+std::map<ImageFilterType, double> Experiment::_filter_thresholds = {
+    {ImageFilterType::Annular, 50},
+    {ImageFilterType::EnhancedAnnular, 1},
+};
 
 Experiment::~Experiment() = default;
 
@@ -147,6 +153,18 @@ bool Experiment::acceptFoundPeaks(const std::string& name)
     std::vector<Peak3D*> peaks = _peak_finder->currentPeaks();
     sptrDataSet data = _peak_finder->currentData();
     return addPeakCollection(name, PeakCollectionType::FOUND, peaks, data, nullptr);
+}
+
+void Experiment::setImageFilterThreshold(ImageFilterType type, double threshold)
+{
+    _filter_thresholds[type] = threshold;
+    _peak_finder_2d->parameters()->threshold = threshold;
+    _peak_finder->parameters()->threshold = threshold;
+}
+
+double Experiment::imageFilterThreshold(ImageFilterType type) const
+{
+    return _filter_thresholds.at(type);
 }
 
 bool Experiment::acceptFoundPeaks(const std::string& name, const PeakCollection& found)
