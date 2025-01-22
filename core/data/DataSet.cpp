@@ -15,6 +15,7 @@
 #include "core/data/DataSet.h"
 #include "base/geometry/AABB.h"
 #include "base/geometry/DirectVector.h"
+#include "base/geometry/ReciprocalVector.h"
 #include "base/mask/BoxMask.h"
 #include "base/mask/EllipseMask.h"
 #include "base/parser/BloscFilter.h"
@@ -392,6 +393,7 @@ ohkl::MetaData& DataSet::metadata()
 void DataSet::setInstrumentStates(InstrumentStateSet* states)
 {
     _states = states;
+    dRange();
 }
 
 InstrumentStateList& DataSet::instrumentStates()
@@ -462,6 +464,39 @@ double DataSet::maxCount()
     for (int i = 0; i < nFrames(); ++i)
         max_count = std::max(max_count, static_cast<double>(frame(i).maxCoeff()));
     return max_count;
+}
+
+
+void DataSet::dRange()
+{
+    // Work out if the direct beam intersects the detector
+
+    // Compute q vectors and d of corners of detector
+    const auto* detector = _diffractometer->detector();
+    const InstrumentStateList& states = _states->getInstrumentStateList();
+    auto state = InterpolatedState::interpolate(states, 0);
+
+    std::vector<std::pair<int, int>> corners;
+    corners.push_back({0, 0});
+    corners.push_back({0, nCols()});
+    corners.push_back({nRows(), 0});
+    corners.push_back({nRows(), nCols()});
+    _d_min = 10000;
+    _d_max = 50;
+    double eps = 2.0e-2;
+
+    for (const auto& [y, x] : corners) {
+        DirectVector pos(detector->pixelPosition(x, y));
+        ReciprocalVector q = state.sampleQ(pos);
+        double modq = q.rowVector().norm();
+        double d;
+        if (modq < eps)
+            d = 50.0;
+        else
+            d = 1.0 / modq;
+        _d_min = std::min(d, _d_min);
+        _d_max = std::max(d, _d_max);
+    }
 }
 
 gsl_histogram* DataSet::getHistogram(int index)

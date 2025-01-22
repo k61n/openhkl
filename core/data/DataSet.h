@@ -178,6 +178,9 @@ class DataSet {
  protected:
     void setReader(const DataFormat dataformat, const std::string& filename = "");
 
+    //! Compute the maximum and minimum d of the detector
+    void dRange();
+
     std::string _name;
     std::vector<Eigen::MatrixXi> _data;
     std::vector<IMask*> _masks;
@@ -190,6 +193,11 @@ class DataSet {
     Diffractometer* _diffractometer;
     //! Pointer to instrument states
     InstrumentStateSet* _states;
+
+    //! Maximum d for this instrument state/detector
+    double _d_max;
+    //! Minimum d for this instrument state/detector
+    double _d_min;
 
     //! Per-frame histograms of intensities
     std::vector<gsl_histogram*> _histograms;
