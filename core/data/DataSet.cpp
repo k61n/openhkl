@@ -469,12 +469,20 @@ double DataSet::maxCount()
 
 void DataSet::dRange()
 {
-    // Work out if the direct beam intersects the detector
-
-    // Compute q vectors and d of corners of detector
     const auto* detector = _diffractometer->detector();
     const InstrumentStateList& states = _states->getInstrumentStateList();
     auto state = InterpolatedState::interpolate(states, 0);
+    DirectVector from(state.samplePosition);
+
+    // Work out if the direct beam intersects the detector
+    Eigen::RowVector3d kf = state.ki().rowVector();
+    const DetectorEvent beam = detector->constructEvent(
+        from, ReciprocalVector(kf * state.detectorOrientation), 0, false);
+    bool beam_on_detector = false;
+    if (beam.px >= 0 && beam.px <= nCols() && beam.py >= 0 && beam.py <= nRows())
+        beam_on_detector = true;
+
+    // Compute q vectors and d of corners of detector
 
     std::vector<std::pair<int, int>> corners;
     corners.push_back({0, 0});
@@ -482,7 +490,7 @@ void DataSet::dRange()
     corners.push_back({nRows(), 0});
     corners.push_back({nRows(), nCols()});
     _d_min = 10000;
-    _d_max = 50;
+    _d_max = 0;
     double eps = 2.0e-2;
 
     for (const auto& [y, x] : corners) {
@@ -495,7 +503,10 @@ void DataSet::dRange()
         else
             d = 1.0 / modq;
         _d_min = std::min(d, _d_min);
-        _d_max = std::max(d, _d_max);
+        if (!beam_on_detector)
+            _d_max = std::max(d, _d_max);
+        else
+            _d_max = 50;
     }
 }
 

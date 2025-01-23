@@ -102,7 +102,8 @@ DirectVector CylindricalDetector::pixelPosition(double px, double py) const
 }
 
 DetectorEvent CylindricalDetector::constructEvent(
-    const DirectVector& from, const ReciprocalVector& kf, const double frame) const
+    const DirectVector& from, const ReciprocalVector& kf, const double frame,
+    bool onDetector) const
 {
     double px, py, tof;
 
@@ -127,13 +128,17 @@ DetectorEvent CylindricalDetector::constructEvent(
 
     double phi = atan2(v[0], v[1]) + 0.5 * _angularWidth;
 
-    if (phi < 0 || phi >= _angularWidth)
-        return {}; // no_event
+    if (phi < 0 || phi >= _angularWidth) {
+        if (onDetector)
+            return {}; // no_event
+    }
 
     double d = v[2] / _height + 0.5;
 
-    if (d < 0 || d > 1.0)
-        return {}; // no_event
+    if (d < 0 || d > 1.0) {
+        if (onDetector)
+            return {}; // no_event
+    }
 
     px = phi / _angularWidth * (_nCols - 1);
     py = d * (_nRows - 1);
