@@ -450,6 +450,7 @@ void Session::onExperimentChanged()
 {
     if (!gSession->hasProject())
         return;
+    onDataChanged();
     gGui->sideBar()->setStrategyMode(gSession->currentProject()->strategyMode());
     gGui->finder->grabFinderParameters();
     gGui->finder->grabIntegrationParameters();
@@ -461,7 +462,6 @@ void Session::onExperimentChanged()
     gGui->refiner->grabRefinerParameters();
     gGui->integrator->grabIntegrationParameters();
     gGui->merger->grabMergeParameters();
-    onDataChanged();
     onUnitCellChanged();
 }
 
