@@ -435,6 +435,9 @@ void Session::onDataChanged()
         return;
 
     _data_combo->currentData()->initBuffer(true);
+    double d_min = _data_combo->currentData()->dMin();
+    double d_max = _data_combo->currentData()->dMax();
+    currentProject()->experiment()->setDRange(d_min, d_max);
 
     double x_offset =
         _data_combo->currentData()->diffractometer()->source().selectedMonochromator().xOffset();

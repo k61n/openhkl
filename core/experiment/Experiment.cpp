@@ -584,4 +584,18 @@ std::vector<ShapeModel*> Experiment::getShapeModels(sptrDataSet data)
         return _shape_handler->getShapeModels();
 }
 
+void Experiment::setDRange(double d_min, double d_max)
+{
+    _auto_indexer->parameters()->d_min = d_min;
+    _auto_indexer->parameters()->d_max = d_max;
+    _predictor->parameters()->d_min = d_min;
+    _predictor->parameters()->d_max = d_max;
+    _shape_model_builder->parameters()->d_min = d_min;
+    _shape_model_builder->parameters()->d_max = d_max;
+    _peak_filter->parameters()->d_min = d_min;
+    _peak_filter->parameters()->d_max = d_max;
+    _peak_merger->parameters()->d_min = d_min;
+    _peak_merger->parameters()->d_max = d_max;
+}
+
 } // namespace ohkl
