@@ -304,6 +304,7 @@ bool Experiment::addData(sptrDataSet data, bool default_states)
     if (!_data_handler->addData(data, _diffractometer.get(), data->name(), default_states)) {
         return false;
     }
+
     return true;
 }
 

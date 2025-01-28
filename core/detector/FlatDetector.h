@@ -54,7 +54,8 @@ class FlatDetector : public Detector {
     //! Determine whether detector at rest can receive a scattering event with
     //! direction given by Kf. px and py are detector position if true.
     DetectorEvent constructEvent(
-        const DirectVector& from, const ReciprocalVector& kf, const double frame) const override;
+        const DirectVector& from, const ReciprocalVector& kf, const double frame,
+        bool onDetector = true) const override;
 
     virtual Eigen::Matrix3d jacobian(double x, double y) const override;
 };

@@ -101,7 +101,8 @@ DirectVector FlatDetector::pixelPosition(double px, double py) const
 }
 
 DetectorEvent FlatDetector::constructEvent(
-    const DirectVector& from, const ReciprocalVector& kf, const double frame) const
+    const DirectVector& from, const ReciprocalVector& kf, const double frame,
+    bool onDetector) const
 {
     const Eigen::Vector3d direction = kf.rowVector().transpose();
     double px, py, tof;
@@ -116,8 +117,10 @@ DetectorEvent FlatDetector::constructEvent(
     px = 0.5 * (_nCols * (2 * v[0] / _width + 1) - 1);
     py = 0.5 * (_nRows * (2 * v[2] / _height + 1) - 1);
 
-    if (px < 0 || px > _nCols || py < 0 || py > _nRows)
-        return {}; // no event
+    if (px < 0 || px > _nCols || py < 0 || py > _nRows) {
+        if (onDetector)
+            return {}; // no event
+    }
 
     return {px, py, frame, tof};
 }

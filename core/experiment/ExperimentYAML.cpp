@@ -121,6 +121,8 @@ void ExperimentYAML::setDataReaderParameters(DataReaderParameters* params)
     } else if (params->data_format == DataFormat::TIFF) {
         reader_node["format"] = "tiff";
         reader_node["rebin_size"] = params->rebin_size;
+    } else if (params->data_format == DataFormat::PLAINTEXT) {
+        reader_node["format"] = "text";
     }
 }
 
