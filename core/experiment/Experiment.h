@@ -274,6 +274,9 @@ class Experiment {
     //! Get strategy mode flag
     bool strategy() const { return _strategy; };
 
+    //! Set the d range for all parameter sets
+    void setDRange(double d_min, double d_max);
+
  private: // private variables
     std::string _name; //!< The name of this experiment
     std::unique_ptr<Diffractometer> _diffractometer;

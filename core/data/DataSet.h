@@ -169,6 +169,11 @@ class DataSet {
     //! Check whether all frames are buffered
     bool allFramesBuffered() const { return _all_frames_buffered; };
 
+    //! Return maximum d value for the detector
+    double dMax() const { return _d_max; };
+    //! Return minimum d value for the detector
+    double dMin() const { return _d_min; };
+
     virtual void setNFrames(std::size_t nframes) { std::ignore = nframes; };
 
     //! Data shape (columns, rows, frames)
