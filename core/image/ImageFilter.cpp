@@ -49,7 +49,8 @@ void ImageFilter::filter()
     int inv = cv::THRESH_BINARY;
     if (inverted)
         inv = cv::THRESH_BINARY_INV;
-    cv::threshold(_filtered_image, _thresholded_image, thresh, 1, inv);
+    // May need to convert this to CV_8U, so set pixels to max for 8-bit iamage
+    cv::threshold(_filtered_image, _thresholded_image, thresh, 255, inv);
 }
 
 RealMatrix ImageFilter::filteredImage()
