@@ -236,16 +236,15 @@ void PeakFinder::findPrimaryBlobs(
         RealMatrix frame_data = data.frame(idx).cast<double>();
         filter->setImage(frame_data);
         filter->filter();
-        // filter->threshold(_params->threshold);
-        RealMatrix filtered_frame = filter->filteredImage();
+        filter->threshold(_params->threshold);
+        RealMatrix filtered_frame = filter->thresholdedImage();
 
         // Go the the beginning of data
         int index2D = 0;
         for (unsigned int row = 0; row < nrows; ++row) {
             for (unsigned int col = 0; col < ncols; ++col) {
                 // Discard pixel if value < threshold                               ...
-                if (filtered_frame(row, col) < _params->threshold)
-                {
+                if (filtered_frame(row, col) < 1) {
                     labels[index2D] = labels2[index2D] = 0;
                     index2D++;
                     continue;
