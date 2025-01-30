@@ -16,10 +16,12 @@
 #define OHKL_GUI_WIDGETS_PLOTCHECKBOX_H
 
 #include <QCheckBox>
+#include <qobjectdefs.h>
 
 enum class TableType { Lattice, SamplePos, SampleOrn, DetectorPos, Ki, Count };
 
 class PlotCheckBox : public QCheckBox {
+    Q_OBJECT
  public:
     PlotCheckBox() = delete;
     PlotCheckBox(const QString& text, TableType table, int column);

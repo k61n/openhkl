@@ -75,7 +75,12 @@ QVariant PeakCollectionModel::data(const QModelIndex& index, int role = Qt::Disp
     if (role == Qt::CheckStateRole && index.column() == PeakColumn::Enabled)
         return _root_item->data(index, role);
     if (!indexIsValid(index))
-        return QVariant();
+        return {};
+    if (role != Qt::DisplayRole &&
+        role != Qt::BackgroundRole &&
+        role != Qt::ForegroundRole &&
+        role != Qt::UserRole)
+        return {};
     return _root_item->data(index, role);
 }
 
