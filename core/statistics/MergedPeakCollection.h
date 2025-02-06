@@ -26,7 +26,7 @@ class PeakCollection;
 
 //! A set of `MergedPeak`s.
 
-using MergedPeakSet = std::set<MergedPeak>;
+using MergedPeakSet = std::set<MergedPeak, std::less<MergedPeak>>;
 
 //! Contains a set of `MergedPeak`s and crystallographic information (SpaceGroup and Friedel flag).
 

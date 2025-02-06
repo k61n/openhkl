@@ -35,6 +35,8 @@ class MergedPeak {
     //! already part of the space group symmetry.
     MergedPeak(const SpaceGroup& grp, bool sum_intensity, bool friedel = false);
 
+    bool operator<(const MergedPeak& other) const;
+
     //! Add a peak to the merged peak.
     MergeFlag addPeak(Peak3D* peak);
     //! Add a peak regardless of RejectionFlag, do not sum intensity
@@ -64,6 +66,9 @@ class MergedPeak {
     //! Return list of symmetry-related peaks as a string
     std::string toString() const;
 
+    //! Determine wither sum or profile intensity was used
+    bool sumIntensity() const { return _sum_intensity; };
+
  private:
     //! Update the hkl that represents the set of equivalences.
     void determineRepresentativeHKL();
@@ -76,10 +81,6 @@ class MergedPeak {
     bool _sum_intensity;
     bool _friedel;
 };
-
-#ifndef SWIG
-bool operator<(const MergedPeak& p, const MergedPeak& q);
-#endif
 
 } // namespace ohkl
 

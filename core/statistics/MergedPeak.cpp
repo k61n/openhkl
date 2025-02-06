@@ -34,6 +34,18 @@ MergedPeak::MergedPeak(const SpaceGroup& grp, bool sum_intensity, bool friedel)
 {
 }
 
+bool MergedPeak::operator<(const MergedPeak& other) const
+{
+    const auto& a = index();
+    const auto& b = other.index();
+
+    if (a(0) != b(0))
+        return a(0) < b(0);
+    if (a(1) != b(1))
+        return a(1) < b(1);
+    return a(2) < b(2);
+}
+
 MergeFlag MergedPeak::addPeak(Peak3D* peak)
 {
     if (_sum_intensity) {
@@ -149,18 +161,6 @@ std::pair<MergedPeak, MergedPeak> MergedPeak::split(bool sum_intensity) const
             p2.addPeak(p);
     }
     return std::make_pair(p1, p2);
-}
-
-bool operator<(const MergedPeak& p, const MergedPeak& q)
-{
-    const auto& a = p.index();
-    const auto& b = q.index();
-
-    if (a(0) != b(0))
-        return a(0) < b(0);
-    if (a(1) != b(1))
-        return a(1) < b(1);
-    return a(2) < b(2);
 }
 
 //! The merged intensity and error are computed as \f$I_{\mathrm{merge}} =
