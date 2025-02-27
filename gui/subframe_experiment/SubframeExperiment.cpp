@@ -386,12 +386,17 @@ void SubframeExperiment::exportMasks()
     QSettings settings = gGui->qSettings();
     settings.beginGroup("RecentDirectories");
     QString loadDirectory = settings.value("experiment", QDir::homePath()).toString();
+    QString defaultFileName = loadDirectory + "/Untitled.yml";
 
     QString file_path =
-        QFileDialog::getSaveFileName(this, "Export maks to ", loadDirectory, "YAML (*.yml)");
+        QFileDialog::getSaveFileName(this, "Export masks to ", defaultFileName, "YAML (*.yml)");
 
     if (file_path.isEmpty())
         return;
+
+    // Ensure the file has the .yml extension
+    if (!file_path.endsWith(".yml", Qt::CaseInsensitive))
+        file_path += ".yml";
 
     ohkl::MaskExporter exporter(_data_combo->currentData()->masks());
     exporter.exportToFile(file_path.toStdString());
