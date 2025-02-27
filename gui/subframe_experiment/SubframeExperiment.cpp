@@ -357,22 +357,28 @@ void SubframeExperiment::importMasks()
     settings.setValue("masks", loadDirectory);
 
     QString file_path =
-        QFileDialog::getOpenFileName(this, "Import masks from file", loadDirectory, "YAML (*.yml)");
+        QFileDialog::getOpenFileName(this, "Import masks from file", loadDirectory, "YAML (*.yml);; All files (*)");
 
     if (file_path.isEmpty())
         return;
 
-    ohkl::MaskImporter importer(
-        file_path.toStdString(), _data_combo->currentData()->nFrames()); // TODO: update nframes
-    for (auto* mask : importer.getMasks())
-        _data_combo->currentData()->addMask(mask);
+    try {
+        YAML::Node config = YAML::LoadFile(file_path.toStdString());
 
-    QFileInfo info(file_path);
-    loadDirectory = info.absolutePath();
-    settings.setValue("masks", loadDirectory);
+        ohkl::MaskImporter importer(
+            file_path.toStdString(), _data_combo->currentData()->nFrames()); // TODO: update nframes
+        for (auto* mask : importer.getMasks())
+            _data_combo->currentData()->addMask(mask);
 
-    _detector_widget->scene()->loadMasksFromData();
-    toggleUnsafeWidgets();
+        QFileInfo info(file_path);
+        loadDirectory = info.absolutePath();
+        settings.setValue("masks", loadDirectory);
+
+        _detector_widget->scene()->loadMasksFromData();
+        toggleUnsafeWidgets();
+    } catch (const YAML::Exception& e) {
+        QMessageBox::critical(nullptr, "Error", "Failed to open or parse selected file.");
+    }
 }
 
 void SubframeExperiment::exportMasks()
