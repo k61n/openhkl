@@ -44,13 +44,19 @@ void ImageFilter::filter()
     cv::filter2D(_image, _filtered_image, ddepth, _kernel, anchor, delta);
 }
 
-    void ImageFilter::threshold(double thresh, bool inverted)
+    void ImageFilter::threshold(double thresh, bool inverted, bool adaptive)
 {
     int inv = cv::THRESH_BINARY;
     if (inverted)
         inv = cv::THRESH_BINARY_INV;
     // May need to convert this to CV_8U, so set pixels to max for 8-bit iamage
-    cv::threshold(_filtered_image, _thresholded_image, thresh, 255, inv);
+    if (adaptive) {
+        int adaptive_blocksize = 11;
+        int adaptive_c = 7;
+        cv::adaptiveThreshold(_filtered_image, _thresholded_image, 255-adaptive_c,cv::ADAPTIVE_THRESH_MEAN_C, inv, adaptive_blocksize, adaptive_c);
+    } else {
+        cv::threshold(_filtered_image, _thresholded_image, thresh, 255, inv);
+    }
 }
 
 RealMatrix ImageFilter::filteredImage()

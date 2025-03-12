@@ -38,7 +38,10 @@ class ImageFilter {
     void setKernel(const cv::Mat& kernel);
     void setImage(const RealMatrix& image);
     virtual void filter();
-    virtual void threshold(double thresh, bool inverted = false);
+    int adaptive_blocksize;
+    int adaptive_c;
+
+    virtual void threshold(double thresh, bool inverted = false, bool adaptive = true);
 
     virtual int kernelSize() const { return _kernel.rows; }
 
