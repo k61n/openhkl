@@ -391,9 +391,6 @@ void SubframeExperiment::exportMasks()
     QString file_path =
         QFileDialog::getSaveFileName(this, "Export masks to ", defaultFileName, "YAML (*.yml)");
 
-    if (file_path.isEmpty())
-        return;
-
     // Ensure the file has the .yml extension
     QFileInfo info(file_path);
     if (info.suffix().compare("yml", Qt::CaseInsensitive) != 0)
