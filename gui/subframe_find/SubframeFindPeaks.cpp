@@ -207,6 +207,31 @@ void SubframeFindPeaks::setBlobUp()
     connect(
         _r3, qOverload<double>(&QDoubleSpinBox::valueChanged), this,
         &SubframeFindPeaks::showFilteredImage);
+    connect(_r1, QOverload<double>::of(&QDoubleSpinBox::valueChanged),
+        [this](double r1Value) {
+            double r2Value = _r2->value();
+            if (r1Value > r2Value) {
+                _r2->setValue(r1Value);
+            }
+        });
+    connect(_r2, QOverload<double>::of(&QDoubleSpinBox::valueChanged),
+        [this](double r2Value) {
+            double r1Value = _r1->value();
+            double r3Value = _r3->value();
+            if (r2Value < r1Value) {
+                _r1->setValue(r2Value);
+            }
+            if (r2Value > r3Value) {
+                _r3->setValue(r2Value);
+            }
+        });
+    connect(_r3, QOverload<double>::of(&QDoubleSpinBox::valueChanged),
+        [this](double r3Value) {
+            double r2Value = _r2->value();
+            if (r3Value < r2Value) {
+                _r2->setValue(r3Value);
+            }
+        });
 
     _left_layout->addWidget(blob_para);
 }
