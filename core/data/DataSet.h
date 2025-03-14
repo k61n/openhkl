@@ -143,7 +143,7 @@ class DataSet {
     void getFrameIntensityHistogram(std::size_t index);
     //! Generate intensity histogram for whole DataSet
     void getIntensityHistogram(std::size_t nbins);
-    //! Free histogram memeory
+    //! Free histogram memory
     void clearHistograms();
     //! Maximum per pixel count for whole DataSet
     double maxCount();
