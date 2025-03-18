@@ -693,7 +693,7 @@ void SubframeExperiment::showFilteredImage()
     auto* experiment = gSession->currentProject()->experiment();
     ohkl::ImageFilterType filter =
         static_cast<ohkl::ImageFilterType>(_convolver_combo->currentIndex());
-    _threshold_spin->setValue(experiment->imageFilterThreshold(filter));
+    experiment->setImageFilterThreshold(filter, _threshold_spin->value());
     setFinderParameters();
     _detector_widget->scene()->params()->filteredImage = _threshold_check->isChecked();
     _detector_widget->scene()->params()->threshold = _threshold_spin->value();
