@@ -436,8 +436,8 @@ void SubframeExperiment::setPeakFinder2DUp()
     _threshold_spin->setValue(2);
     _threshold_spin->setSingleStep(0.1);
 
-    _blob_min_thresh->setMaximum(256);
-    _blob_max_thresh->setMaximum(256);
+    _blob_min_thresh->setMaximum(255);
+    _blob_max_thresh->setMaximum(255);
 
     _blob_min_thresh->setValue(1);
     _blob_max_thresh->setValue(100);
