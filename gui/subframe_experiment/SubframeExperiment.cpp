@@ -436,8 +436,8 @@ void SubframeExperiment::setPeakFinder2DUp()
     _threshold_spin->setValue(2);
     _threshold_spin->setSingleStep(0.1);
 
-    _blob_min_thresh->setMaximum(256);
-    _blob_max_thresh->setMaximum(256);
+    _blob_min_thresh->setMaximum(255);
+    _blob_max_thresh->setMaximum(255);
 
     _blob_min_thresh->setValue(1);
     _blob_max_thresh->setValue(100);
@@ -480,6 +480,31 @@ void SubframeExperiment::setPeakFinder2DUp()
     connect(
         _threshold_spin, qOverload<double>(&QDoubleSpinBox::valueChanged), this,
         &SubframeExperiment::showFilteredImage);
+    connect(_r1, QOverload<double>::of(&QDoubleSpinBox::valueChanged),
+        [this](double r1Value) {
+            double r2Value = _r2->value();
+            if (r1Value > r2Value) {
+                _r2->setValue(r1Value);
+            }
+        });
+    connect(_r2, QOverload<double>::of(&QDoubleSpinBox::valueChanged),
+        [this](double r2Value) {
+            double r1Value = _r1->value();
+            double r3Value = _r3->value();
+            if (r2Value < r1Value) {
+                _r1->setValue(r2Value);
+            }
+            if (r2Value > r3Value) {
+                _r3->setValue(r2Value);
+            }
+        });
+    connect(_r3, QOverload<double>::of(&QDoubleSpinBox::valueChanged),
+        [this](double r3Value) {
+            double r2Value = _r2->value();
+            if (r3Value < r2Value) {
+                _r2->setValue(r3Value);
+            }
+        });
 
     _strategy_layout->addWidget(peak2D_spoiler);
 }
@@ -668,7 +693,7 @@ void SubframeExperiment::showFilteredImage()
     auto* experiment = gSession->currentProject()->experiment();
     ohkl::ImageFilterType filter =
         static_cast<ohkl::ImageFilterType>(_convolver_combo->currentIndex());
-    _threshold_spin->setValue(experiment->imageFilterThreshold(filter));
+    experiment->setImageFilterThreshold(filter, _threshold_spin->value());
     setFinderParameters();
     _detector_widget->scene()->params()->filteredImage = _threshold_check->isChecked();
     _detector_widget->scene()->params()->threshold = _threshold_spin->value();
