@@ -41,7 +41,7 @@ class QGrid2D {
     void sampleGrid();
 
     // Get a reference to the grid
-    const RealMatrix& grid() { return _grid; };
+    RealMatrix grid() { return _grid; };
 
  private:
     sptrDataSet _data; //!< pointer to the DataSet
@@ -56,6 +56,9 @@ class QGrid2D {
     Eigen::Vector3d _grid_min; //!< Lower bound of q for the 2D grid
     Eigen::Vector3d _grid_max; //!< Upper bound of q for the 2D grid
     Eigen::Vector3i _ngridpoints; //!< Number of grid points in each direction
+
+    bool _thread_parallel;
+    int _max_threads;
 };
 
 } // namespace ohkl

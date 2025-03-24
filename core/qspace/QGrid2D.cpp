@@ -16,13 +16,16 @@
 
 #include "base/geometry/DirectVector.h"
 #include "base/geometry/ReciprocalVector.h"
+#include "base/utils/ParallelFor.h"
 #include "core/data/DataSet.h"
 #include "core/data/DataTypes.h"
 #include "core/detector/DetectorEvent.h"
 #include "tables/crystal/UnitCell.h"
 
 #include <Eigen/src/Core/Matrix.h>
+
 #include <iostream>
+#include <mutex>
 
 namespace ohkl {
 
@@ -31,6 +34,8 @@ QGrid2D::QGrid2D(sptrDataSet data, sptrUnitCell cell)
     , _cell(cell)
     , _q_min(1000, 1000, 1000)
     , _q_max(-1000, -1000, -1000)
+    , _thread_parallel(true)
+    , _max_threads(8)
 {
 }
 
@@ -106,6 +111,10 @@ void QGrid2D::getEmptyGrid()
 
 void QGrid2D::sampleGrid()
 {
+    const std::size_t nframes = _data->nFrames();
+    const std::size_t ncols = _data->nCols();
+    const std::size_t nrows = _data->nRows();
+
     int z_idx = static_cast<int>(_fixed_direction);
 
     // Get the shape of the 2D grid, set the grid to zero
@@ -115,32 +124,75 @@ void QGrid2D::sampleGrid()
             continue;
         indices.push_back(i);
     }
-    _grid = Eigen::MatrixXd::Zero(_ngridpoints[indices.at(0)], _ngridpoints[indices.at(1)]);
+    int x_idx = indices.at(0);
+    int y_idx = indices.at(1);
+    double grid_freq = 1.0 / _grid_spacing;
+    _grid = Eigen::MatrixXd::Zero(_ngridpoints[x_idx], _ngridpoints[y_idx]);
 
-    std::vector<int> grid_idx;
-    for (std::size_t frame_idx = 0; frame_idx < _data->nFrames(); ++frame_idx) {
-        Eigen::MatrixXi frame = _data->frame(frame_idx);
-        for (std::size_t d_i = 0; d_i < _data->nCols(); ++d_i) {
-            for (std::size_t d_j = 0; d_j < _data->nRows(); ++d_j) {
-                DetectorEvent event(d_i, d_j, frame_idx);
-                ReciprocalVector q = _data->computeQ(event);
-                // Check that the pixel is in the slab
-                if (q[z_idx] < _grid_min[z_idx] || q[z_idx] > _grid_max[z_idx])
-                    continue;
+    std::cout << "x y z " << x_idx << " " << y_idx << " " << z_idx << std::endl;
+    std::cout << _data->nCols() * _data->nRows() * _data->nFrames() << " Real space grid points"
+              << std::endl;
+    std::atomic_int bin_count = 0;
+    std::mutex mut;
+    parallel_for(nframes, [&](int start, int end) {
+            for (int frame_idx = start; frame_idx < end; ++frame_idx) {
+                Eigen::MatrixXi frame = _data->frame(frame_idx);
+                Eigen::MatrixXd tmp_grid =
+                    Eigen::MatrixXd::Zero(_ngridpoints[x_idx], _ngridpoints[y_idx]);
 
-                // Find the right q-space bin, add the count to it
-                int count = frame(d_i, d_j);
-                grid_idx.clear();
-                for (std::size_t q_idx = 0; q_idx < 3; ++q_idx) {
-                    if (q_idx == z_idx)
-                        continue;
-                    grid_idx.push_back(
-                        (int)(q[q_idx] - _grid_min[q_idx]) / (_grid_max[q_idx] - _grid_min[q_idx]));
+                for (std::size_t d_i = 0; d_i < ncols; ++d_i) {
+                    for (std::size_t d_j = 0; d_j < nrows; ++d_j) {
+                        const DetectorEvent event(d_i, d_j, frame_idx);
+                        const ReciprocalVector qvec = _data->computeQ(event);
+                        // Check that the pixel is in the slab
+                        if (qvec[z_idx] < _grid_min[z_idx] || qvec[z_idx] > _grid_max[z_idx])
+                            continue;
+
+                        // Find the right q-space bin, add the count to it
+                        const int count = frame(d_i, d_j);
+                        const int grid_x_idx =
+                            std::floor(std::fabs(qvec[x_idx] - _grid_min[x_idx]) * grid_freq);
+                        const int grid_y_idx =
+                            std::floor(std::fabs(qvec[y_idx] - _grid_min[y_idx]) * grid_freq);
+                        if (grid_x_idx >= _ngridpoints[x_idx] || grid_y_idx >= _ngridpoints[y_idx])
+                            continue;
+                        tmp_grid(grid_x_idx, grid_y_idx) += count;
+                        ++bin_count;
+                    }
                 }
-                _grid(grid_idx[0], grid_idx[1]) += count;
+                {
+                    std::lock_guard<std::mutex> lock(mut);
+                    _grid += tmp_grid;
+                }
             }
-        }
-    }
+        }, _thread_parallel, _max_threads);
+
+    // int bin_count = 0;
+    // for (std::size_t frame_idx = 0; frame_idx < nframes; ++frame_idx) {
+    //     Eigen::MatrixXi frame = _data->frame(frame_idx);
+    //     for (std::size_t d_i = 0; d_i < ncols; ++d_i) {
+    //         for (std::size_t d_j = 0; d_j < nrows; ++d_j) {
+    //             const DetectorEvent event = DetectorEvent(d_i, d_j, frame_idx);
+    //             const ReciprocalVector qvec = _data->computeQ(event);
+    //             // Check that the pixel is in the slab
+    //             if (qvec[z_idx] < _grid_min[z_idx] || qvec[z_idx] > _grid_max[z_idx])
+    //                 continue;
+
+    //             // Find the right q-space bin, add the count to it
+    //             const int count = frame(d_i, d_j);
+    //             const int grid_x_idx =
+    //                 std::floor(std::fabs(qvec[x_idx] - _grid_min[x_idx]) * grid_freq);
+    //             const int grid_y_idx =
+    //                 std::floor(std::fabs(qvec[y_idx] - _grid_min[y_idx]) * grid_freq);
+    //             if (grid_x_idx >= _ngridpoints[x_idx] || grid_y_idx >= _ngridpoints[y_idx])
+    //                 continue;
+
+    //             _grid(grid_x_idx, grid_y_idx) += count;
+    //             ++bin_count;
+    //         }
+    //     }
+    // }
+    std::cout << bin_count << " real space bins mapped to q-space" << std::endl;
 }
 
 } // namespace ohkl
