@@ -92,6 +92,7 @@ void QGrid2D::getEmptyGrid()
 
     _grid_min = _q_min;
     _grid_max = _q_max;
+    _grid_range = _q_max - _q_min;
 
     Eigen::RowVector3d origin_q = _cell->fromIndex(intersecting_peak);
     for (std::size_t i = 0; i < 3; ++i) {
@@ -151,9 +152,10 @@ void QGrid2D::sampleGrid()
                         // Find the right q-space bin, add the count to it
                         const int count = frame(d_i, d_j);
                         const int grid_x_idx =
-                            std::floor(std::fabs(qvec[x_idx] - _grid_min[x_idx]) * grid_freq);
+                            std::floor(std::fabs((qvec[x_idx] - _grid_min[x_idx]) / _grid_range[x_idx]) * _ngridpoints[x_idx]);
                         const int grid_y_idx =
-                            std::floor(std::fabs(qvec[y_idx] - _grid_min[y_idx]) * grid_freq);
+                            std::floor((std::fabs(qvec[y_idx] - _grid_min[y_idx]) / _grid_range[y_idx]) * _ngridpoints[y_idx]);
+                        // std::cout << grid_x_idx << " " << grid_y_idx << " " << count << std::endl;
                         if (grid_x_idx >= _ngridpoints[x_idx] || grid_y_idx >= _ngridpoints[y_idx])
                             continue;
                         tmp_grid(grid_x_idx, grid_y_idx) += count;
@@ -167,31 +169,6 @@ void QGrid2D::sampleGrid()
             }
         }, _thread_parallel, _max_threads);
 
-    // int bin_count = 0;
-    // for (std::size_t frame_idx = 0; frame_idx < nframes; ++frame_idx) {
-    //     Eigen::MatrixXi frame = _data->frame(frame_idx);
-    //     for (std::size_t d_i = 0; d_i < ncols; ++d_i) {
-    //         for (std::size_t d_j = 0; d_j < nrows; ++d_j) {
-    //             const DetectorEvent event = DetectorEvent(d_i, d_j, frame_idx);
-    //             const ReciprocalVector qvec = _data->computeQ(event);
-    //             // Check that the pixel is in the slab
-    //             if (qvec[z_idx] < _grid_min[z_idx] || qvec[z_idx] > _grid_max[z_idx])
-    //                 continue;
-
-    //             // Find the right q-space bin, add the count to it
-    //             const int count = frame(d_i, d_j);
-    //             const int grid_x_idx =
-    //                 std::floor(std::fabs(qvec[x_idx] - _grid_min[x_idx]) * grid_freq);
-    //             const int grid_y_idx =
-    //                 std::floor(std::fabs(qvec[y_idx] - _grid_min[y_idx]) * grid_freq);
-    //             if (grid_x_idx >= _ngridpoints[x_idx] || grid_y_idx >= _ngridpoints[y_idx])
-    //                 continue;
-
-    //             _grid(grid_x_idx, grid_y_idx) += count;
-    //             ++bin_count;
-    //         }
-    //     }
-    // }
     std::cout << bin_count << " real space bins mapped to q-space" << std::endl;
 }
 

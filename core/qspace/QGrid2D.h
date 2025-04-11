@@ -55,6 +55,7 @@ class QGrid2D {
     Eigen::Vector3d _q_max; //!< Upper bound of q for the data set
     Eigen::Vector3d _grid_min; //!< Lower bound of q for the 2D grid
     Eigen::Vector3d _grid_max; //!< Upper bound of q for the 2D grid
+    Eigen::Vector3d _grid_range; //!< Range of q for the 2D grid
     Eigen::Vector3i _ngridpoints; //!< Number of grid points in each direction
 
     bool _thread_parallel;
