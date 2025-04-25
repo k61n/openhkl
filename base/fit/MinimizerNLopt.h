@@ -17,6 +17,8 @@
 
 #include <nlopt.hpp>
 
+#include <optional>
+
 namespace ohkl {
 
 struct NLoptFitData {
@@ -34,9 +36,10 @@ class MinimizerNLopt {
 
     void reset();
     void setObjectiveFunction(nlopt::vfunc func);
+    void setConstraintFunction(nlopt::vfunc func);
     void setFTol(double ftol);
     NLoptFitData* data() { return &_data; };
-    bool minimize(std::vector<double>& parameters);
+    std::optional<double> minimize(std::vector<double>& parameters);
 
  private:
     unsigned int _nparams;
