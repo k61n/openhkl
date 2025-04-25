@@ -2,7 +2,7 @@
 //
 //  OpenHKL: data reduction for single crystal diffraction
 //
-//! @file      test/cpp/mathematics/TestMinimizer.cpp
+//! @file      test/cpp/mathematics/TestMinimizerNLopt.cpp
 //! @brief     Test ...
 //!
 //! @homepage  https://openhkl.org
@@ -36,7 +36,7 @@ double objective(const std::vector<double>& params, std::vector<double>& grad, v
     return sum2;
 }
 
-TEST_CASE("test/mathematics/TestMinimizer.cpp", "")
+TEST_CASE("test/mathematics/TestMinimizerNLopt.cpp", "")
 {
     const int nparams = 3;
     const int npoints = 40;

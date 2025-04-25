@@ -136,4 +136,4 @@ include_directories(SYSTEM ${OpenCV_INCLUDE_DIRS})
 
 ##### Find NLopt
 find_package(NLopt REQUIRED)
-include_directories(SYSTEM ${NLopt_INCLUDE_DIRS})
+include_directories(SYSTEM ${NLOPT_INCLUDE_DIRS})

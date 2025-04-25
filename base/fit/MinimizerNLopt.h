@@ -34,6 +34,7 @@ class MinimizerNLopt {
 
     void reset();
     void setObjectiveFunction(nlopt::vfunc func);
+    void setFTol(double ftol);
     NLoptFitData* data() { return &_data; };
     bool minimize(std::vector<double>& parameters);
 
@@ -41,6 +42,8 @@ class MinimizerNLopt {
     unsigned int _nparams;
     nlopt::algorithm _algo;
     nlopt::opt _optimizer;
+    double _ftol;
+    int _max_iter;
     NLoptFitData _data;
 };
 

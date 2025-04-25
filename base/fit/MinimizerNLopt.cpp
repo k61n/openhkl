@@ -18,6 +18,8 @@
 
 #include <nlopt.hpp>
 
+#include <iostream>
+
 namespace ohkl {
 
 NLoptFitData::NLoptFitData(unsigned int size)
@@ -31,8 +33,10 @@ MinimizerNLopt::MinimizerNLopt(unsigned int nparams, unsigned int ndatapoints)
     : _nparams(nparams)
     , _algo(nlopt::LN_AUGLAG)
     , _optimizer(_algo, _nparams)
+    , _ftol(1.0e-3)
     , _data(ndatapoints)
 {
+    setFTol(_ftol);
 }
 
 void MinimizerNLopt::reset() { }
@@ -42,18 +46,25 @@ void MinimizerNLopt::setObjectiveFunction(nlopt::vfunc func)
     _optimizer.set_min_objective(func, &_data);
 }
 
+void MinimizerNLopt::setFTol(double ftol)
+{
+    _optimizer.set_ftol_rel(ftol);
+}
+
 bool MinimizerNLopt::minimize(std::vector<double>& parameters)
 {
     double minf;
     nlopt::result result;
+    bool success = false;
     try {
         result = _optimizer.optimize(parameters, minf);
     } catch (std::exception& e) {
         ohklLog(Level::Error, "MinimizerNLOpt::minimize: " + std::string(e.what()));
         return false;
     }
-    if (result == nlopt::result::NUM_RESULTS)
-        return true;
+    if (result > 0)
+        success = true;
+    return success;
 }
 
 
