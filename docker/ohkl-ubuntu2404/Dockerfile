@@ -1,4 +1,4 @@
-FROM ubuntu:23.04
+FROM ubuntu:24.04
 
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive \
@@ -11,6 +11,7 @@ RUN apt-get update && \
       libgl-dev \
       libgsl-dev \
       libhdf5-dev \
+      libnlopt-dev \
       libopencv-dev \
       libpython3-dev \
       libqhull-dev \

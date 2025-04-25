@@ -43,6 +43,13 @@ RUN cd openhkl \
   && cmake --build build -j10
 RUN cd openhkl/build && ctest -j12
 
+RUN git clone https://github.com/stevengj/nlopt.git
+RUN cd nlopt \
+  && cmake -B build -DCMAKE_BUILD_TYPE=RELEASE \
+                    -DCMAKE_INSTALL_PREFIX=/usr/local \
+  && cmake --build build -j10 \
+  && cd build && make install
+
 RUN python3 -m pip install sphinxcontrib-bibtex sphinx-press-theme
 RUN cd openhkl/build && make docs
 

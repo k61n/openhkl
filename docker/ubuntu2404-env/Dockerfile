@@ -1,4 +1,4 @@
-FROM ubuntu:23.04
+FROM ubuntu:24.04
 
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive \
@@ -11,6 +11,7 @@ RUN apt-get update && \
       libgl-dev \
       libgsl-dev \
       libhdf5-dev \
+      libnlopt-dev \
       libopencv-dev \
       libpython3-dev \
       libqhull-dev \
@@ -27,5 +28,3 @@ RUN apt-get update && \
       python3-pip \
       git \
       git-lfs
-RUN git clone https://iffgit.fz-juelich.de/neutron-simlab/openhkl.git
-RUN cd openhkl && mkdir build && cd build && cmake .. && make

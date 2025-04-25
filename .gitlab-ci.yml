@@ -4,20 +4,6 @@ variables:
 stages:
   - build-docker-image
 
-ubuntu2204-env:
-  image: docker:latest
-  stage: build-docker-image
-  services:
-    - docker:dind
-  tags:
-    - docker-in-docker
-  script:
-    - docker build -t ${CI_REGISTRY_IMAGE}/${CI_JOB_NAME} docker/${CI_JOB_NAME}
-    - docker login -u gitlab-ci-token -p ${CI_JOB_TOKEN} ${CI_REGISTRY}
-    - docker push ${CI_REGISTRY_IMAGE}/${CI_JOB_NAME}
-  only:
-    - build-docker-images
-
 archlinux-env:
   image: docker:latest
   stage: build-docker-image
@@ -32,7 +18,35 @@ archlinux-env:
   only:
     - build-docker-images
 
-ohkl-ubuntu2304:
+ubuntu2404-ohkl-env:
+  image: docker:latest
+  stage: build-docker-image
+  services:
+    - docker:dind
+  tags:
+    - docker-in-docker
+  script:
+    - docker build -t ${CI_REGISTRY_IMAGE}/${CI_JOB_NAME} docker/${CI_JOB_NAME}
+    - docker login -u gitlab-ci-token -p ${CI_JOB_TOKEN} ${CI_REGISTRY}
+    - docker push ${CI_REGISTRY_IMAGE}/${CI_JOB_NAME}
+  only:
+    - build-docker-images
+
+ohkl-ubuntu2404:
+  image: docker:latest
+  stage: build-docker-image
+  services:
+    - docker:dind
+  tags:
+    - docker-in-docker
+  script:
+    - docker build -t ${CI_REGISTRY_IMAGE}/${CI_JOB_NAME} docker/${CI_JOB_NAME}
+    - docker login -u gitlab-ci-token -p ${CI_JOB_TOKEN} ${CI_REGISTRY}
+    - docker push ${CI_REGISTRY_IMAGE}/${CI_JOB_NAME}
+  only:
+    - build-docker-images
+
+rocky9-ohkl-env:
   image: docker:latest
   stage: build-docker-image
   services:
@@ -47,20 +61,6 @@ ohkl-ubuntu2304:
     - build-docker-images
 
 ohkl-rocky9:
-  image: docker:latest
-  stage: build-docker-image
-  services:
-    - docker:dind
-  tags:
-    - docker-in-docker
-  script:
-    - docker build -t ${CI_REGISTRY_IMAGE}/${CI_JOB_NAME} docker/${CI_JOB_NAME}
-    - docker login -u gitlab-ci-token -p ${CI_JOB_TOKEN} ${CI_REGISTRY}
-    - docker push ${CI_REGISTRY_IMAGE}/${CI_JOB_NAME}
-  only:
-    - build-docker-images
-
-rocky9-env:
   image: docker:latest
   stage: build-docker-image
   services:
