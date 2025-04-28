@@ -25,39 +25,51 @@ NLoptFitData::NLoptFitData(unsigned int size)
 {
 }
 
-MinimizerNLopt::MinimizerNLopt(unsigned int nparams, unsigned int ndatapoints)
-    : _nparams(nparams)
-    , _algo(nlopt::LN_AUGLAG)
-    , _optimizer(_algo, _nparams)
+MinimizerNLopt::MinimizerNLopt()
+    : _algo(nlopt::LN_AUGLAG)
     , _ftol(1.0e-3)
-    , _data(ndatapoints)
+    , _ctol(1.0e-8)
 {
-    setFTol(_ftol);
 }
 
-void MinimizerNLopt::reset() { }
-
-void MinimizerNLopt::setObjectiveFunction(nlopt::vfunc func)
+void MinimizerNLopt::addParameter(double* address)
 {
-    _optimizer.set_min_objective(func, &_data);
+    _parameters.emplace_back(address);
 }
 
-void MinimizerNLopt::setConstraintFunction(nlopt::vfunc func)
+
+std::vector<double> MinimizerNLopt::grabParameters()
 {
-    _optimizer.add_equality_constraint(func, &_data, 1.0e-8);
+    std::vector<double> params(_parameters.size(), 0);
+    for (std::size_t i = 0; i < params.size(); ++i)
+        params[i] = *_parameters[i];
+    return params;
 }
 
-void MinimizerNLopt::setFTol(double ftol)
+void MinimizerNLopt::setParameters(const std::vector<double> params)
 {
-    _optimizer.set_ftol_rel(ftol);
+    for (std::size_t i = 0; i < params.size(); ++i)
+        *_parameters[i] = params[i];
 }
 
-std::optional<double> MinimizerNLopt::minimize(std::vector<double>& parameters)
+void MinimizerNLopt::init(
+    void* f_data, nlopt::vfunc objective, std::optional<nlopt::vfunc> constraint)
 {
+    _optimizer = nlopt::opt(_algo, _parameters.size());
+    _optimizer.set_min_objective(objective, f_data);
+    if (constraint)
+        _optimizer.add_equality_constraint(constraint.value(), f_data, _ctol);
+}
+
+std::optional<double> MinimizerNLopt::minimize()
+{
+    _optimizer.set_ftol_rel(_ftol);
     double minf;
     nlopt::result result;
     try {
+        std::vector<double> parameters = grabParameters();
         result = _optimizer.optimize(parameters, minf);
+        setParameters(parameters);
     } catch (std::exception& e) {
         ohklLog(Level::Error, "MinimizerNLOpt::minimize: " + std::string(e.what()));
         return {};

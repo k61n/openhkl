@@ -32,22 +32,36 @@ struct NLoptFitData {
 //! Wraps the NLopt non-linear least squares minimization routines.
 class MinimizerNLopt {
  public:
-    explicit MinimizerNLopt(unsigned int nparams, unsigned int ndatapoints);
+    MinimizerNLopt();
 
-    void reset();
-    void setObjectiveFunction(nlopt::vfunc func);
-    void setConstraintFunction(nlopt::vfunc func);
-    void setFTol(double ftol);
-    NLoptFitData* data() { return &_data; };
-    std::optional<double> minimize(std::vector<double>& parameters);
+    //! Add a parameter of the optimisation problem
+    void addParameter(double* address);
+    //! Transfer parameters from pointers to local vector
+    std::vector<double> grabParameters();
+    //! Transfer parameters from local vector to pointers
+    void setParameters(const std::vector<double> params);
+    //! Initialise optimizer, set objective and constraint functions
+    void init(void* f_data, nlopt::vfunc objective, std::optional<nlopt::vfunc> constraint = {});
+    //! Set the optimization tolerance
+    void setFTol(double ftol) { _ftol = ftol; };
+    //! Set the constraint tolerance
+    void setCTol(double ctol) { _ctol = ctol; };
+    //! Perform the minimization
+    std::optional<double> minimize();
 
  private:
-    unsigned int _nparams;
+    //! Optimisation algorithm to use
     nlopt::algorithm _algo;
+    //! Vector of pointers to parameters
+    std::vector<double*> _parameters;
+    //! The NLopt optimzer opbject
     nlopt::opt _optimizer;
+    //! Relative tolerance on sum of squared residuals
     double _ftol;
+    //! Constraint tolerance
+    double _ctol;
+    //! Maximum number of iterations
     int _max_iter;
-    NLoptFitData _data;
 };
 
 } // namespace ohkl
