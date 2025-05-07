@@ -29,31 +29,29 @@ struct NLoptFitData {
     std::vector<double> y_data;
 };
 
+struct EqualityConstraintData {
+    int index;
+    double value;
+};
+
 //! Wraps the NLopt non-linear least squares minimization routines.
 class MinimizerNLopt {
  public:
-    MinimizerNLopt();
+    MinimizerNLopt(int nparams, nlopt::vfunc objective, void* f_data);
 
-    //! Add a parameter of the optimisation problem
-    void addParameter(double* address);
-    //! Transfer parameters from pointers to local vector
-    std::vector<double> grabParameters();
-    //! Transfer parameters from local vector to pointers
-    void setParameters(const std::vector<double> params);
-    //! Initialise optimizer, set objective and constraint functions
-    void init(void* f_data, nlopt::vfunc objective, std::optional<nlopt::vfunc> constraint = {});
+    void addEqualityConstraint(nlopt::vfunc constraint, void* c_data);
     //! Set the optimization tolerance
     void setFTol(double ftol) { _ftol = ftol; };
     //! Set the constraint tolerance
     void setCTol(double ctol) { _ctol = ctol; };
+    //! Set maximum number of iterations
+    void setMaxIter(double max_iter) { _max_iter = max_iter; };
     //! Perform the minimization
-    std::optional<double> minimize();
+    std::optional<double> minimize(std::vector<double>& parameters);
 
  private:
     //! Optimisation algorithm to use
     nlopt::algorithm _algo;
-    //! Vector of pointers to parameters
-    std::vector<double*> _parameters;
     //! The NLopt optimzer opbject
     nlopt::opt _optimizer;
     //! Relative tolerance on sum of squared residuals

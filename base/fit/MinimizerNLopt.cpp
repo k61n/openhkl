@@ -25,51 +25,27 @@ NLoptFitData::NLoptFitData(unsigned int size)
 {
 }
 
-MinimizerNLopt::MinimizerNLopt()
-    : _algo(nlopt::LN_AUGLAG)
-    , _ftol(1.0e-3)
-    , _ctol(1.0e-8)
+MinimizerNLopt::MinimizerNLopt(int nparams, nlopt::vfunc objective, void* f_data)
+    : _algo(nlopt::LN_AUGLAG), _ftol(1.0e-3), _ctol(1.0e-4), _max_iter(5)
 {
-}
-
-void MinimizerNLopt::addParameter(double* address)
-{
-    _parameters.emplace_back(address);
-}
-
-
-std::vector<double> MinimizerNLopt::grabParameters()
-{
-    std::vector<double> params(_parameters.size(), 0);
-    for (std::size_t i = 0; i < params.size(); ++i)
-        params[i] = *_parameters[i];
-    return params;
-}
-
-void MinimizerNLopt::setParameters(const std::vector<double> params)
-{
-    for (std::size_t i = 0; i < params.size(); ++i)
-        *_parameters[i] = params[i];
-}
-
-void MinimizerNLopt::init(
-    void* f_data, nlopt::vfunc objective, std::optional<nlopt::vfunc> constraint)
-{
-    _optimizer = nlopt::opt(_algo, _parameters.size());
+    _optimizer = nlopt::opt(_algo, nparams);
     _optimizer.set_min_objective(objective, f_data);
-    if (constraint)
-        _optimizer.add_equality_constraint(constraint.value(), f_data, _ctol);
 }
 
-std::optional<double> MinimizerNLopt::minimize()
+void MinimizerNLopt::addEqualityConstraint(nlopt::vfunc constraint, void* c_data)
+{
+    _optimizer.add_equality_constraint(constraint, c_data, _ctol);
+}
+
+
+std::optional<double> MinimizerNLopt::minimize(std::vector<double>& parameters)
 {
     _optimizer.set_ftol_rel(_ftol);
+    _optimizer.set_maxeval(_max_iter);
     double minf;
     nlopt::result result;
     try {
-        std::vector<double> parameters = grabParameters();
         result = _optimizer.optimize(parameters, minf);
-        setParameters(parameters);
     } catch (std::exception& e) {
         ohklLog(Level::Error, "MinimizerNLOpt::minimize: " + std::string(e.what()));
         return {};

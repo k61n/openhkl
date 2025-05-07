@@ -44,23 +44,13 @@ TEST_CASE("test/mathematics/TestMinimizerNLopt.cpp", "")
 {
     const int nparams = 3;
     const int npoints = 40;
-    ohkl::MinimizerNLopt minimizer;
     ohkl::NLoptFitData data(npoints);
 
     // Initial guess
-    std::vector<double> params(nparams, 0.0);
-    params[0] = 4.0;
-    params[1] = 0.2;
-    params[2] = 0.5;
-
-    for (std::size_t i = 0; i < nparams; ++i)
-        minimizer.addParameter(&params[i]);
+    std::vector<double> params = {4.0, 0.2, 0.5};
 
     // Target parameters
-    std::vector<double> ref_params(nparams, 0.0);
-    ref_params[0] = 5.0;
-    ref_params[1] = 0.1;
-    ref_params[2] = 1.0;
+    std::vector<double> ref_params = {5.0, 0.1, 1.0};
 
     // Generate data using target parameters
     for (int i = 0; i < npoints; ++i) {
@@ -69,8 +59,8 @@ TEST_CASE("test/mathematics/TestMinimizerNLopt.cpp", "")
     }
 
     // Give the minimizer initial guess parameters
-    minimizer.init(&data, objective);
-    std::optional<double> minf = minimizer.minimize();
+    ohkl::MinimizerNLopt minimizer(nparams, objective, &data);
+    std::optional<double> minf = minimizer.minimize(params);
     CHECK(minf);
 
     const double eps = 1.0e-6;

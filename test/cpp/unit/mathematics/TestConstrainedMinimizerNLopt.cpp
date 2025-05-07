@@ -53,30 +53,17 @@ TEST_CASE("test/mathematics/TestConstrainedMinimizerNLopt.cpp", "")
 {
     const int nparams = 3;
     const int npoints = 40;
-    ohkl::MinimizerNLopt minimizer;
     ohkl::NLoptFitData data(npoints);
 
 
     // Initial guess
-    std::vector<double> params(nparams, 0.0);
-    params[0] = 4.01;
-    params[1] = 0.399;
-    params[2] = 0.5;
-
-    for (std::size_t i = 0; i < nparams; ++i)
-        minimizer.addParameter(&params[i]);
+    std::vector<double> params = {4.01, 0.399, 0.5};
 
     // Target parameters
-    std::vector<double> ref_params(nparams, 0.0);
-    ref_params[0] = 5.0;
-    ref_params[1] = 0.1;
-    ref_params[2] = 1.0;
+    std::vector<double> ref_params = {5.0, 0.2, 1.0};
 
     // Constrained reference parameters
-    std::vector<double> constrained_ref_params(nparams, 0.0);
-    constrained_ref_params[0] = 3.5892173806;
-    constrained_ref_params[1] = 0.3589217376;
-    constrained_ref_params[2] = 1.9945771731;
+    std::vector<double> constrained_ref_params = {3.5892173806, 0.3589217376, 1.9945771731};
 
     // Generate data using target parameters
     for (int i = 0; i < npoints; ++i) {
@@ -84,10 +71,10 @@ TEST_CASE("test/mathematics/TestConstrainedMinimizerNLopt.cpp", "")
         data.y_data[i] = modelFunc(ref_params, static_cast<double>(i));
     }
 
-    minimizer.init(&data, objective, constraint);
-    std::optional<double> minf = minimizer.minimize();
+    ohkl::MinimizerNLopt minimizer(nparams, objective, &data);
+    minimizer.addEqualityConstraint(constraint, nullptr);
+    std::optional<double> minf = minimizer.minimize(params);
     CHECK(minf);
-
 
     const double eps = 1.0e-6;
     const double ref_minf = 26.1403011495;
