@@ -61,6 +61,7 @@ class Rescaler {
     std::map<PeakCollection*, std::vector<double*>> _scale_factors;
     std::vector<double> _parameters;
     std::vector<EqualityConstraintData> _equality_constraints;
+    std::vector<InequalityConstraintData> _inequality_constraints;
 
     std::unique_ptr<MergedPeakCollection> _merged_peaks;
 

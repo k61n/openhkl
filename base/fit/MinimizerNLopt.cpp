@@ -26,7 +26,7 @@ NLoptFitData::NLoptFitData(unsigned int size)
 }
 
 MinimizerNLopt::MinimizerNLopt(int nparams, nlopt::vfunc objective, void* f_data)
-    : _algo(nlopt::LN_AUGLAG), _ftol(1.0e-3), _ctol(1.0e-4), _max_iter(5)
+    : _algo(nlopt::LN_AUGLAG), _ftol(1.0e-3), _ctol(1.0e-4), _init_step(0.1), _max_iter(5)
 {
     _optimizer = nlopt::opt(_algo, nparams);
     _optimizer.set_min_objective(objective, f_data);
@@ -37,11 +37,16 @@ void MinimizerNLopt::addEqualityConstraint(nlopt::vfunc constraint, void* c_data
     _optimizer.add_equality_constraint(constraint, c_data, _ctol);
 }
 
+void MinimizerNLopt::addInequalityConstraint(nlopt::vfunc constraint, void* c_data)
+{
+    _optimizer.add_inequality_constraint(constraint, c_data, _ctol);
+}
 
 std::optional<double> MinimizerNLopt::minimize(std::vector<double>& parameters)
 {
     _optimizer.set_ftol_rel(_ftol);
     _optimizer.set_maxeval(_max_iter);
+    _optimizer.set_initial_step(_init_step);
     double minf;
     nlopt::result result;
     try {

@@ -29,6 +29,10 @@ double objective(const std::vector<double>& params, std::vector<double>& grad, v
     (void)grad;
     ohkl::Rescaler* rescaler = static_cast<ohkl::Rescaler*>(f_data);
 
+    for (std::size_t idx = 0; idx < params.size(); ++idx)
+        std::cout << params[idx] << " ";
+    std::cout << std::endl;
+
     rescaler->updateScaleFactors();
     rescaler->merge();
 
@@ -54,6 +58,16 @@ double equality_constraint(
     return params.at(data->index) - data->value;
 }
 
+double inequality_constraint(
+    const std::vector<double>& params, std::vector<double>& grad, void* f_data)
+{
+    // Inequality of type
+    // a * x_{n} <= b * x_{n-1}
+    // a * x_{n} - b * x_{n-1} <= 0
+    (void)grad;
+    ohkl::InequalityConstraintData* data = static_cast<ohkl::InequalityConstraintData*>(f_data);
+    return (data->a * params.at(data->n)) - (data->b * params.at(data->n - 1));
+}
 }
 
 namespace ohkl {
@@ -79,6 +93,10 @@ Rescaler::Rescaler(
             // Constrain the first image in a data set to be 1.0
             if (frame == 0)
                 _equality_constraints.push_back({idx, 1.0});
+            else {
+                _inequality_constraints.push_back({idx, 1.0, 1.05});
+                _inequality_constraints.push_back({idx, -1.0, -0.95});
+            }
             _scale_factors.at(peaks).at(frame) = &_parameters.at(idx);
         }
     }
@@ -112,8 +130,10 @@ std::optional<double> Rescaler::rescale()
     minimizer.setFTol(_ftol);
     minimizer.setCTol(_ctol);
     minimizer.setMaxIter(_max_iter);
-    for (auto constraint : _equality_constraints)
+    for (auto& constraint : _equality_constraints)
         minimizer.addEqualityConstraint(equality_constraint, &constraint);
+    for (auto& constraint : _inequality_constraints)
+        minimizer.addInequalityConstraint(inequality_constraint, &constraint);
     std::optional<double> minf = minimizer.minimize(_parameters);
 
     return minf;

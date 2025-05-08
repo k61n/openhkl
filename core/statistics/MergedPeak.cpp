@@ -171,6 +171,7 @@ bool operator<(const MergedPeak& p, const MergedPeak& q)
 //! approximately a chi-squared statistic with \f$N-1\f$ degrees of freedom.
 double MergedPeak::chi2() const
 {
+    const double eps = 1.0e-5;
     double I_merge = intensity().value();
 
     if (redundancy() < 1.99) // if there is no redundancy, we cannot compute chi2
@@ -184,6 +185,8 @@ double MergedPeak::chi2() const
         else
             I = peak->correctedProfileIntensity();
         const double std = I.sigma();
+        if (std < eps)
+            return 0;
         const double x = (I.value() - I_merge) / (std * std);
         chi_sq += x * x;
     }

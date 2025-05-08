@@ -34,16 +34,27 @@ struct EqualityConstraintData {
     double value;
 };
 
+struct InequalityConstraintData {
+    // a * x_{n} <= b * x_{n-1}
+    // a * x_{n} - b * x_{n-1} <= 0
+    int n;
+    double a;
+    double b;
+};
+
 //! Wraps the NLopt non-linear least squares minimization routines.
 class MinimizerNLopt {
  public:
     MinimizerNLopt(int nparams, nlopt::vfunc objective, void* f_data);
 
     void addEqualityConstraint(nlopt::vfunc constraint, void* c_data);
+    void addInequalityConstraint(nlopt::vfunc constraint, void* c_data);
     //! Set the optimization tolerance
     void setFTol(double ftol) { _ftol = ftol; };
     //! Set the constraint tolerance
     void setCTol(double ctol) { _ctol = ctol; };
+    //! Set initial step size
+    void setInitStep(double init_step) { _init_step = init_step; };
     //! Set maximum number of iterations
     void setMaxIter(double max_iter) { _max_iter = max_iter; };
     //! Perform the minimization
@@ -58,6 +69,8 @@ class MinimizerNLopt {
     double _ftol;
     //! Constraint tolerance
     double _ctol;
+    //! Initial step size
+    double _init_step;
     //! Maximum number of iterations
     int _max_iter;
 };
