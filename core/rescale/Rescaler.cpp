@@ -33,7 +33,7 @@ double objective(const std::vector<double>& params, std::vector<double>& grad, v
         std::cout << params[idx] << " ";
     std::cout << std::endl;
 
-    rescaler->updateScaleFactors();
+    rescaler->updateScaleFactors(params);
     rescaler->merge();
 
     double sum_chi2 = 0.0;
@@ -73,8 +73,8 @@ double inequality_constraint(
 namespace ohkl {
 
 Rescaler::Rescaler(
-    std::vector<PeakCollection*> collections, SpaceGroup group, bool friedel, bool sum_intensity)
-    : _peak_collections(collections)
+    PeakCollection* collection, SpaceGroup group, bool friedel, bool sum_intensity)
+    : _peak_collection(collection)
     , _space_group(group)
     , _friedel(friedel)
     , _sum_intensity(sum_intensity)
@@ -84,42 +84,38 @@ Rescaler::Rescaler(
     , _max_iter(2)
 {
     ohklLog(Level::Info, "Rescaler::Rescaler");
-    for (auto* peaks : _peak_collections) {
-        int nframes = peaks->data()->nFrames();
-        _scale_factors.insert_or_assign(peaks, std::vector<double*>(nframes));
-        for (std::size_t frame = 0; frame < nframes; ++frame) {
-            _parameters.push_back(1.0);
-            int idx = _parameters.size() - 1;
-            // Constrain the first image in a data set to be 1.0
-            if (frame == 0)
-                _equality_constraints.push_back({idx, 1.0});
-            else {
-                _inequality_constraints.push_back({idx, 1.0, 1.05});
-                _inequality_constraints.push_back({idx, -1.0, -0.95});
-            }
-            _scale_factors.at(peaks).at(frame) = &_parameters.at(idx);
+
+    int nframes = collection->data()->nFrames();
+    for (std::size_t frame = 0; frame < nframes; ++frame) {
+        _parameters.push_back(1.0);
+        int idx = _parameters.size() - 1;
+        // Constrain the first image in a data set to be 1.0
+        if (frame == 0)
+            _equality_constraints.push_back({idx, 1.0});
+        else {
+            _inequality_constraints.push_back({idx, 1.0, 1.05});
+            _inequality_constraints.push_back({idx, -1.0, -0.95});
         }
     }
 }
 
-void Rescaler::updateScaleFactors()
+void Rescaler::updateScaleFactors(const std::vector<double>& parameters)
 {
     ohklLog(Level::Info, "Rescaler::updateScaleFactors");
-    for (PeakCollection* collection : _peak_collections) {
-        for (Peak3D* peak : collection->getPeakList()) {
-            int frame = std::lround(peak->shape().center()[2]);
-            double* scale = _scale_factors.at(collection).at(frame);
-            peak->setScale(*scale);
-        }
+    for (Peak3D* peak : _peak_collection->getPeakList()) {
+        int frame = std::lround(peak->shape().center()[2]);
+        double scale = parameters.at(frame);
+        peak->setScale(scale);
     }
 }
 
 void Rescaler::merge()
 {
+    std::vector<PeakCollection*> collections = {_peak_collection};
     ohklLog(Level::Info, "Rescaler::merge");
     _merged_peaks.reset();
     _merged_peaks = std::make_unique<MergedPeakCollection>(
-        _space_group, _peak_collections, _friedel, _sum_intensity);
+        _space_group, collections, _friedel, _sum_intensity);
     // _merged_peaks->setDRange(1.5, 50.0);
 }
 
@@ -130,10 +126,10 @@ std::optional<double> Rescaler::rescale()
     minimizer.setFTol(_ftol);
     minimizer.setCTol(_ctol);
     minimizer.setMaxIter(_max_iter);
-    for (auto& constraint : _equality_constraints)
-        minimizer.addEqualityConstraint(equality_constraint, &constraint);
-    for (auto& constraint : _inequality_constraints)
-        minimizer.addInequalityConstraint(inequality_constraint, &constraint);
+    // for (auto& constraint : _equality_constraints)
+    //     minimizer.addEqualityConstraint(equality_constraint, &constraint);
+    // for (auto& constraint : _inequality_constraints)
+    //     minimizer.addInequalityConstraint(inequality_constraint, &constraint);
     std::optional<double> minf = minimizer.minimize(_parameters);
 
     return minf;

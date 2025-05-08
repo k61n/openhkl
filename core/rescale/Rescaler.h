@@ -38,10 +38,10 @@ class PeakCollection;
 class Rescaler {
  public:
     Rescaler(
-        std::vector<PeakCollection*> collections, SpaceGroup group, bool friedel,
+        PeakCollection* collection, SpaceGroup group, bool friedel,
         bool sum_intensity = true);
 
-    void updateScaleFactors();
+    void updateScaleFactors(const std::vector<double>& parameters);
     void merge();
 
     void setFTol(double ftol) { _ftol = ftol; };
@@ -53,12 +53,11 @@ class Rescaler {
     MergedPeakCollection* mergedPeaks() { return _merged_peaks.get(); };
 
  private:
-    std::vector<PeakCollection*> _peak_collections;
+    PeakCollection* _peak_collection;
     SpaceGroup _space_group;
     bool _friedel;
     bool _sum_intensity;
 
-    std::map<PeakCollection*, std::vector<double*>> _scale_factors;
     std::vector<double> _parameters;
     std::vector<EqualityConstraintData> _equality_constraints;
     std::vector<InequalityConstraintData> _inequality_constraints;

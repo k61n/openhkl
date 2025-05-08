@@ -34,9 +34,7 @@ TEST_CASE("test/data/TestRescaler.cpp", "")
     ohkl::PeakCollection* peaks = experiment.getPeakCollection("predicted");
     ohkl::UnitCell* cell = experiment.getUnitCell("indexed");
 
-    std::vector<ohkl::PeakCollection*> collections = {peaks};
-
-    ohkl::Rescaler rescaler(collections, cell->spaceGroup(), true, true);
+    ohkl::Rescaler rescaler(peaks, cell->spaceGroup(), true, true);
     std::optional<double> minf = rescaler.rescale();
     CHECK(minf);
 
