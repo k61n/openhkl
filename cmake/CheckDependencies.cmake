@@ -1,12 +1,42 @@
-###### Find OPENMP
-if(BUILD_WITH_OPENMP)
-    find_package(OpenMP REQUIRED)
-    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
-    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+###### Find Qt
+if(BUILD_WITH_QT6)
+  set(QT_VER "Qt6")
+else()
+  set(QT_VER "Qt5")
 endif()
 
-###### Find Eigen3
-include_directories(SYSTEM ${EIGEN3_INCLUDE_DIR})
+set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
+set(THREADS_PREFER_PTHREAD_FLAG TRUE)
+find_package(Threads REQUIRED)
+
+set(OpenGL_GL_PREFERENCE LEGACY)
+set(QT_USE_QTOPENGL TRUE)
+find_package(OpenGL REQUIRED)
+message(STATUS "Found OpenGL:")
+message(STATUS "  libraries: ${OPENGL_LIBRARIES}")
+message(STATUS "  headers: ${OPENGL_INCLUDE_DIR}")
+
+find_package(${QT_VER} COMPONENTS Core Gui Widgets OpenGL PrintSupport Concurrent REQUIRED)
+
+set(QT_LIBS "${QT_VER}::Widgets")
+set(QT_INCLUDES "${${QT_VER}Widgets_INCLUDE_DIRS}")
+
+message(STATUS "Found ${QT_VER} version ${${QT_VER}_VERSION}:")
+message(STATUS "  Qt_DIR: ${${QT_VER}_DIR}")
+message(STATUS "  QT_INCLUDES: ${QT_INCLUDES}")
+
+get_target_property(QtWidgets_location ${QT_VER}::Widgets LOCATION_Release)
+message(STATUS "  ${${QT_VER}Widgets_LIBRARIES} ${QtWidgets_location}")
+get_target_property(QtCore_location ${QT_VER}::Core LOCATION_Release)
+message(STATUS "  ${${QT_VER}Core_LIBRARIES} ${QtCore_location}")
+get_target_property(QtGui_location ${QT_VER}::Gui LOCATION_Release)
+message(STATUS "  ${${QT_VER}Gui_LIBRARIES} ${QtGui_location}")
+get_target_property(QtOpenGL_location ${QT_VER}::OpenGL LOCATION_Release)
+message(STATUS "  ${${QT_VER}OpenGL_LIBRARIES} ${QtOpenGL_location}")
+
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+set(CMAKE_AUTOUIC OFF)
 
 ###### Find HDF5
 find_package(HDF5 COMPONENTS CXX REQUIRED)
@@ -72,32 +102,34 @@ if(OHKL_PYTHON)
     include(UseSWIG)
 endif(OHKL_PYTHON)
 
-###### Find C-Blosc
+###### C-Blosc
 find_package(Blosc REQUIRED)
 include_directories(SYSTEM ${Blosc_INCLUDE_DIRS})
 
+###### Yaml-cpp
 find_package(YAMLCPP REQUIRED)
 include_directories(SYSTEM ${YAMLCPP_INCLUDES})
 
-###### Find TIFF
+###### Tiff
 find_package(TIFF REQUIRED)
 include_directories(SYSTEM ${TIFF_INCLUDE_DIR})
 
+##### FFTW
 find_package(FFTW REQUIRED)
 include_directories(SYSTEM ${FFTW_INCLUDE_DIR})
 
-###### Find GSL
+###### GSL
 find_package(GSL REQUIRED)
 include_directories(SYSTEM ${GSL_INCLUDE_DIR})
 
-##### Find Eigen3
+##### Eigen3
 find_package(Eigen3 MODULE REQUIRED)
 include_directories(SYSTEM ${EIGEN3_INCLUDE_DIR})
 
-##### Find QHull
+##### QHull
 find_package(Qhull MODULE REQUIRED)
 include_directories(SYSTEM ${QHULL_INCLUDE_DIR})
 
-##### Find OpenCV
+##### OpenCV
 find_package(OpenCV REQUIRED)
 include_directories(SYSTEM ${OpenCV_INCLUDE_DIRS})
