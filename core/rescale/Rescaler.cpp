@@ -41,10 +41,10 @@ double objective(const std::vector<double>& params, std::vector<double>& grad, v
         if (merged_peak.redundancy() < 1.99)
             continue;
         double chi2 = merged_peak.chi2();
-        std::cout << chi2 << " ";
+        // std::cout << chi2 << " ";
         sum_chi2 += merged_peak.chi2();
     }
-    std::cout << std::endl;
+    // std::cout << std::endl;
 
     std::cout << "sum_chi2 = " << sum_chi2 << std::endl;
     return sum_chi2;
@@ -81,7 +81,7 @@ Rescaler::Rescaler(
     , _merged_peaks(nullptr)
     , _ftol(1.0e-3)
     , _ctol(1.0e-3)
-    , _max_iter(2)
+    , _max_iter(1e7)
 {
     ohklLog(Level::Info, "Rescaler::Rescaler");
 
@@ -126,10 +126,10 @@ std::optional<double> Rescaler::rescale()
     minimizer.setFTol(_ftol);
     minimizer.setCTol(_ctol);
     minimizer.setMaxIter(_max_iter);
-    // for (auto& constraint : _equality_constraints)
-    //     minimizer.addEqualityConstraint(equality_constraint, &constraint);
-    // for (auto& constraint : _inequality_constraints)
-    //     minimizer.addInequalityConstraint(inequality_constraint, &constraint);
+    for (auto& constraint : _equality_constraints)
+        minimizer.addEqualityConstraint(equality_constraint, &constraint);
+    for (auto& constraint : _inequality_constraints)
+        minimizer.addInequalityConstraint(inequality_constraint, &constraint);
     std::optional<double> minf = minimizer.minimize(_parameters);
 
     return minf;

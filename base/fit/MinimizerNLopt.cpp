@@ -26,7 +26,7 @@ NLoptFitData::NLoptFitData(unsigned int size)
 }
 
 MinimizerNLopt::MinimizerNLopt(int nparams, nlopt::vfunc objective, void* f_data)
-    : _algo(nlopt::LN_AUGLAG), _ftol(1.0e-3), _ctol(1.0e-4), _init_step(0.1), _max_iter(5)
+    : _algo(nlopt::LN_AUGLAG), _ftol(1.0e-3), _ctol(1.0e-4), _init_step(0.1), _max_iter(1000)
 {
     _optimizer = nlopt::opt(_algo, nparams);
     _optimizer.set_min_objective(objective, f_data);
