@@ -51,15 +51,21 @@ class Rescaler {
     void updateScaleFactors(const std::vector<double>& parameters);
     void merge();
 
+    double rfactor() const;
+    double sumChi2() const;
+
     void setFTol(double ftol) { _ftol = ftol; };
+    void setXTol(double xtol) { _xtol = xtol; };
     void setCTol(double ctol) { _ctol = ctol; };
     void setMaxIter(double max_iter) { _max_iter = max_iter; };
+    void setInitStep(double init_step) { _init_step = init_step; };
 
     std::optional<double> rescale();
 
     MergedPeakCollection* mergedPeaks() { return _merged_peaks.get(); };
     const std::vector<double>& parameters() const { return _parameters; };
     int nIter() const { return _niter; };
+    bool sumIntensity() const { return _sum_intensity; };
 
  private:
     PeakCollection* _peak_collection;
@@ -73,9 +79,15 @@ class Rescaler {
 
     std::unique_ptr<MergedPeakCollection> _merged_peaks;
 
+    //! The maximum fraction by which scale factor can differ from adjacent images
+    double _frame_ratio;
+
+    // Minimizer parameters
     double _ftol;
+    double _xtol;
     double _ctol;
     unsigned int _max_iter;
+    double _init_step;
 
     static std::vector<double> _minf;
     static int _niter;

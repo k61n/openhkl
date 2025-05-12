@@ -51,6 +51,8 @@ class MinimizerNLopt {
     void addInequalityConstraint(nlopt::vfunc constraint, void* c_data);
     //! Set the optimization tolerance
     void setFTol(double ftol) { _ftol = ftol; };
+    //! Set the parameter tolerance
+    void setXTol(double xtol) { _xtol = xtol; };
     //! Set the constraint tolerance
     void setCTol(double ctol) { _ctol = ctol; };
     //! Set initial step size
@@ -67,6 +69,8 @@ class MinimizerNLopt {
     nlopt::opt _optimizer;
     //! Relative tolerance on sum of squared residuals
     double _ftol;
+    //! Relative tolerance on parameters
+    double _xtol;
     //! Constraint tolerance
     double _ctol;
     //! Initial step size

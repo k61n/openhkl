@@ -14,6 +14,8 @@
 
 #include "core/experiment/Experiment.h"
 #include "core/shape/PeakCollection.h"
+#include "core/statistics/MergedPeakCollection.h"
+#include "core/statistics/RFactor.h"
 #include "tables/crystal/SpaceGroup.h"
 #include "tables/crystal/UnitCell.h"
 
@@ -33,6 +35,12 @@ TEST_CASE("test/data/TestRescaler.cpp", "")
     ohkl::sptrDataSet data = experiment.getData("Scan I");
     ohkl::PeakCollection* peaks = experiment.getPeakCollection("predicted");
     ohkl::UnitCell* cell = experiment.getUnitCell("indexed");
+    std::vector<ohkl::PeakCollection*> collections = {peaks};
+
+    ohkl::MergedPeakCollection initial_merge(cell->spaceGroup(), collections, true, true);
+    ohkl::RFactor initial_rfactor(true);
+    initial_rfactor.calculate(&initial_merge);
+    std::cout << "Initial Rmerge = " << initial_rfactor.Rmerge() << std::endl;
 
     ohkl::Rescaler rescaler(peaks, cell->spaceGroup(), true, true);
     std::optional<double> minf = rescaler.rescale();
@@ -45,6 +53,11 @@ TEST_CASE("test/data/TestRescaler.cpp", "")
             std::cout << param << " ";
     }
     std::cout << std::endl;
+
+    ohkl::MergedPeakCollection final_merge(cell->spaceGroup(), collections, true, true);
+    ohkl::RFactor final_rfactor(true);
+    final_rfactor.calculate(&final_merge);
+    std::cout << "Final Rmerge = " << final_rfactor.Rmerge() << std::endl;
 
     CHECK(false);
 
