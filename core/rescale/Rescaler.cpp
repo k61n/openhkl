@@ -25,6 +25,7 @@
 namespace ohkl {
 
 std::vector<double> Rescaler::_minf = {};
+int Rescaler::_niter = 0;
 
 Rescaler::Rescaler(PeakCollection* collection, SpaceGroup group, bool friedel, bool sum_intensity)
     : _peak_collection(collection)
@@ -39,14 +40,17 @@ Rescaler::Rescaler(PeakCollection* collection, SpaceGroup group, bool friedel, b
     ohklLog(Level::Info, "Rescaler::Rescaler");
 
     _minf.clear();
+    _niter = 0;
+
     int nframes = collection->data()->nFrames();
     for (std::size_t frame = 0; frame < nframes; ++frame) {
         _parameters.push_back(1.0);
         int idx = _parameters.size() - 1;
-        // Constrain the first image in a data set to be 1.0
         if (frame == 0)
+            // Constrain the first image in a data set to be 1.0
             _equality_constraints.push_back({idx, 1.0});
         else {
+            // Constrain a scale factor to be within 5% of the previous one
             _inequality_constraints.push_back({idx, 1.0, 1.05});
             _inequality_constraints.push_back({idx, -1.0, -0.95});
         }
@@ -68,6 +72,7 @@ double Rescaler::objective(const std::vector<double>& params, std::vector<double
         sum_chi2 += chi2;
     }
 
+    ++_niter;
     return sum_chi2;
 }
 

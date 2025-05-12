@@ -58,7 +58,8 @@ class Rescaler {
     std::optional<double> rescale();
 
     MergedPeakCollection* mergedPeaks() { return _merged_peaks.get(); };
-    const std::vector<double>& parameters() { return _parameters; };
+    const std::vector<double>& parameters() const { return _parameters; };
+    int nIter() const { return _niter; };
 
  private:
     PeakCollection* _peak_collection;
@@ -77,6 +78,7 @@ class Rescaler {
     unsigned int _max_iter;
 
     static std::vector<double> _minf;
+    static int _niter;
 };
 
 /*! @}*/

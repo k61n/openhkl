@@ -39,6 +39,7 @@ TEST_CASE("test/data/TestRescaler.cpp", "")
     CHECK(minf);
 
     if (minf) {
+        std::cout << rescaler.nIter() << " iterations" << std::endl;
         std::cout << "minf = " << minf.value() << std::endl;
         for (const auto& param : rescaler.parameters())
             std::cout << param << " ";
