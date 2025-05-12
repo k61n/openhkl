@@ -22,58 +22,11 @@
 #include <iostream>
 #include <memory>
 
-namespace {
-
-double objective(const std::vector<double>& params, std::vector<double>& grad, void* f_data)
-{
-    (void)grad;
-    ohkl::Rescaler* rescaler = static_cast<ohkl::Rescaler*>(f_data);
-
-    for (std::size_t idx = 0; idx < params.size(); ++idx)
-        std::cout << params[idx] << " ";
-    std::cout << std::endl;
-
-    rescaler->updateScaleFactors(params);
-    rescaler->merge();
-
-    double sum_chi2 = 0.0;
-    for (const ohkl::MergedPeak& merged_peak : rescaler->mergedPeaks()->mergedPeakSet()) {
-        if (merged_peak.redundancy() < 1.99)
-            continue;
-        double chi2 = merged_peak.chi2();
-        // std::cout << chi2 << " ";
-        sum_chi2 += merged_peak.chi2();
-    }
-    // std::cout << std::endl;
-
-    std::cout << "sum_chi2 = " << sum_chi2 << std::endl;
-    return sum_chi2;
-}
-
-double equality_constraint(
-    const std::vector<double>& params, std::vector<double>& grad, void* f_data)
-{
-    (void)grad;
-    ohkl::EqualityConstraintData* data = static_cast<ohkl::EqualityConstraintData*>(f_data);
-    return params.at(data->index) - data->value;
-}
-
-double inequality_constraint(
-    const std::vector<double>& params, std::vector<double>& grad, void* f_data)
-{
-    // Inequality of type
-    // a * x_{n} <= b * x_{n-1}
-    // a * x_{n} - b * x_{n-1} <= 0
-    (void)grad;
-    ohkl::InequalityConstraintData* data = static_cast<ohkl::InequalityConstraintData*>(f_data);
-    return (data->a * params.at(data->n)) - (data->b * params.at(data->n - 1));
-}
-}
-
 namespace ohkl {
 
-Rescaler::Rescaler(
-    PeakCollection* collection, SpaceGroup group, bool friedel, bool sum_intensity)
+std::vector<double> Rescaler::_minf = {};
+
+Rescaler::Rescaler(PeakCollection* collection, SpaceGroup group, bool friedel, bool sum_intensity)
     : _peak_collection(collection)
     , _space_group(group)
     , _friedel(friedel)
@@ -81,10 +34,11 @@ Rescaler::Rescaler(
     , _merged_peaks(nullptr)
     , _ftol(1.0e-3)
     , _ctol(1.0e-3)
-    , _max_iter(1e7)
+    , _max_iter(1e5)
 {
     ohklLog(Level::Info, "Rescaler::Rescaler");
 
+    _minf.clear();
     int nframes = collection->data()->nFrames();
     for (std::size_t frame = 0; frame < nframes; ++frame) {
         _parameters.push_back(1.0);
@@ -97,6 +51,43 @@ Rescaler::Rescaler(
             _inequality_constraints.push_back({idx, -1.0, -0.95});
         }
     }
+}
+
+double Rescaler::objective(const std::vector<double>& params, std::vector<double>& grad, void* f_data)
+{
+    (void)grad;
+    ohkl::Rescaler* rescaler = static_cast<ohkl::Rescaler*>(f_data);
+
+    rescaler->updateScaleFactors(params);
+    rescaler->merge();
+
+    double sum_chi2 = 0.0;
+    for (const ohkl::MergedPeak& merged_peak : rescaler->mergedPeaks()->mergedPeakSet()) {
+        double chi2 = merged_peak.chi2();
+        _minf.push_back(chi2);
+        sum_chi2 += chi2;
+    }
+
+    return sum_chi2;
+}
+
+double Rescaler::equality_constraint(
+    const std::vector<double>& params, std::vector<double>& grad, void* f_data)
+{
+    (void)grad;
+    ohkl::EqualityConstraintData* data = static_cast<ohkl::EqualityConstraintData*>(f_data);
+    return params.at(data->index) - data->value;
+}
+
+double Rescaler::inequality_constraint(
+    const std::vector<double>& params, std::vector<double>& grad, void* f_data)
+{
+    // Inequality of type
+    // a * x_{n} <= b * x_{n-1}
+    // a * x_{n} - b * x_{n-1} <= 0
+    (void)grad;
+    ohkl::InequalityConstraintData* data = static_cast<ohkl::InequalityConstraintData*>(f_data);
+    return (data->a * params.at(data->n)) - (data->b * params.at(data->n - 1));
 }
 
 void Rescaler::updateScaleFactors(const std::vector<double>& parameters)

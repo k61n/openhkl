@@ -41,6 +41,13 @@ class Rescaler {
         PeakCollection* collection, SpaceGroup group, bool friedel,
         bool sum_intensity = true);
 
+    static double objective(
+        const std::vector<double>& params, std::vector<double>& grad, void* f_data);
+    static double equality_constraint(
+        const std::vector<double>& params, std::vector<double>& grad, void* f_data);
+    static double inequality_constraint(
+        const std::vector<double>& params, std::vector<double>& grad, void* f_data);
+
     void updateScaleFactors(const std::vector<double>& parameters);
     void merge();
 
@@ -51,6 +58,7 @@ class Rescaler {
     std::optional<double> rescale();
 
     MergedPeakCollection* mergedPeaks() { return _merged_peaks.get(); };
+    const std::vector<double>& parameters() { return _parameters; };
 
  private:
     PeakCollection* _peak_collection;
@@ -67,6 +75,8 @@ class Rescaler {
     double _ftol;
     double _ctol;
     unsigned int _max_iter;
+
+    static std::vector<double> _minf;
 };
 
 /*! @}*/

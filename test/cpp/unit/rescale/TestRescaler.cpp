@@ -38,8 +38,12 @@ TEST_CASE("test/data/TestRescaler.cpp", "")
     std::optional<double> minf = rescaler.rescale();
     CHECK(minf);
 
-    if (minf)
+    if (minf) {
         std::cout << "minf = " << minf.value() << std::endl;
+        for (const auto& param : rescaler.parameters())
+            std::cout << param << " ";
+    }
+    std::cout << std::endl;
 
     CHECK(false);
 
