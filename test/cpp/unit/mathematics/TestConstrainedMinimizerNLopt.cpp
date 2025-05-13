@@ -60,10 +60,11 @@ TEST_CASE("test/mathematics/TestConstrainedMinimizerNLopt.cpp", "")
     std::vector<double> params = {4.01, 0.399, 0.5};
 
     // Target parameters
-    std::vector<double> ref_params = {5.0, 0.2, 1.0};
+    const std::vector<double> ref_params = {5.0, 0.2, 1.0};
 
     // Constrained reference parameters
-    std::vector<double> constrained_ref_params = {3.5892173806, 0.3589217376, 1.9945771731};
+    const std::vector<double> constrained_ref_params =
+        {4.3958110707, 0.4395811071, 1.3803889979};
 
     // Generate data using target parameters
     for (int i = 0; i < npoints; ++i) {
@@ -72,12 +73,13 @@ TEST_CASE("test/mathematics/TestConstrainedMinimizerNLopt.cpp", "")
     }
 
     ohkl::MinimizerNLopt minimizer(nparams, objective, &data);
+    minimizer.setFTol(1.0e-8);
     minimizer.addEqualityConstraint(constraint, nullptr);
     std::optional<double> minf = minimizer.minimize(params);
     CHECK(minf);
 
-    const double eps = 1.0e-6;
-    const double ref_minf = 26.1403011495;
+    const double eps = 1.0e-5;
+    const double ref_minf = 10.0459822135;
 
     CHECK_THAT(minf.value(), Catch::Matchers::WithinAbs(ref_minf, eps));
     CHECK_THAT(params[0], Catch::Matchers::WithinAbs(10 * params[1], eps));

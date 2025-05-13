@@ -30,6 +30,7 @@ struct NLoptFitData {
 };
 
 struct EqualityConstraintData {
+    // Fix a parameter: params[index] = value
     int index;
     double value;
 };

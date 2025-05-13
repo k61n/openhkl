@@ -33,7 +33,7 @@ TEST_CASE("test/integrate/TestMergedPeakCollection.cpp", "")
     const int ref_merged = 4880;
     const int ref_max_peaks = 35149;
     const double ref_redundancy = 1.1743852459;
-    const int ref_n_sym_peaks = 781;
+    const int ref_n_sym_peaks = 782;
 
     const std::string filename = "Trypsin-small.ohkl";
     ohkl::Experiment experiment("Trypsin", "BioDiff");

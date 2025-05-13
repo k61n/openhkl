@@ -50,7 +50,7 @@ TEST_CASE("test/mathematics/TestMinimizerNLopt.cpp", "")
     std::vector<double> params = {4.0, 0.2, 0.5};
 
     // Target parameters
-    std::vector<double> ref_params = {5.0, 0.1, 1.0};
+    const std::vector<double> ref_params = {5.0, 0.1, 1.0};
 
     // Generate data using target parameters
     for (int i = 0; i < npoints; ++i) {

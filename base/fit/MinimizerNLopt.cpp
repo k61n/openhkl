@@ -27,10 +27,10 @@ NLoptFitData::NLoptFitData(unsigned int size)
 
 MinimizerNLopt::MinimizerNLopt(int nparams, nlopt::vfunc objective, void* f_data)
     : _algo(nlopt::LN_COBYLA)
-    , _ftol(1.0e-3)
-    , _xtol(1.0e-3)
-    , _ctol(1.0e-4)
-    , _init_step(0.2)
+    , _ftol(1.0e-6)
+    , _xtol(1.0e-10)
+    , _ctol(1.0e-10)
+    , _init_step(0.1)
     , _max_iter(1e7)
 {
     _optimizer = nlopt::opt(_algo, nparams);
