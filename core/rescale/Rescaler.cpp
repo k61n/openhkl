@@ -14,7 +14,6 @@
 
 #include "core/rescale/Rescaler.h"
 
-#include "base/utils/Logger.h"
 #include "core/data/DataSet.h"
 #include "core/data/DataTypes.h"
 #include "core/shape/PeakCollection.h"
@@ -29,18 +28,21 @@ namespace ohkl {
 std::vector<double> Rescaler::_minf = {};
 int Rescaler::_niter = 0;
 
-Rescaler::Rescaler(PeakCollection* collection, SpaceGroup group, bool friedel, bool sum_intensity)
-    : _peak_collection(collection)
-    , _space_group(group)
-    , _friedel(friedel)
-    , _sum_intensity(sum_intensity)
-    , _merged_peaks(nullptr)
-    , _frame_ratio(0.05)
-    , _ftol(1.0e-4)
-    , _xtol(1.0e-6)
-    , _ctol(1.0e-6)
-    , _max_iter(1e7)
-    , _init_step(0.1)
+void RescalerParameters::log(const Level& level) const
+{
+    ohklLog(level, "Rescaler parameters:");
+    ohklLog(level, "sum_intensity          = ", sum_intensity);
+    ohklLog(level, "friedel                = ", friedel);
+    ohklLog(level, "ftol                   = ", ftol);
+    ohklLog(level, "xtol                   = ", xtol);
+    ohklLog(level, "ctol                   = ", ctol);
+    ohklLog(level, "max_iter               = ", max_iter);
+    ohklLog(level, "init_step              = ", init_step);
+    ohklLog(level, "frame_ratio            = ", frame_ratio);
+}
+
+    Rescaler::Rescaler(PeakCollection* collection, SpaceGroup group)
+    : _peak_collection(collection), _space_group(group), _parameters(), _merged_peaks(nullptr)
 {
     ohklLog(Level::Info, "Rescaler::Rescaler");
 
@@ -48,11 +50,11 @@ Rescaler::Rescaler(PeakCollection* collection, SpaceGroup group, bool friedel, b
     _niter = 0;
 
     int nframes = collection->data()->nFrames();
-    double scale_upper = 1.0 + _frame_ratio;
-    double scale_lower = 1.0 - _frame_ratio;
+    double scale_upper = 1.0 + _parameters.frame_ratio;
+    double scale_lower = 1.0 - _parameters.frame_ratio;
     for (std::size_t frame = 0; frame < nframes; ++frame) {
-        _parameters.push_back(1.0);
-        int idx = _parameters.size() - 1;
+        _scale_factors.push_back(1.0);
+        int idx = _scale_factors.size() - 1;
         if (frame == 0)
             // Constrain the first image in a data set to be 1.0
             _equality_constraints.push_back({idx, 1.0});
@@ -111,13 +113,13 @@ void Rescaler::merge()
     ohklLog(Level::Info, "Rescaler::merge");
     _merged_peaks.reset();
     _merged_peaks = std::make_unique<MergedPeakCollection>(
-        _space_group, collections, _friedel, _sum_intensity);
+        _space_group, collections, _parameters.friedel, _parameters.sum_intensity);
     // _merged_peaks->setDRange(1.5, 50.0);
 }
 
 double Rescaler::rfactor() const
 {
-    RFactor rfactor(_sum_intensity);
+    RFactor rfactor(_parameters.sum_intensity);
     rfactor.calculate(_merged_peaks.get());
     return rfactor.Rmerge();
 }
@@ -133,17 +135,18 @@ double Rescaler::sumChi2() const
 std::optional<double> Rescaler::rescale()
 {
     ohklLog(Level::Info, "Rescaler::rescale");
-    MinimizerNLopt minimizer(_parameters.size(), objective, this);
-    minimizer.setFTol(_ftol);
-    minimizer.setXTol(_xtol);
-    minimizer.setCTol(_ctol);
-    minimizer.setMaxIter(_max_iter);
-    minimizer.setInitStep(_init_step);
+    _parameters.log(Level::Info);
+    MinimizerNLopt minimizer(_scale_factors.size(), objective, this);
+    minimizer.setFTol(_parameters.ftol);
+    minimizer.setXTol(_parameters.xtol);
+    minimizer.setCTol(_parameters.ctol);
+    minimizer.setMaxIter(_parameters.max_iter);
+    minimizer.setInitStep(_parameters.init_step);
     for (auto& constraint : _equality_constraints)
         minimizer.addEqualityConstraint(equality_constraint, &constraint);
     for (auto& constraint : _inequality_constraints)
         minimizer.addInequalityConstraint(inequality_constraint, &constraint);
-    std::optional<double> minf = minimizer.minimize(_parameters);
+    std::optional<double> minf = minimizer.minimize(_scale_factors);
 
     return minf;
 }

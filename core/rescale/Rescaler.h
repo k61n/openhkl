@@ -16,6 +16,7 @@
 #define OHKL_CORE_RESCALE_RESCALER_H
 
 #include "base/fit/MinimizerNLopt.h"
+#include "base/utils/Logger.h"
 #include "core/statistics/MergedPeakCollection.h"
 #include "tables/crystal/SpaceGroup.h"
 
@@ -28,6 +29,19 @@ namespace ohkl {
 
 class PeakCollection;
 
+struct RescalerParameters {
+    bool sum_intensity = true; //! Use sum integrated intensity (not profile)
+    bool friedel = true; //! Use Friedel's law for merging
+    double ftol = 1.0e-4; //! Relative tolerance for objective function evaluations
+    double xtol = 1.0e-6; //! Relative tolerance for parameters
+    double ctol = 1.0e-6; //! Constraint tolerance
+    int max_iter = 1e7; //! Maximum number of iterations
+    double init_step = 0.1; //! Initial step size for gradient calculation
+    double frame_ratio = 0.05; //! Maximum variation in scale factor between adjacent frames
+
+    void log(const Level& level) const;
+};
+
 /*! \brief Rescale peak intensity as a function of image number
  *
  * Peak intensities are scaled by a factor dependent on image number. Optimize the scale
@@ -37,9 +51,7 @@ class PeakCollection;
  */
 class Rescaler {
  public:
-    Rescaler(
-        PeakCollection* collection, SpaceGroup group, bool friedel,
-        bool sum_intensity = true);
+    Rescaler(PeakCollection* collection, SpaceGroup group);
 
     static double objective(
         const std::vector<double>& params, std::vector<double>& grad, void* f_data);
@@ -54,40 +66,23 @@ class Rescaler {
     double rfactor() const;
     double sumChi2() const;
 
-    void setFTol(double ftol) { _ftol = ftol; };
-    void setXTol(double xtol) { _xtol = xtol; };
-    void setCTol(double ctol) { _ctol = ctol; };
-    void setMaxIter(double max_iter) { _max_iter = max_iter; };
-    void setInitStep(double init_step) { _init_step = init_step; };
-
     std::optional<double> rescale();
 
     MergedPeakCollection* mergedPeaks() { return _merged_peaks.get(); };
-    const std::vector<double>& parameters() const { return _parameters; };
+    const std::vector<double>& scaleFactors() const { return _scale_factors; };
     int nIter() const { return _niter; };
-    bool sumIntensity() const { return _sum_intensity; };
+    RescalerParameters* parameters() { return &_parameters; };
 
  private:
     PeakCollection* _peak_collection;
     SpaceGroup _space_group;
-    bool _friedel;
-    bool _sum_intensity;
+    RescalerParameters _parameters;
 
-    std::vector<double> _parameters;
+    std::vector<double> _scale_factors;
     std::vector<EqualityConstraintData> _equality_constraints;
     std::vector<InequalityConstraintData> _inequality_constraints;
 
     std::unique_ptr<MergedPeakCollection> _merged_peaks;
-
-    //! The maximum fraction by which scale factor can differ from adjacent images
-    double _frame_ratio;
-
-    // Minimizer parameters
-    double _ftol;
-    double _xtol;
-    double _ctol;
-    unsigned int _max_iter;
-    double _init_step;
 
     static std::vector<double> _minf;
     static int _niter;

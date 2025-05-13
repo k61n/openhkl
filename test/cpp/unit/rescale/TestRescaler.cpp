@@ -48,14 +48,18 @@ TEST_CASE("test/data/TestRescaler.cpp", "")
     std::cout << "Initial Rmerge = " << initial_rfactor.Rmerge() << std::endl;
     CHECK_THAT(initial_rmerge, Catch::Matchers::WithinAbs(ref_initial_rmerge, eps));
 
-    ohkl::Rescaler rescaler(peaks, cell->spaceGroup(), true, true);
+    ohkl::Rescaler rescaler(peaks, cell->spaceGroup());
+    auto* rescaler_parameters = rescaler.parameters();
+    rescaler_parameters->sum_intensity = true;
+    rescaler_parameters->friedel = true;
+
     std::optional<double> minf = rescaler.rescale();
     CHECK(minf);
 
     if (minf) {
         std::cout << rescaler.nIter() << " iterations" << std::endl;
         std::cout << "minf = " << minf.value() << std::endl;
-        for (const auto& param : rescaler.parameters())
+        for (const auto& param : rescaler.scaleFactors())
             std::cout << param << " ";
     }
     std::cout << std::endl;
