@@ -28,6 +28,10 @@
 
 TEST_CASE("test/data/TestRescaler.cpp", "")
 {
+    const double ref_initial_rmerge = 0.156948;
+    const double ref_final_rmerge = 0.152007;
+    const double eps = 1.0e-5;
+
     const std::string filename = "Trypsin-small.ohkl";
     ohkl::Experiment experiment("Trypsin", "BioDiff");
     experiment.loadFromFile(filename);
@@ -40,7 +44,9 @@ TEST_CASE("test/data/TestRescaler.cpp", "")
     ohkl::MergedPeakCollection initial_merge(cell->spaceGroup(), collections, true, true);
     ohkl::RFactor initial_rfactor(true);
     initial_rfactor.calculate(&initial_merge);
+    const double initial_rmerge = initial_rfactor.Rmerge();
     std::cout << "Initial Rmerge = " << initial_rfactor.Rmerge() << std::endl;
+    CHECK_THAT(initial_rmerge, Catch::Matchers::WithinAbs(ref_initial_rmerge, eps));
 
     ohkl::Rescaler rescaler(peaks, cell->spaceGroup(), true, true);
     std::optional<double> minf = rescaler.rescale();
@@ -57,8 +63,7 @@ TEST_CASE("test/data/TestRescaler.cpp", "")
     ohkl::MergedPeakCollection final_merge(cell->spaceGroup(), collections, true, true);
     ohkl::RFactor final_rfactor(true);
     final_rfactor.calculate(&final_merge);
-    std::cout << "Final Rmerge = " << final_rfactor.Rmerge() << std::endl;
-
-    CHECK(false);
-
+    const double final_rmerge = final_rfactor.Rmerge();
+    std::cout << "Final Rmerge = " << final_rmerge << std::endl;
+    CHECK_THAT(final_rmerge, Catch::Matchers::WithinAbs(ref_final_rmerge, eps));
 }

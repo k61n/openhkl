@@ -30,10 +30,10 @@ class PeakCollection;
 
 /*! \brief Rescale peak intensity as a function of image number
  *
- *
- *
- *
- *
+ * Peak intensities are scaled by a factor dependent on image number. Optimize the scale
+ * factors such that the R-factor (Rmerge) of the peak collection is minimized. The first
+ * scale factor is fixed to 1, and each scale factor can vary by a maximum of 5% relative
+ * to its neighbours.
  */
 class Rescaler {
  public:
