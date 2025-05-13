@@ -43,6 +43,7 @@
         <file>images/sidebar/lighttheme/reject.svg</file>
         <file>images/sidebar/lighttheme/merger.svg</file>
         <file>images/sidebar/lighttheme/shapes.svg</file>
+        <file>images/sidebar/lighttheme/rescale.svg</file>
         <file>images/sidebar/darktheme/home.svg</file>
         <file>images/sidebar/darktheme/experiment.svg</file>
         <file>images/sidebar/darktheme/finder.svg</file>
@@ -54,6 +55,7 @@
         <file>images/sidebar/darktheme/reject.svg</file>
         <file>images/sidebar/darktheme/merger.svg</file>
         <file>images/sidebar/darktheme/shapes.svg</file>
+        <file>images/sidebar/darktheme/rescale.svg</file>
         <file>images/statusbar/red-circle.svg</file>
         <file>images/statusbar/green-circle.svg</file>
     </qresource>
