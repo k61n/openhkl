@@ -41,6 +41,7 @@ class PeakHandler;
 class PeakMerger;
 class Predictor;
 class Refiner;
+class Rescaler;
 class ShapeHandler;
 class ShapeModel;
 class ShapeModelBuilder;
@@ -243,9 +244,21 @@ class Experiment {
     //! Get a pointer to the ShapeModelBuilder object
     ShapeModelBuilder* shapeModelBuilder() const { return _shape_model_builder.get(); };
 
+    // Prediction
+    //! Get a pointer to the predictor
+    Predictor* predictor() { return _predictor.get(); };
+
+    // Refiner
+    //! Get a pointer to the refiner
+    Refiner* refiner() { return _refiner.get(); };
+
     // Peak Merger
     //! get a pointer to the PeakMerger object
     PeakMerger* peakMerger() const { return _peak_merger.get(); };
+
+    // Rescaler
+    //! Get a pointer to the Rescaler object
+    Rescaler* rescaler() const { return _rescaler.get(); };
 
     // Save load
     //! Save the current experiment state to hdf5
@@ -253,15 +266,10 @@ class Experiment {
     //! Load the current experiment state to hdf5
     void loadFromFile(const std::string& path);
 
-    // Prediction
-    //! Get a pointer to the predictor
-    Predictor* predictor() { return _predictor.get(); };
-    //! Get a pointer to the refiner
-    Refiner* refiner() { return _refiner.get(); };
 
     // Integration
     //! Get a pointer to the integrator module
-    Integrator* integrator();
+    Integrator* integrator() const { return _integrator.get(); };
 
     //! Generate automatic name for PeakCollection
     std::string generatePeakCollectionName();
@@ -298,6 +306,7 @@ class Experiment {
     std::unique_ptr<Refiner> _refiner;
     std::unique_ptr<Integrator> _integrator;
     std::unique_ptr<PeakMerger> _peak_merger;
+    std::unique_ptr<Rescaler> _rescaler;
 
     // Data reader parameters, since there is nowhere else to store this
     std::unique_ptr<DataReaderParameters> _data_reader_params;

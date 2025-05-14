@@ -16,8 +16,13 @@
 #include "gui/subframe_rescale/SubframeRescale.h"
 
 #include "core/experiment/Experiment.h"
+#include "core/rescale/Rescaler.h"
 #include "gui/models/Project.h"
+#include "gui/utility/ScienceSpinBox.h"
+#include "gui/utility/ScienceSpinBox.h"
+#include "gui/views/PeakTableView.h"
 #include "gui/models/Session.h"
+#include "gui/graphics/SXPlot.h"
 #include "gui/utility/GridFiller.h"
 #include "gui/utility/PeakComboBox.h"
 #include "gui/utility/PropertyScrollArea.h"
@@ -27,9 +32,11 @@
 
 #include <QComboBox>
 #include <QHBoxLayout>
+#include <QPushButton>
 #include <QSignalBlocker>
 #include <QSplitter>
 #include <QVBoxLayout>
+#include <qpushbutton.h>
 
 
 SubframeRescale::SubframeRescale() : QWidget()
@@ -41,6 +48,8 @@ SubframeRescale::SubframeRescale() : QWidget()
 
     setDataUp();
     setRescalerUp();
+    setPeakTableUp();
+    setPlotUp();
 
     _right_element->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
@@ -49,8 +58,8 @@ SubframeRescale::SubframeRescale() : QWidget()
     main_layout->addWidget(propertyScrollArea);
     main_layout->addWidget(_right_element);
 
-    _right_element->setStretchFactor(0, 2);
-    _right_element->setStretchFactor(1, 1);
+    // _right_element->setStretchFactor(0, 2);
+    // _right_element->setStretchFactor(1, 1);
 }
 
 void SubframeRescale::setDataUp()
@@ -76,13 +85,13 @@ void SubframeRescale::setRescalerUp()
         "Include Friedel", "Include Freidel relations when merging");
     _profile_intensity_check = f.addCheckBox(
         "Profile intensities", "Use profile intensities instead of sum intensities");
-    _ftol_spin = f.addDoubleSpinBox(
+    _ftol_spin = f.addScienceSpinBox(
         "Objective function tolerance",
         "Convergence threshold for objective function evaluations");
-    _ftol_spin = f.addDoubleSpinBox(
+    _xtol_spin = f.addScienceSpinBox(
         "Parameter tolerance",
         "Convergence threshold for optimised parameters (scale factors)");
-    _ctol_spin = f.addDoubleSpinBox(
+    _ctol_spin = f.addScienceSpinBox(
         "Constraint tolerance",
         "Convergence threshold for optimised parameters (scale factors)");
     _max_iter_spin = f.addSpinBox(
@@ -94,7 +103,44 @@ void SubframeRescale::setRescalerUp()
         "Scale difference", "Maximum difference in scale factor between adjacent images");
     _rescale_button = f.addButton("Rescale");
 
+    connect(_rescale_button, &QPushButton::clicked, this, &SubframeRescale::rescale);
+
     _left_layout->addWidget(rescaler_para);
+}
+
+void SubframeRescale::setPeakTableUp()
+{
+    QGroupBox* peak_group = new QGroupBox("Peaks");
+    QGridLayout* peak_grid = new QGridLayout(peak_group);
+
+    peak_group->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
+    _peak_table = new PeakTableView(this);
+    _peak_collection_model.setRoot(&_peak_collection_item);
+    _peak_table->setModel(&_peak_collection_model);
+    _peak_table->resizeColumnsToContents();
+
+    _peak_table->setColumnHidden(PeakColumn::h, true);
+    _peak_table->setColumnHidden(PeakColumn::k, true);
+    _peak_table->setColumnHidden(PeakColumn::l, true);
+    _peak_table->setColumnHidden(PeakColumn::Enabled, true);
+    _peak_table->setColumnHidden(PeakColumn::Count, true);
+    _peak_table->setColumnHidden(PeakColumn::ProfileIntensity, true);
+    _peak_table->setColumnHidden(PeakColumn::ProfileSigma, true);
+    _peak_table->setColumnHidden(PeakColumn::ProfileStrength, true);
+    _peak_table->setColumnHidden(PeakColumn::ProfileBkg, true);
+    _peak_table->setColumnHidden(PeakColumn::ProfileBkgSigma, true);
+
+    peak_grid->addWidget(_peak_table, 0, 0, 0, 0);
+
+    _right_element->addWidget(peak_group);
+}
+
+void SubframeRescale::setPlotUp()
+{
+    _plot = new SXPlot;
+    _right_element->addWidget(_plot);
+
 }
 
 void SubframeRescale::refreshAll()
@@ -102,14 +148,44 @@ void SubframeRescale::refreshAll()
     if (!gSession->hasProject())
         return;
 
+    grabRescalerParameters();
     toggleUnsafeWidgets();
 }
 
-void SubframeRescale::toggleUnsafeWidgets()
+void SubframeRescale::grabRescalerParameters()
 {
-
     if (!gSession->hasProject())
         return;
+
+    auto* experiment = gSession->currentProject()->experiment();
+    auto* params = experiment->rescaler()->parameters();
+
+    _friedel_check->setChecked(params->friedel);
+    _profile_intensity_check->setChecked(!params->sum_intensity);
+    _ftol_spin->setValue(params->ftol);
+    _xtol_spin->setValue(params->xtol);
+    _ctol_spin->setValue(params->ctol);
+    _max_iter_spin->setValue(params->max_iter);
+    _init_step_spin->setValue(params->init_step);
+    _frame_ratio_spin->setValue(params->frame_ratio);
+}
+
+void SubframeRescale::setRescalerParameters()
+{
+    if (!gSession->hasProject())
+        return;
+
+    auto* experiment = gSession->currentProject()->experiment();
+    auto* params = experiment->rescaler()->parameters();
+
+    params->friedel = _friedel_check->isChecked();
+    params->sum_intensity = !_profile_intensity_check->isChecked();
+    params->ftol = _ftol_spin->value();
+    params->xtol = _xtol_spin->value();
+    params->ctol = _ctol_spin->value();
+    params->max_iter = _max_iter_spin->value();
+    params->init_step = _init_step_spin->value();
+    params->frame_ratio = _frame_ratio_spin->value();
 }
 
 
@@ -145,4 +221,20 @@ void SubframeRescale::refreshSpaceGroupCombo()
     for (const auto& [key, value] : vec)
         _space_group_combo->addItem(QString::fromStdString(key));
     _space_group_combo->setCurrentIndex(0);
+}
+
+void SubframeRescale::toggleUnsafeWidgets()
+{
+
+    if (!gSession->hasProject())
+        return;
+}
+
+void SubframeRescale::rescale()
+{
+    auto* experiment = gSession->currentProject()->experiment();
+    auto* rescaler = experiment->rescaler();
+
+    setRescalerParameters();
+
 }

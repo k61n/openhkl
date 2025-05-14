@@ -41,29 +41,8 @@ void RescalerParameters::log(const Level& level) const
     ohklLog(level, "frame_ratio            = ", frame_ratio);
 }
 
-    Rescaler::Rescaler(PeakCollection* collection, SpaceGroup group)
-    : _peak_collection(collection), _space_group(group), _parameters(), _merged_peaks(nullptr)
+Rescaler::Rescaler() : _parameters(), _merged_peaks(nullptr)
 {
-    ohklLog(Level::Info, "Rescaler::Rescaler");
-
-    _minf.clear();
-    _niter = 0;
-
-    int nframes = collection->data()->nFrames();
-    double scale_upper = 1.0 + _parameters.frame_ratio;
-    double scale_lower = 1.0 - _parameters.frame_ratio;
-    for (std::size_t frame = 0; frame < nframes; ++frame) {
-        _scale_factors.push_back(1.0);
-        int idx = _scale_factors.size() - 1;
-        if (frame == 0)
-            // Constrain the first image in a data set to be 1.0
-            _equality_constraints.push_back({idx, 1.0});
-        else {
-            // Constrain a scale factor to be within 100 * _frame_ratio% of the previous one
-            _inequality_constraints.push_back({idx, 1.0, scale_upper});
-            _inequality_constraints.push_back({idx, -1.0, -scale_lower});
-        }
-    }
 }
 
 double Rescaler::objective(const std::vector<double>& params, std::vector<double>& grad, void* f_data)
@@ -95,6 +74,31 @@ double Rescaler::inequality_constraint(
     (void)grad;
     ohkl::InequalityConstraintData* data = static_cast<ohkl::InequalityConstraintData*>(f_data);
     return (data->a * params.at(data->n)) - (data->b * params.at(data->n - 1));
+}
+
+void Rescaler::setPeakCollection(PeakCollection* collection, SpaceGroup group)
+{
+    _minf.clear();
+    _equality_constraints.clear();
+    _inequality_constraints.clear();
+    _niter = 0;
+    _space_group = group;
+
+    int nframes = collection->data()->nFrames();
+    double scale_upper = 1.0 + _parameters.frame_ratio;
+    double scale_lower = 1.0 - _parameters.frame_ratio;
+    for (std::size_t frame = 0; frame < nframes; ++frame) {
+        _scale_factors.push_back(1.0);
+        int idx = _scale_factors.size() - 1;
+        if (frame == 0)
+            // Constrain the first image in a data set to be 1.0
+            _equality_constraints.push_back({idx, 1.0});
+        else {
+            // Constrain a scale factor to be within 100 * _frame_ratio% of the previous one
+            _inequality_constraints.push_back({idx, 1.0, scale_upper});
+            _inequality_constraints.push_back({idx, -1.0, -scale_lower});
+        }
+    }
 }
 
 void Rescaler::updateScaleFactors(const std::vector<double>& parameters)

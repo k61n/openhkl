@@ -26,6 +26,7 @@ class ShapeComboBox;
 class Spoiler;
 class SafeSpinBox;
 class SafeDoubleSpinBox;
+class ScienceSpinBox;
 class QGridLayout;
 class QComboBox;
 class QWidget;
@@ -77,6 +78,10 @@ class GridFiller {
 
     //! Add a row with a label, a tooltip for the label and two spin boxes.
     std::tuple<SafeSpinBox*, SafeSpinBox*> addSpinBoxPair(
+        const QString& labelText, const QString& labelTooltip = QString());
+
+    //! Add a spin box pair that allows scientific notation
+    ScienceSpinBox* addScienceSpinBox(
         const QString& labelText, const QString& labelTooltip = QString());
 
     //! Add a row with a label, a tooltip for the label and two double spin boxes.
