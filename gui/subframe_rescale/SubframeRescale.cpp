@@ -124,16 +124,13 @@ void SubframeRescale::setPeakTableUp()
     _peak_table->setModel(&_peak_collection_model);
     _peak_table->resizeColumnsToContents();
 
-    _peak_table->setColumnHidden(PeakColumn::h, true);
-    _peak_table->setColumnHidden(PeakColumn::k, true);
-    _peak_table->setColumnHidden(PeakColumn::l, true);
+    _peak_table->setColumnHidden(PeakColumn::BkgGradient, true);
+    _peak_table->setColumnHidden(PeakColumn::BkgGradientSigma, true);
+    _peak_table->setColumnHidden(PeakColumn::uc, true);
+    _peak_table->setColumnHidden(PeakColumn::DataSet, true);
+    _peak_table->setColumnHidden(PeakColumn::Rejection, true);
+    _peak_table->setColumnHidden(PeakColumn::Filtered, true);
     _peak_table->setColumnHidden(PeakColumn::Enabled, true);
-    _peak_table->setColumnHidden(PeakColumn::Count, true);
-    _peak_table->setColumnHidden(PeakColumn::ProfileIntensity, true);
-    _peak_table->setColumnHidden(PeakColumn::ProfileSigma, true);
-    _peak_table->setColumnHidden(PeakColumn::ProfileStrength, true);
-    _peak_table->setColumnHidden(PeakColumn::ProfileBkg, true);
-    _peak_table->setColumnHidden(PeakColumn::ProfileBkgSigma, true);
 
     peak_grid->addWidget(_peak_table, 0, 0, 0, 0);
 
@@ -144,7 +141,6 @@ void SubframeRescale::setPlotUp()
 {
     _plot = new SXPlot;
     _right_element->addWidget(_plot);
-
 }
 
 void SubframeRescale::refreshAll()
@@ -153,6 +149,7 @@ void SubframeRescale::refreshAll()
         return;
 
     refreshSpaceGroupCombo();
+    refreshPeakTable();
     grabRescalerParameters();
     toggleUnsafeWidgets();
 }
@@ -228,6 +225,17 @@ void SubframeRescale::refreshSpaceGroupCombo()
     _space_group_combo->setCurrentIndex(0);
 }
 
+void SubframeRescale::refreshPeakTable()
+{
+    if (!gSession->currentProject()->hasPeakCollection())
+        return;
+
+    _peak_collection = _peak_combo->currentPeakCollection();
+    _peak_collection_item.setPeakCollection(_peak_collection);
+    _peak_collection_model.setRoot(&_peak_collection_item);
+    _peak_table->resizeColumnsToContents();
+}
+
 void SubframeRescale::toggleUnsafeWidgets()
 {
 
@@ -261,6 +269,7 @@ void SubframeRescale::rescale()
         }
         plotScaleFactors();
     }
+    refreshPeakTable();
 }
 
 void SubframeRescale::plotScaleFactors()

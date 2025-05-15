@@ -110,7 +110,7 @@ void Rescaler::setPeakCollection(PeakCollection* collection, const SpaceGroup& g
 
 void Rescaler::updateScaleFactors(const std::vector<double>& parameters)
 {
-    ohklLog(Level::Info, "Rescaler::updateScaleFactors");
+    ohklLog(Level::Debug, "Rescaler::updateScaleFactors");
     for (Peak3D* peak : _peak_collection->getPeakList()) {
         int frame = std::lround(peak->shape().center()[2]);
         double scale = parameters.at(frame);
@@ -121,7 +121,7 @@ void Rescaler::updateScaleFactors(const std::vector<double>& parameters)
 void Rescaler::merge()
 {
     std::vector<PeakCollection*> collections = {_peak_collection};
-    ohklLog(Level::Info, "Rescaler::merge");
+    ohklLog(Level::Debug, "Rescaler::merge");
     _merged_peaks.reset();
     _merged_peaks = std::make_unique<MergedPeakCollection>(
         _space_group, collections, _parameters.friedel, _parameters.sum_intensity);

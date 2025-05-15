@@ -63,6 +63,8 @@ class SubframeRescale : public QWidget {
 
     //! Refresh the QComboBox for the space group
     void refreshSpaceGroupCombo();
+    //! Refresh the peak table
+    void refreshPeakTable();
     //! Disable widgets that are unsafe without relevant data
     void toggleUnsafeWidgets();
 
@@ -94,7 +96,7 @@ class SubframeRescale : public QWidget {
 
     // Peak Table
     PeakTableView* _peak_table;
-    ohkl::PeakCollection _peak_collection;
+    ohkl::PeakCollection* _peak_collection;
     PeakCollectionItem _peak_collection_item;
     PeakCollectionModel _peak_collection_model;
 
