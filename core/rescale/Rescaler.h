@@ -60,7 +60,7 @@ class Rescaler {
     static double inequality_constraint(
         const std::vector<double>& params, std::vector<double>& grad, void* f_data);
 
-    void setPeakCollection(PeakCollection* collection, SpaceGroup group);
+    void setPeakCollection(PeakCollection* collection, const SpaceGroup& group);
     void updateScaleFactors(const std::vector<double>& parameters);
     void merge();
 

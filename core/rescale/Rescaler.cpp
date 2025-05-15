@@ -42,7 +42,12 @@ void RescalerParameters::log(const Level& level) const
     ohklLog(level, "frame_ratio            = ", frame_ratio);
 }
 
-Rescaler::Rescaler() : _parameters(), _merged_peaks(nullptr)
+Rescaler::Rescaler()
+    : _parameters()
+    , _scale_factors()
+    , _equality_constraints()
+    , _inequality_constraints()
+    , _merged_peaks(nullptr)
 {
 }
 
@@ -77,13 +82,14 @@ double Rescaler::inequality_constraint(
     return (data->a * params.at(data->n)) - (data->b * params.at(data->n - 1));
 }
 
-void Rescaler::setPeakCollection(PeakCollection* collection, SpaceGroup group)
+void Rescaler::setPeakCollection(PeakCollection* collection, const SpaceGroup& group)
 {
-    _minf.clear();
+    _scale_factors.clear();
     _equality_constraints.clear();
     _inequality_constraints.clear();
-    _niter = 0;
+
     _space_group = group;
+    _peak_collection = collection;
 
     int nframes = collection->data()->nFrames();
     double scale_upper = 1.0 + _parameters.frame_ratio;
@@ -141,6 +147,10 @@ std::optional<double> Rescaler::rescale()
 {
     ohklLog(Level::Info, "Rescaler::rescale");
     _parameters.log(Level::Info);
+
+    _niter = 0;
+    _minf.clear();
+
     MinimizerNLopt minimizer(_scale_factors.size(), objective, this);
     minimizer.setFTol(_parameters.ftol);
     minimizer.setXTol(_parameters.xtol);

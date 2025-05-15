@@ -49,10 +49,10 @@ TEST_CASE("test/data/TestRescaler.cpp", "")
     CHECK_THAT(initial_rmerge, Catch::Matchers::WithinAbs(ref_initial_rmerge, eps));
 
     ohkl::Rescaler rescaler;
-    rescaler.setPeakCollection(peaks, cell->spaceGroup());
     auto* rescaler_parameters = rescaler.parameters();
     rescaler_parameters->sum_intensity = true;
     rescaler_parameters->friedel = true;
+    rescaler.setPeakCollection(peaks, cell->spaceGroup());
 
     std::optional<double> minf = rescaler.rescale();
     CHECK(minf);
