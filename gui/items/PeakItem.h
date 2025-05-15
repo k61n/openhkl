@@ -44,6 +44,7 @@ enum PeakColumn {
     ProfileBkgSigma,
     BkgGradient,
     BkgGradientSigma,
+    Scale,
     DataSet,
     uc,
     Rejection,
@@ -72,6 +73,7 @@ class PeakItem : public QStandardItem {
     double profile_bkg_sigma() const;
     double bkg_gradient() const;
     double bkg_gradient_sigma() const;
+    double scale() const;
     bool enabled() const;
     //! Retrieve the data of column and row
     QVariant peakData(const QModelIndex& index, int role, PeakDisplayModes mode) const;

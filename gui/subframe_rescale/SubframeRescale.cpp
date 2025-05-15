@@ -19,6 +19,7 @@
 #include "core/rescale/Rescaler.h"
 #include "gui/models/Project.h"
 #include "gui/utility/ScienceSpinBox.h"
+#include "gui/utility/PeakComboBox.h"
 #include "gui/utility/ScienceSpinBox.h"
 #include "gui/views/PeakTableView.h"
 #include "gui/models/Session.h"
@@ -36,6 +37,7 @@
 #include <QSignalBlocker>
 #include <QSplitter>
 #include <QVBoxLayout>
+#include <qchar.h>
 #include <qpushbutton.h>
 
 
@@ -67,8 +69,7 @@ void SubframeRescale::setDataUp()
     Spoiler* _data_box = new Spoiler("Input");
     GridFiller f(_data_box);
 
-    _peak_combo_1 = f.addPeakCombo(ComboType::IntegratedPeaks, "Peak Collection 1:");
-    _peak_combo_2 = f.addPeakCombo(ComboType::IntegratedPeaks, "Peak Collection 2:");
+    _peak_combo = f.addPeakCombo(ComboType::IntegratedPeaks, "Peak Collection:");
 
     _left_layout->addWidget(_data_box);
     _data_box->setExpanded(true);
@@ -102,6 +103,9 @@ void SubframeRescale::setRescalerUp()
     _frame_ratio_spin = f.addDoubleSpinBox(
         "Scale difference", "Maximum difference in scale factor between adjacent images");
     _rescale_button = f.addButton("Rescale");
+
+    _max_iter_spin->setMaximum(10000000000);
+    _max_iter_spin->setMinimum(0);
 
     connect(_rescale_button, &QPushButton::clicked, this, &SubframeRescale::rescale);
 
@@ -148,6 +152,7 @@ void SubframeRescale::refreshAll()
     if (!gSession->hasProject())
         return;
 
+    refreshSpaceGroupCombo();
     grabRescalerParameters();
     toggleUnsafeWidgets();
 }
@@ -228,13 +233,51 @@ void SubframeRescale::toggleUnsafeWidgets()
 
     if (!gSession->hasProject())
         return;
+
+    _rescale_button->setEnabled(gSession->currentProject()->hasPeakCollection());
 }
 
 void SubframeRescale::rescale()
 {
+    _scale_factors.clear();
+    _image_numbers.clear();
+
     auto* experiment = gSession->currentProject()->experiment();
     auto* rescaler = experiment->rescaler();
 
     setRescalerParameters();
 
+    if (_space_group_combo->currentText().toStdString().empty())
+        return;
+    ohkl::SpaceGroup group = {_space_group_combo->currentText().toStdString()};
+
+    rescaler->setPeakCollection(_peak_combo->currentPeakCollection(), group);
+    std::optional<double> minf = rescaler->rescale();
+    if (minf) {
+        int image = 0;
+        for (const double& scale : rescaler->scaleFactors()) {
+            _scale_factors.push_back(scale);
+            _image_numbers.push_back(++image);
+        }
+        plotScaleFactors();
+    }
+}
+
+void SubframeRescale::plotScaleFactors()
+{
+    _plot->clearGraphs();
+    QPen pen;
+    pen.setColor(QColor("black"));
+    pen.setWidth(2.0);
+
+    _plot->addGraph();
+    _plot->graph(0)->addData(_image_numbers, _scale_factors);
+    _plot->xAxis->setLabel("Image number");
+    _plot->yAxis->setLabel("Scale factor");
+    _plot->setNotAntialiasedElements(QCP::aeAll);
+    _plot->setInteractions(
+        QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectAxes | QCP::iSelectLegend
+        | QCP::iSelectPlottables);
+    _plot->rescaleAxes();
+    _plot->replot();
 }

@@ -21,6 +21,7 @@
 
 #include <QWidget>
 
+class PeakComboBox;
 class PeakTableView;
 class QCheckBox;
 class QComboBox;
@@ -67,12 +68,13 @@ class SubframeRescale : public QWidget {
 
     //! Run the rescaler
     void rescale();
+    //! Plot the scale factors as a function of image number
+    void plotScaleFactors();
 
     QVBoxLayout* _left_layout;
     QSplitter* _right_element;
 
-    QComboBox* _peak_combo_1;
-    QComboBox* _peak_combo_2;
+    PeakComboBox* _peak_combo;
     QComboBox* _space_group_combo;
 
     // Merge parameters
@@ -98,6 +100,9 @@ class SubframeRescale : public QWidget {
 
     // Plot
     SXPlot* _plot;
+
+    QVector<double> _image_numbers;
+    QVector<double> _scale_factors;
 };
 
 

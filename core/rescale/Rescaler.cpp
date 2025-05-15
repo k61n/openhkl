@@ -14,14 +14,15 @@
 
 #include "core/rescale/Rescaler.h"
 
+#include "base/utils/Logger.h"
 #include "core/data/DataSet.h"
 #include "core/data/DataTypes.h"
 #include "core/shape/PeakCollection.h"
 #include "core/statistics/MergedPeakCollection.h"
 #include "core/statistics/RFactor.h"
 
-#include <iostream>
 #include <memory>
+#include <string>
 
 namespace ohkl {
 
@@ -151,6 +152,14 @@ std::optional<double> Rescaler::rescale()
     for (auto& constraint : _inequality_constraints)
         minimizer.addInequalityConstraint(inequality_constraint, &constraint);
     std::optional<double> minf = minimizer.minimize(_scale_factors);
+    if (minf) {
+        ohklLog(Level::Info, "Rescaler::rescale: success. Scale factors:");
+        for (std::size_t idx = 0; idx < _scale_factors.size(); ++idx) {
+            std::string line =
+                std::to_string(idx + 1) + " " + std::to_string(_scale_factors.at(idx));
+            ohklLog(Level::Info, line);
+        }
+    }
 
     return minf;
 }

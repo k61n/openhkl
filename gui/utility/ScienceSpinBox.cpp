@@ -34,6 +34,8 @@ ScienceSpinBox::ScienceSpinBox(QWidget* parent) : QWidget(parent)
 
     _coefficient->setMaximum(10);
     _coefficient->setMinimum(-10);
+    _exponent->setMaximum(20);
+    _exponent->setMinimum(-20);
     setLayout(layout);
 }
 
@@ -47,8 +49,7 @@ double ScienceSpinBox::value() const
 void ScienceSpinBox::setValue(double value)
 {
     double exp = std::floor(std::log10(value));
-    double coeff = value / exp;
+    double coeff = value / std::pow(10, exp);
     _exponent->setValue(exp);
     _coefficient->setValue(coeff);
 }
-
