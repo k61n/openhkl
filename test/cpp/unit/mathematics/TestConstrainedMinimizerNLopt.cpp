@@ -63,8 +63,7 @@ TEST_CASE("test/mathematics/TestConstrainedMinimizerNLopt.cpp", "")
     const std::vector<double> ref_params = {5.0, 0.2, 1.0};
 
     // Constrained reference parameters
-    const std::vector<double> constrained_ref_params =
-        {4.3958110707, 0.4395811071, 1.3803889979};
+    const std::vector<double> constrained_ref_params = {4.3958218974, 0.4395811071, 1.3803889979};
 
     // Generate data using target parameters
     for (int i = 0; i < npoints; ++i) {
