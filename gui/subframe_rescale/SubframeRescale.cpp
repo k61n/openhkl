@@ -17,6 +17,7 @@
 
 #include "core/experiment/Experiment.h"
 #include "core/rescale/Rescaler.h"
+#include "gui/MainWin.h"
 #include "gui/models/Project.h"
 #include "gui/utility/ScienceSpinBox.h"
 #include "gui/utility/PeakComboBox.h"
@@ -80,7 +81,6 @@ void SubframeRescale::setRescalerUp()
     Spoiler* rescaler_para = new Spoiler("Rescaler parameters");
     GridFiller f(rescaler_para, true);
 
-    std::tie(_d_min_spin, _d_max_spin) = f.addDoubleSpinBoxPair("Resolution (d) range");
     _space_group_combo = f.addCombo("Space group:");
     _friedel_check = f.addCheckBox(
         "Include Friedel", "Include Freidel relations when merging");
@@ -98,13 +98,11 @@ void SubframeRescale::setRescalerUp()
     _max_iter_spin = f.addSpinBox(
         "Maximum iterations",
         "Maximum number of iterations for optimizer");
-    _init_step_spin = f.addDoubleSpinBox(
-        "Initial step", "Initial step size for gradient calculation");
     _frame_ratio_spin = f.addDoubleSpinBox(
         "Scale difference", "Maximum difference in scale factor between adjacent images");
     _rescale_button = f.addButton("Rescale");
 
-    _max_iter_spin->setMaximum(10000000000);
+    _max_iter_spin->setMaximum(100000000);
     _max_iter_spin->setMinimum(0);
 
     connect(_rescale_button, &QPushButton::clicked, this, &SubframeRescale::rescale);
@@ -168,7 +166,6 @@ void SubframeRescale::grabRescalerParameters()
     _xtol_spin->setValue(params->xtol);
     _ctol_spin->setValue(params->ctol);
     _max_iter_spin->setValue(params->max_iter);
-    _init_step_spin->setValue(params->init_step);
     _frame_ratio_spin->setValue(params->frame_ratio);
 }
 
@@ -186,7 +183,6 @@ void SubframeRescale::setRescalerParameters()
     params->xtol = _xtol_spin->value();
     params->ctol = _ctol_spin->value();
     params->max_iter = _max_iter_spin->value();
-    params->init_step = _init_step_spin->value();
     params->frame_ratio = _frame_ratio_spin->value();
 }
 
@@ -247,6 +243,7 @@ void SubframeRescale::toggleUnsafeWidgets()
 
 void SubframeRescale::rescale()
 {
+    gGui->setReady(false);
     _scale_factors.clear();
     _image_numbers.clear();
 
@@ -267,22 +264,45 @@ void SubframeRescale::rescale()
             _scale_factors.push_back(scale);
             _image_numbers.push_back(++image);
         }
-        plotScaleFactors();
+        int step = 0;
+        for (const auto& value : rescaler->convergence()) {
+            _convergence.push_back(value);
+            _convergence_step.push_back(++step);
+        }
+        plot();
     }
     refreshPeakTable();
+    gGui->setReady(true);
 }
 
-void SubframeRescale::plotScaleFactors()
+void SubframeRescale::plot()
 {
     _plot->clearGraphs();
-    QPen pen;
-    pen.setColor(QColor("black"));
-    pen.setWidth(2.0);
+    QPen pen1;
+    pen1.setColor(QColor("black"));
+    pen1.setWidth(2.0);
+    QPen pen2;
+    pen2.setColor(QColor("red"));
+    pen2.setWidth(2.0);
 
-    _plot->addGraph();
+    _plot->addGraph(_plot->xAxis, _plot->yAxis);
+    _plot->graph(0)->setPen(pen1);
     _plot->graph(0)->addData(_image_numbers, _scale_factors);
+    _plot->graph(0)->setName("Scale factors");
     _plot->xAxis->setLabel("Image number");
     _plot->yAxis->setLabel("Scale factor");
+
+    _plot->addGraph(_plot->xAxis2, _plot->yAxis2);
+    _plot->graph(1)->setPen(pen2);
+    _plot->graph(1)->addData(_convergence_step, _convergence);
+    _plot->graph(1)->setName("Convergence");
+    _plot->xAxis2->setLabel("Convergence step");
+    _plot->yAxis2->setLabel("Objective function");
+
+    _plot->xAxis2->setVisible(true);
+    _plot->yAxis2->setVisible(true);
+    _plot->legend->setVisible(true);
+
     _plot->setNotAntialiasedElements(QCP::aeAll);
     _plot->setInteractions(
         QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectAxes | QCP::iSelectLegend

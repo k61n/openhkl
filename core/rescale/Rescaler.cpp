@@ -24,6 +24,10 @@
 #include <memory>
 #include <string>
 
+namespace {
+static const double eps = 1.0e-8;
+}
+
 namespace ohkl {
 
 std::vector<double> Rescaler::_minf = {};
@@ -38,7 +42,6 @@ void RescalerParameters::log(const Level& level) const
     ohklLog(level, "xtol                   = ", xtol);
     ohklLog(level, "ctol                   = ", ctol);
     ohklLog(level, "max_iter               = ", max_iter);
-    ohklLog(level, "init_step              = ", init_step);
     ohklLog(level, "frame_ratio            = ", frame_ratio);
 }
 
@@ -60,6 +63,7 @@ double Rescaler::objective(const std::vector<double>& params, std::vector<double
     rescaler->merge();
     double rfactor = rescaler->rfactor();
     ++_niter;
+    _minf.push_back(rfactor);
     return rfactor;
 }
 
@@ -130,9 +134,40 @@ void Rescaler::merge()
 
 double Rescaler::rfactor() const
 {
-    RFactor rfactor(_parameters.sum_intensity);
-    rfactor.calculate(_merged_peaks.get());
-    return rfactor.Rmerge();
+    double Rmerge = 0.0;
+    double I_total = 0.0;
+
+    // go through each equivalence class of peaks
+    for (const auto& peak : _merged_peaks->mergedPeakSet()) {
+        const double n = double(peak.redundancy());
+
+        // skip if there are fewer than two peaks
+        if (n < 1.999)
+            continue;
+
+        const double Iave = peak.intensity().value();
+        I_total += std::fabs(Iave) * peak.redundancy();
+        for (const auto& p : peak.peaks()) {
+            Intensity I;
+            if (_parameters.sum_intensity)
+                I = p->correctedSumIntensity();
+            else
+                I = p->correctedProfileIntensity();
+
+            double diff = std::fabs(I.value() - Iave);
+            Rmerge += diff;
+        }
+    }
+
+    if (I_total < eps)
+        Rmerge = 0.0;
+    else
+        Rmerge /= I_total;
+
+    return Rmerge;
+    // RFactor rfactor(_parameters.sum_intensity);
+    // rfactor.calculate(_merged_peaks.get());
+    // return rfactor.Rmerge();
 }
 
 double Rescaler::sumChi2() const
@@ -156,13 +191,15 @@ std::optional<double> Rescaler::rescale()
     minimizer.setXTol(_parameters.xtol);
     minimizer.setCTol(_parameters.ctol);
     minimizer.setMaxIter(_parameters.max_iter);
-    minimizer.setInitStep(_parameters.init_step);
     for (auto& constraint : _equality_constraints)
         minimizer.addEqualityConstraint(equality_constraint, &constraint);
     for (auto& constraint : _inequality_constraints)
         minimizer.addInequalityConstraint(inequality_constraint, &constraint);
     std::optional<double> minf = minimizer.minimize(_scale_factors);
+    updateScaleFactors(_scale_factors);
     if (minf) {
+        ohklLog(Level::Info, "Rescaler::rescale: initial objective = ", _minf.at(0));
+        ohklLog(Level::Info, "Rescaler::rescale: final   objective = ", minf.value());
         ohklLog(Level::Info, "Rescaler::rescale: success. Scale factors:");
         for (std::size_t idx = 0; idx < _scale_factors.size(); ++idx) {
             std::string line =

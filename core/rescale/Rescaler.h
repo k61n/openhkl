@@ -36,7 +36,6 @@ struct RescalerParameters {
     double xtol = 1.0e-6; //! Relative tolerance for parameters
     double ctol = 1.0e-6; //! Constraint tolerance
     int max_iter = 1e7; //! Maximum number of iterations
-    double init_step = 0.1; //! Initial step size for gradient calculation
     double frame_ratio = 0.05; //! Maximum variation in scale factor between adjacent frames
 
     void log(const Level& level) const;
@@ -71,6 +70,7 @@ class Rescaler {
 
     MergedPeakCollection* mergedPeaks() { return _merged_peaks.get(); };
     const std::vector<double>& scaleFactors() const { return _scale_factors; };
+    const std::vector<double>& convergence() const { return _minf; };
     int nIter() const { return _niter; };
     RescalerParameters* parameters() { return &_parameters; };
 

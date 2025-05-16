@@ -29,7 +29,7 @@
 TEST_CASE("test/data/TestRescaler.cpp", "")
 {
     const double ref_initial_rmerge = 0.156948;
-    const double ref_final_rmerge = 0.152007;
+    const double ref_final_rmerge = 0.1520405016;
     const double eps = 1.0e-5;
 
     const std::string filename = "Trypsin-small.ohkl";

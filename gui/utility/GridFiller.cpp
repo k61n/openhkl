@@ -33,7 +33,6 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QPushButton>
-#include <qnamespace.h>
 
 GridFiller::GridFiller(QGridLayout* gridLayout)
     : _mainLayout(gridLayout), _spoiler(nullptr), _nextRow(0)

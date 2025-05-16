@@ -71,7 +71,7 @@ class SubframeRescale : public QWidget {
     //! Run the rescaler
     void rescale();
     //! Plot the scale factors as a function of image number
-    void plotScaleFactors();
+    void plot();
 
     QVBoxLayout* _left_layout;
     QSplitter* _right_element;
@@ -80,8 +80,6 @@ class SubframeRescale : public QWidget {
     QComboBox* _space_group_combo;
 
     // Merge parameters
-    SafeDoubleSpinBox* _d_min_spin;
-    SafeDoubleSpinBox* _d_max_spin;
     QCheckBox* _friedel_check;
     QCheckBox* _profile_intensity_check;
 
@@ -90,7 +88,6 @@ class SubframeRescale : public QWidget {
     ScienceSpinBox* _xtol_spin;
     ScienceSpinBox* _ctol_spin;
     SafeSpinBox* _max_iter_spin;
-    SafeDoubleSpinBox* _init_step_spin;
     SafeDoubleSpinBox* _frame_ratio_spin;
     QPushButton* _rescale_button;
 
@@ -105,6 +102,8 @@ class SubframeRescale : public QWidget {
 
     QVector<double> _image_numbers;
     QVector<double> _scale_factors;
+    QVector<double> _convergence_step;
+    QVector<double> _convergence;
 };
 
 

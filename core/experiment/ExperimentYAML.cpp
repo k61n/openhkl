@@ -414,7 +414,6 @@ void ExperimentYAML::grabRescalerParameters(RescalerParameters* params)
     params->xtol = getNode<double>(branch, "xtol");
     params->ctol = getNode<double>(branch, "ctol");
     params->max_iter = getNode<int>(branch, "max_iter");
-    params->init_step = getNode<double>(branch, "init_step");
     params->frame_ratio = getNode<double>(branch, "frame_ratio");
 }
 
@@ -432,7 +431,6 @@ void ExperimentYAML::setRescalerParameters(RescalerParameters* params)
     merge_node["xtol"] = params->xtol;
     merge_node["ctol"] = params->ctol;
     merge_node["max_iter"] = params->max_iter;
-    merge_node["init_step"] = params->init_step;
     merge_node["frame_ratio"] = params->frame_ratio;
 }
 

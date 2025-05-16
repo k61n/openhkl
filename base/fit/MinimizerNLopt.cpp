@@ -30,7 +30,7 @@ MinimizerNLopt::MinimizerNLopt(int nparams, nlopt::vfunc objective, void* f_data
     , _ftol(1.0e-6)
     , _xtol(1.0e-10)
     , _ctol(1.0e-10)
-    , _init_step(0.1)
+    , _init_step(0.01)
     , _max_iter(1e7)
 {
     _optimizer = nlopt::opt(_algo, nparams);
@@ -50,9 +50,9 @@ void MinimizerNLopt::addInequalityConstraint(nlopt::vfunc constraint, void* c_da
 std::optional<double> MinimizerNLopt::minimize(std::vector<double>& parameters)
 {
     _optimizer.set_ftol_rel(_ftol);
-    _optimizer.set_xtol_rel(_xtol);
+    _optimizer.set_xtol_abs(_xtol); // Scale factors are O(1), so use absolute tolerance
     _optimizer.set_maxeval(_max_iter);
-    _optimizer.set_initial_step(_init_step);
+    // _optimizer.set_initial_step(_init_step); // Does not seem to work well
     double minf;
     nlopt::result result;
     try {
