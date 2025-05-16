@@ -20,10 +20,9 @@ set(CMAKE_PROJECT_DESCRIPTION # for display in installer
 ###################################################################################################
 
 option(BUILD_OHKL_GUI "Build OpenHKL GUI application." ON)
-option(BUILD_OHKL_OLD_APPS "Build old GUI." OFF)
+option(BUILD_WITH_QT6 "Build using QT6" OFF)
 option(BUILD_OPTIMIZED_DEBUG "Set optimization level -O1 or -Og for debug build" OFF)
 option(COVERAGE "Build code coverage report" OFF)
-option(BUILD_WITH_OPENMP "Build with OpenMP support" OFF)
 option(OHKL_VALGRIND "Run tests with valgrind" OFF)
 option(OHKL_SANITIZE "Compile with clang's -fsanitize (must also set OHKL_SANITIZER variable)" OFF)
 option(OHKL_PYTHON "Generate Python bindings" ON)
@@ -31,17 +30,13 @@ option(BUILD_TESTING "Build the tests" ON)
 option(BUILD_DOCUMENTATION "Build Sphinx/Doxygen documentation" ON)
 option(BUILD_PDF_DOCUMENTATION "Build Sphinx documentation using LaTeX" ON)
 option(OHKL_TIDY "Upon 'make', clang-tidy will print warnings as specified in .clang-tidy" OFF)
+option(OHKL_TEST_INTEGRATORS "Build intensive integrator tests" OFF)
 option(OHKL_FULL_WORKFLOW_TEST "Add full workflow test to ctest" OFF)
-option(BUILD_WITH_QT6 "Build using QT6" OFF)
-option(TEST_INTEGRATORS "Build intensive integrator tests" OFF)
 
 # Path to test data directory must provided via -DOHKL_TESTDATA_DIR or from cache.
-set(OHKL_TESTDATA_URL https://computing.mlz-garching.de/download/testdata/nsx)
 if (BUILD_TESTING)
     if(NOT DEFINED OHKL_TESTDATA_DIR)
         set(OHKL_TESTDATA_DIR "test/data")
-        # message(FATAL_ERROR "Missing -DOHKL_TESTDATA_DIR=<path>"
-        #       " where <path> should point to directory that contains copy of ${OHKL_TESTDATA_URL}")
     elseif(NOT IS_DIRECTORY ${OHKL_TESTDATA_DIR})
         message(FATAL_ERROR "Directory OHKL_TESTDATA_DIR=${OHKL_TESTDATA_DIR} does not exist")
     else()
@@ -141,71 +136,27 @@ if(COVERAGE)
 endif()
 
 ###################################################################################################
-#  Qt
+#  Dependencies
 ###################################################################################################
 
-if(BUILD_WITH_QT6)
-  set(QT_VER "Qt6")
-else()
-  set(QT_VER "Qt5")
-endif()
-
-set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
-set(THREADS_PREFER_PTHREAD_FLAG TRUE)
-find_package(Threads REQUIRED)
-
-set(OpenGL_GL_PREFERENCE LEGACY)
-set(QT_USE_QTOPENGL TRUE)
-find_package(OpenGL REQUIRED)
-message(STATUS "Found OpenGL:")
-message(STATUS "  libraries: ${OPENGL_LIBRARIES}")
-message(STATUS "  headers: ${OPENGL_INCLUDE_DIR}")
-
-find_package(${QT_VER} COMPONENTS Core Gui Widgets OpenGL PrintSupport Concurrent REQUIRED)
-
-set(QT_LIBS "${QT_VER}::Widgets")
-set(QT_INCLUDES "${${QT_VER}Widgets_INCLUDE_DIRS}")
-
-message(STATUS "Found ${QT_VER} version ${${QT_VER}_VERSION}:")
-message(STATUS "  Qt_DIR: ${${QT_VER}_DIR}")
-message(STATUS "  QT_INCLUDES: ${QT_INCLUDES}")
-
-get_target_property(QtWidgets_location ${QT_VER}::Widgets LOCATION_Release)
-message(STATUS "  ${${QT_VER}Widgets_LIBRARIES} ${QtWidgets_location}")
-get_target_property(QtCore_location ${QT_VER}::Core LOCATION_Release)
-message(STATUS "  ${${QT_VER}Core_LIBRARIES} ${QtCore_location}")
-get_target_property(QtGui_location ${QT_VER}::Gui LOCATION_Release)
-message(STATUS "  ${${QT_VER}Gui_LIBRARIES} ${QtGui_location}")
-get_target_property(QtOpenGL_location ${QT_VER}::OpenGL LOCATION_Release)
-message(STATUS "  ${${QT_VER}OpenGL_LIBRARIES} ${QtOpenGL_location}")
-
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTORCC ON)
-set(CMAKE_AUTOUIC OFF)
-
-###################################################################################################
-#  Other dependences
-###################################################################################################
-
-# All other dependences are included in CheckDependencies.cmake
 include(CheckDependencies)
 
 ###################################################################################################
-#  3rd party dependences
+#  3rd party dependencies
 ###################################################################################################
 
-# QCustomPlot: As long as there is no homebrew package for MacOS, we provide it as 3rdparty code:
+# QCustomPlot: there is currently no homebrew package for QCustomPlot
 add_subdirectory(3rdparty/qcustomplot)
 set(QCustomPlot_LIBRARIES qcustomplot)
 set(QCustomPlot_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/3rdparty/qcustomplot)
-
-add_subdirectory(3rdparty/ccp4)
-set(Mtz_LIBRARIES mtz)
-set(Mtz_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/3rdparty/ccp4)
 #find_package(QCustomPlot MODULE REQUIRED)
 #message(STATUS "libQCustomPlot: FOUND=${QCustomPlot_FOUND},
 #        VERSION=${QCustomPlot_VERSION}, LIB=${QCustomPlot_LIBRARIES},
 #        INCLUDE_DIR=${QCustomPlot_INCLUDE_DIR}")
+
+add_subdirectory(3rdparty/ccp4)
+set(Mtz_LIBRARIES mtz)
+set(Mtz_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/3rdparty/ccp4)
 
 
 ###################################################################################################
@@ -227,7 +178,7 @@ if(OHKL_PYTHON AND NOT MSVC AND BUILD_TESTING)
 endif()
 
 # Ignore tests specified in CTestCustom.cmake
-if (NOT TEST_INTEGRATORS)
+if (NOT OHKL_TEST_INTEGRATORS)
   configure_file(${CMAKE_SOURCE_DIR}/cmake/CTestCustom.cmake ${CMAKE_BINARY_DIR})
 endif()
 
@@ -263,9 +214,6 @@ add_subdirectory(data/instruments)
 if(BUILD_OHKL_GUI)
     add_subdirectory(gui)
     add_subdirectory(main)
-    if(BUILD_OHKL_OLD_APPS)
-        add_subdirectory(apps)
-    endif()
 endif()
 
 if(BUILD_TESTING) # option defined by CTest and enabled by default
