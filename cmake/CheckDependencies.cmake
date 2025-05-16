@@ -1,4 +1,4 @@
-###### Find Qt
+###### Qt
 if(BUILD_WITH_QT6)
   set(QT_VER "Qt6")
 else()
@@ -38,7 +38,7 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC OFF)
 
-###### Find HDF5
+###### HDF5
 find_package(HDF5 COMPONENTS CXX REQUIRED)
 find_library(HDF5_LIB_PATH libhdf5_cpp)
 
@@ -70,7 +70,7 @@ else()
     message(FATAL_ERROR "HDF5 not found")
 endif()
 
-###### Find Python
+###### Python
 if(OHKL_PYTHON)
     set(pyver_min 3.9)
     find_package(Python3 ${pyver_min} QUIET
