@@ -49,6 +49,7 @@
 #include "manifest.h"
 #include "tables/crystal/UnitCell.h"
 
+#include <filesystem>
 #include <stdexcept>
 
 namespace ohkl {
@@ -254,6 +255,8 @@ void Experiment::loadFromFile(const std::string& path)
 {
     ohkl::ExperimentImporter importer;
     ohklLog(Level::Info, "Loading experiment from file: '" + path + "'");
+    if (!std::filesystem::exists(path))
+        throw std::runtime_error("Experiment::loadFromFile: " + path + " does not exist");
 
     importer.setFilePath(path, this);
     importer.loadData(this);
