@@ -49,6 +49,7 @@
 #include <H5Cpp.h>
 #include <gsl/gsl_histogram.h>
 
+#include <filesystem>
 #include <memory>
 #include <regex>
 #include <stdexcept>
@@ -155,23 +156,26 @@ void DataSet::addFrame(const std::string& filename, const DataFormat& format)
     if (_dataformat != format)
         throw std::runtime_error("DataSet:addFrame: format does not match existing images");
 
+    if (!std::filesystem::exists(filename))
+        throw std::runtime_error("DataSet::addFrame: " + filename + " does not exist");
+
     switch (format) {
-    case DataFormat::TIFF: {
-        TiffDataReader& tiffreader = *static_cast<TiffDataReader*>(_reader.get());
-        tiffreader.addFrame(filename);
-        break;
-    }
-    case DataFormat::RAW: {
-        RawDataReader& rawreader = *static_cast<RawDataReader*>(_reader.get());
-        rawreader.addFrame(filename);
-        break;
-    }
-    case DataFormat::PLAINTEXT: {
-        PlainTextReader& textreader = *static_cast<PlainTextReader*>(_reader.get());
-        textreader.addFrame(filename);
-        break;
-    }
-    default: throw std::runtime_error("DataSet::addFrame: unrecognised data format");
+        case DataFormat::TIFF: {
+            TiffDataReader& tiffreader = *static_cast<TiffDataReader*>(_reader.get());
+            tiffreader.addFrame(filename);
+            break;
+        }
+        case DataFormat::RAW: {
+            RawDataReader& rawreader = *static_cast<RawDataReader*>(_reader.get());
+            rawreader.addFrame(filename);
+            break;
+        }
+        case DataFormat::PLAINTEXT: {
+            PlainTextReader& textreader = *static_cast<PlainTextReader*>(_reader.get());
+            textreader.addFrame(filename);
+            break;
+        }
+        default: throw std::runtime_error("DataSet::addFrame: unrecognised data format");
     }
 }
 
