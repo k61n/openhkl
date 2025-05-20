@@ -17,8 +17,12 @@
 #include "core/statistics/MergedPeak.h"
 #include "core/statistics/MergedPeakCollection.h"
 
+namespace {
+
 static const double g_sqrt2pi = std::sqrt(2.0 / M_PI);
 static const double eps = 1.0e-8;
+
+}
 
 namespace ohkl {
 
