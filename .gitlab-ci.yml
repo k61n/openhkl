@@ -1,8 +1,6 @@
 variables:
   DEBIAN_FRONTEND: noninteractive
 
-image: iffregistry.fz-juelich.de/neutron-simlab/openhkl/rocky9-ohkl-env
-
 stages:
   - build
   - test
@@ -10,6 +8,7 @@ stages:
 
 build:rocky9:
   stage: build
+  image: iffregistry.fz-juelich.de/neutron-simlab/openhkl/rocky9-ohkl-env
   script:
     - |
       if test $CI_PIPELINE_SOURCE == "nightly"
@@ -26,6 +25,7 @@ build:rocky9:
 
 test:rocky9:
   stage: test
+  image: iffregistry.fz-juelich.de/neutron-simlab/openhkl/rocky9-ohkl-env
   timeout: 3 hours
   script:
     - cd build
@@ -39,6 +39,7 @@ test:rocky9:
 
 pages:
   stage: deploy:doc
+  image: iffregistry.fz-juelich.de/neutron-simlab/openhkl/rocky9-ohkl-env
   script:
     - cd build
     - cmake ..
