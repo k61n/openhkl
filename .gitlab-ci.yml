@@ -45,6 +45,25 @@ build:macos:
       -DCMAKE_CXX_FLAGS="-I/opt/$BREW/include"
     - /opt/$BREW/bin/cmake --build . --parallel $(sysctl -n hw.ncpu)
 
+build:windows:
+  stage: build
+  tags:
+    - win, x64
+  script:
+    - mkdir build
+    - cd build
+    - $env:Path = "C:\msys64\mingw64\bin;" + $env:Path
+    - cmake ..
+      -DCMAKE_C_COMPILER=gcc
+      -DCMAKE_CXX_COMPILER=g++
+      -GNinja
+      -DCMAKE_BUILD_TYPE=Release
+      -DBUILD_TESTING=OFF
+      -DINSTRUMENT_RESOURCE_DIR="$PWD/../data/instruments"
+      -DBUILD_WITH_QT6=ON
+      -DCMAKE_PREFIX_PATH=C:/msys64/mingw64
+    - cmake --build . --parallel $env:NUMBER_OF_PROCESSORS
+
 test:rocky9:
   stage: test
   image: iffregistry.fz-juelich.de/neutron-simlab/openhkl/rocky9-ohkl-env
