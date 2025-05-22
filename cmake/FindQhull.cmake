@@ -1,8 +1,14 @@
 find_path(QHULL_INCLUDE_DIR NAMES libqhullcpp/Qhull.h Qhull.h)
 
-find_library(QHULL_LIBRARY1 NAMES qhull_r)
-find_library(QHULL_LIBRARY2 NAMES qhullcpp)
-
+if (WIN32)
+    find_library(QHULL_LIBRARY1 NAMES qhullstatic)
+    find_library(QHULL_LIBRARY2 NAMES qhullstatic_r)
+    find_library(QHULL_LIBRARY3 NAMES qhullcpp)
+    list(APPEND QHULL_LIBRARIES "${QHULL_LIBRARY3}")
+else ()
+    find_library(QHULL_LIBRARY1 NAMES qhull_r)
+    find_library(QHULL_LIBRARY2 NAMES qhullcpp)
+endif ()
 list(APPEND QHULL_LIBRARIES "${QHULL_LIBRARY1}")
 list(APPEND QHULL_LIBRARIES "${QHULL_LIBRARY2}")
 
