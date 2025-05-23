@@ -122,7 +122,7 @@ ComputeResult PixelSumIntegrator::compute(
     // note that this is the std of the _estimate_ of the background
     // should be approximately mean_bkg / num_bkg for Poisson statistics
     const double std_bkg = result.sum_background.sigma();
-    size_t npeak = 0.0;
+    size_t npixel = 0;
     Blob3D blob;
 
     // background sigma, assuming Poisson statistics
@@ -137,7 +137,7 @@ ComputeResult PixelSumIntegrator::compute(
 
         if (ev_type == IntegrationRegion::EventType::PEAK) {
             sum_peak += counts[i];
-            npeak++;
+            npixel++;
 
             // update blob if pixel is strong (Poisson statistics)
             if (counts[i] > mean_bkg + sigma)
@@ -145,12 +145,13 @@ ComputeResult PixelSumIntegrator::compute(
         }
     }
 
-    sum_peak -= npeak * result.sum_background.value();
+    sum_peak -= npixel * result.sum_background.value();
 
     // TODO: ERROR ESTIMATE!!
     // This INCORRECTLY assumes Poisson statistics (no gain or baseline)
     result.sum_intensity =
-        Intensity(sum_peak, sum_peak + npeak * mean_bkg + npeak * npeak * std_bkg * std_bkg);
+        Intensity(sum_peak, sum_peak + npixel * mean_bkg +
+                  npixel * npixel * std_bkg * std_bkg);
 
     // TODO: compute rocking curve
     double f_min = int(events[0].frame);
@@ -241,7 +242,11 @@ ComputeResult PixelSumIntegrator::compute(
     for (int i = 0; i < nframes; ++i) {
         const double corrected_intensity =
             intensity_per_frame[i] - n_peak_points_per_frame[i] * mean_bkg;
-        result.rocking_curve[i] = Intensity(corrected_intensity, sqrt(corrected_intensity));
+        result.rocking_curve[i] =
+            Intensity(
+                corrected_intensity,
+                corrected_intensity + n_peak_points_per_frame[i] * mean_bkg +
+                n_peak_points_per_frame[i] * n_peak_points_per_frame[i] * std_bkg * std_bkg);
     }
     result.profile_intensity = {};
     result.profile_background = {};

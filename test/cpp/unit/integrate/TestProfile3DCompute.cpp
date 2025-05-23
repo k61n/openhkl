@@ -129,6 +129,8 @@ void UnitTest_Profile3DIntegrator::run()
         Eigen::MatrixXi mask;
         mask.resize(data->nRows(), data->nCols());
         mask.setConstant(int(IntegrationRegion::EventType::EXCLUDED));
+        weak_peak_region.updateMask(mask, idx);
+        strong_peak_region.updateMask(mask, idx);
         weak_peak_region.advanceFrame(current_frame, mask, idx);
         strong_peak_region.advanceFrame(current_frame, mask, idx);
     }

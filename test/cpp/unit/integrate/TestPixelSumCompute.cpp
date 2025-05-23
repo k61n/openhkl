@@ -82,20 +82,25 @@ void UnitTest_PixelSumIntegrator::run()
     // hkl symmetric (-1, -12, 5)
 
     IntegrationRegion weak_region(weak_peak, 5.5, 1.3, 2.3, RegionType::FixedEllipsoid);
-    IntegrationRegion strong_region(weak_peak, 5.5, 1.3, 2.3, RegionType::FixedEllipsoid);
+    IntegrationRegion strong_region(strong_peak, 5.5, 1.3, 2.3, RegionType::FixedEllipsoid);
 
     for (std::size_t idx = 0; idx < data->nFrames(); ++idx) {
         Eigen::MatrixXd current_frame = data->transformedFrame(idx);
         Eigen::MatrixXi mask;
         mask.resize(data->nRows(), data->nCols());
         mask.setConstant(int(IntegrationRegion::EventType::EXCLUDED));
+        weak_region.updateMask(mask, idx);
+        strong_region.updateMask(mask, idx);
         weak_region.advanceFrame(current_frame, mask, idx);
         strong_region.advanceFrame(current_frame, mask, idx);
     }
 
     PixelSumIntegrator integrator;
     ComputeResult weak = integrator.compute(weak_peak, nullptr, weak_region);
-    ComputeResult strong = integrator.compute(weak_peak, nullptr, strong_region);
+    ComputeResult strong = integrator.compute(strong_peak, nullptr, strong_region);
+
+    CHECK(static_cast<int>(weak.integration_flag) == 0);
+    CHECK(static_cast<int>(strong.integration_flag) == 0);
 
     CHECK_THAT(
         weak_peak->sumIntensity().value(),
@@ -109,6 +114,32 @@ void UnitTest_PixelSumIntegrator::run()
     CHECK_THAT(
         strong_peak->sumIntensity().sigma(),
         Catch::Matchers::WithinAbs(ref_strong_intensity.variance(), eps));
+
+    // Rocking curves
+    Intensity weak_sum = {0, 0};
+    std::cout << "Total (weak) = " << weak.sum_intensity.value() << " "
+              << weak.sum_intensity.sigma() << std::endl;
+    std::cout << "nframes = " << weak.rocking_curve.size() << std::endl;
+    for (std::size_t idx = 0; idx < weak.rocking_curve.size(); ++idx) {
+        weak_sum += weak.rocking_curve.at(idx);
+        std::cout << idx << " " << weak.rocking_curve.at(idx).value() << " "
+                  << weak.rocking_curve.at(idx).sigma() << std::endl;
+    }
+
+    Intensity strong_sum = {0, 0};
+    std::cout << "Total (strong) = " << strong.sum_intensity.value() << " "
+              << strong.sum_intensity.sigma() << std::endl;
+    std::cout << "nframes = " << strong.rocking_curve.size() << std::endl;
+    for (std::size_t idx = 0; idx < strong.rocking_curve.size(); ++idx) {
+        strong_sum += strong.rocking_curve.at(idx);
+        std::cout << idx << " " << strong.rocking_curve.at(idx).value() << " "
+                  << strong.rocking_curve.at(idx).sigma() << std::endl;
+    }
+
+    CHECK_THAT(weak.sum_intensity.value(), Catch::Matchers::WithinAbs(weak_sum.value(), eps));
+    // CHECK_THAT(weak.sum_intensity.sigma(), Catch::Matchers::WithinAbs(weak_sum.sigma(), eps));
+    CHECK_THAT(strong.sum_intensity.value(), Catch::Matchers::WithinAbs(strong_sum.value(), eps));
+    // CHECK_THAT(strong.sum_intensity.sigma(), Catch::Matchers::WithinAbs(strong_sum.sigma(), eps));
 }
 
 
