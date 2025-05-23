@@ -36,8 +36,6 @@
 #include <QSignalBlocker>
 #include <QSplitter>
 #include <QVBoxLayout>
-#include <qchar.h>
-#include <qpushbutton.h>
 
 
 SubframeRescale::SubframeRescale() : QWidget()
