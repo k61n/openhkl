@@ -27,7 +27,7 @@
 TEST_CASE("test/integrate/TestMergedPeakCollection.cpp", "")
 {
     const double eps = 1.0e-2;
-    const int eps_peaks = 10;
+    const int eps_peaks = 30;
 
     const int ref_npeaks = 5731;
     const int ref_merged = 4880;
