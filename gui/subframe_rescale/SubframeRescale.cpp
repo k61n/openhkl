@@ -19,9 +19,6 @@
 #include "core/rescale/Rescaler.h"
 #include "gui/MainWin.h"
 #include "gui/models/Project.h"
-#include "gui/utility/ScienceSpinBox.h"
-#include "gui/utility/PeakComboBox.h"
-#include "gui/utility/ScienceSpinBox.h"
 #include "gui/views/PeakTableView.h"
 #include "gui/models/Session.h"
 #include "gui/graphics/SXPlot.h"
@@ -29,6 +26,7 @@
 #include "gui/utility/PeakComboBox.h"
 #include "gui/utility/PropertyScrollArea.h"
 #include "gui/utility/SafeSpinBox.h"
+#include "gui/utility/ScienceSpinBox.h"
 #include "gui/utility/Spoiler.h"
 #include "tables/crystal/UnitCell.h"
 
@@ -60,9 +58,6 @@ SubframeRescale::SubframeRescale() : QWidget()
     propertyScrollArea->setContentLayout(_left_layout);
     main_layout->addWidget(propertyScrollArea);
     main_layout->addWidget(_right_element);
-
-    // _right_element->setStretchFactor(0, 2);
-    // _right_element->setStretchFactor(1, 1);
 }
 
 void SubframeRescale::setDataUp()
@@ -93,8 +88,7 @@ void SubframeRescale::setRescalerUp()
         "Parameter tolerance",
         "Convergence threshold for optimised parameters (scale factors)");
     _ctol_spin = f.addScienceSpinBox(
-        "Constraint tolerance",
-        "Convergence threshold for optimised parameters (scale factors)");
+        "Constraint tolerance", "Convergence threshold for constraints");
     _max_iter_spin = f.addSpinBox(
         "Maximum iterations",
         "Maximum number of iterations for optimizer");

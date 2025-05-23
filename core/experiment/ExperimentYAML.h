@@ -2,8 +2,8 @@
 //
 //  OpenHKL: data reduction for single crystal diffraction
 //
-//! @file      base/parser/ExperimentYAML.h
-//! @brief     Declares function eigenToVector
+//! @file      core/experiment/ExperimentYAML.h
+//! @brief     Declares class ExperimentYAML
 //!
 //! @homepage  https://openhkl.org
 //! @license   GNU General Public License v3 or higher (see COPYING)

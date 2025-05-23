@@ -25,7 +25,7 @@ NLoptFitData::NLoptFitData(unsigned int size)
 {
 }
 
-MinimizerNLopt::MinimizerNLopt(int nparams, nlopt::vfunc objective, void* f_data)
+MinimizerNLopt::MinimizerNLopt(unsigned int nparams, nlopt::vfunc objective, void* f_data)
     : _algo(nlopt::LN_COBYLA)
     , _ftol(1.0e-6)
     , _xtol(1.0e-10)

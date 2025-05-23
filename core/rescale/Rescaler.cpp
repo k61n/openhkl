@@ -30,7 +30,7 @@ static const double eps = 1.0e-8;
 
 namespace ohkl {
 
-std::vector<double> Rescaler::_minf = {};
+std::vector<double> Rescaler::_minf_history = {};
 int Rescaler::_niter = 0;
 
 void RescalerParameters::log(const Level& level) const
@@ -63,7 +63,7 @@ double Rescaler::objective(const std::vector<double>& params, std::vector<double
     rescaler->merge();
     double rfactor = rescaler->rfactor();
     ++_niter;
-    _minf.push_back(rfactor);
+    _minf_history.push_back(rfactor);
     return rfactor;
 }
 
@@ -79,8 +79,8 @@ double Rescaler::inequality_constraint(
     const std::vector<double>& params, std::vector<double>& grad, void* f_data)
 {
     // Inequality of type
-    // a * x_{n} <= b * x_{n-1}
-    // a * x_{n} - b * x_{n-1} <= 0
+    // a * x_{n} <= b * x_{n-1} (human readable)
+    // a * x_{n} - b * x_{n-1} <= 0 (form required by nlopt constraint function)
     (void)grad;
     ohkl::InequalityConstraintData* data = static_cast<ohkl::InequalityConstraintData*>(f_data);
     return (data->a * params.at(data->n)) - (data->b * params.at(data->n - 1));
@@ -184,7 +184,7 @@ std::optional<double> Rescaler::rescale()
     _parameters.log(Level::Info);
 
     _niter = 0;
-    _minf.clear();
+    _minf_history.clear();
 
     MinimizerNLopt minimizer(_scale_factors.size(), objective, this);
     minimizer.setFTol(_parameters.ftol);
@@ -198,7 +198,7 @@ std::optional<double> Rescaler::rescale()
     std::optional<double> minf = minimizer.minimize(_scale_factors);
     updateScaleFactors(_scale_factors);
     if (minf) {
-        ohklLog(Level::Info, "Rescaler::rescale: initial objective = ", _minf.at(0));
+        ohklLog(Level::Info, "Rescaler::rescale: initial objective = ", _minf_history.at(0));
         ohklLog(Level::Info, "Rescaler::rescale: final   objective = ", minf.value());
         ohklLog(Level::Info, "Rescaler::rescale: success. Scale factors:");
         for (std::size_t idx = 0; idx < _scale_factors.size(); ++idx) {

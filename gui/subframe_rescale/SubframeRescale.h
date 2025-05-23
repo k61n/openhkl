@@ -33,7 +33,7 @@ class SafeSpinBox;
 class ScienceSpinBox;
 class SXPlot;
 
-//! Frame containing interface to integrate peaks
+//! Frame containing interface to rescale peaks
 class SubframeRescale : public QWidget {
     Q_OBJECT
  public:
@@ -47,10 +47,6 @@ class SubframeRescale : public QWidget {
     //! Transfer rescaler parameters from GUI to core
     void setRescalerParameters();
 
- public slots:
-
- signals:
-
  private:
     //! Set up the data selection GUI
     void setDataUp();
@@ -58,7 +54,7 @@ class SubframeRescale : public QWidget {
     void setRescalerUp();
     //! Set up the peak table
     void setPeakTableUp();
-    // Set up the scale factor plot
+    //! Set up the scale factor plot
     void setPlotUp();
 
     //! Refresh the QComboBox for the space group

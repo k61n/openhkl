@@ -46,7 +46,7 @@ struct InequalityConstraintData {
 //! Wraps the NLopt non-linear least squares minimization routines.
 class MinimizerNLopt {
  public:
-    MinimizerNLopt(int nparams, nlopt::vfunc objective, void* f_data);
+    MinimizerNLopt(unsigned int nparams, nlopt::vfunc objective, void* f_data);
 
     void addEqualityConstraint(nlopt::vfunc constraint, void* c_data);
     void addInequalityConstraint(nlopt::vfunc constraint, void* c_data);

@@ -70,7 +70,7 @@ class Rescaler {
 
     MergedPeakCollection* mergedPeaks() { return _merged_peaks.get(); };
     const std::vector<double>& scaleFactors() const { return _scale_factors; };
-    const std::vector<double>& convergence() const { return _minf; };
+    const std::vector<double>& convergence() const { return _minf_history; };
     int nIter() const { return _niter; };
     RescalerParameters* parameters() { return &_parameters; };
 
@@ -85,7 +85,7 @@ class Rescaler {
 
     std::unique_ptr<MergedPeakCollection> _merged_peaks;
 
-    static std::vector<double> _minf;
+    static std::vector<double> _minf_history;
     static int _niter;
 };
 
