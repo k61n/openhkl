@@ -152,6 +152,15 @@ double PeakItem::bkg_gradient_sigma() const
     }
 }
 
+double PeakItem::scale() const
+{
+    try {
+        return _peak->scale();
+    } catch (std::range_error& e) {
+        return 0.0;
+    }
+}
+
 bool PeakItem::enabled() const
 {
     return _peak->enabled();
@@ -223,6 +232,9 @@ QVariant PeakItem::peakData(const QModelIndex& index, int role, PeakDisplayModes
                 }
                 case PeakColumn::BkgGradientSigma: {
                     return bkg_gradient_sigma();
+                }
+                case PeakColumn::Scale: {
+                    return scale();
                 }
                 case PeakColumn::DataSet: {
                     return QString::fromStdString(_peak->dataSet()->name());

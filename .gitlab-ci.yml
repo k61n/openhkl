@@ -1,7 +1,7 @@
 variables:
   DEBIAN_FRONTEND: noninteractive
 
-image: iffregistry.fz-juelich.de/neutron-simlab/openhkl/rocky9-env
+image: iffregistry.fz-juelich.de/neutron-simlab/openhkl/rocky9-ohkl-env
 
 stages:
   - build

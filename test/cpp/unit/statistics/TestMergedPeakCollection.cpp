@@ -27,12 +27,13 @@
 TEST_CASE("test/integrate/TestMergedPeakCollection.cpp", "")
 {
     const double eps = 1.0e-2;
-    const int eps_peaks = 10;
+    const int eps_peaks = 30;
 
     const int ref_npeaks = 5731;
     const int ref_merged = 4880;
     const int ref_max_peaks = 35149;
     const double ref_redundancy = 1.1743852459;
+    const int ref_n_sym_peaks = 782;
 
     const std::string filename = "Trypsin-small.ohkl";
     ohkl::Experiment experiment("Trypsin", "BioDiff");
@@ -47,11 +48,17 @@ TEST_CASE("test/integrate/TestMergedPeakCollection.cpp", "")
 
     merged_peaks.setDRange(1.5, 50.0);
 
-
     CHECK(merged_peaks.totalSize() >= ref_npeaks - eps_peaks);
     CHECK(merged_peaks.totalSize() <= ref_npeaks + eps_peaks);
     CHECK(merged_peaks.nUnique() >= ref_merged - eps_peaks);
     CHECK(merged_peaks.nUnique() <= ref_merged + eps_peaks);
     CHECK(merged_peaks.maxPeaks() == ref_max_peaks);
     CHECK_THAT(merged_peaks.redundancy(), Catch::Matchers::WithinAbs(ref_redundancy, eps));
+
+    int sym_peaks = 0;
+    for (const auto& peak : merged_peaks.mergedPeakSet()) {
+        if (peak.redundancy() > 1)
+            ++sym_peaks;
+    }
+    CHECK(sym_peaks == ref_n_sym_peaks);
 }

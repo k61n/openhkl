@@ -387,6 +387,24 @@ void PeakCollectionItem::sort(int column, Qt::SortOrder order)
             };
             break;
         }
+        case PeakColumn::Scale: {
+            compareFn = [](std::unique_ptr<PeakItem>& p1, std::unique_ptr<PeakItem>& p2) {
+                double scale1 = 0.0;
+                double scale2 = 0.0;
+                try {
+                    scale1 = p1->peak()->scale();
+                } catch (std::range_error& e) {
+                    // interpolation error
+                }
+                try {
+                    scale2 = p2->peak()->scale();
+                } catch (std::range_error& e) {
+                    // interpolation error
+                }
+                return (scale1 < scale2);
+            };
+            break;
+        }
         case PeakColumn::DataSet: {
             compareFn = [&](std::unique_ptr<PeakItem>& p1, std::unique_ptr<PeakItem>& p2) {
                 const std::string data_1 = p1->peak()->dataSet()->name();

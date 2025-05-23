@@ -27,6 +27,7 @@
 #include "gui/subframe_predict/SubframePredict.h"
 #include "gui/subframe_refiner/SubframeRefiner.h"
 #include "gui/subframe_reject/SubframeReject.h"
+#include "gui/subframe_rescale/SubframeRescale.h"
 #include "gui/subframe_shapes/SubframeShapes.h"
 
 #include <QDebug>
@@ -49,6 +50,7 @@
 // integrator.svg: triple integral by Sumana Chamrunworakiat from the Noun Project
 // reject.svg: Reject by Alfredo @ IconsAlfredo.com
 // merger.svg: Merge by Muneer A.Safiah from the Noun Project
+// rescale.svg: bright by Sentya Irma from the Noun Project
 
 SideBar::SideBar(QWidget* parent)
     : QWidget(parent), mCheckedAction(nullptr), mOverAction(nullptr), _strategy(false)
@@ -74,7 +76,8 @@ SideBar::SideBar(QWidget* parent)
     QAction* refiner = addAction(QIcon(path + QString("refiner.svg")), "Refine");
     QAction* integrator = addAction(QIcon(path + QString("integrator.svg")), "Integrate");
     QAction* rejector = addAction(QIcon(path + QString("reject.svg")), "Reject");
-    QAction* info = addAction(QIcon(path + QString("merger.svg")), "Merge");
+    QAction* merger = addAction(QIcon(path + QString("merger.svg")), "Merge");
+    QAction* rescaler = addAction(QIcon(path + QString("rescale.svg")), "Rescale");
 
 
     QAction* tempAction = mActions.at(0);
@@ -92,7 +95,8 @@ SideBar::SideBar(QWidget* parent)
     connect(refiner, &QAction::triggered, this, &SideBar::onRefiner);
     connect(integrator, &QAction::triggered, this, &SideBar::onIntegrator);
     connect(rejector, &QAction::triggered, this, &SideBar::onReject);
-    connect(info, &QAction::triggered, this, &SideBar::onMerger);
+    connect(merger, &QAction::triggered, this, &SideBar::onMerger);
+    connect(rescaler, &QAction::triggered, this, &SideBar::onRescale);
     connect(this, &SideBar::subframeChanged, this, &SideBar::onSubframeChanged);
 }
 
@@ -321,6 +325,13 @@ void SideBar::onMerger()
     gGui->merger->processMerge();
 }
 
+void SideBar::onRescale()
+{
+    onSubframeChanged();
+    gGui->_layout_stack->setCurrentIndex(static_cast<int>(SubFrame::Rescale));
+    gGui->rescaler->refreshAll();
+}
+
 void SideBar::refreshAll()
 {
     gGui->finder->refreshAll();
@@ -330,6 +341,7 @@ void SideBar::refreshAll()
     gGui->refiner->refreshAll();
     gGui->integrator->refreshAll();
     gGui->merger->refreshAll();
+    gGui->rescaler->refreshAll();
     gGui->home->clearTables();
 }
 
@@ -384,9 +396,12 @@ void SideBar::onSubframeChanged()
             break;
         }
         case SubFrame::Merge: {
+            // SubframeMerge does not need setMergeParameters because it is triggered on merging
             break;
         }
-            // SubframeMerge does not need setMergeParameters because it is triggered on merging
+        case SubFrame::Rescale: {
+            break;
+        }
     }
 
     if (gSession->hasProject())

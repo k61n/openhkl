@@ -20,10 +20,10 @@
 #include "core/integration/IIntegrator.h"
 #include "core/loader/IDataReader.h"
 #include "core/peak/IntegrationRegion.h"
+#include "core/rescale/Rescaler.h"
 #include "core/shape/Predictor.h"
 #include "core/shape/ShapeModel.h"
 #include "core/statistics/PeakMerger.h"
-
 
 #include <yaml-cpp/exceptions.h>
 #include <yaml-cpp/node/node.h>
@@ -397,6 +397,41 @@ void ExperimentYAML::setMergeParameters(MergeParameters* params)
     merge_node["friedel"] = params->friedel;
     merge_node["scale"] = params->scale;
     merge_node["d_max"] = params->d_max;
+}
+
+void ExperimentYAML::grabRescalerParameters(RescalerParameters* params)
+{
+    YAML::Node root = _node["Experiment"];
+    if (!root["Rescale"])
+        return;
+
+    ohklLog(Level::Info, "ExperimentYAML::grabRescalerParameters: reading parameters from yml");
+    YAML::Node branch = root["Rescale"];
+
+    params->sum_intensity = getNode<bool>(branch, "sum_intensity");
+    params->friedel = getNode<bool>(branch, "friedel");
+    params->ftol = getNode<double>(branch, "ftol");
+    params->xtol = getNode<double>(branch, "xtol");
+    params->ctol = getNode<double>(branch, "ctol");
+    params->max_iter = getNode<int>(branch, "max_iter");
+    params->frame_ratio = getNode<double>(branch, "frame_ratio");
+}
+
+void ExperimentYAML::setRescalerParameters(RescalerParameters* params)
+{
+    ohklLog(Level::Info, "ExperimentYAML::setRescalerParameters: writing parameters to yml");
+    YAML::Node root = _node["Experiment"];
+    if (!root["Rescale"])
+        root["Rescale"] = YAML::Null;
+    YAML::Node merge_node = root["Rescale"];
+
+    merge_node["sum_intensity"] = params->sum_intensity;
+    merge_node["friedel"] = params->friedel;
+    merge_node["ftol"] = params->ftol;
+    merge_node["xtol"] = params->xtol;
+    merge_node["ctol"] = params->ctol;
+    merge_node["max_iter"] = params->max_iter;
+    merge_node["frame_ratio"] = params->frame_ratio;
 }
 
 void ExperimentYAML::writeFile(const std::string& filename)

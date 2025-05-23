@@ -16,6 +16,7 @@
 #define OHKL_CORE_STATISTICS_RFACTOR_H
 
 #include "core/statistics/IMergedPeakStatistic.h" // inherits from
+#include "core/statistics/MergedPeakCollection.h"
 
 namespace ohkl {
 
@@ -35,6 +36,7 @@ class RFactor : public IMergedPeakStatistic {
     }
     ~RFactor() { }
 
+    //! Compute all R-factors
     void calculate(MergedPeakCollection* data) override;
 
     double Rmerge() const { return _Rmerge; }

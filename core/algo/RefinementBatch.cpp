@@ -14,7 +14,6 @@
 
 #include <algorithm>
 #include <iomanip>
-#include <iostream>
 #include <limits>
 
 #include "base/fit/Minimizer.h"

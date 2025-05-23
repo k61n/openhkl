@@ -17,7 +17,12 @@
 #include "core/statistics/MergedPeak.h"
 #include "core/statistics/MergedPeakCollection.h"
 
+namespace {
+
 static const double g_sqrt2pi = std::sqrt(2.0 / M_PI);
+static const double eps = 1.0e-8;
+
+}
 
 namespace ohkl {
 
@@ -69,8 +74,7 @@ void RFactor::calculate(MergedPeakCollection* data)
         }
     }
 
-    double epsilon = 1.0e-8;
-    if (I_total < epsilon) {
+    if (I_total < eps) {
         // something wrong! too few peaks?
         _Rmerge = 0.0;
         _Rmeas = 0.0;

@@ -32,7 +32,8 @@ enum class SubFrame {
     Refine,
     Integrate,
     Reject,
-    Merge
+    Merge,
+    Rescale
 };
 
 class SideBar : public QWidget {
@@ -66,6 +67,7 @@ class SideBar : public QWidget {
     void onIntegrator();
     void onReject();
     void onMerger();
+    void onRescale();
 
  protected:
     void paintEvent(QPaintEvent* event);
@@ -78,8 +80,8 @@ class SideBar : public QWidget {
  private:
     QList<QAction*> mActions;
 
-    std::array<QIcon, 9> mEnabledIcons;
-    std::array<QIcon, 9> mDisabledIcons;
+    std::array<QIcon, 10> mEnabledIcons;
+    std::array<QIcon, 10> mDisabledIcons;
 
     QAction* mCheckedAction;
     QAction* mOverAction;
