@@ -33,13 +33,13 @@ MergedPeakCollection::MergedPeakCollection(
     , _first_frame(fmin)
     , _last_frame(fmax)
 {
-    ohklLog(Level::Info, "MergedPeakCollection::MergedPeakCollection: merging peaks");
+    ohklLog(Level::Debug, "MergedPeakCollection::MergedPeakCollection: merging peaks");
     _peak_collections = peak_collections;
     for (int i = 0; i < _peak_collections.size(); ++i) {
         if (_peak_collections[i] == nullptr)
             continue;
         ohklLog(
-            Level::Info, "MergedPeakCollection::MergedPeakCollection: peak collection ",
+            Level::Debug, "MergedPeakCollection::MergedPeakCollection: peak collection ",
             _peak_collections[i]->name());
         std::vector<Peak3D*> peaks = _peak_collections[i]->getPeakList();
         for (int j = 0; j < peaks.size(); ++j)
@@ -47,16 +47,16 @@ MergedPeakCollection::MergedPeakCollection(
     }
     if (_nInvalid > 0) {
         ohklLog(
-            Level::Info, "MergedPeakCollection::MergedPeakCollection: ", totalSize(),
+            Level::Debug, "MergedPeakCollection::MergedPeakCollection: ", totalSize(),
             " observed peaks");
         ohklLog(
-            Level::Info, "MergedPeakCollection::MergedPeakCollection: ", _nInvalid,
+            Level::Debug, "MergedPeakCollection::MergedPeakCollection: ", _nInvalid,
             " disabled peaks");
         ohklLog(
-            Level::Info, "MergedPeakCollection::MergedPeakCollection: ", _nInequivalent,
+            Level::Debug, "MergedPeakCollection::MergedPeakCollection: ", _nInequivalent,
             " inequivalent peaks");
         ohklLog(
-            Level::Info, "MergedPeakCollection::MergedPeakCollection: ", nUnique(),
+            Level::Debug, "MergedPeakCollection::MergedPeakCollection: ", nUnique(),
             " symmetry-unique peaks");
     }
 }

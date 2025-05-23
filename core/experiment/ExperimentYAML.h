@@ -2,8 +2,8 @@
 //
 //  OpenHKL: data reduction for single crystal diffraction
 //
-//! @file      base/parser/ExperimentYAML.h
-//! @brief     Declares function eigenToVector
+//! @file      core/experiment/ExperimentYAML.h
+//! @brief     Declares class ExperimentYAML
 //!
 //! @homepage  https://openhkl.org
 //! @license   GNU General Public License v3 or higher (see COPYING)
@@ -31,6 +31,7 @@ struct MergeParameters;
 struct PeakFinderParameters;
 struct PredictionParameters;
 struct ShapeModelParameters;
+struct RescalerParameters;
 
 
 /*! \addtogroup python_api
@@ -74,6 +75,10 @@ class ExperimentYAML {
     void grabMergeParameters(MergeParameters* params);
     //! Set merger parameters
     void setMergeParameters(MergeParameters* params);
+    //! Get parameters from rescaler
+    void grabRescalerParameters(RescalerParameters* params);
+    //! Set rescaler parameters
+    void setRescalerParameters(RescalerParameters* params);
 
     //! Write the yml file
     void writeFile(const std::string& filename);

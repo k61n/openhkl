@@ -19,6 +19,7 @@
 #include "gui/utility/ColorButton.h"
 #include "gui/utility/DataComboBox.h"
 #include "gui/utility/FoundPeakComboBox.h"
+#include "gui/utility/ScienceSpinBox.h"
 #include "gui/utility/IntegratedPeakComboBox.h"
 #include "gui/utility/PeakComboBox.h"
 #include "gui/utility/PredictedPeakComboBox.h"
@@ -222,6 +223,19 @@ std::tuple<SafeSpinBox*, SafeSpinBox*> GridFiller::addSpinBoxPair(
 
     _nextRow++;
     return std::make_tuple(spinBox1, spinBox2);
+}
+
+ScienceSpinBox* GridFiller::addScienceSpinBox(
+    const QString& labelText, const QString& labelTooltip)
+{
+    addLabel(labelText, labelTooltip);
+
+    ScienceSpinBox* spinBox = new ScienceSpinBox();
+    spinBox->setFocusPolicy(Qt::ClickFocus);
+    _mainLayout->addWidget(spinBox, _nextRow, 1, 1, -1);
+
+    _nextRow++;
+    return spinBox;
 }
 
 std::tuple<SafeDoubleSpinBox*, SafeDoubleSpinBox*> GridFiller::addDoubleSpinBoxPair(

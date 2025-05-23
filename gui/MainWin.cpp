@@ -31,6 +31,7 @@
 #include "gui/subframe_predict/SubframePredict.h"
 #include "gui/subframe_refiner/SubframeRefiner.h"
 #include "gui/subframe_reject/SubframeReject.h"
+#include "gui/subframe_rescale/SubframeRescale.h"
 #include "gui/subframe_shapes/SubframeShapes.h"
 #include "gui/subwindows/DetectorWindow.h"
 #include "gui/subwindows/InputFilesWindow.h"
@@ -90,6 +91,7 @@ MainWin::MainWin()
     integrator = new SubframeIntegrate;
     rejector = new SubframeReject;
     merger = new SubframeMerge;
+    rescaler = new SubframeRescale;
 
     detector_window = new DetectorWindow();
     log_window = new LogWindow();
@@ -108,6 +110,7 @@ MainWin::MainWin()
     _layout_stack->addWidget(integrator);
     _layout_stack->addWidget(rejector);
     _layout_stack->addWidget(merger);
+    _layout_stack->addWidget(rescaler);
     _layout_stack->setCurrentIndex(0);
 
     main_layout->addWidget(_layout_stack);

@@ -9,4 +9,5 @@ target_link_libraries(openhklbase
     ${YAMLCPP_LIBRARIES}
     ${GSL_LIBRARIES}
     ${QHULL_LIBRARIES}
+    ${NLOPT_LIBRARIES}
     )

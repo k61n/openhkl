@@ -40,6 +40,7 @@
 #include "core/raw/DataKeys.h"
 #include "core/loader/IDataReader.h"
 #include "core/raw/MetaData.h"
+#include "core/rescale/Rescaler.h"
 #include "core/shape/PeakCollection.h"
 #include "core/shape/PeakFilter.h"
 #include "core/shape/Predictor.h"
@@ -50,6 +51,7 @@
 #include "tables/crystal/UnitCell.h"
 
 #include <filesystem>
+#include <memory>
 #include <stdexcept>
 
 namespace ohkl {
@@ -77,6 +79,7 @@ Experiment::Experiment() : _diffractometer(nullptr), _strategy(false)
     _refiner = std::make_unique<Refiner>(_cell_handler.get());
     _integrator = std::make_unique<Integrator>(_data_handler);
     _peak_merger = std::make_unique<PeakMerger>();
+    _rescaler = std::make_unique<Rescaler>();
 
     _data_reader_params = std::make_unique<DataReaderParameters>();
 }
@@ -115,6 +118,7 @@ void Experiment::readFromYaml(const std::string& filename)
     yaml.grabPredictorParameters(_predictor->parameters());
     yaml.grabIntegrationParameters(_integrator->parameters());
     yaml.grabMergeParameters(_peak_merger->parameters());
+    yaml.grabRescalerParameters(_rescaler->parameters());
 }
 
 void Experiment::saveToYaml(const std::string& filename)
@@ -128,6 +132,7 @@ void Experiment::saveToYaml(const std::string& filename)
     yaml.setPredictorParameters(_predictor->parameters());
     yaml.setIntegrationParameters(_integrator->parameters());
     yaml.setMergeParameters(_peak_merger->parameters());
+    yaml.setRescalerParameters(_rescaler->parameters());
     yaml.writeFile(filename);
 }
 
@@ -273,11 +278,6 @@ const UnitCell* Experiment::getAcceptedCell() const
 const UnitCell* Experiment::getReferenceCell() const
 {
     return getUnitCell(ohkl::kw_referenceUnitcell);
-}
-
-Integrator* Experiment::integrator()
-{
-    return _integrator.get();
 }
 
 // Data handler methods

@@ -652,7 +652,7 @@ void SubframeMerge::updateMergedModel(
 
         const ohkl::Intensity I = peak.intensity();
         const double chi2 = peak.chi2();
-        const double p = peak.chi2();
+        const double p = peak.pValue();
 
         const double intensity = I.value();
         const double sigma = I.sigma();

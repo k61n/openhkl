@@ -18,6 +18,7 @@ Compile from source
    * GSL
    * HDF5
    * OpenGL
+   * vtk
    * Tiff
    * QHull
    * YAMLCpp
@@ -26,10 +27,7 @@ Compile from source
    * OpenCV
    * Swig
    * numpy
-
-   Optional dependencies:
-
-   * OpenMP
+   * nlopt
 
 2. Clone the git repository
 
@@ -42,9 +40,8 @@ Compile from source
 ::
 
    cd openhkl
-   mkdir build
+   cmake -B build .
    cd build
-   cmake ..
    make -j8
    make install <optional>
 

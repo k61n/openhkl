@@ -18,8 +18,6 @@
 #include <opencv2/core/hal/interface.h>
 #include <stdexcept>
 
-#include <iostream>
-
 namespace ohkl {
 
 RadialConvolutionKernel::RadialConvolutionKernel(double r_in, double r_out) : ConvolutionKernel()

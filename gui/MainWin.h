@@ -43,6 +43,7 @@ class SubframeIntegrate;
 class SubframePredict;
 class SubframeShapes;
 class SubframeReject;
+class SubframeRescale;
 
 extern class MainWin* gGui; //!< global pointer to the main window
 
@@ -101,6 +102,7 @@ class MainWin : public QMainWindow {
     SubframeIntegrate* integrator;
     SubframeReject* rejector;
     SubframeMerge* merger;
+    SubframeRescale* rescaler;
 
     // modeless detector dialog
     DetectorWindow* detector_window;

@@ -37,6 +37,7 @@
 #include "gui/subframe_merge/SubframeMerge.h"
 #include "gui/subframe_predict/SubframePredict.h"
 #include "gui/subframe_refiner/SubframeRefiner.h"
+#include "gui/subframe_rescale/SubframeRescale.h"
 #include "gui/utility/CellComboBox.h"
 #include "gui/utility/DataComboBox.h"
 #include "gui/utility/FoundPeakComboBox.h"
@@ -465,6 +466,7 @@ void Session::onExperimentChanged()
     gGui->refiner->grabRefinerParameters();
     gGui->integrator->grabIntegrationParameters();
     gGui->merger->grabMergeParameters();
+    gGui->rescaler->grabRescalerParameters();
     onUnitCellChanged();
 }
 
