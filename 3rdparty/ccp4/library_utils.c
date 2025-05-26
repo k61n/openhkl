@@ -139,7 +139,7 @@ int ccp4_utils_setenv (char *str)
     defined (__osf__) || defined (__FreeBSD__) || defined (linux) || \
     defined (_WIN32) || defined __linux__
   /* putenv is the POSIX.1, draft 3 proposed mechanism */
-#if !(defined(__hpux) && defined(__HP_cc))
+#if (!defined(_WIN32) && !(defined(__hpux) && defined(__HP_cc)))
   int putenv (char*);
 #endif
   char *param;
