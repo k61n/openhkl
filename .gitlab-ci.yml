@@ -1,8 +1,6 @@
 variables:
   DEBIAN_FRONTEND: noninteractive
 
-image: iffregistry.fz-juelich.de/neutron-simlab/openhkl/rocky9-ohkl-env
-
 stages:
   - build
   - test
@@ -10,6 +8,7 @@ stages:
 
 build:rocky9:
   stage: build
+  image: iffregistry.fz-juelich.de/neutron-simlab/openhkl/rocky9-ohkl-env
   script:
     - |
       if test $CI_PIPELINE_SOURCE == "nightly"
@@ -24,8 +23,50 @@ build:rocky9:
       - build
     expire_in: 1 day
 
+build:macos:
+  stage: build
+  parallel:
+    matrix:
+      - { ARCH: "arm64", BREW: "homebrew" }
+      - { ARCH: "intel", BREW: "homebrew-x86" }
+  tags:
+    - darwin, $ARCH, ventura
+  script:
+    - mkdir build && cd build
+    - /opt/$BREW/bin/cmake ..
+      -GNinja
+      -DCMAKE_BUILD_TYPE=Release
+      -DBUILD_TESTING=OFF
+      -DINSTRUMENT_RESOURCE_DIR=$PWD/../data/instruments/
+      -DCMAKE_PREFIX_PATH="/opt/$BREW/opt/qt@5;/opt/$BREW"
+      -DCMAKE_IGNORE_PATH=/usr/local
+      -DCMAKE_SYSTEM_IGNORE_PATH=/usr/local
+      -DPython3_ROOT_DIR=/opt/$BREW/opt/python@3.13
+      -DCMAKE_CXX_FLAGS="-I/opt/$BREW/include"
+    - /opt/$BREW/bin/cmake --build . --parallel $(sysctl -n hw.ncpu)
+
+build:windows:
+  stage: build
+  tags:
+    - win, x64
+  script:
+    - mkdir build
+    - cd build
+    - $env:Path = "C:\msys64\mingw64\bin;" + $env:Path
+    - cmake ..
+      -DCMAKE_C_COMPILER=gcc
+      -DCMAKE_CXX_COMPILER=g++
+      -GNinja
+      -DCMAKE_BUILD_TYPE=Release
+      -DBUILD_TESTING=OFF
+      -DINSTRUMENT_RESOURCE_DIR="$PWD/../data/instruments"
+      -DBUILD_WITH_QT6=ON
+      -DCMAKE_PREFIX_PATH=C:/msys64/mingw64
+    - cmake --build . --parallel $env:NUMBER_OF_PROCESSORS
+
 test:rocky9:
   stage: test
+  image: iffregistry.fz-juelich.de/neutron-simlab/openhkl/rocky9-ohkl-env
   timeout: 3 hours
   script:
     - cd build
@@ -39,6 +80,7 @@ test:rocky9:
 
 pages:
   stage: deploy:doc
+  image: iffregistry.fz-juelich.de/neutron-simlab/openhkl/rocky9-ohkl-env
   script:
     - cd build
     - cmake ..
