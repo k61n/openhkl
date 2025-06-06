@@ -14,7 +14,6 @@
 
 #include "core/experiment/Experiment.h"
 
-#include "InstrumentParameters.h"
 #include "base/utils/Logger.h"
 #include "base/utils/Path.h" // tempFilename
 #include "core/algo/AutoIndexer.h"
@@ -35,6 +34,7 @@
 #include "core/experiment/UnitCellHandler.h"
 #include "core/image/ImageFilter.h"
 #include "core/instrument/Diffractometer.h"
+#include "core/instrument/InstrumentParameters.h"
 #include "core/instrument/InstrumentStateSet.h"
 #include "core/instrument/Monochromator.h"
 #include "core/raw/DataKeys.h"

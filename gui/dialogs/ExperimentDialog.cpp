@@ -14,7 +14,7 @@
 
 #include "gui/dialogs/ExperimentDialog.h"
 
-#include "InstrumentParameters.h"
+#include "core/instrument/InstrumentParameters.h"
 #include "base/utils/Path.h"
 #include "gui/MainWin.h"
 

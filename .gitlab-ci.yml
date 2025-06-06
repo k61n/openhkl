@@ -37,7 +37,6 @@ build:macos:
       -GNinja
       -DCMAKE_BUILD_TYPE=Release
       -DBUILD_TESTING=OFF
-      -DINSTRUMENT_RESOURCE_DIR=$PWD/../data/instruments/
       -DCMAKE_PREFIX_PATH="/opt/$BREW/opt/qt@5;/opt/$BREW"
       -DCMAKE_IGNORE_PATH=/usr/local
       -DCMAKE_SYSTEM_IGNORE_PATH=/usr/local
@@ -59,7 +58,6 @@ build:windows:
       -GNinja
       -DCMAKE_BUILD_TYPE=Release
       -DBUILD_TESTING=OFF
-      -DINSTRUMENT_RESOURCE_DIR="$PWD/../data/instruments"
       -DBUILD_WITH_QT6=ON
       -DCMAKE_PREFIX_PATH=C:/msys64/mingw64
     - cmake --build . --parallel $env:NUMBER_OF_PROCESSORS
