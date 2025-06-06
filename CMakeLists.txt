@@ -199,14 +199,12 @@ if(OHKL_TIDY)
     set(CMAKE_CXX_CLANG_TIDY "clang-tidy") # has effect only if compiler is clang; uses .clang-tidy
 endif()
 
-set(INSTRUMENT_RESOURCE_DIR "${CMAKE_BINARY_DIR}/data/instruments")
 configure_file("manifest.h.in" "${CMAKE_BINARY_DIR}/manifest.h")
 configure_file("InstrumentParameters.h.in" "${CMAKE_BINARY_DIR}/InstrumentParameters.h")
 
 add_subdirectory(base)
 add_subdirectory(tables)
 add_subdirectory(core)
-add_subdirectory(data/instruments)
 
 if(BUILD_OHKL_GUI)
     add_subdirectory(gui)
@@ -249,9 +247,7 @@ else()
   install(TARGETS OpenHKL DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
   install(FILES ${CMAKE_BINARY_DIR}/OpenHKL.desktop DESTINATION share/applications)
   install(FILES ${CMAKE_SOURCE_DIR}/main/images/icons/OpenHKL.png DESTINATION share/icons)
-  install(DIRECTORY ${CMAKE_BINARY_DIR}/data/instruments DESTINATION share/openhkl)
-  set(INSTRUMENT_RESOURCE_DIR "${CMAKE_INSTALL_PREFIX}/share/openhkl/data/instruments")
-  message(STATUS "INSTRUMENT_RESOURCE_DIR=${INSTRUMENT_RESOURCE_DIR}")
+  install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/data/instruments DESTINATION share/openhkl)
 endif()
 
 if (NOT APPLE)
