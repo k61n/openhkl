@@ -19,12 +19,6 @@ endif()
 if(WIN32)
     include(PackWindows)
 
-elseif(APPLE)
-    # BornAgain Mac packaging
-
-    set(CPACK_BINARY_DRAGNDROP ON)
-    set(CPACK_GENERATOR "DragNDrop")
-
 elseif(UNIX AND BUILD_DEBIAN) # one can build debian package only on UNIX system
     include(PackDebian)
 

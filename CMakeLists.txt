@@ -254,4 +254,6 @@ else()
   message(STATUS "INSTRUMENT_RESOURCE_DIR=${INSTRUMENT_RESOURCE_DIR}")
 endif()
 
-include(Pack)
+if (NOT APPLE)
+  include(Pack)
+endif ()
