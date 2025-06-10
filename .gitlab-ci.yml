@@ -5,6 +5,7 @@ stages:
   - build
   - test
   - deploy:doc
+  - bundling
 
 build:rocky9:
   stage: build
@@ -91,3 +92,43 @@ pages:
       - public
   only:
     - main
+
+bundle:macos:
+  stage: bundling
+  dependencies: []
+  parallel:
+    matrix:
+      - { ARCH: "arm64", }
+      - { ARCH: "intel", }
+  tags:
+    - darwin, $ARCH, ventura
+  only:
+    - tags@neutron-simlab/openhkl
+  script:
+    - mkdir build && cd build
+    - /opt/homebrew/bin/cmake
+      ..
+      -GNinja
+      -DCMAKE_BUILD_TYPE=Release
+      -DBUILD_TESTING=OFF
+      -DCMAKE_PREFIX_PATH="/opt/homebrew/opt/qt@5;/opt/homebrew"
+      -DCMAKE_IGNORE_PATH=/usr/local
+      -DCMAKE_IGNORE_PREFIX_PATH=/usr/local
+      -DCMAKE_SYSTEM_IGNORE_PATH=/usr/local
+      -DCMAKE_SYSTEM_IGNORE_PREFIX_PATH=/usr/local
+      -DCMAKE_CXX_FLAGS="-I/opt/homebrew/include"
+    - /opt/homebrew/bin/cmake --build . --parallel $(sysctl -n hw.ncpu)
+    - /opt/homebrew/opt/qt@5/bin/macdeployqt main/OpenHKL.app -verbose=3
+    - ../install/macos/relink.sh main/OpenHKL.app/Contents/Frameworks
+    - codesign --deep --force --verify --verbose --sign "openhkl" main/OpenHKL.app
+    - if [ -d "/Volumes/openhkl" ]; then hdiutil detach /Volumes/openhkl; fi
+    - hdiutil create -size 500m -fs HFS+ -volname "openhkl" -attach ./openhkl.dmg
+    - mv main/OpenHKL.app /Volumes/openhkl
+    - ln -s /Applications /Volumes/openhkl/Applications
+    - rm -rf /Volumes/openhkl/.fseventsd
+    - hdiutil detach /Volumes/openhkl
+    - hdiutil convert ./openhkl.dmg -format UDZO -o openhkl-$CI_COMMIT_TAG-$ARCH.dmg
+    - mv openhkl-$CI_COMMIT_TAG-$ARCH.dmg ../
+  artifacts:
+    paths:
+      - openhkl-$CI_COMMIT_TAG-$ARCH.dmg
