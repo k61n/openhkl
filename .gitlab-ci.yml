@@ -132,3 +132,38 @@ bundle:macos:
   artifacts:
     paths:
       - openhkl-$CI_COMMIT_TAG-$ARCH.dmg
+
+bundle:windows:
+  stage: bundling
+  dependencies: []
+  tags:
+    - win, x64
+  only:
+    - tags@neutron-simlab/openhkl
+  script:
+    - $env:Path = "C:\Qt\Tools\QtInstallerFramework\4.8\bin;" + $env:Path
+    - $env:Path = "C:\msys64\mingw64\bin;" + $env:Path
+    - mkdir build
+    - cd build
+    - cmake ..
+      -DCMAKE_C_COMPILER=gcc
+      -DCMAKE_CXX_COMPILER=g++
+      -GNinja
+      -DCMAKE_BUILD_TYPE=Release
+      -DBUILD_TESTING=OFF
+      -DBUILD_WITH_QT6=ON
+      -DCMAKE_PREFIX_PATH=C:/msys64/mingw64
+    - cmake --build . --parallel $env:NUMBER_OF_PROCESSORS
+    - cd ..
+    - copy build\main\OpenHKL.exe install\windows\packages\com.openhkl\data
+    - windeployqt6 install\windows\packages\com.openhkl\data\OpenHKL.exe
+    - Get-Content "install\windows\dll_list.txt" | ForEach-Object {
+        Copy-Item "C:\msys64\mingw64\bin\$_" -Destination "install\windows\packages\com.openhkl\data"
+      }
+    - mkdir install\windows\packages\com.openhkl\data\icons
+    - copy main\images\icons\OpenHKL.ico install\windows\packages\com.openhkl\data\icons
+    - Copy-Item -Path data\instruments -Destination install\windows\packages\com.openhkl\data -Recurse
+    - binarycreator -c install\windows\config\config.xml -p install\windows\packages openhkl-$CI_COMMIT_TAG-x64.exe --verbose
+  artifacts:
+    paths:
+      - openhkl-$CI_COMMIT_TAG-x64.exe
