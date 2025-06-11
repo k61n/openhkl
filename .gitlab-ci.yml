@@ -6,6 +6,8 @@ stages:
   - test
   - deploy:doc
   - bundling
+  - upload
+  - release
 
 build:rocky9:
   stage: build
@@ -167,3 +169,37 @@ bundle:windows:
   artifacts:
     paths:
       - openhkl-$CI_COMMIT_TAG-x64.exe
+
+upload:
+  stage: upload
+  image: curlimages/curl:latest
+  only:
+    - tags@neutron-simlab/openhkl
+  script:
+    - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file ./openhkl-$CI_COMMIT_TAG-arm64.dmg "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${CI_PROJECT_NAME}/${CI_COMMIT_TAG}/openhkl-${CI_COMMIT_TAG}-arm64.dmg"'
+    - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file ./openhkl-$CI_COMMIT_TAG-intel.dmg "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${CI_PROJECT_NAME}/${CI_COMMIT_TAG}/openhkl-${CI_COMMIT_TAG}-intel.dmg"'
+    - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file ./openhkl-$CI_COMMIT_TAG-x64.exe "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${CI_PROJECT_NAME}/${CI_COMMIT_TAG}/openhkl-${CI_COMMIT_TAG}-x64.exe"'
+  needs: ["bundle:macos: [arm64]",
+          "bundle:macos: [intel]",
+          "bundle:windows"]
+
+release:
+  stage: release
+  image: registry.gitlab.com/gitlab-org/release-cli:latest
+  only:
+    - tags@neutron-simlab/openhkl
+  script:
+    - echo "Release CI stage for $CI_COMMIT_TAG"
+  release:
+    tag_name: $CI_COMMIT_TAG
+    name: $CI_COMMIT_TAG
+    description: 'Release created using the release-cli.'
+    assets:
+      links:
+        - name: 'openhkl-$CI_COMMIT_TAG-arm64.dmg'
+          url: '${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${CI_PROJECT_NAME}/${CI_COMMIT_TAG}/openhkl-${CI_COMMIT_TAG}-arm64.dmg'
+        - name: 'openhkl-$CI_COMMIT_TAG-intel.dmg'
+          url: '${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${CI_PROJECT_NAME}/${CI_COMMIT_TAG}/openhkl-${CI_COMMIT_TAG}-intel.dmg'
+        - name: 'openhkl-$CI_COMMIT_TAG-x64.exe'
+          url: '${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${CI_PROJECT_NAME}/${CI_COMMIT_TAG}/openhkl-${CI_COMMIT_TAG}-x64.exe'
+  needs: ["upload"]
