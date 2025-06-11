@@ -79,6 +79,8 @@ test:rocky9:
       else
           ctest -j8 --output-on-failure -E "nightly"
       fi
+  needs:
+    - build:rocky9
 
 pages:
   stage: deploy:doc
@@ -94,10 +96,11 @@ pages:
       - public
   only:
     - main
+  needs:
+    - build:rocky9
 
 bundle:macos:
   stage: bundling
-  dependencies: []
   parallel:
     matrix:
       - { ARCH: "arm64", }
@@ -106,20 +109,10 @@ bundle:macos:
     - darwin, $ARCH, ventura
   only:
     - tags@neutron-simlab/openhkl
+  variables:
+    GIT_STRATEGY: none
   script:
-    - mkdir build && cd build
-    - /opt/homebrew/bin/cmake
-      ..
-      -GNinja
-      -DCMAKE_BUILD_TYPE=Release
-      -DBUILD_TESTING=OFF
-      -DCMAKE_PREFIX_PATH="/opt/homebrew/opt/qt@5;/opt/homebrew"
-      -DCMAKE_IGNORE_PATH=/usr/local
-      -DCMAKE_IGNORE_PREFIX_PATH=/usr/local
-      -DCMAKE_SYSTEM_IGNORE_PATH=/usr/local
-      -DCMAKE_SYSTEM_IGNORE_PREFIX_PATH=/usr/local
-      -DCMAKE_CXX_FLAGS="-I/opt/homebrew/include"
-    - /opt/homebrew/bin/cmake --build . --parallel $(sysctl -n hw.ncpu)
+    - cd build
     - /opt/homebrew/opt/qt@5/bin/macdeployqt main/OpenHKL.app -verbose=3
     - ../install/macos/relink.sh main/OpenHKL.app/Contents/Frameworks
     - codesign --deep --force --verify --verbose --sign "openhkl" main/OpenHKL.app
@@ -134,29 +127,21 @@ bundle:macos:
   artifacts:
     paths:
       - openhkl-$CI_COMMIT_TAG-$ARCH.dmg
+    expire_in: 1 day
+  needs:
+    - build:macos
 
 bundle:windows:
   stage: bundling
-  dependencies: []
   tags:
     - win, x64
   only:
     - tags@neutron-simlab/openhkl
+  variables:
+    GIT_STRATEGY: none
   script:
     - $env:Path = "C:\Qt\Tools\QtInstallerFramework\4.8\bin;" + $env:Path
     - $env:Path = "C:\msys64\mingw64\bin;" + $env:Path
-    - mkdir build
-    - cd build
-    - cmake ..
-      -DCMAKE_C_COMPILER=gcc
-      -DCMAKE_CXX_COMPILER=g++
-      -GNinja
-      -DCMAKE_BUILD_TYPE=Release
-      -DBUILD_TESTING=OFF
-      -DBUILD_WITH_QT6=ON
-      -DCMAKE_PREFIX_PATH=C:/msys64/mingw64
-    - cmake --build . --parallel $env:NUMBER_OF_PROCESSORS
-    - cd ..
     - copy build\main\OpenHKL.exe install\windows\packages\com.openhkl\data
     - windeployqt6 install\windows\packages\com.openhkl\data\OpenHKL.exe
     - Get-Content "install\windows\dll_list.txt" | ForEach-Object {
@@ -169,12 +154,17 @@ bundle:windows:
   artifacts:
     paths:
       - openhkl-$CI_COMMIT_TAG-x64.exe
+    expire_in: 1 day
+  needs:
+    - build:windows
 
 upload:
   stage: upload
   image: curlimages/curl:latest
   only:
     - tags@neutron-simlab/openhkl
+  variables:
+    GIT_STRATEGY: none
   script:
     - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file ./openhkl-$CI_COMMIT_TAG-arm64.dmg "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${CI_PROJECT_NAME}/${CI_COMMIT_TAG}/openhkl-${CI_COMMIT_TAG}-arm64.dmg"'
     - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file ./openhkl-$CI_COMMIT_TAG-intel.dmg "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${CI_PROJECT_NAME}/${CI_COMMIT_TAG}/openhkl-${CI_COMMIT_TAG}-intel.dmg"'
@@ -188,6 +178,8 @@ release:
   image: registry.gitlab.com/gitlab-org/release-cli:latest
   only:
     - tags@neutron-simlab/openhkl
+  variables:
+    GIT_STRATEGY: none
   script:
     - echo "Release CI stage for $CI_COMMIT_TAG"
   release:
