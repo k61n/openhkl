@@ -112,18 +112,18 @@ bundle:macos:
   variables:
     GIT_STRATEGY: none
   script:
-    - cd build
-    - /opt/homebrew/opt/qt@5/bin/macdeployqt main/OpenHKL.app -verbose=3
-    - ../install/macos/relink.sh main/OpenHKL.app/Contents/Frameworks
-    - codesign --deep --force --verify --verbose --sign "openhkl" main/OpenHKL.app
+    - cp -r build/main/OpenHKL.app .
+    - /opt/homebrew/opt/qt@5/bin/macdeployqt OpenHKL.app -verbose=3
+    - python3 install/macos/missing_libs.py $PWD/build/main/OpenHKL.app $PWD/OpenHKL.app
+    - ./install/macos/relink.sh $PWD/OpenHKL.app/Contents/Frameworks
+    - codesign --deep --force --verify --verbose --sign "openhkl" OpenHKL.app
     - if [ -d "/Volumes/openhkl" ]; then hdiutil detach /Volumes/openhkl; fi
     - hdiutil create -size 500m -fs HFS+ -volname "openhkl" -attach ./openhkl.dmg
-    - mv main/OpenHKL.app /Volumes/openhkl
+    - mv OpenHKL.app /Volumes/openhkl
     - ln -s /Applications /Volumes/openhkl/Applications
     - rm -rf /Volumes/openhkl/.fseventsd
     - hdiutil detach /Volumes/openhkl
     - hdiutil convert ./openhkl.dmg -format UDZO -o openhkl-$CI_COMMIT_TAG-$ARCH.dmg
-    - mv openhkl-$CI_COMMIT_TAG-$ARCH.dmg ../
   artifacts:
     paths:
       - openhkl-$CI_COMMIT_TAG-$ARCH.dmg
