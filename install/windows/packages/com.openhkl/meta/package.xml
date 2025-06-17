@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package>
+    <DisplayName>OpenHKL</DisplayName>
+    <Description>OpenHKL - Single crystal diffraction data reduction - work in progress. Formerly NSXTool.</Description>
+    <Version>0.1.0</Version>
+    <ReleaseDate>2025-06-10</ReleaseDate>
+    <Licenses>
+        <License name="GNU GENERAL PUBLIC LICENSE Version 3" file="LICENSE" />
+    </Licenses>
+    <Default>true</Default>
+    <Script>installscript.qs</Script>
+</Package>

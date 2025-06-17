@@ -13,8 +13,8 @@
 //  ***********************************************************************************************
 
 #include "core/instrument/Diffractometer.h"
+#include "core/instrument/InstrumentParameters.h"
 
-#include "InstrumentParameters.h"
 #include "base/parser/EigenToVector.h"
 #include "base/utils/Path.h"
 #include "base/utils/Units.h"
