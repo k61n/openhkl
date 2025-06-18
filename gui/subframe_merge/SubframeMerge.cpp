@@ -817,7 +817,9 @@ void SubframeMerge::saveStatistics()
     QString loadDirectory = settings.value("merged", QDir::homePath()).toString();
 
     QString filename =
-        QFileDialog::getSaveFileName(this, "Save the shell info", loadDirectory, "(*.txt)");
+        QFileDialog::getSaveFileName(
+            this, "Save the shell info", loadDirectory, "(*.txt)",
+            nullptr, QFileDialog::DontUseNativeDialog);
 
     if (filename.isEmpty())
         return;

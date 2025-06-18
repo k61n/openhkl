@@ -357,7 +357,9 @@ void SubframeExperiment::importMasks()
     settings.setValue("masks", loadDirectory);
 
     QString file_path =
-        QFileDialog::getOpenFileName(this, "Import masks from file", loadDirectory, "YAML (*.yml);; All files (*)");
+        QFileDialog::getOpenFileName(
+            this, "Import masks from file", loadDirectory, "YAML (*.yml);; All files (*)",
+            nullptr, QFileDialog::DontUseNativeDialog);
 
     if (file_path.isEmpty())
         return;
@@ -389,7 +391,9 @@ void SubframeExperiment::exportMasks()
     QString defaultFileName = QDir(loadDirectory).filePath("Masks.yml");
 
     QString file_path =
-        QFileDialog::getSaveFileName(this, "Export masks to ", defaultFileName, "YAML (*.yml)");
+        QFileDialog::getSaveFileName(
+            this, "Export masks to ", defaultFileName, "YAML (*.yml)",
+            nullptr, QFileDialog::DontUseNativeDialog);
 
     // Ensure the file has the .yml extension
     QFileInfo info(file_path);

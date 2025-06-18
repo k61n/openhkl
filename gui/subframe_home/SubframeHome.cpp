@@ -325,7 +325,8 @@ void SubframeHome::loadFromFile()
     QString loadDirectory = settings.value("experiment", QDir::homePath()).toString();
 
     QString file_path = QFileDialog::getOpenFileName(
-        this, "Load the current experiment", loadDirectory, "OpenHKL file (*.ohkl)");
+        this, "Load the current experiment", loadDirectory, "OpenHKL file (*.ohkl)",
+        nullptr, QFileDialog::DontUseNativeDialog);
 
     if (file_path.isEmpty())
         return;
@@ -369,7 +370,8 @@ void SubframeHome::saveCurrent(bool dialogue /* = false */)
     } else {
         QString default_name = loadDirectory + "/" + project->currentFileName() + ".ohkl";
         file_path = QFileDialog::getSaveFileName(
-            this, "Save the current experiment", default_name, "OpenHKL file (*.ohkl)");
+            this, "Save the current experiment", default_name, "OpenHKL file (*.ohkl)",
+            nullptr, QFileDialog::DontUseNativeDialog);
 
         if (file_path.isEmpty())
             return;

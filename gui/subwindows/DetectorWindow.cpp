@@ -189,7 +189,8 @@ void DetectorWindow::load3rdPartyPeaks()
     QString loadDirectory = settings.value("experiment", QDir::homePath()).toString();
 
     QStringList files = QFileDialog::getOpenFileNames(
-        this, "Load 3rd party peaks file", loadDirectory, "3rd party output (*.x)");
+        this, "Load 3rd party peaks file", loadDirectory, "3rd party output (*.x)",
+        nullptr, QFileDialog::DontUseNativeDialog);
 
     int current_frame = _detector_widget->scene()->currentFrame();
 
