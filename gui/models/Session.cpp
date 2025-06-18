@@ -83,21 +83,24 @@ std::pair<QString, QStringList> askFileNames(ohkl::DataFormat fmt)
         case ohkl::DataFormat::RAW: {
             loadDirectory = qset.value("data_raw", QDir::homePath()).toString();
             qfilenames = QFileDialog::getOpenFileNames(
-                gGui, "Import raw data", loadDirectory, "Image files (*.raw);; All files (*.* *)");
+                gGui, "Import raw data", loadDirectory, "Image files (*.raw);; All files (*.* *)",
+                nullptr, QFileDialog::DontUseNativeDialog);
             break;
         }
         case ohkl::DataFormat::TIFF: {
             loadDirectory = qset.value("data_tiff", QDir::homePath()).toString();
             qfilenames = QFileDialog::getOpenFileNames(
                 gGui, "Import tiff data", loadDirectory,
-                "Image files (*.tif *.tiff);; All files (*.* *)");
+                "Image files (*.tif *.tiff);; All files (*.* *)",
+                nullptr, QFileDialog::DontUseNativeDialog);
             break;
         }
         case ohkl::DataFormat::PLAINTEXT: {
             loadDirectory = qset.value("data_text", QDir::homePath()).toString();
             qfilenames = QFileDialog::getOpenFileNames(
                 gGui, "Import plain text data", loadDirectory,
-                "Plain text files (*.dat *.txt);; All files (*.* *)");
+                "Plain text files (*.dat *.txt);; All files (*.* *)",
+                nullptr, QFileDialog::DontUseNativeDialog);
 
             break;
         }
@@ -276,7 +279,9 @@ void Session::loadData(ohkl::DataFormat format)
     }
 
     QStringList filenames =
-        QFileDialog::getOpenFileNames(gGui, "import data", loadDirectory, format_string);
+        QFileDialog::getOpenFileNames(
+            gGui, "import data", loadDirectory, format_string,
+            nullptr, QFileDialog::DontUseNativeDialog);
 
     if (filenames.empty())
         return;

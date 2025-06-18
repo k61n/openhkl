@@ -85,7 +85,9 @@ void LogWindow::saveLog()
 
     QString format_string{"Log files(*.log);;all files (*.* *)"};
     QString filename =
-        QFileDialog::getSaveFileName(this, "Save log messages", logSaveDirectory, format_string);
+        QFileDialog::getSaveFileName(
+            this, "Save log messages", logSaveDirectory, format_string,
+            nullptr, QFileDialog::DontUseNativeDialog);
 
     if (filename.isEmpty())
         return;

@@ -353,7 +353,8 @@ void DetectorWidget::saveScreenshot()
         + QString::fromStdString(_data_combo->currentData()->name()) + "-" + fmt_date + ".png";
 
     QString file_path = QFileDialog::getSaveFileName(
-        _detector_view, "Save image as", default_name, "Images (*.png *.jpg)");
+        _detector_view, "Save image as", default_name, "Images (*.png *.jpg)",
+        nullptr, QFileDialog::DontUseNativeDialog);
 
     QFileInfo file_info(file_path);
     if (!file_info.absoluteFilePath().isNull()) {

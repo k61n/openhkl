@@ -243,7 +243,8 @@ void SXPlot::exportToAscii(QCPErrorBars* errorBars, const char lim)
         return;
 
     QString fileName = QFileDialog::getSaveFileName(
-        this, tr("Name CSV file to export"), QString(qgetenv("HOME")), tr("Data file (*.csv)"));
+        this, tr("Name CSV file to export"), QString(qgetenv("HOME")), tr("Data file (*.csv)"),
+        nullptr, QFileDialog::DontUseNativeDialog);
 
     std::ofstream file;
     file.open(fileName.toStdString().c_str(), std::ios::out);
@@ -290,7 +291,8 @@ void SXPlot::setmenuRequested(QPoint pos)
         menu->popup(mapToGlobal(pos));
         connect(save_graph, &QAction::triggered, this, [=]() {
             QFileInfo fi(QFileDialog::getSaveFileName(
-                this, tr("Save image as"), QString(qgetenv("HOME")), tr("Images (*.png *.jpg)")));
+                             this, tr("Save image as"), QString(qgetenv("HOME")), tr("Images (*.png *.jpg)"),
+                             nullptr, QFileDialog::DontUseNativeDialog));
 
             if (!fi.absoluteFilePath().isNull()) {
                 if (fi.suffix() == "png")
